@@ -1,0 +1,90 @@
+#!/home/dockimble/build/pylith/bin/nemesis
+# -*- Python -*-
+#
+# ======================================================================
+#
+# Brad T. Aagaard, U.S. Geological Survey
+# Charles A. Williams, GNS Science
+# Matthew G. Knepley, University of Chicago
+#
+# This code was developed as part of the Computational Infrastructure
+# for Geodynamics (http://geodynamics.org).
+#
+# Copyright (c) 2010-2017 University of California, Davis
+#
+# See COPYING for license information.
+#
+# ======================================================================
+#
+
+# This script dumps all PyLith parameters (defaults plus those
+# specified by the user to a text file. The default name of the output
+# file is 'pylith_parameters.txt'. Verbose output includes a
+# description of the parameter along with where it's current value was
+# set.
+#
+# Usage: pylithinfo.py [--verbose] [--fileout=FILE] [PyLith args]
+
+
+# ======================================================================
+class ParametersApp(object):
+    """
+    Application for printing current PyLith parameters to a text file.
+    """
+
+    # PUBLIC METHODS /////////////////////////////////////////////////////
+
+    def __init__(self, name="pylithinfo"):
+        """
+        Constructor.
+        """
+        self.format = "json"
+        self.verbose = False
+        self.filename = "pylith_parameters.json"
+        self.pylith_args = ""
+        return
+
+    def main(self, *args, **kwds):
+        """
+        Main entry point for application.
+        """
+        from pylith.apps.PyLithApp import InfoApp
+        targetapp = InfoApp(self.pylith_args)
+        targetapp.run(*args, **kwds)
+
+        dumper = None
+        if self.format == "json":
+            from pylith.utils.DumpParametersJson import DumpParametersJson
+            dumper = DumpParametersJson()
+        elif self.format == "ascii":
+            from pylith.utils.DumpParametersAscii import DumpParametersAscii
+            dumper = DumpParametersAscii()
+            dumper.inventory.verbose = self.verbose
+        dumper.inventory.filename = self.filename
+        dumper._configure()
+
+        dumper.write(targetapp)
+        return
+
+# ----------------------------------------------------------------------
+if __name__ == "__main__":
+
+    description = "Configure PyLith simulation and dump parameters to a file."
+    addInfo = "Also include any normal PyLith command line arguments, like .cfg files."
+
+    import argparse
+    parser = argparse.ArgumentParser(description=description, epilog=addInfo)
+    parser.add_argument("--verbose-false", action="store_false", dest="verbose", help="Don't include description, location, and aliases in output.")
+    parser.add_argument("--format", action="store", dest="format", default="json", help="Format of output file.", choices=("ascii", "json"))
+    parser.add_argument("--filename", action="store", dest="filename", default="pylith_parameters.json", help="Name of output file")
+    args, extraArgs = parser.parse_known_args()
+
+    app = ParametersApp()
+    app.format = args.format
+    app.verbose = args.verbose
+    app.filename = args.filename
+    app.pylith_args = extraArgs
+    app.main()
+
+
+# End of file

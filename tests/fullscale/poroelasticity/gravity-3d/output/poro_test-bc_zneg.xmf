@@ -1,0 +1,64 @@
+<?xml version="1.0" ?>
+<!DOCTYPE Xdmf SYSTEM "Xdmf.dtd" [
+<!ENTITY HeavyData "poro_test-bc_zneg.h5">
+]>
+
+<Xdmf>
+  <Domain Name="domain">
+    <DataItem Name="cells" ItemType="Uniform" Format="HDF" NumberType="Float" Precision="8" Dimensions="16 4">
+      &HeavyData;:/topology/cells
+    </DataItem>
+    <DataItem Name="vertices" ItemType="Uniform" Format="HDF" Dimensions="25 3">
+      &HeavyData;:/geometry/vertices
+    </DataItem>
+    <Grid Name="TimeSeries" GridType="Collection" CollectionType="Temporal">
+      <Time TimeType="List">
+        <DataItem Format="XML" NumberType="Float" Dimensions="1">
+            3.15576000e+07
+        </DataItem>
+      </Time>
+      <Grid Name="domain" GridType="Uniform">
+        <Topology TopologyType="Quadrilateral" NumberOfElements="16">
+          <DataItem Reference="XML">
+            /Xdmf/Domain/DataItem[@Name="cells"]
+          </DataItem>
+        </Topology>
+        <Geometry GeometryType="XYZ">
+          <DataItem Reference="XML">
+            /Xdmf/Domain/DataItem[@Name="vertices"]
+          </DataItem>
+        </Geometry>
+        <Attribute Name="displacement" Type="Vector" Center="Node">
+          <DataItem ItemType="HyperSlab" Dimensions="1 25 3" Type="HyperSlab">
+            <DataItem Dimensions="3 3" Format="XML">
+              0 0 0    1 1 1    1 25 3
+            </DataItem>
+            <DataItem DataType="Float" Precision="8" Dimensions="1 25 3" Format="HDF">
+              &HeavyData;:/vertex_fields/displacement
+            </DataItem>
+          </DataItem>
+        </Attribute>
+        <Attribute Name="pressure" Type="Scalar" Center="Node">
+          <DataItem ItemType="HyperSlab" Dimensions="1 25 1" Type="HyperSlab">
+            <DataItem Dimensions="3 3" Format="XML">
+              0 0 0    1 1 1    1 25 1
+            </DataItem>
+            <DataItem DataType="Float" Precision="8" Dimensions="1 25 1" Format="HDF">
+              &HeavyData;:/vertex_fields/pressure
+            </DataItem>
+          </DataItem>
+        </Attribute>
+        <Attribute Name="trace_strain" Type="Scalar" Center="Node">
+          <DataItem ItemType="HyperSlab" Dimensions="1 25 1" Type="HyperSlab">
+            <DataItem Dimensions="3 3" Format="XML">
+              0 0 0    1 1 1    1 25 1
+            </DataItem>
+            <DataItem DataType="Float" Precision="8" Dimensions="1 25 1" Format="HDF">
+              &HeavyData;:/vertex_fields/trace_strain
+            </DataItem>
+          </DataItem>
+        </Attribute>
+      </Grid>
+    </Grid>
+  </Domain>
+</Xdmf>

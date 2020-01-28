@@ -238,7 +238,7 @@ pylith::fekernels::Poroelasticity::g0p_sourceDensity_grav_body(const PylithInt d
                                                                        PylithScalar g0p[]) {
 
 
-    const PylithInt _dim = 2;
+    //const PylithInt _dim = 2;
 
     // Incoming auxiliary fields.
     const PylithInt i_sourceDensity = 4;
@@ -252,7 +252,7 @@ pylith::fekernels::Poroelasticity::g0p_sourceDensity_grav_body(const PylithInt d
     const PylithInt aOffSource[1] = { aOff[i_sourceDensity] };
     const PylithInt aOffSource_x[1] = { aOff_x[i_sourceDensity] };
 
-    pylith::fekernels::Poroelasticity::g0p_sourceDensity(_dim, _numS, numASource,
+    pylith::fekernels::Poroelasticity::g0p_sourceDensity(dim, _numS, numASource,
                                                  NULL, NULL, NULL, NULL, NULL,
                                                  aOffSource, aOffSource_x, a, a_t, a_x,
                                                  t, x, numConstants, constants, g0p);
@@ -284,7 +284,7 @@ pylith::fekernels::Poroelasticity::g0e_trace_strain(const PylithInt dim,
                                                    const PylithInt numConstants,
                                                    const PylithScalar constants[],
                                                    PylithScalar g0E[]) {
-    const PylithInt _dim = 2;
+    //const PylithInt _dim = 2;
 
     // Incoming solution fields.
     const PylithInt i_disp = 0;
@@ -292,7 +292,7 @@ pylith::fekernels::Poroelasticity::g0e_trace_strain(const PylithInt dim,
 
     // Incoming auxiliary fields.
 
-    assert(_dim == dim);
+    //assert(_dim == dim);
     assert(3 == numS || 4 == numS);
     assert(numA >= 9);
     assert(sOff);
@@ -304,7 +304,7 @@ pylith::fekernels::Poroelasticity::g0e_trace_strain(const PylithInt dim,
     const PylithInt sOffTrace[2] = { sOff[i_disp], sOff[i_trace] };
     const PylithInt sOffTrace_x[2] = { sOff_x[i_disp], sOff_x[i_trace] };
 
-    pylith::fekernels::Poroelasticity::trace_strainCal(_dim, _numS, 0,
+    pylith::fekernels::Poroelasticity::trace_strainCal(dim, _numS, 0,
                                                          sOffTrace, sOffTrace_x, s, s_t, s_x,
                                                          NULL, NULL, NULL, NULL, NULL,
                                                          t, x, numConstants, constants, g0E);
@@ -334,7 +334,7 @@ pylith::fekernels::Poroelasticity::trace_strainCal(const PylithInt dim,
                                                      const PylithInt numConstants,
                                                      const PylithScalar constants[],
                                                      PylithScalar g0E[]) {
-    const PylithInt _dim = 2;
+    //const PylithInt _dim = 2;
 
     //PylithInt i;
 
@@ -342,7 +342,7 @@ pylith::fekernels::Poroelasticity::trace_strainCal(const PylithInt dim,
     const PylithInt i_disp = 0;
     const PylithInt i_trace = 1;
 
-    assert(_dim == dim);
+    //assert(_dim == dim);
     assert(2 == numS);
     assert(sOff_x);
     assert(s_x);
@@ -353,8 +353,8 @@ pylith::fekernels::Poroelasticity::trace_strainCal(const PylithInt dim,
 
     // g0E = uxx + uyy - trace
 
-    for (PylithInt i = 0; i < _dim; ++i) {
-        g0E[0] += disp_x[i*_dim+i];
+    for (PylithInt i = 0; i < dim; ++i) {
+        g0E[0] += disp_x[i*dim+i];
     } // for
 
     g0E[0] += -trace;
@@ -424,12 +424,12 @@ pylith::fekernels::Poroelasticity::Jg1eu(const PylithInt dim,
                                                 const PylithInt numConstants,
                                                 const PylithScalar constants[],
                                                 PylithScalar Jg1[]) {
-    const PylithInt _dim = 2;
+    //const PylithInt _dim = 2;
     PylithInt i;
     assert(aOff);
     assert(a);
 
-    for (i = 0; i < _dim; ++i) {
-        Jg1[i*_dim+i] += 1.;
+    for (i = 0; i < dim; ++i) {
+        Jg1[i*dim+i] += 1.;
     } // for
 } // Jg1eu

@@ -1,0 +1,121 @@
+/* portinfo.  Generated from portinfo.in by configure.  */
+/* portinfo.in.  Generated from configure.ac by autoheader.  */
+
+/* Define if building universal (internal helper macro) */
+/* #undef AC_APPLE_UNIVERSAL_BUILD */
+
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#define HAVE_DLFCN_H 1
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#define HAVE_INTTYPES_H 1
+
+/* Define to 1 if you have the `proj' library (-lproj). */
+#define HAVE_LIBPROJ 1
+
+/* Define to 1 if you have the <memory.h> header file. */
+#define HAVE_MEMORY_H 1
+
+/* Defined if you have NETCDF4 support */
+#define HAVE_NETCDF4 1
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#define HAVE_STDINT_H 1
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#define HAVE_STDLIB_H 1
+
+/* Define to 1 if you have the <strings.h> header file. */
+#define HAVE_STRINGS_H 1
+
+/* Define to 1 if you have the <string.h> header file. */
+#define HAVE_STRING_H 1
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#define HAVE_SYS_STAT_H 1
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#define HAVE_SYS_TYPES_H 1
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#define HAVE_UNISTD_H 1
+
+/* Define to the sub-directory where libtool stores uninstalled libraries. */
+#define LT_OBJDIR ".libs/"
+
+/* Define NETCDF4 version */
+#define NETCDF4_VERSION "4.6.0"
+
+/* Name of package */
+#define PACKAGE "pylith"
+
+/* Define to the address where bug reports for this package should be sent. */
+#define PACKAGE_BUGREPORT "cig-short@geodynamics.org"
+
+/* Define to the full name of this package. */
+#define PACKAGE_NAME "PyLith"
+
+/* Define to the full name and version of this package. */
+#define PACKAGE_STRING "PyLith 3.0.0beta2"
+
+/* Define to the one symbol short name of this package. */
+#define PACKAGE_TARNAME "pylith"
+
+/* Define to the home page for this package. */
+#define PACKAGE_URL ""
+
+/* Define to the version of this package. */
+#define PACKAGE_VERSION "3.0.0beta2"
+
+/* Define PyLith doi */
+#define PYLITH_DOI "10.5281/zenodo.886600"
+
+/* Define GIT branch for package source. */
+#define PYLITH_GIT_BRANCH "rlwalker/feature-poroelasticity"
+
+/* Define date of GIT commit for package source. */
+#define PYLITH_GIT_DATE "2019-12-12 14:13:11 -0500"
+
+/* Define GIT hash for package source. */
+#define PYLITH_GIT_HASH "5dff01034948a07b87057c4b9d8f60222d2366da"
+
+/* Define git revision commit for package source. */
+#define PYLITH_GIT_REVISION "v3.0.0beta2-152-g5dff01034"
+
+/* Set to 0 if source is from GIT, 1 otherwise. */
+#define PYLITH_RELEASE_VERSION 0
+
+/* Define PyLith version */
+#define PYLITH_VERSION "3.0.0beta2"
+
+/* Define to 1 if you have the ANSI C header files. */
+#define STDC_HEADERS 1
+
+/* Version number of package */
+#define VERSION "3.0.0beta2"
+
+/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
+   significant byte first (like Motorola and SPARC, unlike Intel). */
+#if defined AC_APPLE_UNIVERSAL_BUILD
+# if defined __BIG_ENDIAN__
+#  define WORDS_BIGENDIAN 1
+# endif
+#else
+# ifndef WORDS_BIGENDIAN
+/* #  undef WORDS_BIGENDIAN */
+# endif
+#endif
+
+/* Enable large inode numbers on Mac OS X 10.5.  */
+#ifndef _DARWIN_USE_64_BIT_INODE
+# define _DARWIN_USE_64_BIT_INODE 1
+#endif
+
+/* Number of bits in a file offset, on hosts where this is settable. */
+/* #undef _FILE_OFFSET_BITS */
+
+/* Define for large files, on AIX-style hosts. */
+/* #undef _LARGE_FILES */
+
+/* Define __FUNCTION_NAME__ to __func__. */
+#define __FUNCTION_NAME__ __PRETTY_FUNCTION__

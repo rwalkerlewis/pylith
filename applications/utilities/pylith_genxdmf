@@ -1,0 +1,73 @@
+#!/home/dockimble/build/pylith/bin/nemesis
+# -*- Python -*-
+#
+# ======================================================================
+#
+# Brad T. Aagaard, U.S. Geological Survey
+# Charles A. Williams, GNS Science
+# Matthew G. Knepley, University of Chicago
+#
+# This code was developed as part of the Computational Infrastructure
+# for Geodynamics (http://geodynamics.org).
+#
+# Copyright (c) 2010-2017 University of California, Davis
+#
+# See COPYING for license information.
+#
+# ======================================================================
+#
+
+# This script creates a metadata file (.xmf) from an HDF5 file written
+# by PyLith permitting the data to be viewed in VTK visualization
+# software, such as ParaView and Visit.
+#
+# Usage: pylith_genxdmf --files=FILE_OR_FILE_PATTERN
+
+# ======================================================================
+class GenXdmfApp(object):
+    """
+    Application for generating corresponding Xdmf files for HDF5 files.
+    """
+
+    # PUBLIC METHODS /////////////////////////////////////////////////////
+
+    def __init__(self, name="pylith_genxdmf"):
+        """
+        Constructor.
+        """
+        self.filepattern = "*.h5"
+        return
+
+
+    def main(self):
+        """
+        Main entry point for application.
+        """
+        import glob
+        from pylith.meshio.Xdmf import Xdmf
+    
+        xdmf = Xdmf()
+        for filenameHDF5 in glob.iglob(self.filepattern):
+              xdmf.write(filenameHDF5, verbose=True)
+        return
+
+      
+# ----------------------------------------------------------------------
+if __name__ == "__main__":
+
+    usage = "%prog --files=FILE_OR_FILE_PATTERN"
+    from optparse import OptionParser
+    parser = OptionParser(usage=usage)
+    parser.add_option("-f", "--files", 
+                      dest="filepattern",
+                      type="string", metavar="FILE",
+                      help="Create Xdmf file for HDF5 file FILE. [*.h5]",
+                      default="*.h5")
+    (options, args) = parser.parse_args()
+
+    app = GenXdmfApp()
+    app.filepattern = options.filepattern
+    app.main()
+
+
+# End of file 

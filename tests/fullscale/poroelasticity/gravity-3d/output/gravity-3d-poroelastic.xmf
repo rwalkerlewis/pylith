@@ -1,0 +1,184 @@
+<?xml version="1.0" ?>
+<!DOCTYPE Xdmf SYSTEM "Xdmf.dtd" [
+<!ENTITY HeavyData "gravity-3d-poroelastic.h5">
+]>
+
+<Xdmf>
+  <Domain Name="domain">
+    <DataItem Name="cells" ItemType="Uniform" Format="HDF" NumberType="Float" Precision="8" Dimensions="48 8">
+      &HeavyData;:/topology/cells
+    </DataItem>
+    <DataItem Name="vertices" ItemType="Uniform" Format="HDF" Dimensions="100 3">
+      &HeavyData;:/geometry/vertices
+    </DataItem>
+    <Grid Name="TimeSeries" GridType="Collection" CollectionType="Temporal">
+      <Time TimeType="List">
+        <DataItem Format="XML" NumberType="Float" Dimensions="1">
+            3.15576000e+07
+        </DataItem>
+      </Time>
+      <Grid Name="domain" GridType="Uniform">
+        <Topology TopologyType="Hexahedron" NumberOfElements="48">
+          <DataItem Reference="XML">
+            /Xdmf/Domain/DataItem[@Name="cells"]
+          </DataItem>
+        </Topology>
+        <Geometry GeometryType="XYZ">
+          <DataItem Reference="XML">
+            /Xdmf/Domain/DataItem[@Name="vertices"]
+          </DataItem>
+        </Geometry>
+        <Attribute Name="cauchy_strain_xx" Type="Scalar" Center="Node">
+          <DataItem ItemType="HyperSlab" Dimensions="1 100 1" Type="HyperSlab">
+            <DataItem Dimensions="3 3" Format="XML">
+              0 0 0    1 1 1    1 100 1
+            </DataItem>
+            <DataItem DataType="Float" Precision="8" Dimensions="1 100 6" Format="HDF">
+              &HeavyData;:/vertex_fields/cauchy_strain
+            </DataItem>
+          </DataItem>
+        </Attribute>
+        <Attribute Name="cauchy_strain_yy" Type="Scalar" Center="Node">
+          <DataItem ItemType="HyperSlab" Dimensions="1 100 1" Type="HyperSlab">
+            <DataItem Dimensions="3 3" Format="XML">
+              0 0 1    1 1 1    1 100 1
+            </DataItem>
+            <DataItem DataType="Float" Precision="8" Dimensions="1 100 6" Format="HDF">
+              &HeavyData;:/vertex_fields/cauchy_strain
+            </DataItem>
+          </DataItem>
+        </Attribute>
+        <Attribute Name="cauchy_strain_zz" Type="Scalar" Center="Node">
+          <DataItem ItemType="HyperSlab" Dimensions="1 100 1" Type="HyperSlab">
+            <DataItem Dimensions="3 3" Format="XML">
+              0 0 2    1 1 1    1 100 1
+            </DataItem>
+            <DataItem DataType="Float" Precision="8" Dimensions="1 100 6" Format="HDF">
+              &HeavyData;:/vertex_fields/cauchy_strain
+            </DataItem>
+          </DataItem>
+        </Attribute>
+        <Attribute Name="cauchy_strain_xy" Type="Scalar" Center="Node">
+          <DataItem ItemType="HyperSlab" Dimensions="1 100 1" Type="HyperSlab">
+            <DataItem Dimensions="3 3" Format="XML">
+              0 0 3    1 1 1    1 100 1
+            </DataItem>
+            <DataItem DataType="Float" Precision="8" Dimensions="1 100 6" Format="HDF">
+              &HeavyData;:/vertex_fields/cauchy_strain
+            </DataItem>
+          </DataItem>
+        </Attribute>
+        <Attribute Name="cauchy_strain_yz" Type="Scalar" Center="Node">
+          <DataItem ItemType="HyperSlab" Dimensions="1 100 1" Type="HyperSlab">
+            <DataItem Dimensions="3 3" Format="XML">
+              0 0 4    1 1 1    1 100 1
+            </DataItem>
+            <DataItem DataType="Float" Precision="8" Dimensions="1 100 6" Format="HDF">
+              &HeavyData;:/vertex_fields/cauchy_strain
+            </DataItem>
+          </DataItem>
+        </Attribute>
+        <Attribute Name="cauchy_strain_xz" Type="Scalar" Center="Node">
+          <DataItem ItemType="HyperSlab" Dimensions="1 100 1" Type="HyperSlab">
+            <DataItem Dimensions="3 3" Format="XML">
+              0 0 5    1 1 1    1 100 1
+            </DataItem>
+            <DataItem DataType="Float" Precision="8" Dimensions="1 100 6" Format="HDF">
+              &HeavyData;:/vertex_fields/cauchy_strain
+            </DataItem>
+          </DataItem>
+        </Attribute>
+        <Attribute Name="cauchy_stress_xx" Type="Scalar" Center="Node">
+          <DataItem ItemType="HyperSlab" Dimensions="1 100 1" Type="HyperSlab">
+            <DataItem Dimensions="3 3" Format="XML">
+              0 0 0    1 1 1    1 100 1
+            </DataItem>
+            <DataItem DataType="Float" Precision="8" Dimensions="1 100 6" Format="HDF">
+              &HeavyData;:/vertex_fields/cauchy_stress
+            </DataItem>
+          </DataItem>
+        </Attribute>
+        <Attribute Name="cauchy_stress_yy" Type="Scalar" Center="Node">
+          <DataItem ItemType="HyperSlab" Dimensions="1 100 1" Type="HyperSlab">
+            <DataItem Dimensions="3 3" Format="XML">
+              0 0 1    1 1 1    1 100 1
+            </DataItem>
+            <DataItem DataType="Float" Precision="8" Dimensions="1 100 6" Format="HDF">
+              &HeavyData;:/vertex_fields/cauchy_stress
+            </DataItem>
+          </DataItem>
+        </Attribute>
+        <Attribute Name="cauchy_stress_zz" Type="Scalar" Center="Node">
+          <DataItem ItemType="HyperSlab" Dimensions="1 100 1" Type="HyperSlab">
+            <DataItem Dimensions="3 3" Format="XML">
+              0 0 2    1 1 1    1 100 1
+            </DataItem>
+            <DataItem DataType="Float" Precision="8" Dimensions="1 100 6" Format="HDF">
+              &HeavyData;:/vertex_fields/cauchy_stress
+            </DataItem>
+          </DataItem>
+        </Attribute>
+        <Attribute Name="cauchy_stress_xy" Type="Scalar" Center="Node">
+          <DataItem ItemType="HyperSlab" Dimensions="1 100 1" Type="HyperSlab">
+            <DataItem Dimensions="3 3" Format="XML">
+              0 0 3    1 1 1    1 100 1
+            </DataItem>
+            <DataItem DataType="Float" Precision="8" Dimensions="1 100 6" Format="HDF">
+              &HeavyData;:/vertex_fields/cauchy_stress
+            </DataItem>
+          </DataItem>
+        </Attribute>
+        <Attribute Name="cauchy_stress_yz" Type="Scalar" Center="Node">
+          <DataItem ItemType="HyperSlab" Dimensions="1 100 1" Type="HyperSlab">
+            <DataItem Dimensions="3 3" Format="XML">
+              0 0 4    1 1 1    1 100 1
+            </DataItem>
+            <DataItem DataType="Float" Precision="8" Dimensions="1 100 6" Format="HDF">
+              &HeavyData;:/vertex_fields/cauchy_stress
+            </DataItem>
+          </DataItem>
+        </Attribute>
+        <Attribute Name="cauchy_stress_xz" Type="Scalar" Center="Node">
+          <DataItem ItemType="HyperSlab" Dimensions="1 100 1" Type="HyperSlab">
+            <DataItem Dimensions="3 3" Format="XML">
+              0 0 5    1 1 1    1 100 1
+            </DataItem>
+            <DataItem DataType="Float" Precision="8" Dimensions="1 100 6" Format="HDF">
+              &HeavyData;:/vertex_fields/cauchy_stress
+            </DataItem>
+          </DataItem>
+        </Attribute>
+        <Attribute Name="displacement" Type="Vector" Center="Node">
+          <DataItem ItemType="HyperSlab" Dimensions="1 100 3" Type="HyperSlab">
+            <DataItem Dimensions="3 3" Format="XML">
+              0 0 0    1 1 1    1 100 3
+            </DataItem>
+            <DataItem DataType="Float" Precision="8" Dimensions="1 100 3" Format="HDF">
+              &HeavyData;:/vertex_fields/displacement
+            </DataItem>
+          </DataItem>
+        </Attribute>
+        <Attribute Name="pressure" Type="Scalar" Center="Node">
+          <DataItem ItemType="HyperSlab" Dimensions="1 100 1" Type="HyperSlab">
+            <DataItem Dimensions="3 3" Format="XML">
+              0 0 0    1 1 1    1 100 1
+            </DataItem>
+            <DataItem DataType="Float" Precision="8" Dimensions="1 100 1" Format="HDF">
+              &HeavyData;:/vertex_fields/pressure
+            </DataItem>
+          </DataItem>
+        </Attribute>
+        <Attribute Name="trace_strain" Type="Scalar" Center="Node">
+          <DataItem ItemType="HyperSlab" Dimensions="1 100 1" Type="HyperSlab">
+            <DataItem Dimensions="3 3" Format="XML">
+              0 0 0    1 1 1    1 100 1
+            </DataItem>
+            <DataItem DataType="Float" Precision="8" Dimensions="1 100 1" Format="HDF">
+              &HeavyData;:/vertex_fields/trace_strain
+            </DataItem>
+          </DataItem>
+        </Attribute>
+      </Grid>
+    </Grid>
+  </Domain>
+</Xdmf>
