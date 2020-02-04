@@ -198,7 +198,7 @@ am__nobase_pkgpyexec_PYTHON_DIST = __init__.py apps/__init__.py \
 	problems/SolnDisp.py problems/SolnDispLagrange.py \
 	problems/SolnDispVel.py problems/SolnDispVelLagrange.py \
 	problems/SolnDispPres.py problems/SolnDispPresLagrange.py \
-	problems/SolnDispPresTracStrain.py \
+	problems/SolnDispPresTracStrain.py problems/SolnDispPresVel.py \
 	problems/SubfieldDisplacement.py problems/SubfieldVelocity.py \
 	problems/SubfieldPressure.py problems/SubfieldTraceStrain.py \
 	problems/SubfieldTemperature.py \
@@ -481,7 +481,7 @@ nobase_pkgpyexec_PYTHON = __init__.py apps/__init__.py \
 	problems/SolnDisp.py problems/SolnDispLagrange.py \
 	problems/SolnDispVel.py problems/SolnDispVelLagrange.py \
 	problems/SolnDispPres.py problems/SolnDispPresLagrange.py \
-	problems/SolnDispPresTracStrain.py \
+	problems/SolnDispPresTracStrain.py problems/SolnDispPresVel.py \
 	problems/SubfieldDisplacement.py problems/SubfieldVelocity.py \
 	problems/SubfieldPressure.py problems/SubfieldTraceStrain.py \
 	problems/SubfieldTemperature.py \

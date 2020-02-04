@@ -636,7 +636,7 @@ configure:18531: $? = 0
 configure:18532: result: yes
 configure:18549: checking for library containing H5Pset_dxpl_mpio
 configure:18580: /home/dockimble/build/pylith/petsc/arch-linux2-c-debug/bin/mpicxx -o conftest -g -O2   -DENABLE_HDF5 -DENABLE_CUBIT -I/home/dockimble/build/pylith/include -I/home/dockimble/build/pylith/petsc/arch-linux2-c-debug/include -L/home/dockimble/build/pylith/lib -L/home/dockimble/build/pylith/petsc/arch-linux2-c-debug/lib conftest.cpp  >&5
-/tmp/ccm6TSp7.o: In function `main':
+/tmp/cc7l3EI7.o: In function `main':
 /home/dockimble/build/pylith/pylith/conftest.cpp:36: undefined reference to `H5Pset_dxpl_mpio'
 collect2: error: ld returned 1 exit status
 configure:18580: $? = 1
@@ -772,9 +772,9 @@ configure: failed program was:
 | #define HAVE_LIBPROJ 1
 | #define __FUNCTION_NAME__ __PRETTY_FUNCTION__
 | #define PYLITH_RELEASE_VERSION 0
-| #define PYLITH_GIT_REVISION "v3.0.0beta2-152-g5dff01034"
-| #define PYLITH_GIT_HASH "5dff01034948a07b87057c4b9d8f60222d2366da"
-| #define PYLITH_GIT_DATE "2019-12-12 14:13:11 -0500"
+| #define PYLITH_GIT_REVISION "v3.0.0beta2-153-gf51b16361"
+| #define PYLITH_GIT_HASH "f51b16361c814a27c46683e9fdfa9dcf7a2b1d62"
+| #define PYLITH_GIT_DATE "2020-01-28 14:13:47 -0500"
 | #define PYLITH_GIT_BRANCH "rlwalker/feature-poroelasticity"
 | #define PYLITH_VERSION "3.0.0beta2"
 | #define PYLITH_DOI "10.5281/zenodo.886600"
@@ -819,9 +819,9 @@ configure: failed program was:
 | #define HAVE_LIBPROJ 1
 | #define __FUNCTION_NAME__ __PRETTY_FUNCTION__
 | #define PYLITH_RELEASE_VERSION 0
-| #define PYLITH_GIT_REVISION "v3.0.0beta2-152-g5dff01034"
-| #define PYLITH_GIT_HASH "5dff01034948a07b87057c4b9d8f60222d2366da"
-| #define PYLITH_GIT_DATE "2019-12-12 14:13:11 -0500"
+| #define PYLITH_GIT_REVISION "v3.0.0beta2-153-gf51b16361"
+| #define PYLITH_GIT_HASH "f51b16361c814a27c46683e9fdfa9dcf7a2b1d62"
+| #define PYLITH_GIT_DATE "2020-01-28 14:13:47 -0500"
 | #define PYLITH_GIT_BRANCH "rlwalker/feature-poroelasticity"
 | #define PYLITH_VERSION "3.0.0beta2"
 | #define PYLITH_DOI "10.5281/zenodo.886600"
@@ -967,7 +967,6 @@ config.status:1337: creating examples/troubleshooting/nofaults-2d/Makefile
 config.status:1337: creating templates/Makefile
 config.status:1337: creating share/Makefile
 config.status:1337: creating portinfo
-config.status:1518: portinfo is unchanged
 config.status:1566: executing depfiles commands
 config.status:1566: executing libtool commands
 
@@ -1340,9 +1339,9 @@ target_alias=''
 #define HAVE_LIBPROJ 1
 #define __FUNCTION_NAME__ __PRETTY_FUNCTION__
 #define PYLITH_RELEASE_VERSION 0
-#define PYLITH_GIT_REVISION "v3.0.0beta2-152-g5dff01034"
-#define PYLITH_GIT_HASH "5dff01034948a07b87057c4b9d8f60222d2366da"
-#define PYLITH_GIT_DATE "2019-12-12 14:13:11 -0500"
+#define PYLITH_GIT_REVISION "v3.0.0beta2-153-gf51b16361"
+#define PYLITH_GIT_HASH "f51b16361c814a27c46683e9fdfa9dcf7a2b1d62"
+#define PYLITH_GIT_DATE "2020-01-28 14:13:47 -0500"
 #define PYLITH_GIT_BRANCH "rlwalker/feature-poroelasticity"
 #define PYLITH_VERSION "3.0.0beta2"
 #define PYLITH_DOI "10.5281/zenodo.886600"

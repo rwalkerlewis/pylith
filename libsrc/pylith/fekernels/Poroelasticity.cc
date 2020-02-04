@@ -42,7 +42,7 @@
 // Displacement
 // =============================================================================
 // ---------------------------------------------------------------------------------------------------------------------
-// g0v_grav - g0 function for generic elasticity terms ( + grav body forces).
+// g0v_grav - g0 function for generic poroelasticity terms ( + grav body forces).
 void
 pylith::fekernels::Poroelasticity::g0v_grav(const PylithInt dim,
                                    const PylithInt numS,
@@ -88,7 +88,7 @@ pylith::fekernels::Poroelasticity::g0v_grav(const PylithInt dim,
 } // g0v_grav
 
 // ---------------------------------------------------------------------------------------------------------------------
-// g0v_bodyforce - g0 function for generic elasticity terms ( + body forces).
+// g0v_bodyforce - g0 function for generic poroelasticity terms ( + body forces).
 void
 pylith::fekernels::Poroelasticity::g0v_bodyforce(const PylithInt dim,
                                    const PylithInt numS,
@@ -124,7 +124,7 @@ pylith::fekernels::Poroelasticity::g0v_bodyforce(const PylithInt dim,
 
 
 // ----------------------------------------------------------------------
-//g0v_gravbodyforce - g0 function for isotropic linear Poroelasticity plane strain with both gravity and body forces.
+//g0v_gravbodyforce - g0 function for isotropic linear Poroelasticity with both gravity and body forces.
 void
 pylith::fekernels::Poroelasticity::g0v_gravbodyforce(const PylithInt dim,
                                                      const PylithInt numS,
@@ -311,7 +311,7 @@ pylith::fekernels::Poroelasticity::g0e_trace_strain(const PylithInt dim,
 } // g0e_trace_strain
 
 // ----------------------------------------------------------------------
-/* Calculate darcy flow rate for 2-D plane strain isotropic linear
+/* Calculate darcy flow rate for isotropic linear
  * poroelasticity.
  *
  */

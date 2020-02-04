@@ -196,7 +196,8 @@ am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/portinfo.in \
 	$(top_srcdir)/./aux-config/missing ./aux-config/compile \
 	./aux-config/config.guess ./aux-config/config.sub \
 	./aux-config/install-sh ./aux-config/ltmain.sh \
-	./aux-config/missing AUTHORS COPYING INSTALL NEWS TODO
+	./aux-config/missing ./aux-config/py-compile AUTHORS COPYING \
+	INSTALL NEWS TODO
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
