@@ -292,14 +292,6 @@ pylith::fekernels::Poroelasticity::g0e_trace_strain(const PylithInt dim,
 
     // Incoming auxiliary fields.
 
-    //assert(_dim == dim);
-    assert(3 == numS || 4 == numS);
-    assert(numA >= 9);
-    assert(sOff);
-    assert(sOff_x);
-    assert(aOff);
-    assert(aOff_x);
-
     const PylithInt _numS = 2; // Number passed on to stress kernels.
     const PylithInt sOffTrace[2] = { sOff[i_disp], sOff[i_trace] };
     const PylithInt sOffTrace_x[2] = { sOff_x[i_disp], sOff_x[i_trace] };
@@ -311,8 +303,7 @@ pylith::fekernels::Poroelasticity::g0e_trace_strain(const PylithInt dim,
 } // g0e_trace_strain
 
 // ----------------------------------------------------------------------
-/* Calculate darcy flow rate for isotropic linear
- * poroelasticity.
+/*
  *
  */
 void
@@ -334,30 +325,32 @@ pylith::fekernels::Poroelasticity::trace_strainCal(const PylithInt dim,
                                                      const PylithInt numConstants,
                                                      const PylithScalar constants[],
                                                      PylithScalar g0E[]) {
-    //const PylithInt _dim = 2;
 
-    //PylithInt i;
 
     // Incoming solution field.
     const PylithInt i_disp = 0;
     const PylithInt i_trace = 1;
 
-    //assert(_dim == dim);
-    assert(2 == numS);
-    assert(sOff_x);
-    assert(s_x);
-
     const PylithScalar* disp = &s[sOff[i_disp]];
     const PylithScalar* disp_x = &s_x[sOff_x[i_disp]];
     const PylithScalar trace = s[sOff[i_trace]];
 
-    // g0E = uxx + uyy - trace
+    PylithScalar strainTrace = 0.0;
 
-    for (PylithInt i = 0; i < dim; ++i) {
-        g0E[0] += disp_x[i*dim+i];
-    } // for
+    if (dim == 1) {
+        strainTrace = disp_x[0*dim+0];
+    } else if (dim == 2) {
+        strainTrace = disp_x[0*dim+0] + disp_x[1*dim+1];
+    } else if (dim == 3) {
+        strainTrace = disp_x[0*dim+0] + disp_x[1*dim+1] + disp_x[2*dim+2];
+    } //elseif
 
-    g0E[0] += -trace;
+    // for (PylithInt i = 0; i < dim; ++i) {
+    //    g0E[i] += strainTrace - trace;
+    //}
+
+    g0E[0] += strainTrace - trace;
+
 
 } // trace_strainCal
 
@@ -430,6 +423,78 @@ pylith::fekernels::Poroelasticity::Jg1eu(const PylithInt dim,
     assert(a);
 
     for (i = 0; i < dim; ++i) {
-        Jg1[i*dim+i] += 1.;
+        Jg1[i*dim+i] += 1.0;
     } // for
 } // Jg1eu
+
+// =====================================================================================================================
+// Kernels for linear isotropic poroelasticity
+// =====================================================================================================================
+
+// ---------------------------------------------------------------------------------------------------------------------
+/* Calculate Cauchy strain for 2-D plane strain elasticity.
+ *
+ * Order of output components is xx, yy, zz, xy for 2D,
+ * Order of output components is xx, yy, zz, xy, yz, xz for 3D.
+ *
+ * Solution fields: [disp(dim)]
+ */
+void
+pylith::fekernels::Poroelasticity::cauchyStrain(const PylithInt dim,
+                                                       const PylithInt numS,
+                                                       const PylithInt numA,
+                                                       const PylithInt sOff[],
+                                                       const PylithInt sOff_x[],
+                                                       const PylithScalar s[],
+                                                       const PylithScalar s_t[],
+                                                       const PylithScalar s_x[],
+                                                       const PylithInt aOff[],
+                                                       const PylithInt aOff_x[],
+                                                       const PylithScalar a[],
+                                                       const PylithScalar a_t[],
+                                                       const PylithScalar a_x[],
+                                                       const PylithReal t,
+                                                       const PylithScalar x[],
+                                                       const PylithInt numConstants,
+                                                       const PylithScalar constants[],
+                                                       PylithScalar strain[]) {
+//    const PylithInt _dim = 2;
+
+//    assert(_dim == dim);
+    assert(numS >= 1);
+    assert(sOff_x);
+    assert(s_x);
+    assert(strain);
+
+    // Incoming solution field.
+    const PylithInt i_disp = 0;
+    const PylithScalar* disp_x = &s_x[sOff_x[i_disp]];
+
+    if (dim == 2) {
+        const PylithScalar strain_xx = disp_x[0*dim+0];
+        const PylithScalar strain_yy = disp_x[1*dim+1];
+        const PylithScalar strain_zz = 0.0;
+        const PylithScalar strain_xy = 0.5*(disp_x[0*dim+1] + disp_x[1*dim+0]);
+
+        strain[0] = strain_xx;
+        strain[1] = strain_yy;
+        strain[2] = strain_zz;
+        strain[3] = strain_xy;
+
+    } else if (dim == 3) {
+
+        const PylithScalar strain_xx = disp_x[0*dim+0];
+        const PylithScalar strain_yy = disp_x[1*dim+1];
+        const PylithScalar strain_zz = disp_x[2*dim+2];
+        const PylithScalar strain_xy = 0.5*(disp_x[0*dim+1] + disp_x[1*dim+0]);
+        const PylithScalar strain_yz = 0.5*(disp_x[1*dim+2] + disp_x[2*dim+1]);
+        const PylithScalar strain_xz = 0.5*(disp_x[0*dim+2] + disp_x[2*dim+0]);
+
+        strain[0] = strain_xx;
+        strain[1] = strain_yy;
+        strain[2] = strain_zz;
+        strain[3] = strain_xy;
+        strain[4] = strain_yz;
+        strain[5] = strain_xz;
+    }
+} // cauchyStrain

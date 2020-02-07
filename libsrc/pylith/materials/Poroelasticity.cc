@@ -753,9 +753,10 @@ pylith::materials::Poroelasticity::_setKernelsDerivedField(pylith::feassemble::I
 
     const int spaceDim = coordsys->spaceDim();
     const PetscPointFunc strainKernel =
-        (3 == spaceDim) ? pylith::fekernels::Elasticity3D::cauchyStrain :
-        (2 == spaceDim) ? pylith::fekernels::ElasticityPlaneStrain::cauchyStrain :
-        NULL;
+        //(3 == spaceDim) ? pylith::fekernels::Elasticity3D::cauchyStrain :
+        //(2 == spaceDim) ? pylith::fekernels::ElasticityPlaneStrain::cauchyStrain :
+        //NULL;
+        pylith::fekernels::Poroelasticity::cauchyStrain;
     kernels[1] = ProjectKernels("cauchy_strain", strainKernel);
 
     assert(integrator);

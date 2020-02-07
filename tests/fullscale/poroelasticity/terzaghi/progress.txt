@@ -1,7 +1,5 @@
 Timestamp                     Simulation t   % complete   Est. completion
-Tue Feb  4 10:32:33 2020       0.00*year              0   TBD
-Tue Feb  4 10:32:37 2020       0.00*year              6   Tue Feb  4 10:34:26 2020
-Tue Feb  4 10:32:43 2020       0.00*year             12   Tue Feb  4 10:34:18 2020
-Tue Feb  4 10:32:48 2020       0.00*year             16   Tue Feb  4 10:34:22 2020
-Tue Feb  4 10:32:55 2020       0.00*year             22   Tue Feb  4 10:34:23 2020
-Tue Feb  4 10:33:02 2020       0.00*year             26   Tue Feb  4 10:34:33 2020
+Thu Feb  6 19:38:55 2020       0.00*year              0   TBD
+Thu Feb  6 19:38:57 2020       0.00*year             40   Thu Feb  6 19:39:07 2020
+Thu Feb  6 19:39:00 2020       0.00*year             60   Thu Feb  6 19:39:06 2020
+Thu Feb  6 19:39:02 2020       0.00*year             80   Thu Feb  6 19:39:05 2020
