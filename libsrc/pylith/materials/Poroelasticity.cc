@@ -339,18 +339,20 @@ pylith::materials::Poroelasticity::_setKernelsRHSResidual(pylith::feassemble::In
         //const PetscPointFunc g0p = NULL;
         break;
     case 0x3:
-        g0p = pylith::fekernels::Poroelasticity::g0p_sourceDensity_grav_body;
+        g0p = pylith::fekernels::Poroelasticity::g0p_sourceDensity_grav;
         break;
     case 0x5:
-        g0p = pylith::fekernels::Poroelasticity::g0p_sourceDensity_grav_body;
+        g0p = pylith::fekernels::Poroelasticity::g0p_sourceDensity_body;
         break;
     case 0x6:
+        // No Source Density
         //const PetscPointFunc g0p = NULL;
         break;
     case 0x7:
         g0p = pylith::fekernels::Poroelasticity::g0p_sourceDensity_grav_body;
         break;
     case 0x0:
+        // No Source Density
         //const PetscPointFunc g0p = NULL;
         break;
     default:

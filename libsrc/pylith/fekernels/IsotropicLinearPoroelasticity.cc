@@ -86,7 +86,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity::f0p_QS(const PylithInt dim,
 
     const PylithScalar storageCoefficientStrain = (biotCoefficient - porosity) / solidBulkModulus + porosity / fluidBulkModulus; // 1/M (biot modulus)
 
-	f0p[0] += biotCoefficient * trace_strain_t + storageCoefficientStrain * poro_pres_t;
+	  f0p[0] += biotCoefficient * trace_strain_t + storageCoefficientStrain * poro_pres_t;
 
     //for (PylithInt i = 0; i < dim; ++i) {
     //  f0p[i] += biotCoefficient * trace_strain_t + storageCoefficientStrain * poro_pres_t[i];
@@ -160,7 +160,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity::f0p_DYN(const PylithInt dim,
 
     const PylithScalar storageCoefficientStrain = (biotCoefficient - porosity) / solidBulkModulus + porosity / fluidBulkModulus; // 1/M (biot modulus)
 
-	f0p[0] += biotCoefficient * trace_strain_t + storageCoefficientStrain * poro_pres_t;
+	  f0p[0] += biotCoefficient * trace_strain_t + storageCoefficientStrain * poro_pres_t;
 
     //for (PylithInt i = 0; i < dim; ++i) {
     //  f0p[i] += biotCoefficient * trace_strain_t + storageCoefficientStrain * poro_pres_t[i];
@@ -189,7 +189,6 @@ pylith::fekernels::IsotropicLinearPoroelasticity::Jf0pe(const PylithInt dim,
                                                 const PylithInt numConstants,
                                                 const PylithScalar constants[],
                                                 PylithScalar Jf0[]) {
-    //const PylithInt _dim = 2;
 
     // Incoming re-packed auxiliary field.
 
@@ -198,11 +197,6 @@ pylith::fekernels::IsotropicLinearPoroelasticity::Jf0pe(const PylithInt dim,
 
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
-    //assert(_dim == dim);
-    assert(3 == numS);
-    assert(numA >= 9);
-    assert(aOff);
-    assert(a);
     Jf0[0] += utshift * biotCoefficient;
 } // Jf0pe
 
@@ -245,12 +239,6 @@ pylith::fekernels::IsotropicLinearPoroelasticity::Jf0pp(const PylithInt dim,
     const PylithScalar solidBulkModulus = a[aOff[i_bulkModulus]];
 
     const PylithScalar storageCoefficientStrain = (biotCoefficient - porosity) / solidBulkModulus + porosity / fluidBulkModulus; // 1/M (biot modulus)
-
-    //assert(_dim == dim);
-    assert(3 == numS);
-    assert(numA >= 9);
-    assert(aOff);
-    assert(a);
 
     Jf0[0] += utshift * storageCoefficientStrain;
 } // Jf0pp
@@ -352,7 +340,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity::g1p_NoGrav(const PylithInt dim
     // Incoming auxiliary field.
 
     // Poroelasticity
-    const PylithInt i_density = 1;
+    //const PylithInt i_density = 1;
     const PylithInt i_viscosity = 3;
 
     // IsotropicLinearPoroelasticity
@@ -361,7 +349,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity::g1p_NoGrav(const PylithInt dim
     const PylithScalar poro_pres = s[sOff[i_poro_pres]];
     const PylithScalar* poro_pres_x = &s_x[sOff_x[i_poro_pres_x]];
 
-    const PylithScalar density = a[aOff[i_density]];
+    //const PylithScalar density = a[aOff[i_density]];
     const PylithScalar isotropicPerm = a[aOff[i_isotropicPerm]];
     const PylithScalar viscosity = a[aOff[i_viscosity]];
 
@@ -398,6 +386,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity::g1v(const PylithInt dim,
     // Incoming solution fields.
     const PylithInt i_disp = 0;
     const PylithInt i_poro_pres = 1;
+    //const PylithInt i_trace_strain = 2;
 
     // Incoming auxiliary fields.
 
@@ -406,9 +395,13 @@ pylith::fekernels::IsotropicLinearPoroelasticity::g1v(const PylithInt dim,
     const PylithInt i_bulkModulus = numA - 4;
     const PylithInt i_biotCoefficient = numA - 3;
 
+    //const PylithInt _numS = 3; // Number passed on to stress kernels.
+    //const PylithInt sOffCouple[3] = { sOff[i_disp], sOff[i_poro_pres], sOff_x[i_trace_strain] };
+    //const PylithInt sOffCouple_x[3] = { sOff_x[i_disp], sOff_x[i_poro_pres], sOff_x[i_trace_strain] };
+
     const PylithInt _numS = 2; // Number passed on to stress kernels.
-    const PylithInt sOffCouple[2] = { sOff[i_disp], sOff[i_poro_pres] };
-    const PylithInt sOffCouple_x[2] = { sOff_x[i_disp], sOff_x[i_poro_pres] };
+    const PylithInt sOffCouple[2] = { sOff[i_disp], sOff[i_poro_pres]};
+    const PylithInt sOffCouple_x[2] = { sOff_x[i_disp], sOff_x[i_poro_pres]};
 
     const PylithInt numAMean = 2; // Number passed to mean stress kernel.
     const PylithInt aOffMean[2] = { aOff[i_bulkModulus], aOff[i_biotCoefficient] };
@@ -480,26 +473,30 @@ pylith::fekernels::IsotropicLinearPoroelasticity::g1v_refstate(const PylithInt d
                                                                       const PylithInt numConstants,
                                                                       const PylithScalar constants[],
                                                                       PylithScalar g1[]) {
-    //const PylithInt _dim = 2;
 
     // Incoming solution fields.
     const PylithInt i_disp = 0;
     const PylithInt i_poro_pres = 1; ///SHOULDN'T THIS BE EQUAL TO 1 ??? (JOSIMAR)
+    //const PylithInt i_trace_strain = 2;
 
     // Incoming auxiliary fields.
 
     // Poroelasticity
-    const PylithInt i_rstress = 4;
-    const PylithInt i_rstrain = 5;
+    const PylithInt i_rstress = numA - 7;
+    const PylithInt i_rstrain = numA - 6;
 
     // IsotropicLinearPoroelasticity
     const PylithInt i_shearModulus = numA - 5;
     const PylithInt i_bulkModulus = numA - 4;
     const PylithInt i_biotCoefficient = numA - 3 ;
 
+    //const PylithInt _numS = 3; // Number passed on to stress kernels.
+    //const PylithInt sOffCouple[3] = { sOff[i_disp], sOff[i_poro_pres], sOff_x[i_trace_strain] };
+    //const PylithInt sOffCouple_x[3] = { sOff_x[i_disp], sOff_x[i_poro_pres], sOff_x[i_trace_strain] };
+
     const PylithInt _numS = 2; // Number passed on to stress kernels.
-    const PylithInt sOffCouple[2] = { sOff[i_disp], sOff[i_poro_pres] };
-    const PylithInt sOffCouple_x[2] = { sOff_x[i_disp], sOff_x[i_poro_pres] };
+    const PylithInt sOffCouple[2] = { sOff[i_disp], sOff[i_poro_pres]};
+    const PylithInt sOffCouple_x[2] = { sOff_x[i_disp], sOff_x[i_poro_pres]};
 
     const PylithInt numAMean = 4; // Number passed to mean stress kernel.
     const PylithInt aOffMean[4] = { aOff[i_bulkModulus], aOff[i_biotCoefficient], aOff[i_rstress], aOff[i_rstrain] };
@@ -580,18 +577,11 @@ pylith::fekernels::IsotropicLinearPoroelasticity::Jg2vp(const PylithInt dim,
                                                 const PylithScalar constants[],
                                                 PylithScalar Jg2[]) {
 
+    // Isotropic Linear Poroelasticity
     const PylithInt i_biotCoefficient = numA - 3;
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
-    PylithInt i;
-
-    //assert(_dim == dim);
-    assert(3 == numS);
-    assert(numA >= 9);
-    assert(aOff);
-    assert(a);
-
-    for (i = 0; i < dim; ++i) {
+    for (PylithInt i = 0; i < dim; ++i) {
         Jg2[i*dim+i] -= biotCoefficient ;
     } // for
 } // Jg2up
@@ -599,7 +589,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity::Jg2vp(const PylithInt dim,
 // Jg3 function for isotropic linear poroelasticity plane strain.
 
 // ----------------------------------------------------------------------
-/* Jg3pp entry function for 2-D plane strain isotropic linear poroelasticity.
+/* Jg3pp entry function for isotropic linear poroelasticity.
  * isotropic permeability (scalar). dimension (1,1,2,2)
  */
 void
@@ -624,8 +614,12 @@ pylith::fekernels::IsotropicLinearPoroelasticity::Jg3pp(const PylithInt dim,
                                                                PylithScalar Jg3[]) {
 
     // index of Incoming auxiliary fields.
-    const PylithInt i_isotropicPermeability = numA - 2;
+    // Poroelasticity
     const PylithInt i_fluidViscosity = 3;
+
+    // Isotropic Linear Poroelasticity
+    const PylithInt i_isotropicPermeability = numA - 2;
+
 
     const PylithScalar isotropicPermeablity = a[aOff[i_isotropicPermeability]];
     const PylithScalar fluidViscosity = a[aOff[i_fluidViscosity]];
@@ -687,6 +681,8 @@ pylith::fekernels::IsotropicLinearPoroelasticity::Jg3vu(const PylithInt dim,
 //    const PylithInt i_poro_pres = 1;
 
     // Incoming auxiliary fields.
+
+    // Isotropic Linear Poroelasticity
     const PylithInt i_shearModulus = numA - 5;
     const PylithInt i_bulkModulus = numA - 4;
     const PylithInt i_biotCoefficient = numA - 3;
@@ -918,28 +914,29 @@ pylith::fekernels::IsotropicLinearPoroelasticity::meanStress(const PylithInt dim
     // Incoming solution field.
     const PylithInt i_disp = 0;
     const PylithInt i_poro_pres = 1;
+    //const PylithInt i_trace_strain = 2;
 
     // Incoming auxiliary field.
 
     // IsotropicLinearPoroelasticity
-    const PylithInt i_bulkModulus = numA - 4;
-    const PylithInt i_biotCoefficient = numA - 3;
+    const PylithInt i_bulkModulus = 0;
+    const PylithInt i_biotCoefficient = 1;
 
     const PylithScalar* disp_x = &s_x[sOff_x[i_disp]];
     const PylithScalar poro_pres = s[sOff[i_poro_pres]];
+    //const PylithScalar trace_strain = s[sOff[i_trace_strain]];
 
     const PylithScalar solidBulkModulus = a[aOff[i_bulkModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
     PylithReal strainTrace = 0.0;
 
     if (dim == 1) {
-        strainTrace = disp_x[0*dim+0];
+       strainTrace = disp_x[0*dim+0];
     } else if (dim == 2) {
-        strainTrace = disp_x[0*dim+0] + disp_x[1*dim+1];
+       strainTrace = disp_x[0*dim+0] + disp_x[1*dim+1];
     } else if (dim == 3) {
-        strainTrace = disp_x[0*dim+0] + disp_x[1*dim+1] + disp_x[2*dim+2];
+       strainTrace = disp_x[0*dim+0] + disp_x[1*dim+1] + disp_x[2*dim+2];
     } //elseif
-
 
     const PylithReal drainedBulkModulus = solidBulkModulus * (1.0 - biotCoefficient);
     const PylithReal meanStress = drainedBulkModulus * strainTrace;
@@ -984,16 +981,17 @@ pylith::fekernels::IsotropicLinearPoroelasticity::meanStress_refstate(const Pyli
     // Incoming solution field.
     const PylithInt i_disp = 0;
     const PylithInt i_poro_pres = 1;
-
+    //const PylithInt i_trace_strain = 2;
 
     // Incoming auxiliary fields.
-    const PylithInt i_bulkModulus = numA - 4;
-    const PylithInt i_biotCoefficient = numA - 3;
-    const PylithInt i_rstress = 4;
-    const PylithInt i_rstrain = 5;
+    const PylithInt i_bulkModulus = 0; //numA - 4;
+    const PylithInt i_biotCoefficient = 1; // numA - 3;
+    const PylithInt i_rstress = 2;
+    const PylithInt i_rstrain = 3;
 
     const PylithScalar* disp_x = &s_x[sOff_x[i_disp]];
     const PylithScalar poro_pres = s[sOff[i_poro_pres]];
+    //const PylithScalar trace_strain = s[sOff[i_trace_strain]];
 
     const PylithScalar solidBulkModulus = a[aOff[i_bulkModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
@@ -1061,7 +1059,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity::deviatoricStress(const PylithI
     // Incoming auxiliary field.
 
     // IsotropicLinearPoroelasticity
-    const PylithInt i_shearModulus = numA - 5;
+    const PylithInt i_shearModulus = 0; //numA - 5;
 
     const PylithScalar* disp_x = &s_x[sOff_x[i_disp]];
     const PylithScalar shearModulus = a[aOff[i_shearModulus]];
@@ -1120,25 +1118,17 @@ pylith::fekernels::IsotropicLinearPoroelasticity::deviatoricStress_refstate(cons
                                                                     const PylithInt numConstants,
                                                                     const PylithScalar constants[],
                                                                     PylithScalar stress[]) {
-    PylithInt i,j;
-  //  const PylithInt _dim = 2;
 
     // Incoming solution field.
     const PylithInt i_disp = 0;
 
     // Incoming auxiliary fields.
-    const PylithInt i_shearModulus = numA - 5;
-    const PylithInt i_rstress = 4;
-    const PylithInt i_rstrain = 5;
+    // Poroelasticity
+    const PylithInt i_rstress = 1; //4;
+    const PylithInt i_rstrain = 2; //5;
 
-  //  assert(_dim == dim);
-    //assert(1 == numS);
-    //assert(3 == numA);
-    assert(sOff_x);
-    assert(aOff);
-    assert(s_x);
-    assert(a);
-    assert(stress);
+    // Isotropic Linear Poroelasticity
+    const PylithInt i_shearModulus = 0; //numA - 5;
 
     const PylithScalar* disp_x = &s_x[sOff_x[i_disp]];
     const PylithScalar shearModulus = a[aOff[i_shearModulus]];
@@ -1159,8 +1149,8 @@ pylith::fekernels::IsotropicLinearPoroelasticity::deviatoricStress_refstate(cons
     const PylithReal meanrstress = (refstress[0] + refstress[1] + refstress[2]) / 3.0;
     const PylithReal traceTerm = -2.0/3.0*shearModulus * (strainTrace - refstrainTrace);
 
-    for (i = 0; i < dim; ++i) {
-      for (j = 0; j< dim; ++j) {
+    for (PylithInt i = 0; i < dim; ++i) {
+      for (PylithInt j = 0; j < dim; ++j) {
         stress[i*dim+j] += 2.0 * shearModulus * (disp_x[i*dim+j] + disp_x[j*dim+i]) / 2.0 - refstrain[i*dim+j];
         if (i == j){
           stress[i*dim+j] += refstress[i*dim+j] - meanrstress +  traceTerm;
@@ -1203,25 +1193,25 @@ pylith::fekernels::IsotropicLinearPoroelasticity::cauchyStress(const PylithInt d
     // Incoming solution fields.
     const PylithInt i_disp = 0;
     const PylithInt i_poro_pres = 1; ///SHOULDN'T THIS BE EQUAL TO 1 ??? (JOSIMAR)
+    //const PylithInt i_trace_strain = 2;
 
     // Incoming auxiliary fields.
+    // Poroelasticity
+    const PylithInt i_rstress = numA - 7;
+    const PylithInt i_rstrain = numA - 6;
+
+    // Isotropic Linear Poroelasticity
     const PylithInt i_shearModulus = numA - 5;
     const PylithInt i_bulkModulus = numA - 4;
-    const PylithInt i_rstress = 4;
-    const PylithInt i_rstrain = 5;
     const PylithInt i_biotCoefficient = numA - 3 ;
 
-    //assert(_dim == dim);
-//    assert(3 == numS || 4 == numS);
-//    assert(numA >= 11);
-//    assert(sOff);
-//    assert(sOff_x);
-//    assert(aOff);
-//    assert(aOff_x);
+    //const PylithInt _numS = 3; // Number passed on to stress kernels.
+    //const PylithInt sOffCouple[3] = { sOff[i_disp], sOff[i_poro_pres], sOff[i_trace_strain]};
+    //const PylithInt sOffCouple_x[3] = { sOff_x[i_disp], sOff_x[i_poro_pres], sOff_x[i_trace_strain]};
 
     const PylithInt _numS = 2; // Number passed on to stress kernels.
-    const PylithInt sOffCouple[2] = { sOff[i_disp], sOff[i_poro_pres] };
-    const PylithInt sOffCouple_x[2] = { sOff_x[i_disp], sOff_x[i_poro_pres] };
+    const PylithInt sOffCouple[2] = { sOff[i_disp], sOff[i_poro_pres]};
+    const PylithInt sOffCouple_x[2] = { sOff_x[i_disp], sOff_x[i_poro_pres]};
 
     const PylithInt numAMean = 4; // Number passed to mean stress kernel.
     const PylithInt aOffMean[4] = { aOff[i_bulkModulus], aOff[i_biotCoefficient], aOff[i_rstress], aOff[i_rstrain] };
@@ -1231,7 +1221,16 @@ pylith::fekernels::IsotropicLinearPoroelasticity::cauchyStress(const PylithInt d
     const PylithInt aOffDev[3] = { aOff[i_shearModulus], aOff[i_rstress], aOff[i_rstrain] };
     const PylithInt aOffDev_x[3] = { aOff_x[i_shearModulus], aOff_x[i_rstress], aOff_x[i_rstrain] };
 
-    if (dim == 2) {
+    if (dim == 1) {
+
+        PylithScalar stressTensor[1] = { 0.0};
+        meanStress(dim, _numS, numAMean, sOffCouple, sOffCouple_x, s, s_t, s_x, aOffMean, NULL, a, a_t, NULL,
+                   t, x, numConstants, constants, stressTensor);
+        deviatoricStress(dim, _numS, numADev, sOffCouple, sOffCouple_x, s, s_t, s_x, aOffDev, NULL, a, a_t, NULL,
+                         t, x, numConstants, constants, stressTensor);
+        stressVector[0] = stressTensor[0]; // stress_xx
+
+    } else if (dim == 2) {
 
         PylithScalar stressTensor[4] = { 0.0, 0.0, 0.0, 0.0 };
         meanStress(dim, _numS, numAMean, sOffCouple, sOffCouple_x, s, s_t, s_x, aOffMean, NULL, a, a_t, NULL,
@@ -1298,25 +1297,25 @@ pylith::fekernels::IsotropicLinearPoroelasticity::cauchyStress_refstate(const Py
     // Incoming solution fields.
     const PylithInt i_disp = 0;
     const PylithInt i_poro_pres = 1; ///SHOULDN'T THIS BE EQUAL TO 1 ??? (JOSIMAR)
+    //const PylithInt i_trace_strain = 2;
 
     // Incoming auxiliary fields.
+    // Poroelasticity
+    const PylithInt i_rstress = numA - 7;
+    const PylithInt i_rstrain = numA - 6;
+
+    // Isotropic Linear Poroelasticity
     const PylithInt i_shearModulus = numA - 5;
     const PylithInt i_bulkModulus = numA - 4;
-    const PylithInt i_rstress = 4;
-    const PylithInt i_rstrain = 5;
     const PylithInt i_biotCoefficient = numA - 3 ;
 
-    //assert(_dim == dim);
-//    assert(3 == numS || 4 == numS);
-//    assert(numA >= 11);
-//    assert(sOff);
-//    assert(sOff_x);
-//    assert(aOff);
-//    assert(aOff_x);
+    //const PylithInt _numS = 3; // Number passed on to stress kernels.
+    //const PylithInt sOffCouple[3] = { sOff[i_disp], sOff[i_poro_pres], sOff[i_trace_strain]};
+    //const PylithInt sOffCouple_x[3] = { sOff_x[i_disp], sOff_x[i_poro_pres], sOff_x[i_trace_strain]};
 
     const PylithInt _numS = 2; // Number passed on to stress kernels.
-    const PylithInt sOffCouple[2] = { sOff[i_disp], sOff[i_poro_pres] };
-    const PylithInt sOffCouple_x[2] = { sOff_x[i_disp], sOff_x[i_poro_pres] };
+    const PylithInt sOffCouple[2] = { sOff[i_disp], sOff[i_poro_pres]};
+    const PylithInt sOffCouple_x[2] = { sOff_x[i_disp], sOff_x[i_poro_pres]};
 
     const PylithInt numAMean = 4; // Number passed to mean stress kernel.
     const PylithInt aOffMean[4] = { aOff[i_bulkModulus], aOff[i_biotCoefficient], aOff[i_rstress], aOff[i_rstrain] };
@@ -1326,7 +1325,16 @@ pylith::fekernels::IsotropicLinearPoroelasticity::cauchyStress_refstate(const Py
     const PylithInt aOffDev[3] = { aOff[i_shearModulus], aOff[i_rstress], aOff[i_rstrain] };
     const PylithInt aOffDev_x[3] = { aOff_x[i_shearModulus], aOff_x[i_rstress], aOff_x[i_rstrain] };
 
-    if (dim == 2) {
+    if (dim == 1) {
+
+        PylithScalar stressTensor[1] = { 0.0};
+        meanStress_refstate(dim, _numS, numAMean, sOffCouple, sOffCouple_x, s, s_t, s_x, aOffMean, NULL, a, a_t, NULL,
+                   t, x, numConstants, constants, stressTensor);
+        deviatoricStress_refstate(dim, _numS, numADev, sOffCouple, sOffCouple_x, s, s_t, s_x, aOffDev, NULL, a, a_t, NULL,
+                         t, x, numConstants, constants, stressTensor);
+        stressVector[0] = stressTensor[0]; // stress_xx
+
+    } else if (dim == 2) {
 
         PylithScalar stressTensor[4] = { 0.0, 0.0, 0.0, 0.0 };
         meanStress_refstate(dim, _numS, numAMean, sOffCouple, sOffCouple_x, s, s_t, s_x, aOffMean, NULL, a, a_t, NULL,

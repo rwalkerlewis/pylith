@@ -74,13 +74,13 @@
 #define PYLITH_GIT_BRANCH "rlwalker/feature-poroelasticity"
 
 /* Define date of GIT commit for package source. */
-#define PYLITH_GIT_DATE "2020-02-04 10:36:29 -0500"
+#define PYLITH_GIT_DATE "2020-02-07 17:36:18 -0500"
 
 /* Define GIT hash for package source. */
-#define PYLITH_GIT_HASH "a46a88f44d62e43584864255d01386d407885ed9"
+#define PYLITH_GIT_HASH "f5e93eb3e38f69a1d1f911188ddea7ce71c67368"
 
 /* Define git revision commit for package source. */
-#define PYLITH_GIT_REVISION "v3.0.0beta2-154-ga46a88f44"
+#define PYLITH_GIT_REVISION "v3.0.0beta2-155-gf5e93eb3e"
 
 /* Set to 0 if source is from GIT, 1 otherwise. */
 #define PYLITH_RELEASE_VERSION 0

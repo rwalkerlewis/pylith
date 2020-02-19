@@ -18,7 +18,7 @@
 
 /** @file libsrc/fekernels/Poroelasticity.hh
  *
- * Generic elasticity pointwise functions
+ * Generic poroelasticity pointwise functions
  *
  */
 
@@ -155,34 +155,13 @@ public:
                     const PylithScalar constants[],
                     PylithScalar f0p_couple[]);
 
-    // ------------------------------------------------------------------------------
-    // g0p function for isotropic linear Poroelasticity plane strain with source density, gravity, and body force.
-    static
-    void g0p_sourceDensity_grav_body(const PylithInt dim,
-                                     const PylithInt numS,
-                                     const PylithInt numA,
-                                     const PylithInt sOff[],
-                                     const PylithInt sOff_x[],
-                                     const PylithScalar s[],
-                                     const PylithScalar s_t[],
-                                     const PylithScalar s_x[],
-                                     const PylithInt aOff[],
-                                     const PylithInt aOff_x[],
-                                     const PylithScalar a[],
-                                     const PylithScalar a_t[],
-                                     const PylithScalar a_x[],
-                                     const PylithReal t,
-                                     const PylithScalar x[],
-                                     const PylithInt numConstants,
-                                     const PylithScalar constants[],
-                                     PylithScalar g0p[]);
 
      /** ----------------------------------------------------------------------
      * g0p function for isotropic linear poroelasticity plane strain without gravity
      * or body force.
      */
      static
-     void g0p_sourceDensity(const PylithInt dim,
+     void g0p_source(const PylithInt dim,
                  const PylithInt numS,
                  const PylithInt numA,
                  const PylithInt sOff[],
@@ -200,6 +179,101 @@ public:
                  const PylithInt numConstants,
                  const PylithScalar constants[],
                  PylithScalar g0p[]);
+
+     // ------------------------------------------------------------------------------
+     // g0p function for isotropic linear Poroelasticity plane strain with source density
+     static
+     void g0p_sourceDensity(const PylithInt dim,
+                                      const PylithInt numS,
+                                      const PylithInt numA,
+                                      const PylithInt sOff[],
+                                      const PylithInt sOff_x[],
+                                      const PylithScalar s[],
+                                      const PylithScalar s_t[],
+                                      const PylithScalar s_x[],
+                                      const PylithInt aOff[],
+                                      const PylithInt aOff_x[],
+                                      const PylithScalar a[],
+                                      const PylithScalar a_t[],
+                                      const PylithScalar a_x[],
+                                      const PylithReal t,
+                                      const PylithScalar x[],
+                                      const PylithInt numConstants,
+                                      const PylithScalar constants[],
+                                      PylithScalar g0p[]);
+
+     // ------------------------------------------------------------------------------
+     // g0p function for isotropic linear Poroelasticity plane strain with source density, gravity
+     static
+     void g0p_sourceDensity_grav(const PylithInt dim,
+                                      const PylithInt numS,
+                                      const PylithInt numA,
+                                      const PylithInt sOff[],
+                                      const PylithInt sOff_x[],
+                                      const PylithScalar s[],
+                                      const PylithScalar s_t[],
+                                      const PylithScalar s_x[],
+                                      const PylithInt aOff[],
+                                      const PylithInt aOff_x[],
+                                      const PylithScalar a[],
+                                      const PylithScalar a_t[],
+                                      const PylithScalar a_x[],
+                                      const PylithReal t,
+                                      const PylithScalar x[],
+                                      const PylithInt numConstants,
+                                      const PylithScalar constants[],
+                                      PylithScalar g0p[]);
+
+
+
+
+     // ------------------------------------------------------------------------------
+     // g0p function for isotropic linear Poroelasticity plane strain with source density, and body force.
+     static
+     void g0p_sourceDensity_body(const PylithInt dim,
+                                      const PylithInt numS,
+                                      const PylithInt numA,
+                                      const PylithInt sOff[],
+                                      const PylithInt sOff_x[],
+                                      const PylithScalar s[],
+                                      const PylithScalar s_t[],
+                                      const PylithScalar s_x[],
+                                      const PylithInt aOff[],
+                                      const PylithInt aOff_x[],
+                                      const PylithScalar a[],
+                                      const PylithScalar a_t[],
+                                      const PylithScalar a_x[],
+                                      const PylithReal t,
+                                      const PylithScalar x[],
+                                      const PylithInt numConstants,
+                                      const PylithScalar constants[],
+                                      PylithScalar g0p[]);
+
+      // ------------------------------------------------------------------------------
+      // g0p function for isotropic linear Poroelasticity plane strain with source density, gravity, and body force.
+      static
+      void g0p_sourceDensity_grav_body(const PylithInt dim,
+                                       const PylithInt numS,
+                                       const PylithInt numA,
+                                       const PylithInt sOff[],
+                                       const PylithInt sOff_x[],
+                                       const PylithScalar s[],
+                                       const PylithScalar s_t[],
+                                       const PylithScalar s_x[],
+                                       const PylithInt aOff[],
+                                       const PylithInt aOff_x[],
+                                       const PylithScalar a[],
+                                       const PylithScalar a_t[],
+                                       const PylithScalar a_x[],
+                                       const PylithReal t,
+                                       const PylithScalar x[],
+                                       const PylithInt numConstants,
+                                       const PylithScalar constants[],
+                                       PylithScalar g0p[]);
+
+
+
+
 
      // ----------------------------------------------------------------------
      // g0E function for isotropic linear Poroelasticity plane strain.
