@@ -13,10 +13,11 @@
 #
 # ----------------------------------------------------------------------
 #
-# @file tests/fullscale/poroelasticity/terzaghi/terzaghi_soln.py
+# @file tests/fullscale/linearporoelasticity/nofaults-2d/terzaghi_soln.py
 #
 # @brief Analytical solution to Terzaghi's problem.
-#
+#  
+#        -1000 Pa
 #       ----------
 #       |        |
 # Ux=0  |        | Ux=0
@@ -26,8 +27,11 @@
 #         Uy=0
 #
 # Dirichlet boundary conditions
-# Ux(+-4000,0) = 0
-# Uy(x,-4000) = 0
+#   Ux(+-4000,0) = 0
+#   Uy(x,-4000) = 0
+# Neumann boundary conditions
+#   \tau_normal(x,+4000) = -1000
+#
 
 import numpy
 
@@ -42,6 +46,7 @@ p_shear_modulus          =    0.4e9 # Pa
 p_biot_coefficient       =      0.8 # -
 p_isotropic_permeability = 10.0e-14 # m**2
 p_fluid_bulk_modulus     =      2e9 # Pa
+p_external_force         =     1000 # Pa
 
 p_bulk_density = (1.0 - p_porosity)*p_density + p_porosity*p_fluid_density
 p_drained_bulk_modulus = -1.0*p_bulk_modulus * (p_biot_coefficient - 1.0)
@@ -53,6 +58,30 @@ p_lambda = p_drained_bulk_modulus - 2.0/3.0 * p_shear_modulus
 gacc = 9.80665  # m/s
 ymax = +4000.0
 ymin = -4000.0  # m
+
+# Height of column, m
+H = ymax - ymin
+
+# Drained Matrix Bulk Modulus, Pa
+K_dr = (-1*p_bulk_modulus)*(p_biot_coefficient - 1)
+
+# Confined compressibility of the Porous Medium
+m_v = 1 / (K_dr + 4/3 * p_shear_modulus)
+
+# Drained storage coefficient
+S = (p_biot_coefficient - p_porosity)/K_sg + p_porosity/p_fluid_bulk_modulus
+
+# Consolidation coefficient
+c_v = p_isotropic_permeability / (p_fluid_viscosity * (p_biot_coefficient**2 * m_v + S))
+
+# Undrained Fluid Pressure Response
+p_0 = (p_biot_coefficient*m_v)/(p_biot_coefficient**2*m_v+S) * p_external_force
+
+# Undrained response of consolidation
+u_z0 = (m_v - (p_biot_coefficient**2*m_v**2)/(p_biot_coefficient**2*m_v + S))*p_external_force*H
+
+# Steady State Consolidation
+u_z_inf = m_v*p_external_force*H 
 
 
 # ----------------------------------------------------------------------

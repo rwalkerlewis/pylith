@@ -1,1 +1,21 @@
 Timestamp                     Simulation t   % complete   Est. completion
+Thu Feb 20 09:44:00 2020       0.00*year              0   TBD
+Thu Feb 20 09:44:02 2020       0.00*year              8   Thu Feb 20 09:44:48 2020
+Thu Feb 20 09:44:03 2020       0.00*year             12   Thu Feb 20 09:44:39 2020
+Thu Feb 20 09:44:04 2020       0.00*year             16   Thu Feb 20 09:44:35 2020
+Thu Feb 20 09:44:06 2020       0.00*year             20   Thu Feb 20 09:44:38 2020
+Thu Feb 20 09:44:09 2020       0.00*year             28   Thu Feb 20 09:44:37 2020
+Thu Feb 20 09:44:11 2020       0.00*year             32   Thu Feb 20 09:44:38 2020
+Thu Feb 20 09:44:12 2020       0.00*year             36   Thu Feb 20 09:44:36 2020
+Thu Feb 20 09:44:14 2020       0.00*year             40   Thu Feb 20 09:44:38 2020
+Thu Feb 20 09:44:18 2020       0.00*year             48   Thu Feb 20 09:44:39 2020
+Thu Feb 20 09:44:19 2020       0.00*year             52   Thu Feb 20 09:44:38 2020
+Thu Feb 20 09:44:21 2020       0.00*year             56   Thu Feb 20 09:44:39 2020
+Thu Feb 20 09:44:23 2020       0.00*year             60   Thu Feb 20 09:44:39 2020
+Thu Feb 20 09:44:26 2020       0.00*year             68   Thu Feb 20 09:44:39 2020
+Thu Feb 20 09:44:28 2020       0.00*year             72   Thu Feb 20 09:44:39 2020
+Thu Feb 20 09:44:31 2020       0.00*year             76   Thu Feb 20 09:44:41 2020
+Thu Feb 20 09:44:33 2020       0.00*year             80   Thu Feb 20 09:44:41 2020
+Thu Feb 20 09:44:40 2020       0.00*year             88   Thu Feb 20 09:44:45 2020
+Thu Feb 20 09:44:43 2020       0.00*year             92   Thu Feb 20 09:44:46 2020
+Thu Feb 20 09:44:45 2020       0.00*year             96   Thu Feb 20 09:44:46 2020

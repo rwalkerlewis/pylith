@@ -31,7 +31,7 @@
             "launcher": {
                 "description": "No description available.",
                 "setFrom": "{file='/home/dockimble/build/pylith/lib/python2.7/site-packages/pythia-0.8.1.18-py2.7.egg/mpi/launchers/mpich.odb'} via {default}",
-                "class": "<mpi.LauncherMPICH.LauncherMPICH object at 0x7fbb9fbfb550>",
+                "class": "<mpi.LauncherMPICH.LauncherMPICH object at 0x7fcc95ff3350>",
                 "name": "mpich",
                 "components": {},
                 "properties": {
@@ -92,7 +92,7 @@
             "dump_parameters": {
                 "description": "Dump parameters used and version information to file.",
                 "setFrom": "{default}",
-                "class": "<pylith.utils.DumpParametersJson.DumpParametersJson object at 0x7fbb9fbd61d0>",
+                "class": "<pylith.utils.DumpParametersJson.DumpParametersJson object at 0x7fcc95fc39d0>",
                 "name": "dumpparamters",
                 "components": {},
                 "properties": {
@@ -123,7 +123,7 @@
             "mesh_generator": {
                 "description": "Generates or imports the computational mesh.",
                 "setFrom": "{default}",
-                "class": "<pylith.topology.MeshImporter.MeshImporter object at 0x7fbb9fbe1950>",
+                "class": "<pylith.topology.MeshImporter.MeshImporter object at 0x7fcc95fd6fd0>",
                 "name": "meshimporter",
                 "components": {
                     "distributor": {
@@ -135,7 +135,7 @@
                             "data_writer": {
                                 "description": "Data writer for partition information.",
                                 "setFrom": "{default}",
-                                "class": "<pylith.meshio.DataWriterVTK.DataWriterVTK; proxy of <Swig Object of type 'pylith::meshio::DataWriterVTK *' at 0x7fbb9fba8570> >",
+                                "class": "<pylith.meshio.DataWriterVTK.DataWriterVTK; proxy of <Swig Object of type 'pylith::meshio::DataWriterVTK *' at 0x7fcc95f40060> >",
                                 "name": "datawritervtk",
                                 "components": {},
                                 "properties": {
@@ -192,7 +192,7 @@
                     "refiner": {
                         "description": "Mesh refiner.",
                         "setFrom": "{default}",
-                        "class": "<pylith.topology.MeshRefiner.MeshRefiner object at 0x7fbb9fbb9210>",
+                        "class": "<pylith.topology.MeshRefiner.MeshRefiner object at 0x7fcc95fae850>",
                         "name": "refiner",
                         "components": {},
                         "properties": {},
@@ -209,7 +209,7 @@
                             "coordsys": {
                                 "description": "Coordinate system associated with mesh.",
                                 "setFrom": "{default}",
-                                "class": "<spatialdata.geocoords.CSCart.CSCart; proxy of <Swig Object of type 'spatialdata::geocoords::CSCart *' at 0x7fbb9fba85a0> >",
+                                "class": "<spatialdata.geocoords.CSCart.CSCart; proxy of <Swig Object of type 'spatialdata::geocoords::CSCart *' at 0x7fcc95f40090> >",
                                 "name": "cscart",
                                 "components": {},
                                 "properties": {
@@ -280,7 +280,7 @@
             "petsc": {
                 "description": "Manager for PETSc options.",
                 "setFrom": "{default}",
-                "class": "<pylith.utils.PetscManager.PetscManager object at 0x7fbb9fb97590>",
+                "class": "<pylith.utils.PetscManager.PetscManager object at 0x7fcc95f8b390>",
                 "name": "petsc",
                 "components": {},
                 "properties": {},
@@ -291,7 +291,7 @@
             "job": {
                 "description": "No description available.",
                 "setFrom": "{default}",
-                "class": "<pyre.schedulers.Job.Job object at 0x7fbb9fb97950>",
+                "class": "<pyre.schedulers.Job.Job object at 0x7fcc95f8bfd0>",
                 "name": "job",
                 "components": {},
                 "properties": {
@@ -369,7 +369,7 @@
             "scheduler": {
                 "description": "No description available.",
                 "setFrom": "{file='/home/dockimble/build/pylith/lib/python2.7/site-packages/pythia-0.8.1.18-py2.7.egg/pyre/schedulers/none.odb'} via {default}",
-                "class": "<pyre.schedulers.SchedulerNone.SchedulerNone object at 0x7fbb9fbfbb10>",
+                "class": "<pyre.schedulers.SchedulerNone.SchedulerNone object at 0x7fcc95ff3910>",
                 "name": "scheduler-none",
                 "components": {},
                 "properties": {
@@ -406,7 +406,7 @@
                     "normalizer": {
                         "description": "Nondimensionalizer for problem.",
                         "setFrom": "{default}",
-                        "class": "<spatialdata.units.NondimElasticQuasistatic.NondimElasticQuasistatic; proxy of <Swig Object of type 'spatialdata::units::Nondimensional *' at 0x7fbb9f641060> >",
+                        "class": "<spatialdata.units.NondimElasticQuasistatic.NondimElasticQuasistatic; proxy of <Swig Object of type 'spatialdata::units::Nondimensional *' at 0x7fcc95f34a50> >",
                         "name": "nondimelasticquasistatic",
                         "components": {},
                         "properties": {
@@ -419,14 +419,14 @@
                             "length_scale": {
                                 "type": "dimensional",
                                 "description": "Value to nondimensionalize length scale.",
-                                "value": "1*m",
-                                "setFrom": "{file='mandel_test.cfg', line=88, column=-1}"
+                                "value": "1000*m",
+                                "setFrom": "{default}"
                             },
                             "relaxation_time": {
                                 "type": "dimensional",
                                 "description": "Relaxation time to nondimensionalize time.",
-                                "value": "1*s",
-                                "setFrom": "{file='mandel_test.cfg', line=89, column=-1}"
+                                "value": "3.15576e+09*s",
+                                "setFrom": "{default}"
                             }
                         },
                         "aliases": [
@@ -436,1262 +436,20 @@
                     },
                     "bc": {
                         "description": "Boundary conditions.",
-                        "setFrom": "{built-in} via {file='mandel_test.cfg', line=186, column=-1}",
-                        "class": "<pyre.inventory.FacilityArrayFacility.FacilityArray object at 0x7fbb9fb20990>",
+                        "setFrom": "{built-in} via {file='mandel_test.cfg', line=187, column=-1}",
+                        "class": "<pyre.inventory.FacilityArrayFacility.FacilityArray object at 0x7fcc95f0ddd0>",
                         "name": "bc",
                         "components": {
                             "y_neg": {
                                 "description": "No description available.",
-                                "setFrom": "{imported} via {file='mandel_test.cfg', line=190, column=-1}",
-                                "class": "<pylith.bc.NeumannTimeDependent.NeumannTimeDependent;  >",
-                                "name": "neumanntimedependent",
-                                "components": {
-                                    "observers": {
-                                        "description": "Observers (e.g., output).",
-                                        "setFrom": "{default}",
-                                        "class": "<pylith.problems.SingleObserver.SinglePhysicsObserver object at 0x7fbb9f5fbdd0>",
-                                        "name": "singlephysicsobserver",
-                                        "components": {
-                                            "observer": {
-                                                "description": "Observer of subject.",
-                                                "setFrom": "{default}",
-                                                "class": "<pylith.meshio.OutputPhysics.OutputPhysics;  >",
-                                                "name": "outputphysics",
-                                                "components": {
-                                                    "writer": {
-                                                        "description": "Writer for data.",
-                                                        "setFrom": "{default}",
-                                                        "class": "<pylith.meshio.DataWriterHDF5.DataWriterHDF5; proxy of <Swig Object of type 'pylith::meshio::DataWriterHDF5 *' at 0x7fbb9f6417e0> >",
-                                                        "name": "datawriterhdf5",
-                                                        "components": {},
-                                                        "properties": {
-                                                            "filename": {
-                                                                "type": "str",
-                                                                "description": "Name of HDF5 file.",
-                                                                "value": "output/mandel-bc_ypos.h5",
-                                                                "setFrom": "{file='mandel_test.cfg', line=227, column=-1}"
-                                                            }
-                                                        },
-                                                        "aliases": [
-                                                            "datawriterhdf5",
-                                                            "writer"
-                                                        ]
-                                                    },
-                                                    "trigger": {
-                                                        "description": "Trigger defining how often output is written.",
-                                                        "setFrom": "{default}",
-                                                        "class": "<pylith.meshio.OutputTriggerStep.OutputTriggerStep;  >",
-                                                        "name": "outputtriggerstep",
-                                                        "components": {},
-                                                        "properties": {
-                                                            "num_skip": {
-                                                                "type": "int",
-                                                                "description": "Number of solution steps to skip between writes.",
-                                                                "value": "0",
-                                                                "setFrom": "{default}"
-                                                            }
-                                                        },
-                                                        "aliases": [
-                                                            "outputtriggerstep",
-                                                            "trigger"
-                                                        ]
-                                                    },
-                                                    "field_filter": {
-                                                        "description": "Filter for output fields.",
-                                                        "setFrom": "{default}",
-                                                        "class": "<pylith.meshio.FieldFilterNone.FieldFilterNone;  >",
-                                                        "name": "fieldfilternone",
-                                                        "components": {},
-                                                        "properties": {},
-                                                        "aliases": [
-                                                            "fieldfilternone",
-                                                            "field_filter"
-                                                        ]
-                                                    }
-                                                },
-                                                "properties": {
-                                                    "info_fields": {
-                                                        "type": "list",
-                                                        "description": "Names of info fields to output.",
-                                                        "value": "['all']",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "data_fields": {
-                                                        "type": "list",
-                                                        "description": "Names of data fields to output.",
-                                                        "value": "['all']",
-                                                        "setFrom": "{default}"
-                                                    }
-                                                },
-                                                "aliases": [
-                                                    "outputphysics",
-                                                    "observer"
-                                                ]
-                                            }
-                                        },
-                                        "properties": {},
-                                        "aliases": [
-                                            "singlephysicsobserver",
-                                            "observers"
-                                        ]
-                                    },
-                                    "time_history": {
-                                        "description": "Time history with normalized amplitude as a function of time.",
-                                        "setFrom": "{default}",
-                                        "class": "<pylith.utils.NullComponent.NullComponent object at 0x7fbb9f5fbe50>",
-                                        "name": "nullcomponent",
-                                        "components": {},
-                                        "properties": {},
-                                        "aliases": [
-                                            "nullcomponent",
-                                            "time_history"
-                                        ]
-                                    },
-                                    "auxiliary_subfields": {
-                                        "description": "Discretization of time-dependent Neumann parameters.",
-                                        "setFrom": "{default}",
-                                        "class": "<pylith.bc.AuxSubfieldsTimeDependent.AuxSubfieldsTimeDependent object at 0x7fbb9f586210>",
-                                        "name": "auxfieldstimedependent",
-                                        "components": {
-                                            "rate_start_time": {
-                                                "description": "Rate starting time, t_1(x), subfield.",
-                                                "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f5a5790>",
-                                                "name": "subfield",
-                                                "components": {},
-                                                "properties": {
-                                                    "is_basis_continous": {
-                                                        "type": "bool",
-                                                        "description": "Is basis continuous?",
-                                                        "value": "True",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "finite_element_space": {
-                                                        "type": "str",
-                                                        "description": "Finite-element space (polynomial or point). Point space corresponds to delta functions at quadrature points.",
-                                                        "value": "polynomial",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "basis_order": {
-                                                        "type": "int",
-                                                        "description": "Order of basis functions.",
-                                                        "value": "1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "dimension": {
-                                                        "type": "int",
-                                                        "description": "Topological dimension associated with subfield (=-1 will use dimension of domain).",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "quadrature_order": {
-                                                        "type": "int",
-                                                        "description": "Order of numerical quadrature.",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    }
-                                                },
-                                                "aliases": [
-                                                    "subfield",
-                                                    "rate_start_time"
-                                                ]
-                                            },
-                                            "initial_amplitude": {
-                                                "description": "Initial amplitude, f_0(x), subfield.",
-                                                "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f5a5490>",
-                                                "name": "subfield",
-                                                "components": {},
-                                                "properties": {
-                                                    "is_basis_continous": {
-                                                        "type": "bool",
-                                                        "description": "Is basis continuous?",
-                                                        "value": "True",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "finite_element_space": {
-                                                        "type": "str",
-                                                        "description": "Finite-element space (polynomial or point). Point space corresponds to delta functions at quadrature points.",
-                                                        "value": "polynomial",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "basis_order": {
-                                                        "type": "int",
-                                                        "description": "Order of basis functions.",
-                                                        "value": "0",
-                                                        "setFrom": "{file='mandel_test.cfg', line=224, column=-1}"
-                                                    },
-                                                    "dimension": {
-                                                        "type": "int",
-                                                        "description": "Topological dimension associated with subfield (=-1 will use dimension of domain).",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "quadrature_order": {
-                                                        "type": "int",
-                                                        "description": "Order of numerical quadrature.",
-                                                        "value": "2",
-                                                        "setFrom": "{file='mandel_test.cfg', line=225, column=-1}"
-                                                    }
-                                                },
-                                                "aliases": [
-                                                    "subfield",
-                                                    "initial_amplitude"
-                                                ]
-                                            },
-                                            "time_history_amplitude": {
-                                                "description": "Time history amplitude, f_2(x). subfield",
-                                                "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f5a5690>",
-                                                "name": "subfield",
-                                                "components": {},
-                                                "properties": {
-                                                    "is_basis_continous": {
-                                                        "type": "bool",
-                                                        "description": "Is basis continuous?",
-                                                        "value": "True",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "finite_element_space": {
-                                                        "type": "str",
-                                                        "description": "Finite-element space (polynomial or point). Point space corresponds to delta functions at quadrature points.",
-                                                        "value": "polynomial",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "basis_order": {
-                                                        "type": "int",
-                                                        "description": "Order of basis functions.",
-                                                        "value": "1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "dimension": {
-                                                        "type": "int",
-                                                        "description": "Topological dimension associated with subfield (=-1 will use dimension of domain).",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "quadrature_order": {
-                                                        "type": "int",
-                                                        "description": "Order of numerical quadrature.",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    }
-                                                },
-                                                "aliases": [
-                                                    "subfield",
-                                                    "time_history_amplitude"
-                                                ]
-                                            },
-                                            "rate_amplitude": {
-                                                "description": "Rate amplitude, \\dot{f}_1(x), subfield.",
-                                                "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f5a5590>",
-                                                "name": "subfield",
-                                                "components": {},
-                                                "properties": {
-                                                    "is_basis_continous": {
-                                                        "type": "bool",
-                                                        "description": "Is basis continuous?",
-                                                        "value": "True",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "finite_element_space": {
-                                                        "type": "str",
-                                                        "description": "Finite-element space (polynomial or point). Point space corresponds to delta functions at quadrature points.",
-                                                        "value": "polynomial",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "basis_order": {
-                                                        "type": "int",
-                                                        "description": "Order of basis functions.",
-                                                        "value": "1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "dimension": {
-                                                        "type": "int",
-                                                        "description": "Topological dimension associated with subfield (=-1 will use dimension of domain).",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "quadrature_order": {
-                                                        "type": "int",
-                                                        "description": "Order of numerical quadrature.",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    }
-                                                },
-                                                "aliases": [
-                                                    "subfield",
-                                                    "rate_amplitude"
-                                                ]
-                                            },
-                                            "time_history_start_time": {
-                                                "description": "Time history starting time, t_2(s), subfield.",
-                                                "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f5a5310>",
-                                                "name": "subfield",
-                                                "components": {},
-                                                "properties": {
-                                                    "is_basis_continous": {
-                                                        "type": "bool",
-                                                        "description": "Is basis continuous?",
-                                                        "value": "True",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "finite_element_space": {
-                                                        "type": "str",
-                                                        "description": "Finite-element space (polynomial or point). Point space corresponds to delta functions at quadrature points.",
-                                                        "value": "polynomial",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "basis_order": {
-                                                        "type": "int",
-                                                        "description": "Order of basis functions.",
-                                                        "value": "1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "dimension": {
-                                                        "type": "int",
-                                                        "description": "Topological dimension associated with subfield (=-1 will use dimension of domain).",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "quadrature_order": {
-                                                        "type": "int",
-                                                        "description": "Order of numerical quadrature.",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    }
-                                                },
-                                                "aliases": [
-                                                    "subfield",
-                                                    "time_history_start_time"
-                                                ]
-                                            }
-                                        },
-                                        "properties": {},
-                                        "aliases": [
-                                            "auxfieldstimedependent",
-                                            "auxiliary_subfields"
-                                        ]
-                                    },
-                                    "db_auxiliary_field": {
-                                        "description": "Database for physical property parameters.",
-                                        "setFrom": "{imported} via {file='mandel_test.cfg', line=218, column=-1}",
-                                        "class": "<spatialdata.spatialdb.UniformDB.UniformDB; proxy of <Swig Object of type 'spatialdata::spatialdb::UniformDB *' at 0x7fbb9f6417b0> >",
-                                        "name": "uniformdb",
-                                        "components": {},
-                                        "properties": {
-                                            "values": {
-                                                "type": "list",
-                                                "description": "Names of values in spatial database.",
-                                                "value": "['initial_amplitude_tangential', 'initial_amplitude_normal']",
-                                                "setFrom": "{file='mandel_test.cfg', line=221, column=-1}"
-                                            },
-                                            "data": {
-                                                "type": "list",
-                                                "description": "Values in spatial database.",
-                                                "value": "['0.0*MPa', '1.0*MPa']",
-                                                "setFrom": "{file='mandel_test.cfg', line=222, column=-1}"
-                                            },
-                                            "label": {
-                                                "type": "str",
-                                                "description": "Descriptive label for database.",
-                                                "value": "Neumann BC -y edge",
-                                                "setFrom": "{file='mandel_test.cfg', line=219, column=-1}"
-                                            }
-                                        },
-                                        "aliases": [
-                                            "uniformdb",
-                                            "db_auxiliary_field"
-                                        ]
-                                    }
-                                },
-                                "properties": {
-                                    "scale_name": {
-                                        "type": "str",
-                                        "description": "Type of scale for nondimensionalizing Neumann boundary condition ('pressure' for elasticity).",
-                                        "value": "pressure",
-                                        "setFrom": "{default}"
-                                    },
-                                    "use_rate": {
-                                        "type": "bool",
-                                        "description": "Use rate term in time-dependent expression.",
-                                        "value": "False",
-                                        "setFrom": "{default}"
-                                    },
-                                    "label": {
-                                        "type": "str",
-                                        "description": "Label identifier for boundary.",
-                                        "value": "edge_yneg",
-                                        "setFrom": "{file='mandel_test.cfg', line=216, column=-1}"
-                                    },
-                                    "field": {
-                                        "type": "str",
-                                        "description": "Solution subfield associated with boundary condition.",
-                                        "value": "displacement",
-                                        "setFrom": "{file='mandel_test.cfg', line=217, column=-1}"
-                                    },
-                                    "use_time_history": {
-                                        "type": "bool",
-                                        "description": "Use time history term in time-dependent expression.",
-                                        "value": "False",
-                                        "setFrom": "{default}"
-                                    },
-                                    "use_initial": {
-                                        "type": "bool",
-                                        "description": "Use initial term in time-dependent expression.",
-                                        "value": "True",
-                                        "setFrom": "{default}"
-                                    },
-                                    "ref_dir_2": {
-                                        "type": "list",
-                                        "description": "Second choice for reference direction to discriminate among tangential directions in 3-D.",
-                                        "value": "[0.0, 1.0, 0.0]",
-                                        "setFrom": "{default}"
-                                    },
-                                    "ref_dir_1": {
-                                        "type": "list",
-                                        "description": "First choice for reference direction to discriminate among tangential directions in 3-D.",
-                                        "value": "[0.0, 0.0, 1.0]",
-                                        "setFrom": "{default}"
-                                    }
-                                },
-                                "aliases": [
-                                    "neumanntimedependent",
-                                    "y_neg"
-                                ]
-                            },
-                            "x_pos": {
-                                "description": "No description available.",
-                                "setFrom": "{imported} via {file='mandel_test.cfg', line=188, column=-1}",
-                                "class": "<pylith.bc.DirichletTimeDependent.DirichletTimeDependent;  >",
-                                "name": "dirichlettimedependent",
-                                "components": {
-                                    "observers": {
-                                        "description": "Observers (e.g., output).",
-                                        "setFrom": "{default}",
-                                        "class": "<pylith.problems.SingleObserver.SinglePhysicsObserver object at 0x7fbb9f63f510>",
-                                        "name": "singlephysicsobserver",
-                                        "components": {
-                                            "observer": {
-                                                "description": "Observer of subject.",
-                                                "setFrom": "{default}",
-                                                "class": "<pylith.meshio.OutputPhysics.OutputPhysics;  >",
-                                                "name": "outputphysics",
-                                                "components": {
-                                                    "writer": {
-                                                        "description": "Writer for data.",
-                                                        "setFrom": "{default}",
-                                                        "class": "<pylith.meshio.DataWriterHDF5.DataWriterHDF5; proxy of <Swig Object of type 'pylith::meshio::DataWriterHDF5 *' at 0x7fbb9f641780> >",
-                                                        "name": "datawriterhdf5",
-                                                        "components": {},
-                                                        "properties": {
-                                                            "filename": {
-                                                                "type": "str",
-                                                                "description": "Name of HDF5 file.",
-                                                                "value": "output/mandel-bc_xpos.h5",
-                                                                "setFrom": "{file='mandel_test.cfg', line=201, column=-1}"
-                                                            }
-                                                        },
-                                                        "aliases": [
-                                                            "datawriterhdf5",
-                                                            "writer"
-                                                        ]
-                                                    },
-                                                    "trigger": {
-                                                        "description": "Trigger defining how often output is written.",
-                                                        "setFrom": "{default}",
-                                                        "class": "<pylith.meshio.OutputTriggerStep.OutputTriggerStep;  >",
-                                                        "name": "outputtriggerstep",
-                                                        "components": {},
-                                                        "properties": {
-                                                            "num_skip": {
-                                                                "type": "int",
-                                                                "description": "Number of solution steps to skip between writes.",
-                                                                "value": "0",
-                                                                "setFrom": "{default}"
-                                                            }
-                                                        },
-                                                        "aliases": [
-                                                            "outputtriggerstep",
-                                                            "trigger"
-                                                        ]
-                                                    },
-                                                    "field_filter": {
-                                                        "description": "Filter for output fields.",
-                                                        "setFrom": "{default}",
-                                                        "class": "<pylith.meshio.FieldFilterNone.FieldFilterNone;  >",
-                                                        "name": "fieldfilternone",
-                                                        "components": {},
-                                                        "properties": {},
-                                                        "aliases": [
-                                                            "fieldfilternone",
-                                                            "field_filter"
-                                                        ]
-                                                    }
-                                                },
-                                                "properties": {
-                                                    "info_fields": {
-                                                        "type": "list",
-                                                        "description": "Names of info fields to output.",
-                                                        "value": "['all']",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "data_fields": {
-                                                        "type": "list",
-                                                        "description": "Names of data fields to output.",
-                                                        "value": "['all']",
-                                                        "setFrom": "{default}"
-                                                    }
-                                                },
-                                                "aliases": [
-                                                    "outputphysics",
-                                                    "observer"
-                                                ]
-                                            }
-                                        },
-                                        "properties": {},
-                                        "aliases": [
-                                            "singlephysicsobserver",
-                                            "observers"
-                                        ]
-                                    },
-                                    "time_history": {
-                                        "description": "Time history with normalized amplitude as a function of time.",
-                                        "setFrom": "{default}",
-                                        "class": "<pylith.utils.NullComponent.NullComponent object at 0x7fbb9f63f6d0>",
-                                        "name": "nullcomponent",
-                                        "components": {},
-                                        "properties": {},
-                                        "aliases": [
-                                            "nullcomponent",
-                                            "time_history"
-                                        ]
-                                    },
-                                    "auxiliary_subfields": {
-                                        "description": "Discretization of constraint parameters.",
-                                        "setFrom": "{default}",
-                                        "class": "<pylith.bc.AuxSubfieldsTimeDependent.AuxSubfieldsTimeDependent object at 0x7fbb9f63f410>",
-                                        "name": "auxfieldstimedependent",
-                                        "components": {
-                                            "rate_start_time": {
-                                                "description": "Rate starting time, t_1(x), subfield.",
-                                                "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f5e2690>",
-                                                "name": "subfield",
-                                                "components": {},
-                                                "properties": {
-                                                    "is_basis_continous": {
-                                                        "type": "bool",
-                                                        "description": "Is basis continuous?",
-                                                        "value": "True",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "finite_element_space": {
-                                                        "type": "str",
-                                                        "description": "Finite-element space (polynomial or point). Point space corresponds to delta functions at quadrature points.",
-                                                        "value": "polynomial",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "basis_order": {
-                                                        "type": "int",
-                                                        "description": "Order of basis functions.",
-                                                        "value": "1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "dimension": {
-                                                        "type": "int",
-                                                        "description": "Topological dimension associated with subfield (=-1 will use dimension of domain).",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "quadrature_order": {
-                                                        "type": "int",
-                                                        "description": "Order of numerical quadrature.",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    }
-                                                },
-                                                "aliases": [
-                                                    "subfield",
-                                                    "rate_start_time"
-                                                ]
-                                            },
-                                            "initial_amplitude": {
-                                                "description": "Initial amplitude, f_0(x), subfield.",
-                                                "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f5e2390>",
-                                                "name": "subfield",
-                                                "components": {},
-                                                "properties": {
-                                                    "is_basis_continous": {
-                                                        "type": "bool",
-                                                        "description": "Is basis continuous?",
-                                                        "value": "True",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "finite_element_space": {
-                                                        "type": "str",
-                                                        "description": "Finite-element space (polynomial or point). Point space corresponds to delta functions at quadrature points.",
-                                                        "value": "polynomial",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "basis_order": {
-                                                        "type": "int",
-                                                        "description": "Order of basis functions.",
-                                                        "value": "1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "dimension": {
-                                                        "type": "int",
-                                                        "description": "Topological dimension associated with subfield (=-1 will use dimension of domain).",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "quadrature_order": {
-                                                        "type": "int",
-                                                        "description": "Order of numerical quadrature.",
-                                                        "value": "2",
-                                                        "setFrom": "{file='mandel_test.cfg', line=200, column=-1}"
-                                                    }
-                                                },
-                                                "aliases": [
-                                                    "subfield",
-                                                    "initial_amplitude"
-                                                ]
-                                            },
-                                            "time_history_amplitude": {
-                                                "description": "Time history amplitude, f_2(x). subfield",
-                                                "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f5e2590>",
-                                                "name": "subfield",
-                                                "components": {},
-                                                "properties": {
-                                                    "is_basis_continous": {
-                                                        "type": "bool",
-                                                        "description": "Is basis continuous?",
-                                                        "value": "True",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "finite_element_space": {
-                                                        "type": "str",
-                                                        "description": "Finite-element space (polynomial or point). Point space corresponds to delta functions at quadrature points.",
-                                                        "value": "polynomial",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "basis_order": {
-                                                        "type": "int",
-                                                        "description": "Order of basis functions.",
-                                                        "value": "1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "dimension": {
-                                                        "type": "int",
-                                                        "description": "Topological dimension associated with subfield (=-1 will use dimension of domain).",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "quadrature_order": {
-                                                        "type": "int",
-                                                        "description": "Order of numerical quadrature.",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    }
-                                                },
-                                                "aliases": [
-                                                    "subfield",
-                                                    "time_history_amplitude"
-                                                ]
-                                            },
-                                            "rate_amplitude": {
-                                                "description": "Rate amplitude, \\dot{f}_1(x), subfield.",
-                                                "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f5e2490>",
-                                                "name": "subfield",
-                                                "components": {},
-                                                "properties": {
-                                                    "is_basis_continous": {
-                                                        "type": "bool",
-                                                        "description": "Is basis continuous?",
-                                                        "value": "True",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "finite_element_space": {
-                                                        "type": "str",
-                                                        "description": "Finite-element space (polynomial or point). Point space corresponds to delta functions at quadrature points.",
-                                                        "value": "polynomial",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "basis_order": {
-                                                        "type": "int",
-                                                        "description": "Order of basis functions.",
-                                                        "value": "1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "dimension": {
-                                                        "type": "int",
-                                                        "description": "Topological dimension associated with subfield (=-1 will use dimension of domain).",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "quadrature_order": {
-                                                        "type": "int",
-                                                        "description": "Order of numerical quadrature.",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    }
-                                                },
-                                                "aliases": [
-                                                    "subfield",
-                                                    "rate_amplitude"
-                                                ]
-                                            },
-                                            "time_history_start_time": {
-                                                "description": "Time history starting time, t_2(s), subfield.",
-                                                "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f5e2210>",
-                                                "name": "subfield",
-                                                "components": {},
-                                                "properties": {
-                                                    "is_basis_continous": {
-                                                        "type": "bool",
-                                                        "description": "Is basis continuous?",
-                                                        "value": "True",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "finite_element_space": {
-                                                        "type": "str",
-                                                        "description": "Finite-element space (polynomial or point). Point space corresponds to delta functions at quadrature points.",
-                                                        "value": "polynomial",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "basis_order": {
-                                                        "type": "int",
-                                                        "description": "Order of basis functions.",
-                                                        "value": "1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "dimension": {
-                                                        "type": "int",
-                                                        "description": "Topological dimension associated with subfield (=-1 will use dimension of domain).",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "quadrature_order": {
-                                                        "type": "int",
-                                                        "description": "Order of numerical quadrature.",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    }
-                                                },
-                                                "aliases": [
-                                                    "subfield",
-                                                    "time_history_start_time"
-                                                ]
-                                            }
-                                        },
-                                        "properties": {},
-                                        "aliases": [
-                                            "auxfieldstimedependent",
-                                            "auxiliary_subfields"
-                                        ]
-                                    },
-                                    "db_auxiliary_field": {
-                                        "description": "Database for physical property parameters.",
-                                        "setFrom": "{imported} via {file='mandel_test.cfg', line=197, column=-1}",
-                                        "class": "<pylith.bc.ZeroDB.ZeroDB; proxy of <Swig Object of type 'spatialdata::spatialdb::UniformDB *' at 0x7fbb9f641750> >",
-                                        "name": "zerodb",
-                                        "components": {},
-                                        "properties": {
-                                            "values": {
-                                                "type": "list",
-                                                "description": "Names of values in spatial database.",
-                                                "value": "['initial_amplitude', 'initial_amplitude_x', 'initial_amplitude_y', 'initial_amplitude_z']",
-                                                "setFrom": "{file='/home/dockimble/build/pylith/lib/python2.7/site-packages/pylith/bc/ZeroDB.py', line=66, function='_configure'}"
-                                            },
-                                            "data": {
-                                                "type": "list",
-                                                "description": "Values in spatial database.",
-                                                "value": "[0.0, 0.0, 0.0, 0.0]",
-                                                "setFrom": "{file='/home/dockimble/build/pylith/lib/python2.7/site-packages/pylith/bc/ZeroDB.py', line=67, function='_configure'}"
-                                            },
-                                            "label": {
-                                                "type": "str",
-                                                "description": "Label for ZeroDB spatial database.",
-                                                "value": "Dirichlet BC on +x boundary",
-                                                "setFrom": "{file='mandel_test.cfg', line=198, column=-1}"
-                                            }
-                                        },
-                                        "aliases": [
-                                            "zerodb",
-                                            "db_auxiliary_field"
-                                        ]
-                                    }
-                                },
-                                "properties": {
-                                    "use_rate": {
-                                        "type": "bool",
-                                        "description": "Use rate term in time-dependent expression.",
-                                        "value": "False",
-                                        "setFrom": "{default}"
-                                    },
-                                    "label": {
-                                        "type": "str",
-                                        "description": "Label identifier for boundary.",
-                                        "value": "edge_xpos",
-                                        "setFrom": "{file='mandel_test.cfg', line=195, column=-1}"
-                                    },
-                                    "field": {
-                                        "type": "str",
-                                        "description": "Solution subfield associated with boundary condition.",
-                                        "value": "pressure",
-                                        "setFrom": "{file='mandel_test.cfg', line=196, column=-1}"
-                                    },
-                                    "use_time_history": {
-                                        "type": "bool",
-                                        "description": "Use time history term in time-dependent expression.",
-                                        "value": "False",
-                                        "setFrom": "{default}"
-                                    },
-                                    "use_initial": {
-                                        "type": "bool",
-                                        "description": "Use initial term in time-dependent expression.",
-                                        "value": "True",
-                                        "setFrom": "{default}"
-                                    },
-                                    "constrained_dof": {
-                                        "type": "list",
-                                        "description": "Constrained degrees of freedom (0=1st DOF, 1=2nd DOF, etc).",
-                                        "value": "[0]",
-                                        "setFrom": "{file='mandel_test.cfg', line=194, column=-1}"
-                                    }
-                                },
-                                "aliases": [
-                                    "dirichlettimedependent",
-                                    "x_pos"
-                                ]
-                            },
-                            "x_neg": {
-                                "description": "No description available.",
-                                "setFrom": "{imported} via {file='mandel_test.cfg', line=189, column=-1}",
-                                "class": "<pylith.bc.DirichletTimeDependent.DirichletTimeDependent;  >",
-                                "name": "dirichlettimedependent",
-                                "components": {
-                                    "observers": {
-                                        "description": "Observers (e.g., output).",
-                                        "setFrom": "{default}",
-                                        "class": "<pylith.problems.SingleObserver.SinglePhysicsObserver object at 0x7fbb9f652550>",
-                                        "name": "singlephysicsobserver",
-                                        "components": {
-                                            "observer": {
-                                                "description": "Observer of subject.",
-                                                "setFrom": "{default}",
-                                                "class": "<pylith.meshio.OutputPhysics.OutputPhysics;  >",
-                                                "name": "outputphysics",
-                                                "components": {
-                                                    "writer": {
-                                                        "description": "Writer for data.",
-                                                        "setFrom": "{default}",
-                                                        "class": "<pylith.meshio.DataWriterHDF5.DataWriterHDF5; proxy of <Swig Object of type 'pylith::meshio::DataWriterHDF5 *' at 0x7fbb9f6414b0> >",
-                                                        "name": "datawriterhdf5",
-                                                        "components": {},
-                                                        "properties": {
-                                                            "filename": {
-                                                                "type": "str",
-                                                                "description": "Name of HDF5 file.",
-                                                                "value": "output/mandel-bc_xneg.h5",
-                                                                "setFrom": "{file='mandel_test.cfg', line=212, column=-1}"
-                                                            }
-                                                        },
-                                                        "aliases": [
-                                                            "datawriterhdf5",
-                                                            "writer"
-                                                        ]
-                                                    },
-                                                    "trigger": {
-                                                        "description": "Trigger defining how often output is written.",
-                                                        "setFrom": "{default}",
-                                                        "class": "<pylith.meshio.OutputTriggerStep.OutputTriggerStep;  >",
-                                                        "name": "outputtriggerstep",
-                                                        "components": {},
-                                                        "properties": {
-                                                            "num_skip": {
-                                                                "type": "int",
-                                                                "description": "Number of solution steps to skip between writes.",
-                                                                "value": "0",
-                                                                "setFrom": "{default}"
-                                                            }
-                                                        },
-                                                        "aliases": [
-                                                            "outputtriggerstep",
-                                                            "trigger"
-                                                        ]
-                                                    },
-                                                    "field_filter": {
-                                                        "description": "Filter for output fields.",
-                                                        "setFrom": "{default}",
-                                                        "class": "<pylith.meshio.FieldFilterNone.FieldFilterNone;  >",
-                                                        "name": "fieldfilternone",
-                                                        "components": {},
-                                                        "properties": {},
-                                                        "aliases": [
-                                                            "fieldfilternone",
-                                                            "field_filter"
-                                                        ]
-                                                    }
-                                                },
-                                                "properties": {
-                                                    "info_fields": {
-                                                        "type": "list",
-                                                        "description": "Names of info fields to output.",
-                                                        "value": "['all']",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "data_fields": {
-                                                        "type": "list",
-                                                        "description": "Names of data fields to output.",
-                                                        "value": "['all']",
-                                                        "setFrom": "{default}"
-                                                    }
-                                                },
-                                                "aliases": [
-                                                    "outputphysics",
-                                                    "observer"
-                                                ]
-                                            }
-                                        },
-                                        "properties": {},
-                                        "aliases": [
-                                            "singlephysicsobserver",
-                                            "observers"
-                                        ]
-                                    },
-                                    "time_history": {
-                                        "description": "Time history with normalized amplitude as a function of time.",
-                                        "setFrom": "{default}",
-                                        "class": "<pylith.utils.NullComponent.NullComponent object at 0x7fbb9f6708d0>",
-                                        "name": "nullcomponent",
-                                        "components": {},
-                                        "properties": {},
-                                        "aliases": [
-                                            "nullcomponent",
-                                            "time_history"
-                                        ]
-                                    },
-                                    "auxiliary_subfields": {
-                                        "description": "Discretization of constraint parameters.",
-                                        "setFrom": "{default}",
-                                        "class": "<pylith.bc.AuxSubfieldsTimeDependent.AuxSubfieldsTimeDependent object at 0x7fbb9f670a10>",
-                                        "name": "auxfieldstimedependent",
-                                        "components": {
-                                            "rate_start_time": {
-                                                "description": "Rate starting time, t_1(x), subfield.",
-                                                "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f61bb90>",
-                                                "name": "subfield",
-                                                "components": {},
-                                                "properties": {
-                                                    "is_basis_continous": {
-                                                        "type": "bool",
-                                                        "description": "Is basis continuous?",
-                                                        "value": "True",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "finite_element_space": {
-                                                        "type": "str",
-                                                        "description": "Finite-element space (polynomial or point). Point space corresponds to delta functions at quadrature points.",
-                                                        "value": "polynomial",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "basis_order": {
-                                                        "type": "int",
-                                                        "description": "Order of basis functions.",
-                                                        "value": "1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "dimension": {
-                                                        "type": "int",
-                                                        "description": "Topological dimension associated with subfield (=-1 will use dimension of domain).",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "quadrature_order": {
-                                                        "type": "int",
-                                                        "description": "Order of numerical quadrature.",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    }
-                                                },
-                                                "aliases": [
-                                                    "subfield",
-                                                    "rate_start_time"
-                                                ]
-                                            },
-                                            "initial_amplitude": {
-                                                "description": "Initial amplitude, f_0(x), subfield.",
-                                                "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f61b890>",
-                                                "name": "subfield",
-                                                "components": {},
-                                                "properties": {
-                                                    "is_basis_continous": {
-                                                        "type": "bool",
-                                                        "description": "Is basis continuous?",
-                                                        "value": "True",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "finite_element_space": {
-                                                        "type": "str",
-                                                        "description": "Finite-element space (polynomial or point). Point space corresponds to delta functions at quadrature points.",
-                                                        "value": "polynomial",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "basis_order": {
-                                                        "type": "int",
-                                                        "description": "Order of basis functions.",
-                                                        "value": "1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "dimension": {
-                                                        "type": "int",
-                                                        "description": "Topological dimension associated with subfield (=-1 will use dimension of domain).",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "quadrature_order": {
-                                                        "type": "int",
-                                                        "description": "Order of numerical quadrature.",
-                                                        "value": "2",
-                                                        "setFrom": "{file='mandel_test.cfg', line=211, column=-1}"
-                                                    }
-                                                },
-                                                "aliases": [
-                                                    "subfield",
-                                                    "initial_amplitude"
-                                                ]
-                                            },
-                                            "time_history_amplitude": {
-                                                "description": "Time history amplitude, f_2(x). subfield",
-                                                "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f61ba90>",
-                                                "name": "subfield",
-                                                "components": {},
-                                                "properties": {
-                                                    "is_basis_continous": {
-                                                        "type": "bool",
-                                                        "description": "Is basis continuous?",
-                                                        "value": "True",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "finite_element_space": {
-                                                        "type": "str",
-                                                        "description": "Finite-element space (polynomial or point). Point space corresponds to delta functions at quadrature points.",
-                                                        "value": "polynomial",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "basis_order": {
-                                                        "type": "int",
-                                                        "description": "Order of basis functions.",
-                                                        "value": "1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "dimension": {
-                                                        "type": "int",
-                                                        "description": "Topological dimension associated with subfield (=-1 will use dimension of domain).",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "quadrature_order": {
-                                                        "type": "int",
-                                                        "description": "Order of numerical quadrature.",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    }
-                                                },
-                                                "aliases": [
-                                                    "subfield",
-                                                    "time_history_amplitude"
-                                                ]
-                                            },
-                                            "rate_amplitude": {
-                                                "description": "Rate amplitude, \\dot{f}_1(x), subfield.",
-                                                "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f61b990>",
-                                                "name": "subfield",
-                                                "components": {},
-                                                "properties": {
-                                                    "is_basis_continous": {
-                                                        "type": "bool",
-                                                        "description": "Is basis continuous?",
-                                                        "value": "True",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "finite_element_space": {
-                                                        "type": "str",
-                                                        "description": "Finite-element space (polynomial or point). Point space corresponds to delta functions at quadrature points.",
-                                                        "value": "polynomial",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "basis_order": {
-                                                        "type": "int",
-                                                        "description": "Order of basis functions.",
-                                                        "value": "1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "dimension": {
-                                                        "type": "int",
-                                                        "description": "Topological dimension associated with subfield (=-1 will use dimension of domain).",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "quadrature_order": {
-                                                        "type": "int",
-                                                        "description": "Order of numerical quadrature.",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    }
-                                                },
-                                                "aliases": [
-                                                    "subfield",
-                                                    "rate_amplitude"
-                                                ]
-                                            },
-                                            "time_history_start_time": {
-                                                "description": "Time history starting time, t_2(s), subfield.",
-                                                "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f61b410>",
-                                                "name": "subfield",
-                                                "components": {},
-                                                "properties": {
-                                                    "is_basis_continous": {
-                                                        "type": "bool",
-                                                        "description": "Is basis continuous?",
-                                                        "value": "True",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "finite_element_space": {
-                                                        "type": "str",
-                                                        "description": "Finite-element space (polynomial or point). Point space corresponds to delta functions at quadrature points.",
-                                                        "value": "polynomial",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "basis_order": {
-                                                        "type": "int",
-                                                        "description": "Order of basis functions.",
-                                                        "value": "1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "dimension": {
-                                                        "type": "int",
-                                                        "description": "Topological dimension associated with subfield (=-1 will use dimension of domain).",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    },
-                                                    "quadrature_order": {
-                                                        "type": "int",
-                                                        "description": "Order of numerical quadrature.",
-                                                        "value": "-1",
-                                                        "setFrom": "{default}"
-                                                    }
-                                                },
-                                                "aliases": [
-                                                    "subfield",
-                                                    "time_history_start_time"
-                                                ]
-                                            }
-                                        },
-                                        "properties": {},
-                                        "aliases": [
-                                            "auxfieldstimedependent",
-                                            "auxiliary_subfields"
-                                        ]
-                                    },
-                                    "db_auxiliary_field": {
-                                        "description": "Database for physical property parameters.",
-                                        "setFrom": "{imported} via {file='mandel_test.cfg', line=208, column=-1}",
-                                        "class": "<pylith.bc.ZeroDB.ZeroDB; proxy of <Swig Object of type 'spatialdata::spatialdb::UniformDB *' at 0x7fbb9fb36ae0> >",
-                                        "name": "zerodb",
-                                        "components": {},
-                                        "properties": {
-                                            "values": {
-                                                "type": "list",
-                                                "description": "Names of values in spatial database.",
-                                                "value": "['initial_amplitude', 'initial_amplitude_x', 'initial_amplitude_y', 'initial_amplitude_z']",
-                                                "setFrom": "{file='/home/dockimble/build/pylith/lib/python2.7/site-packages/pylith/bc/ZeroDB.py', line=66, function='_configure'}"
-                                            },
-                                            "data": {
-                                                "type": "list",
-                                                "description": "Values in spatial database.",
-                                                "value": "[0.0, 0.0, 0.0, 0.0]",
-                                                "setFrom": "{file='/home/dockimble/build/pylith/lib/python2.7/site-packages/pylith/bc/ZeroDB.py', line=67, function='_configure'}"
-                                            },
-                                            "label": {
-                                                "type": "str",
-                                                "description": "Label for ZeroDB spatial database.",
-                                                "value": "Dirichlet BC on -x boundary",
-                                                "setFrom": "{file='mandel_test.cfg', line=209, column=-1}"
-                                            }
-                                        },
-                                        "aliases": [
-                                            "zerodb",
-                                            "db_auxiliary_field"
-                                        ]
-                                    }
-                                },
-                                "properties": {
-                                    "use_rate": {
-                                        "type": "bool",
-                                        "description": "Use rate term in time-dependent expression.",
-                                        "value": "False",
-                                        "setFrom": "{default}"
-                                    },
-                                    "label": {
-                                        "type": "str",
-                                        "description": "Label identifier for boundary.",
-                                        "value": "edge_xneg",
-                                        "setFrom": "{file='mandel_test.cfg', line=206, column=-1}"
-                                    },
-                                    "field": {
-                                        "type": "str",
-                                        "description": "Solution subfield associated with boundary condition.",
-                                        "value": "pressure",
-                                        "setFrom": "{file='mandel_test.cfg', line=207, column=-1}"
-                                    },
-                                    "use_time_history": {
-                                        "type": "bool",
-                                        "description": "Use time history term in time-dependent expression.",
-                                        "value": "False",
-                                        "setFrom": "{default}"
-                                    },
-                                    "use_initial": {
-                                        "type": "bool",
-                                        "description": "Use initial term in time-dependent expression.",
-                                        "value": "True",
-                                        "setFrom": "{default}"
-                                    },
-                                    "constrained_dof": {
-                                        "type": "list",
-                                        "description": "Constrained degrees of freedom (0=1st DOF, 1=2nd DOF, etc).",
-                                        "value": "[0]",
-                                        "setFrom": "{file='mandel_test.cfg', line=205, column=-1}"
-                                    }
-                                },
-                                "aliases": [
-                                    "dirichlettimedependent",
-                                    "x_neg"
-                                ]
-                            },
-                            "y_pos": {
-                                "description": "No description available.",
                                 "setFrom": "{imported} via {file='mandel_test.cfg', line=191, column=-1}",
-                                "class": "<pylith.bc.NeumannTimeDependent.NeumannTimeDependent;  >",
-                                "name": "neumanntimedependent",
+                                "class": "<pylith.bc.DirichletTimeDependent.DirichletTimeDependent;  >",
+                                "name": "dirichlettimedependent",
                                 "components": {
                                     "observers": {
                                         "description": "Observers (e.g., output).",
                                         "setFrom": "{default}",
-                                        "class": "<pylith.problems.SingleObserver.SinglePhysicsObserver object at 0x7fbb9f54a210>",
+                                        "class": "<pylith.problems.SingleObserver.SinglePhysicsObserver object at 0x7fcc95a51210>",
                                         "name": "singlephysicsobserver",
                                         "components": {
                                             "observer": {
@@ -1703,15 +461,15 @@
                                                     "writer": {
                                                         "description": "Writer for data.",
                                                         "setFrom": "{default}",
-                                                        "class": "<pylith.meshio.DataWriterHDF5.DataWriterHDF5; proxy of <Swig Object of type 'pylith::meshio::DataWriterHDF5 *' at 0x7fbb9f641900> >",
+                                                        "class": "<pylith.meshio.DataWriterHDF5.DataWriterHDF5; proxy of <Swig Object of type 'pylith::meshio::DataWriterHDF5 *' at 0x7fcc95f34510> >",
                                                         "name": "datawriterhdf5",
                                                         "components": {},
                                                         "properties": {
                                                             "filename": {
                                                                 "type": "str",
                                                                 "description": "Name of HDF5 file.",
-                                                                "value": "output/mandel-bc_ypos.h5",
-                                                                "setFrom": "{file='mandel_test.cfg', line=244, column=-1}"
+                                                                "value": "output/mandel-bc_yneg.h5",
+                                                                "setFrom": "{file='mandel_test.cfg', line=239, column=-1}"
                                                             }
                                                         },
                                                         "aliases": [
@@ -1780,7 +538,7 @@
                                     "time_history": {
                                         "description": "Time history with normalized amplitude as a function of time.",
                                         "setFrom": "{default}",
-                                        "class": "<pylith.utils.NullComponent.NullComponent object at 0x7fbb9f54a410>",
+                                        "class": "<pylith.utils.NullComponent.NullComponent object at 0x7fcc95a5d390>",
                                         "name": "nullcomponent",
                                         "components": {},
                                         "properties": {},
@@ -1790,15 +548,15 @@
                                         ]
                                     },
                                     "auxiliary_subfields": {
-                                        "description": "Discretization of time-dependent Neumann parameters.",
+                                        "description": "Discretization of constraint parameters.",
                                         "setFrom": "{default}",
-                                        "class": "<pylith.bc.AuxSubfieldsTimeDependent.AuxSubfieldsTimeDependent object at 0x7fbb9f54a350>",
+                                        "class": "<pylith.bc.AuxSubfieldsTimeDependent.AuxSubfieldsTimeDependent object at 0x7fcc95a5d4d0>",
                                         "name": "auxfieldstimedependent",
                                         "components": {
                                             "rate_start_time": {
                                                 "description": "Rate starting time, t_1(x), subfield.",
                                                 "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f56c390>",
+                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fcc95a0e650>",
                                                 "name": "subfield",
                                                 "components": {},
                                                 "properties": {
@@ -1841,7 +599,7 @@
                                             "initial_amplitude": {
                                                 "description": "Initial amplitude, f_0(x), subfield.",
                                                 "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f56c090>",
+                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fcc95a0e350>",
                                                 "name": "subfield",
                                                 "components": {},
                                                 "properties": {
@@ -1860,8 +618,8 @@
                                                     "basis_order": {
                                                         "type": "int",
                                                         "description": "Order of basis functions.",
-                                                        "value": "0",
-                                                        "setFrom": "{file='mandel_test.cfg', line=241, column=-1}"
+                                                        "value": "1",
+                                                        "setFrom": "{default}"
                                                     },
                                                     "dimension": {
                                                         "type": "int",
@@ -1873,7 +631,7 @@
                                                         "type": "int",
                                                         "description": "Order of numerical quadrature.",
                                                         "value": "2",
-                                                        "setFrom": "{file='mandel_test.cfg', line=242, column=-1}"
+                                                        "setFrom": "{file='mandel_test.cfg', line=238, column=-1}"
                                                     }
                                                 },
                                                 "aliases": [
@@ -1884,7 +642,7 @@
                                             "time_history_amplitude": {
                                                 "description": "Time history amplitude, f_2(x). subfield",
                                                 "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f56c290>",
+                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fcc95a0e550>",
                                                 "name": "subfield",
                                                 "components": {},
                                                 "properties": {
@@ -1927,7 +685,7 @@
                                             "rate_amplitude": {
                                                 "description": "Rate amplitude, \\dot{f}_1(x), subfield.",
                                                 "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f56c190>",
+                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fcc95a0e450>",
                                                 "name": "subfield",
                                                 "components": {},
                                                 "properties": {
@@ -1970,7 +728,7 @@
                                             "time_history_start_time": {
                                                 "description": "Time history starting time, t_2(s), subfield.",
                                                 "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f564ed0>",
+                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fcc95a03e90>",
                                                 "name": "subfield",
                                                 "components": {},
                                                 "properties": {
@@ -2020,7 +778,417 @@
                                     "db_auxiliary_field": {
                                         "description": "Database for physical property parameters.",
                                         "setFrom": "{imported} via {file='mandel_test.cfg', line=235, column=-1}",
-                                        "class": "<spatialdata.spatialdb.UniformDB.UniformDB; proxy of <Swig Object of type 'spatialdata::spatialdb::UniformDB *' at 0x7fbb9f6418d0> >",
+                                        "class": "<pylith.bc.ZeroDB.ZeroDB; proxy of <Swig Object of type 'spatialdata::spatialdb::UniformDB *' at 0x7fcc95f34ea0> >",
+                                        "name": "zerodb",
+                                        "components": {},
+                                        "properties": {
+                                            "values": {
+                                                "type": "list",
+                                                "description": "Names of values in spatial database.",
+                                                "value": "['initial_amplitude', 'initial_amplitude_x', 'initial_amplitude_y', 'initial_amplitude_z']",
+                                                "setFrom": "{file='/home/dockimble/build/pylith/lib/python2.7/site-packages/pylith/bc/ZeroDB.py', line=66, function='_configure'}"
+                                            },
+                                            "data": {
+                                                "type": "list",
+                                                "description": "Values in spatial database.",
+                                                "value": "[0.0, 0.0, 0.0, 0.0]",
+                                                "setFrom": "{file='/home/dockimble/build/pylith/lib/python2.7/site-packages/pylith/bc/ZeroDB.py', line=67, function='_configure'}"
+                                            },
+                                            "label": {
+                                                "type": "str",
+                                                "description": "Label for ZeroDB spatial database.",
+                                                "value": "Dirichlet BC on -y boundary",
+                                                "setFrom": "{file='mandel_test.cfg', line=236, column=-1}"
+                                            }
+                                        },
+                                        "aliases": [
+                                            "zerodb",
+                                            "db_auxiliary_field"
+                                        ]
+                                    }
+                                },
+                                "properties": {
+                                    "use_rate": {
+                                        "type": "bool",
+                                        "description": "Use rate term in time-dependent expression.",
+                                        "value": "False",
+                                        "setFrom": "{default}"
+                                    },
+                                    "label": {
+                                        "type": "str",
+                                        "description": "Label identifier for boundary.",
+                                        "value": "edge_yneg",
+                                        "setFrom": "{file='mandel_test.cfg', line=233, column=-1}"
+                                    },
+                                    "field": {
+                                        "type": "str",
+                                        "description": "Solution subfield associated with boundary condition.",
+                                        "value": "displacement",
+                                        "setFrom": "{file='mandel_test.cfg', line=234, column=-1}"
+                                    },
+                                    "use_time_history": {
+                                        "type": "bool",
+                                        "description": "Use time history term in time-dependent expression.",
+                                        "value": "False",
+                                        "setFrom": "{default}"
+                                    },
+                                    "use_initial": {
+                                        "type": "bool",
+                                        "description": "Use initial term in time-dependent expression.",
+                                        "value": "True",
+                                        "setFrom": "{default}"
+                                    },
+                                    "constrained_dof": {
+                                        "type": "list",
+                                        "description": "Constrained degrees of freedom (0=1st DOF, 1=2nd DOF, etc).",
+                                        "value": "[1]",
+                                        "setFrom": "{file='mandel_test.cfg', line=232, column=-1}"
+                                    }
+                                },
+                                "aliases": [
+                                    "dirichlettimedependent",
+                                    "y_neg"
+                                ]
+                            },
+                            "y_pos": {
+                                "description": "No description available.",
+                                "setFrom": "{imported} via {file='mandel_test.cfg', line=193, column=-1}",
+                                "class": "<pylith.bc.NeumannTimeDependent.NeumannTimeDependent;  >",
+                                "name": "neumanntimedependent",
+                                "components": {
+                                    "observers": {
+                                        "description": "Observers (e.g., output).",
+                                        "setFrom": "{default}",
+                                        "class": "<pylith.problems.SingleObserver.SinglePhysicsObserver object at 0x7fcc95a2f050>",
+                                        "name": "singlephysicsobserver",
+                                        "components": {
+                                            "observer": {
+                                                "description": "Observer of subject.",
+                                                "setFrom": "{default}",
+                                                "class": "<pylith.meshio.OutputPhysics.OutputPhysics;  >",
+                                                "name": "outputphysics",
+                                                "components": {
+                                                    "writer": {
+                                                        "description": "Writer for data.",
+                                                        "setFrom": "{default}",
+                                                        "class": "<pylith.meshio.DataWriterHDF5.DataWriterHDF5; proxy of <Swig Object of type 'pylith::meshio::DataWriterHDF5 *' at 0x7fcc95a5a1b0> >",
+                                                        "name": "datawriterhdf5",
+                                                        "components": {},
+                                                        "properties": {
+                                                            "filename": {
+                                                                "type": "str",
+                                                                "description": "Name of HDF5 file.",
+                                                                "value": "output/mandel-bc_ypos.h5",
+                                                                "setFrom": "{file='mandel_test.cfg', line=254, column=-1}"
+                                                            }
+                                                        },
+                                                        "aliases": [
+                                                            "datawriterhdf5",
+                                                            "writer"
+                                                        ]
+                                                    },
+                                                    "trigger": {
+                                                        "description": "Trigger defining how often output is written.",
+                                                        "setFrom": "{default}",
+                                                        "class": "<pylith.meshio.OutputTriggerStep.OutputTriggerStep;  >",
+                                                        "name": "outputtriggerstep",
+                                                        "components": {},
+                                                        "properties": {
+                                                            "num_skip": {
+                                                                "type": "int",
+                                                                "description": "Number of solution steps to skip between writes.",
+                                                                "value": "0",
+                                                                "setFrom": "{default}"
+                                                            }
+                                                        },
+                                                        "aliases": [
+                                                            "outputtriggerstep",
+                                                            "trigger"
+                                                        ]
+                                                    },
+                                                    "field_filter": {
+                                                        "description": "Filter for output fields.",
+                                                        "setFrom": "{default}",
+                                                        "class": "<pylith.meshio.FieldFilterNone.FieldFilterNone;  >",
+                                                        "name": "fieldfilternone",
+                                                        "components": {},
+                                                        "properties": {},
+                                                        "aliases": [
+                                                            "fieldfilternone",
+                                                            "field_filter"
+                                                        ]
+                                                    }
+                                                },
+                                                "properties": {
+                                                    "info_fields": {
+                                                        "type": "list",
+                                                        "description": "Names of info fields to output.",
+                                                        "value": "['all']",
+                                                        "setFrom": "{default}"
+                                                    },
+                                                    "data_fields": {
+                                                        "type": "list",
+                                                        "description": "Names of data fields to output.",
+                                                        "value": "['all']",
+                                                        "setFrom": "{default}"
+                                                    }
+                                                },
+                                                "aliases": [
+                                                    "outputphysics",
+                                                    "observer"
+                                                ]
+                                            }
+                                        },
+                                        "properties": {},
+                                        "aliases": [
+                                            "singlephysicsobserver",
+                                            "observers"
+                                        ]
+                                    },
+                                    "time_history": {
+                                        "description": "Time history with normalized amplitude as a function of time.",
+                                        "setFrom": "{default}",
+                                        "class": "<pylith.utils.NullComponent.NullComponent object at 0x7fcc95a2f390>",
+                                        "name": "nullcomponent",
+                                        "components": {},
+                                        "properties": {},
+                                        "aliases": [
+                                            "nullcomponent",
+                                            "time_history"
+                                        ]
+                                    },
+                                    "auxiliary_subfields": {
+                                        "description": "Discretization of time-dependent Neumann parameters.",
+                                        "setFrom": "{default}",
+                                        "class": "<pylith.bc.AuxSubfieldsTimeDependent.AuxSubfieldsTimeDependent object at 0x7fcc95a2f2d0>",
+                                        "name": "auxfieldstimedependent",
+                                        "components": {
+                                            "rate_start_time": {
+                                                "description": "Rate starting time, t_1(x), subfield.",
+                                                "setFrom": "{default}",
+                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fcc959d09d0>",
+                                                "name": "subfield",
+                                                "components": {},
+                                                "properties": {
+                                                    "is_basis_continous": {
+                                                        "type": "bool",
+                                                        "description": "Is basis continuous?",
+                                                        "value": "True",
+                                                        "setFrom": "{default}"
+                                                    },
+                                                    "finite_element_space": {
+                                                        "type": "str",
+                                                        "description": "Finite-element space (polynomial or point). Point space corresponds to delta functions at quadrature points.",
+                                                        "value": "polynomial",
+                                                        "setFrom": "{default}"
+                                                    },
+                                                    "basis_order": {
+                                                        "type": "int",
+                                                        "description": "Order of basis functions.",
+                                                        "value": "1",
+                                                        "setFrom": "{default}"
+                                                    },
+                                                    "dimension": {
+                                                        "type": "int",
+                                                        "description": "Topological dimension associated with subfield (=-1 will use dimension of domain).",
+                                                        "value": "-1",
+                                                        "setFrom": "{default}"
+                                                    },
+                                                    "quadrature_order": {
+                                                        "type": "int",
+                                                        "description": "Order of numerical quadrature.",
+                                                        "value": "-1",
+                                                        "setFrom": "{default}"
+                                                    }
+                                                },
+                                                "aliases": [
+                                                    "subfield",
+                                                    "rate_start_time"
+                                                ]
+                                            },
+                                            "initial_amplitude": {
+                                                "description": "Initial amplitude, f_0(x), subfield.",
+                                                "setFrom": "{default}",
+                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fcc959d06d0>",
+                                                "name": "subfield",
+                                                "components": {},
+                                                "properties": {
+                                                    "is_basis_continous": {
+                                                        "type": "bool",
+                                                        "description": "Is basis continuous?",
+                                                        "value": "True",
+                                                        "setFrom": "{default}"
+                                                    },
+                                                    "finite_element_space": {
+                                                        "type": "str",
+                                                        "description": "Finite-element space (polynomial or point). Point space corresponds to delta functions at quadrature points.",
+                                                        "value": "polynomial",
+                                                        "setFrom": "{default}"
+                                                    },
+                                                    "basis_order": {
+                                                        "type": "int",
+                                                        "description": "Order of basis functions.",
+                                                        "value": "0",
+                                                        "setFrom": "{file='mandel_test.cfg', line=251, column=-1}"
+                                                    },
+                                                    "dimension": {
+                                                        "type": "int",
+                                                        "description": "Topological dimension associated with subfield (=-1 will use dimension of domain).",
+                                                        "value": "-1",
+                                                        "setFrom": "{default}"
+                                                    },
+                                                    "quadrature_order": {
+                                                        "type": "int",
+                                                        "description": "Order of numerical quadrature.",
+                                                        "value": "2",
+                                                        "setFrom": "{file='mandel_test.cfg', line=252, column=-1}"
+                                                    }
+                                                },
+                                                "aliases": [
+                                                    "subfield",
+                                                    "initial_amplitude"
+                                                ]
+                                            },
+                                            "time_history_amplitude": {
+                                                "description": "Time history amplitude, f_2(x). subfield",
+                                                "setFrom": "{default}",
+                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fcc959d08d0>",
+                                                "name": "subfield",
+                                                "components": {},
+                                                "properties": {
+                                                    "is_basis_continous": {
+                                                        "type": "bool",
+                                                        "description": "Is basis continuous?",
+                                                        "value": "True",
+                                                        "setFrom": "{default}"
+                                                    },
+                                                    "finite_element_space": {
+                                                        "type": "str",
+                                                        "description": "Finite-element space (polynomial or point). Point space corresponds to delta functions at quadrature points.",
+                                                        "value": "polynomial",
+                                                        "setFrom": "{default}"
+                                                    },
+                                                    "basis_order": {
+                                                        "type": "int",
+                                                        "description": "Order of basis functions.",
+                                                        "value": "1",
+                                                        "setFrom": "{default}"
+                                                    },
+                                                    "dimension": {
+                                                        "type": "int",
+                                                        "description": "Topological dimension associated with subfield (=-1 will use dimension of domain).",
+                                                        "value": "-1",
+                                                        "setFrom": "{default}"
+                                                    },
+                                                    "quadrature_order": {
+                                                        "type": "int",
+                                                        "description": "Order of numerical quadrature.",
+                                                        "value": "-1",
+                                                        "setFrom": "{default}"
+                                                    }
+                                                },
+                                                "aliases": [
+                                                    "subfield",
+                                                    "time_history_amplitude"
+                                                ]
+                                            },
+                                            "rate_amplitude": {
+                                                "description": "Rate amplitude, \\dot{f}_1(x), subfield.",
+                                                "setFrom": "{default}",
+                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fcc959d07d0>",
+                                                "name": "subfield",
+                                                "components": {},
+                                                "properties": {
+                                                    "is_basis_continous": {
+                                                        "type": "bool",
+                                                        "description": "Is basis continuous?",
+                                                        "value": "True",
+                                                        "setFrom": "{default}"
+                                                    },
+                                                    "finite_element_space": {
+                                                        "type": "str",
+                                                        "description": "Finite-element space (polynomial or point). Point space corresponds to delta functions at quadrature points.",
+                                                        "value": "polynomial",
+                                                        "setFrom": "{default}"
+                                                    },
+                                                    "basis_order": {
+                                                        "type": "int",
+                                                        "description": "Order of basis functions.",
+                                                        "value": "1",
+                                                        "setFrom": "{default}"
+                                                    },
+                                                    "dimension": {
+                                                        "type": "int",
+                                                        "description": "Topological dimension associated with subfield (=-1 will use dimension of domain).",
+                                                        "value": "-1",
+                                                        "setFrom": "{default}"
+                                                    },
+                                                    "quadrature_order": {
+                                                        "type": "int",
+                                                        "description": "Order of numerical quadrature.",
+                                                        "value": "-1",
+                                                        "setFrom": "{default}"
+                                                    }
+                                                },
+                                                "aliases": [
+                                                    "subfield",
+                                                    "rate_amplitude"
+                                                ]
+                                            },
+                                            "time_history_start_time": {
+                                                "description": "Time history starting time, t_2(s), subfield.",
+                                                "setFrom": "{default}",
+                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fcc959d0550>",
+                                                "name": "subfield",
+                                                "components": {},
+                                                "properties": {
+                                                    "is_basis_continous": {
+                                                        "type": "bool",
+                                                        "description": "Is basis continuous?",
+                                                        "value": "True",
+                                                        "setFrom": "{default}"
+                                                    },
+                                                    "finite_element_space": {
+                                                        "type": "str",
+                                                        "description": "Finite-element space (polynomial or point). Point space corresponds to delta functions at quadrature points.",
+                                                        "value": "polynomial",
+                                                        "setFrom": "{default}"
+                                                    },
+                                                    "basis_order": {
+                                                        "type": "int",
+                                                        "description": "Order of basis functions.",
+                                                        "value": "1",
+                                                        "setFrom": "{default}"
+                                                    },
+                                                    "dimension": {
+                                                        "type": "int",
+                                                        "description": "Topological dimension associated with subfield (=-1 will use dimension of domain).",
+                                                        "value": "-1",
+                                                        "setFrom": "{default}"
+                                                    },
+                                                    "quadrature_order": {
+                                                        "type": "int",
+                                                        "description": "Order of numerical quadrature.",
+                                                        "value": "-1",
+                                                        "setFrom": "{default}"
+                                                    }
+                                                },
+                                                "aliases": [
+                                                    "subfield",
+                                                    "time_history_start_time"
+                                                ]
+                                            }
+                                        },
+                                        "properties": {},
+                                        "aliases": [
+                                            "auxfieldstimedependent",
+                                            "auxiliary_subfields"
+                                        ]
+                                    },
+                                    "db_auxiliary_field": {
+                                        "description": "Database for physical property parameters.",
+                                        "setFrom": "{imported} via {file='mandel_test.cfg', line=245, column=-1}",
+                                        "class": "<spatialdata.spatialdb.UniformDB.UniformDB; proxy of <Swig Object of type 'spatialdata::spatialdb::UniformDB *' at 0x7fcc95a5a180> >",
                                         "name": "uniformdb",
                                         "components": {},
                                         "properties": {
@@ -2028,19 +1196,19 @@
                                                 "type": "list",
                                                 "description": "Names of values in spatial database.",
                                                 "value": "['initial_amplitude_tangential', 'initial_amplitude_normal']",
-                                                "setFrom": "{file='mandel_test.cfg', line=238, column=-1}"
+                                                "setFrom": "{file='mandel_test.cfg', line=248, column=-1}"
                                             },
                                             "data": {
                                                 "type": "list",
                                                 "description": "Values in spatial database.",
                                                 "value": "['0.0*MPa', '-1.0*MPa']",
-                                                "setFrom": "{file='mandel_test.cfg', line=239, column=-1}"
+                                                "setFrom": "{file='mandel_test.cfg', line=249, column=-1}"
                                             },
                                             "label": {
                                                 "type": "str",
                                                 "description": "Descriptive label for database.",
                                                 "value": "Neumann BC +y edge",
-                                                "setFrom": "{file='mandel_test.cfg', line=236, column=-1}"
+                                                "setFrom": "{file='mandel_test.cfg', line=246, column=-1}"
                                             }
                                         },
                                         "aliases": [
@@ -2066,13 +1234,13 @@
                                         "type": "str",
                                         "description": "Label identifier for boundary.",
                                         "value": "edge_ypos",
-                                        "setFrom": "{file='mandel_test.cfg', line=233, column=-1}"
+                                        "setFrom": "{file='mandel_test.cfg', line=243, column=-1}"
                                     },
                                     "field": {
                                         "type": "str",
                                         "description": "Solution subfield associated with boundary condition.",
                                         "value": "displacement",
-                                        "setFrom": "{file='mandel_test.cfg', line=234, column=-1}"
+                                        "setFrom": "{file='mandel_test.cfg', line=244, column=-1}"
                                     },
                                     "use_time_history": {
                                         "type": "bool",
@@ -2113,7 +1281,7 @@
                     "interfaces": {
                         "description": "Interior surfaces with constraints or constitutive models.",
                         "setFrom": "{default}",
-                        "class": "<pylith.utils.EmptyBin.EmptyBin object at 0x7fbb9fb0ed90>",
+                        "class": "<pylith.utils.EmptyBin.EmptyBin object at 0x7fcc95f0d950>",
                         "name": "emptybin",
                         "components": {},
                         "properties": {},
@@ -2125,19 +1293,19 @@
                     "solution": {
                         "description": "Solution field for problem.",
                         "setFrom": "{imported} via {file='mandel_test.cfg', line=87, column=-1}",
-                        "class": "<pylith.problems.SolnDispPresTracStrain.Solution object at 0x7fbb9faf5250>",
+                        "class": "<pylith.problems.SolnDispPresTracStrain.Solution object at 0x7fcc95cbf650>",
                         "name": "solution",
                         "components": {
                             "subfields": {
                                 "description": "Subfields in solution.",
                                 "setFrom": "{default}",
-                                "class": "<pylith.problems.SolnDispPresTracStrain.SolnDispPresTracStrain object at 0x7fbb9f50f250>",
+                                "class": "<pylith.problems.SolnDispPresTracStrain.SolnDispPresTracStrain object at 0x7fcc959f3990>",
                                 "name": "solndispprestracstrain",
                                 "components": {
                                     "pressure": {
                                         "description": "Pressure subfield.",
                                         "setFrom": "{default}",
-                                        "class": "<pylith.problems.SubfieldPressure.SubfieldPressure object at 0x7fbb9f50ff90>",
+                                        "class": "<pylith.problems.SubfieldPressure.SubfieldPressure object at 0x7fcc959fe7d0>",
                                         "name": "subfieldpressure",
                                         "components": {},
                                         "properties": {
@@ -2186,7 +1354,7 @@
                                     "displacement": {
                                         "description": "Displacement subfield.",
                                         "setFrom": "{default}",
-                                        "class": "<pylith.problems.SubfieldDisplacement.SubfieldDisplacement object at 0x7fbb9f518390>",
+                                        "class": "<pylith.problems.SubfieldDisplacement.SubfieldDisplacement object at 0x7fcc959fead0>",
                                         "name": "subfielddisplacement",
                                         "components": {},
                                         "properties": {
@@ -2235,7 +1403,7 @@
                                     "trace_strain": {
                                         "description": "Trace strain subfield.",
                                         "setFrom": "{default}",
-                                        "class": "<pylith.problems.SubfieldTraceStrain.SubfieldTraceStrain object at 0x7fbb9f518790>",
+                                        "class": "<pylith.problems.SubfieldTraceStrain.SubfieldTraceStrain object at 0x7fcc959feed0>",
                                         "name": "subfieldtracestrain",
                                         "components": {},
                                         "properties": {
@@ -2298,7 +1466,7 @@
                     "gravity_field": {
                         "description": "Database used for gravity field.",
                         "setFrom": "{default}",
-                        "class": "<pylith.utils.NullComponent.NullComponent object at 0x7fbb9fb0efd0>",
+                        "class": "<pylith.utils.NullComponent.NullComponent object at 0x7fcc95f0d510>",
                         "name": "nullcomponent",
                         "components": {},
                         "properties": {},
@@ -2310,7 +1478,7 @@
                     "materials": {
                         "description": "Materials in problem.",
                         "setFrom": "{built-in} via {file='mandel_test.cfg', line=129, column=-1}",
-                        "class": "<pyre.inventory.FacilityArrayFacility.FacilityArray object at 0x7fbb9faf5610>",
+                        "class": "<pyre.inventory.FacilityArrayFacility.FacilityArray object at 0x7fcc95cbfa10>",
                         "name": "materials",
                         "components": {
                             "poroelastic": {
@@ -2322,7 +1490,7 @@
                                     "observers": {
                                         "description": "Observers (e.g., output).",
                                         "setFrom": "{default}",
-                                        "class": "<pylith.problems.SingleObserver.SinglePhysicsObserver object at 0x7fbb9f4cf6d0>",
+                                        "class": "<pylith.problems.SingleObserver.SinglePhysicsObserver object at 0x7fcc959bae10>",
                                         "name": "singlephysicsobserver",
                                         "components": {
                                             "observer": {
@@ -2334,7 +1502,7 @@
                                                     "writer": {
                                                         "description": "Writer for data.",
                                                         "setFrom": "{default}",
-                                                        "class": "<pylith.meshio.DataWriterHDF5.DataWriterHDF5; proxy of <Swig Object of type 'pylith::meshio::DataWriterHDF5 *' at 0x7fbb9f641d50> >",
+                                                        "class": "<pylith.meshio.DataWriterHDF5.DataWriterHDF5; proxy of <Swig Object of type 'pylith::meshio::DataWriterHDF5 *' at 0x7fcc95a5a660> >",
                                                         "name": "datawriterhdf5",
                                                         "components": {},
                                                         "properties": {
@@ -2418,13 +1586,13 @@
                                     "auxiliary_subfields": {
                                         "description": "Discretization of Poroelasticity properties.",
                                         "setFrom": "{default}",
-                                        "class": "<pylith.materials.AuxSubfieldsPoroelasticity.AuxSubfieldsPoroelasticity object at 0x7fbb9f4cff90>",
+                                        "class": "<pylith.materials.AuxSubfieldsPoroelasticity.AuxSubfieldsPoroelasticity object at 0x7fcc959bae50>",
                                         "name": "auxsubfieldsporoelasticity",
                                         "components": {
                                             "body_force": {
                                                 "description": "Body force subfield.",
                                                 "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f4fcad0>",
+                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fcc95964fd0>",
                                                 "name": "subfield",
                                                 "components": {},
                                                 "properties": {
@@ -2467,7 +1635,7 @@
                                             "fluid_density": {
                                                 "description": "Fluid density subfield.",
                                                 "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f4fc950>",
+                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fcc9596d290>",
                                                 "name": "subfield",
                                                 "components": {},
                                                 "properties": {
@@ -2510,7 +1678,7 @@
                                             "density": {
                                                 "description": "Density subfield.",
                                                 "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f4fc910>",
+                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fcc9596d0d0>",
                                                 "name": "subfield",
                                                 "components": {},
                                                 "properties": {
@@ -2553,7 +1721,7 @@
                                             "fluid_viscosity": {
                                                 "description": "Fluid viscosity subfield.",
                                                 "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f4fc810>",
+                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fcc9596d050>",
                                                 "name": "subfield",
                                                 "components": {},
                                                 "properties": {
@@ -2596,7 +1764,7 @@
                                             "gravitational_acceleration": {
                                                 "description": "Gravitational acceleration subfield.",
                                                 "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f4fcc50>",
+                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fcc9596d3d0>",
                                                 "name": "subfield",
                                                 "components": {},
                                                 "properties": {
@@ -2639,7 +1807,7 @@
                                             "porosity": {
                                                 "description": "Porosity subfield.",
                                                 "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f4fcd50>",
+                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fcc9596d4d0>",
                                                 "name": "subfield",
                                                 "components": {},
                                                 "properties": {
@@ -2689,7 +1857,7 @@
                                     "db_auxiliary_field": {
                                         "description": "Database for physical property parameters.",
                                         "setFrom": "{imported} via {file='mandel_test.cfg', line=139, column=-1}",
-                                        "class": "<spatialdata.spatialdb.UniformDB.UniformDB; proxy of <Swig Object of type 'spatialdata::spatialdb::UniformDB *' at 0x7fbb9f641930> >",
+                                        "class": "<spatialdata.spatialdb.UniformDB.UniformDB; proxy of <Swig Object of type 'spatialdata::spatialdb::UniformDB *' at 0x7fcc95a5a210> >",
                                         "name": "uniformdb",
                                         "components": {},
                                         "properties": {
@@ -2720,13 +1888,13 @@
                                     "derived_subfields": {
                                         "description": "Discretization of derived subfields (e.g., stress and strain).",
                                         "setFrom": "{default}",
-                                        "class": "<pylith.materials.DerivedSubfieldsElasticity.DerivedSubfieldsElasticity object at 0x7fbb9f4cfc50>",
+                                        "class": "<pylith.materials.DerivedSubfieldsElasticity.DerivedSubfieldsElasticity object at 0x7fcc95943890>",
                                         "name": "derivedsubfieldselasticity",
                                         "components": {
                                             "cauchy_stress": {
                                                 "description": "Cauchy stress subfield.",
                                                 "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f49bed0>",
+                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fcc9590e650>",
                                                 "name": "subfield",
                                                 "components": {},
                                                 "properties": {
@@ -2769,7 +1937,7 @@
                                             "cauchy_strain": {
                                                 "description": "Cauchy strain subfield.",
                                                 "setFrom": "{default}",
-                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f49bf90>",
+                                                "class": "<pylith.topology.Subfield.Subfield object at 0x7fcc9590e710>",
                                                 "name": "subfield",
                                                 "components": {},
                                                 "properties": {
@@ -2825,13 +1993,13 @@
                                             "auxiliary_subfields": {
                                                 "description": "Discretization of linear poroelastic rheology physical properties.",
                                                 "setFrom": "{default}",
-                                                "class": "<pylith.materials.AuxSubfieldsIsotropicLinearPoroelasticity.AuxSubfieldsIsotropicLinearPoroelasticity object at 0x7fbb9f4adb90>",
+                                                "class": "<pylith.materials.AuxSubfieldsIsotropicLinearPoroelasticity.AuxSubfieldsIsotropicLinearPoroelasticity object at 0x7fcc95920310>",
                                                 "name": "auxfieldsisotropiclinearporoelasticity",
                                                 "components": {
                                                     "reference_stress": {
                                                         "description": "Reference stress subfield.",
                                                         "setFrom": "{default}",
-                                                        "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f4b6cd0>",
+                                                        "class": "<pylith.topology.Subfield.Subfield object at 0x7fcc9592a450>",
                                                         "name": "subfield",
                                                         "components": {},
                                                         "properties": {
@@ -2874,7 +2042,7 @@
                                                     "shear_modulus": {
                                                         "description": "Shear modulus subfield.",
                                                         "setFrom": "{default}",
-                                                        "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f4b6b50>",
+                                                        "class": "<pylith.topology.Subfield.Subfield object at 0x7fcc9592a2d0>",
                                                         "name": "subfield",
                                                         "components": {},
                                                         "properties": {
@@ -2917,7 +2085,7 @@
                                                     "isotropic_permeability": {
                                                         "description": "Isotropic permeability subfield.",
                                                         "setFrom": "{default}",
-                                                        "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f4b6b10>",
+                                                        "class": "<pylith.topology.Subfield.Subfield object at 0x7fcc9592a290>",
                                                         "name": "subfield",
                                                         "components": {},
                                                         "properties": {
@@ -2960,7 +2128,7 @@
                                                     "reference_strain": {
                                                         "description": "Reference strain subfield.",
                                                         "setFrom": "{default}",
-                                                        "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f4b6a10>",
+                                                        "class": "<pylith.topology.Subfield.Subfield object at 0x7fcc9592a190>",
                                                         "name": "subfield",
                                                         "components": {},
                                                         "properties": {
@@ -3003,7 +2171,7 @@
                                                     "bulk_modulus": {
                                                         "description": "Bulk modulus subfield.",
                                                         "setFrom": "{default}",
-                                                        "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f4b6e50>",
+                                                        "class": "<pylith.topology.Subfield.Subfield object at 0x7fcc9592a5d0>",
                                                         "name": "subfield",
                                                         "components": {},
                                                         "properties": {
@@ -3046,7 +2214,7 @@
                                                     "fluid_bulk_modulus": {
                                                         "description": "Fluid bulk modulus subfield.",
                                                         "setFrom": "{default}",
-                                                        "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f4b6f50>",
+                                                        "class": "<pylith.topology.Subfield.Subfield object at 0x7fcc9592a6d0>",
                                                         "name": "subfield",
                                                         "components": {},
                                                         "properties": {
@@ -3089,7 +2257,7 @@
                                                     "biot_coefficient": {
                                                         "description": "Biot coefficient subfield.",
                                                         "setFrom": "{default}",
-                                                        "class": "<pylith.topology.Subfield.Subfield object at 0x7fbb9f4bf090>",
+                                                        "class": "<pylith.topology.Subfield.Subfield object at 0x7fcc9592a7d0>",
                                                         "name": "subfield",
                                                         "components": {},
                                                         "properties": {
@@ -3191,7 +2359,7 @@
                     "defaults": {
                         "description": "Default options for problem.",
                         "setFrom": "{default}",
-                        "class": "<pylith.problems.ProblemDefaults.ProblemDefaults object at 0x7fbb9fb0e850>",
+                        "class": "<pylith.problems.ProblemDefaults.ProblemDefaults object at 0x7fcc95f0dc90>",
                         "name": "problem_defaults",
                         "components": {},
                         "properties": {
@@ -3222,7 +2390,7 @@
                     "ic": {
                         "description": "Initial conditions.",
                         "setFrom": "{default}",
-                        "class": "<pylith.utils.EmptyBin.EmptyBin object at 0x7fbb9fb204d0>",
+                        "class": "<pylith.utils.EmptyBin.EmptyBin object at 0x7fcc95cd16d0>",
                         "name": "emptybin",
                         "components": {},
                         "properties": {},
@@ -3234,7 +2402,7 @@
                     "solution_observers": {
                         "description": "Observers (e.g., output) for solution.",
                         "setFrom": "{built-in} via {file='mandel_test.cfg', line=116, column=-1}",
-                        "class": "<pyre.inventory.FacilityArrayFacility.FacilityArray object at 0x7fbb9fafea50>",
+                        "class": "<pyre.inventory.FacilityArrayFacility.FacilityArray object at 0x7fcc95cc8e50>",
                         "name": "solution_observers",
                         "components": {
                             "domain": {
@@ -3246,7 +2414,7 @@
                                     "writer": {
                                         "description": "Writer for data.",
                                         "setFrom": "{default}",
-                                        "class": "<pylith.meshio.DataWriterHDF5.DataWriterHDF5; proxy of <Swig Object of type 'pylith::meshio::DataWriterHDF5 *' at 0x7fbb9f641f60> >",
+                                        "class": "<pylith.meshio.DataWriterHDF5.DataWriterHDF5; proxy of <Swig Object of type 'pylith::meshio::DataWriterHDF5 *' at 0x7fcc95a5a870> >",
                                         "name": "datawriterhdf5",
                                         "components": {},
                                         "properties": {
@@ -3396,7 +2564,7 @@
                 ]
             }
         },
-        "class": "<pylith.apps.PyLithApp.PyLithApp object at 0x7fbbb28a7d50>"
+        "class": "<pylith.apps.PyLithApp.PyLithApp object at 0x7fcca8ca8d50>"
     },
     "platform": {
         "kernel": "4.15.0-76-lowlatency",
@@ -3471,5 +2639,5 @@
             "standard": "3.1"
         }
     },
-    "timestamp": "2020-02-19T17:51:16.351987"
+    "timestamp": "2020-02-20T09:43:56.508490"
 }
