@@ -25,7 +25,7 @@ from pylith.tests.FullTestApp import check_data
 from pylith.tests.FullTestApp import TestCase as FullTestCase
 
 import meshes
-from gravity_soln import AnalyticalSoln
+from terzaghi_soln import AnalyticalSoln
 
 
 # ----------------------------------------------------------------------------------------------------------------------
