@@ -34,7 +34,7 @@ class TestCase(FullTestCase):
     Test suite for testing PyLith with Terzaghi's problem.
     """
     DIRICHLET_BOUNDARIES = ["x_neg", "x_pos", "y_pos_dir", "y_neg"]
-    NEUMANN_BOUNDARIES = ["y_pos_dir"]
+    NEUMANN_BOUNDARIES = ["y_pos_neu"]
 
     def setUp(self):
         """
@@ -55,10 +55,10 @@ class TestCase(FullTestCase):
         return
 
     def test_material_info(self):
-        vertexFields = ["porosity", "density", "fluid_density", "fluid_viscosity", "shear_modulus",  "bulk_modulus", "biot_coefficient", "isotropic_permeability", "fluid_bulk_modulus"]
+        cellFields = ["porosity", "density", "fluid_density", "fluid_viscosity", "shear_modulus",  "bulk_modulus", "biot_coefficient", "isotropic_permeability", "fluid_bulk_modulus"]
         for material in self.MATERIALS.keys():
             filename = "output/{}-{}_info.h5".format(self.NAME, material)
-            check_data(filename, self, self.MATERIALS[material], vertexFields=vertexFields)
+            check_data(filename, self, self.MATERIALS[material], cellFields=cellFields)
         return
 
     def test_material_solution(self):

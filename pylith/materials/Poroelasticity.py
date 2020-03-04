@@ -74,14 +74,14 @@ class Poroelasticity(Material, ModulePoroelasticity):
         Material.__init__(self, name)
         return
 
-    def preinitialize(self, mesh):
+    def preinitialize(self, problem):
         """
         Setup material.
         """
-        self.rheology.preinitialize(mesh)
-        Material.preinitialize(self, mesh)
+        self.rheology.preinitialize(problem)
+        Material.preinitialize(self, problem)
 
-        self.rheology.addAuxiliarySubfields(self)
+        self.rheology.addAuxiliarySubfields(self, problem)
 
         ModulePoroelasticity.useInertia(self, self.useInertia)
         ModulePoroelasticity.useBodyForce(self, self.useBodyForce)

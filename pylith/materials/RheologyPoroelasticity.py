@@ -54,14 +54,14 @@ class RheologyPoroelasticity(PetscComponent, ModuleRheology):
         if 0 == comm.rank:
             self._info.log("Performing minimal initialization of poroelasticity rheology '%s'." %
                            self.aliases[-1])
-
         self._createModuleObj()
         return
 
-    def addAuxiliarySubfields(self, material):
+    def addAuxiliarySubfields(self, material, problem):
         for subfield in self.auxiliarySubfields.components():
             fieldName = subfield.aliases[-1]
-            material.setAuxiliarySubfieldDiscretization(fieldName, subfield.basisOrder, subfield.quadOrder,
+            quadOrder = problem.defaults.quadOrder if subfield.quadOrder < 0 else subfield.quadOrder
+            material.setAuxiliarySubfieldDiscretization(fieldName, subfield.basisOrder, quadOrder,
                                                         subfield.dimension, subfield.isBasisContinuous, subfield.feSpace)
         return
 

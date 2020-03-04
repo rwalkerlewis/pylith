@@ -7,29 +7,49 @@
 # Create surface using vertices
 # ----------------------------------------------------------------------
 
-# Block is 8000m x 8000m
-# -4000 m <= x <= 4000 m 
-# -4000 m <= y <= 4000 m
+# Block is 2m x 2m
+# -1 m <= x <= 1 m 
+# -1 m <= y <= 1 m
 reset
-create vertex -4000.0 -4000.0 0.0
-create vertex -4000.0 +4000.0 0.0
-create vertex +4000.0 +4000.0 0.0
-create vertex +4000.0 -4000.0 0.0
+create vertex -1.0 -1.0 0.0
+create vertex -1.0 +1.0 0.0
+create vertex +1.0 +1.0 0.0
+create vertex +1.0 -1.0 0.0
 create surface vertex 1 2 3 4
 delete vertex all
 
+
+## Block is 8000m x 8000m
+## -4000 m <= x <= 4000 m 
+## -4000 m <= y <= 4000 m
+#reset
+#create vertex -4000.0 -4000.0 0.0
+#create vertex -4000.0 +4000.0 0.0
+#create vertex +4000.0 +4000.0 0.0
+#create vertex +4000.0 -4000.0 0.0
+#create surface vertex 1 2 3 4
+#delete vertex all
 # ----------------------------------------------------------------------
 # Create interface surfaces
 # ----------------------------------------------------------------------
 
 # Fault at x=0
-create vertex 0.0 -4000.0 0.0
-create vertex 0.0 +4000.0 0.0
+create vertex 0.0 -1.0 0.0
+create vertex 0.0 +1.0 0.0
+#
+## Fault at x=0
+#create vertex 0.0 -4000.0 0.0
+#create vertex 0.0 +4000.0 0.0
 split surface 1 across location vertex 5 location vertex 6
 
-# Fault at x=-2000.0
-create vertex -2000.0 +4000.0 0.0
-create vertex -2000.0 -4000.0 0.0
+# Fault at x=-0.5
+create vertex -0.5 +1.0 0.0
+create vertex -0.5 -1.0 0.0
+#
+## Fault at x=-2000.0
+#create vertex -2000.0 +4000.0 0.0
+#create vertex -2000.0 -4000.0 0.0
+
 split surface 2 across location vertex 9 location vertex 10
 split surface 3 across location vertex 9 location vertex 10
 
@@ -38,7 +58,8 @@ delete vertex all
 # ----------------------------------------------------------------------
 # Set discretization size
 # ----------------------------------------------------------------------
-surface all size 1000
+surface all size 0.25
+#surface all size 1000
 
 # ----------------------------------------------------------------------
 # Generate the mesh
@@ -118,4 +139,7 @@ nodeset 24 name "edge_yneg_nofault"
 # Export exodus file
 # ----------------------------------------------------------------------
 export mesh "mesh_tri.exo" dimension 2 overwrite
+
+
+
 

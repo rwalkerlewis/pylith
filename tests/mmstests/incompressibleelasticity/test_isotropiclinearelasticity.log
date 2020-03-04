@@ -1,0 +1,161 @@
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformPressure_QuadQ3::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformPressure_QuadQ3::testResidual : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformPressure_QuadQ3::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformPressure_QuadQ3::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    Run with -snes_test_jacobian_view and optionally -snes_test_jacobian <threshold> to show difference
+      of hand-coded and finite difference Jacobian entries greater than <threshold>.
+    Testing hand-coded Jacobian, if (for double precision runs) ||J - Jfd||_F/||J||_F is
+      O(1.e-8), the hand-coded Jacobian is probably correct.
+    ||J - Jfd||_F/||J||_F = 3.878e-08, ||J - Jfd||_F = 4.71397e-06
+    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 1.3937e-08, ||J - Jfd||_F = 1.69413e-06
+ : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformPressure_QuadQ2::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformPressure_QuadQ2::testResidual : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformPressure_QuadQ2::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformPressure_QuadQ2::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 5.09911e-08, ||J - Jfd||_F = 2.30112e-06
+    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 2.86813e-08, ||J - Jfd||_F = 1.29432e-06
+ : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformPressure_QuadQ1::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformPressure_QuadQ1::testResidual : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformPressure_QuadQ1::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformPressure_QuadQ1::testJacobianFiniteDiff : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformPressure_TriP3::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformPressure_TriP3::testResidual : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformPressure_TriP3::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformPressure_TriP3::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 4.5108e-08, ||J - Jfd||_F = 4.34666e-06
+    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 1.78413e-08, ||J - Jfd||_F = 1.71921e-06
+ : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformPressure_TriP2::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformPressure_TriP2::testResidual : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformPressure_TriP2::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformPressure_TriP2::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 5.18642e-08, ||J - Jfd||_F = 2.21143e-06
+ : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformPressure_TriP1::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformPressure_TriP1::testResidual : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformPressure_TriP1::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformPressure_TriP1::testJacobianFiniteDiff : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformShear_QuadQ3::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformShear_QuadQ3::testResidual : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformShear_QuadQ3::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformShear_QuadQ3::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 1.59408e-08, ||J - Jfd||_F = 1.93771e-06
+    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 2.4857e-09, ||J - Jfd||_F = 3.02153e-07
+ : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformShear_QuadQ2::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformShear_QuadQ2::testResidual : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformShear_QuadQ2::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformShear_QuadQ2::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 1.16488e-08, ||J - Jfd||_F = 5.25685e-07
+    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 2.98253e-09, ||J - Jfd||_F = 1.34595e-07
+ : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformShear_QuadQ1::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformShear_QuadQ1::testResidual : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformShear_QuadQ1::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformShear_QuadQ1::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 9.16506e-09, ||J - Jfd||_F = 1.477e-07
+ : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformShear_TriP3::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformShear_TriP3::testResidual : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformShear_TriP3::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformShear_TriP3::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 1.591e-08, ||J - Jfd||_F = 1.5331e-06
+    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 2.86705e-09, ||J - Jfd||_F = 2.76273e-07
+ : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformShear_TriP2::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformShear_TriP2::testResidual : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformShear_TriP2::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformShear_TriP2::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 1.38874e-08, ||J - Jfd||_F = 5.92143e-07
+ : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformShear_TriP1::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformShear_TriP1::testResidual : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformShear_TriP1::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_UniformShear_TriP1::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 9.0573e-09, ||J - Jfd||_F = 1.67118e-07
+ : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_Gravity_QuadQ3::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_Gravity_QuadQ3::testResidual : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_Gravity_QuadQ3::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_Gravity_QuadQ3::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 1.79688e-11, ||J - Jfd||_F = 2.18422e-09
+    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 4.68692e-11, ||J - Jfd||_F = 5.69727e-09
+ : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_Gravity_QuadQ2::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_Gravity_QuadQ2::testResidual : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_Gravity_QuadQ2::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_Gravity_QuadQ2::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 2.63651e-11, ||J - Jfd||_F = 1.1898e-09
+    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 6.28899e-11, ||J - Jfd||_F = 2.83808e-09
+ : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_Gravity_TriP3::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_Gravity_TriP3::testResidual : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_Gravity_TriP3::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_Gravity_TriP3::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 2.1099e-11, ||J - Jfd||_F = 2.03313e-09
+    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 6.07398e-11, ||J - Jfd||_F = 5.85295e-09
+ : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_Gravity_TriP2::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_Gravity_TriP2::testResidual : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_Gravity_TriP2::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_Gravity_TriP2::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 2.83388e-11, ||J - Jfd||_F = 1.20833e-09
+ : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_Gravity_TriP1::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_Gravity_TriP1::testResidual : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_Gravity_TriP1::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_Gravity_TriP1::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 2.23609e-11, ||J - Jfd||_F = 3.17633e-10
+ : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_BodyForce_QuadQ3::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_BodyForce_QuadQ3::testResidual : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_BodyForce_QuadQ3::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_BodyForce_QuadQ3::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 2.05307e-11, ||J - Jfd||_F = 2.49564e-09
+    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 3.85092e-11, ||J - Jfd||_F = 4.68106e-09
+ : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_BodyForce_QuadQ2::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_BodyForce_QuadQ2::testResidual : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_BodyForce_QuadQ2::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_BodyForce_QuadQ2::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 2.058e-11, ||J - Jfd||_F = 9.2873e-10
+    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 4.24129e-11, ||J - Jfd||_F = 1.914e-09
+ : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_BodyForce_TriP3::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_BodyForce_TriP3::testResidual : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_BodyForce_TriP3::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_BodyForce_TriP3::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 2.08284e-11, ||J - Jfd||_F = 2.00705e-09
+    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 4.35863e-11, ||J - Jfd||_F = 4.20002e-09
+ : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_BodyForce_TriP2::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_BodyForce_TriP2::testResidual : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_BodyForce_TriP2::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_BodyForce_TriP2::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 2.49141e-11, ||J - Jfd||_F = 1.06231e-09
+ : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_BodyForce_TriP1::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_BodyForce_TriP1::testResidual : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_BodyForce_TriP1::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearIncompElasticity2D_BodyForce_TriP1::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 2.87896e-11, ||J - Jfd||_F = 4.08952e-10
+ : OK
+
+OK (88 tests)
+
+
+PASS test_isotropiclinearelasticity (exit status: 0)
