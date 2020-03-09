@@ -1,0 +1,127 @@
+pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_QuadQ3::testDiscretization : error
+pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_QuadQ3::testResidual : error
+pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_QuadQ3::testJacobianTaylorSeries : error
+pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_QuadQ3::testJacobianFiniteDiff : error
+pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_QuadQ2::testDiscretization : error
+pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_QuadQ2::testResidual : error
+pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_QuadQ2::testJacobianTaylorSeries : error
+pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_QuadQ2::testJacobianFiniteDiff : error
+pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP3::testDiscretization : error
+pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP3::testResidual : error
+pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP3::testJacobianTaylorSeries : error
+pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP3::testJacobianFiniteDiff : error
+pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP2::testDiscretization : error
+pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP2::testResidual : error
+pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP2::testJacobianTaylorSeries : error
+pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP2::testJacobianFiniteDiff : error
+pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP1::testDiscretization : error
+pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP1::testResidual : error
+pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP1::testJacobianTaylorSeries : error
+pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP1::testJacobianFiniteDiff : error
+
+!!!FAILURES!!!
+Test Results:
+Run:  20   Failures: 0   Errors: 20
+
+
+1) test: pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_QuadQ3::testDiscretization (E) 
+uncaught exception of type std::exception (or derived).
+- basic_string::_M_construct null not valid
+
+
+2) test: pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_QuadQ3::testResidual (E) 
+uncaught exception of type std::exception (or derived).
+- basic_string::_M_construct null not valid
+
+
+3) test: pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_QuadQ3::testJacobianTaylorSeries (E) 
+uncaught exception of type std::exception (or derived).
+- basic_string::_M_construct null not valid
+
+
+4) test: pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_QuadQ3::testJacobianFiniteDiff (E) 
+uncaught exception of type std::exception (or derived).
+- basic_string::_M_construct null not valid
+
+
+5) test: pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_QuadQ2::testDiscretization (E) 
+uncaught exception of type std::exception (or derived).
+- basic_string::_M_construct null not valid
+
+
+6) test: pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_QuadQ2::testResidual (E) 
+uncaught exception of type std::exception (or derived).
+- basic_string::_M_construct null not valid
+
+
+7) test: pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_QuadQ2::testJacobianTaylorSeries (E) 
+uncaught exception of type std::exception (or derived).
+- basic_string::_M_construct null not valid
+
+
+8) test: pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_QuadQ2::testJacobianFiniteDiff (E) 
+uncaught exception of type std::exception (or derived).
+- basic_string::_M_construct null not valid
+
+
+9) test: pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP3::testDiscretization (E) 
+uncaught exception of type std::exception (or derived).
+- basic_string::_M_construct null not valid
+
+
+10) test: pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP3::testResidual (E) 
+uncaught exception of type std::exception (or derived).
+- basic_string::_M_construct null not valid
+
+
+11) test: pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP3::testJacobianTaylorSeries (E) 
+uncaught exception of type std::exception (or derived).
+- basic_string::_M_construct null not valid
+
+
+12) test: pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP3::testJacobianFiniteDiff (E) 
+uncaught exception of type std::exception (or derived).
+- basic_string::_M_construct null not valid
+
+
+13) test: pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP2::testDiscretization (E) 
+uncaught exception of type std::exception (or derived).
+- basic_string::_M_construct null not valid
+
+
+14) test: pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP2::testResidual (E) 
+uncaught exception of type std::exception (or derived).
+- basic_string::_M_construct null not valid
+
+
+15) test: pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP2::testJacobianTaylorSeries (E) 
+uncaught exception of type std::exception (or derived).
+- basic_string::_M_construct null not valid
+
+
+16) test: pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP2::testJacobianFiniteDiff (E) 
+uncaught exception of type std::exception (or derived).
+- basic_string::_M_construct null not valid
+
+
+17) test: pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP1::testDiscretization (E) 
+uncaught exception of type std::exception (or derived).
+- basic_string::_M_construct null not valid
+
+
+18) test: pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP1::testResidual (E) 
+uncaught exception of type std::exception (or derived).
+- basic_string::_M_construct null not valid
+
+
+19) test: pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP1::testJacobianTaylorSeries (E) 
+uncaught exception of type std::exception (or derived).
+- basic_string::_M_construct null not valid
+
+
+20) test: pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP1::testJacobianFiniteDiff (E) 
+uncaught exception of type std::exception (or derived).
+- basic_string::_M_construct null not valid
+
+
+FAIL test_isotropiclinearporoelasticity (exit status: 1)

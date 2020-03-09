@@ -17,28 +17,28 @@
 //
 
 /**
- * @file tests/mmstests/elasticity/TestIsotropicLinearIncompElasticity.hh
+ * @file tests/mmstests/elasticity/TestIsotropicLinearPoroelasticity.hh
  *
- * @brief C++ TestIsotropicLinearIncompElasticity object
+ * @brief C++ TestIsotropicLinearPoroelasticity object
  *
- * C++ unit testing for IsotropicLinearIncompElasticity.
+ * C++ unit testing for IsotropicLinearPoroelasticity.
  */
 
-#if !defined(pylith_mmstests_testisotropiclinearincompelasticity_hh)
-#define pylith_mmstests_testisotropiclinearincompelasticity_hh
+#if !defined(pylith_mmstests_testisotropiclinearporoelasticity_hh)
+#define pylith_mmstests_testisotropiclinearporoelasticity_hh
 
-#include "TestIncompressibleElasticity.hh" // ISA TestIncompressibleElasticity
+#include "TestPoroelasticity.hh" // ISA TestIncompressibleElasticity
 
-#include "pylith/materials/IsotropicLinearIncompElasticity.hh" // HOLDSA IsotropicLinearIncompElasticity
+#include "pylith/materials/IsotropicLinearPoroelasticity.hh" // HOLDSA IsotropicLinearIncompElasticity
 
 namespace pylith {
     namespace mmstests {
-        class TestIsotropicLinearIncompElasticity;
+        class TestIsotropicLinearPoroelasticity;
     } // tests/mmstests
 } // pylith
 
-/// C++ unit testing for IsotropicLinearIncompElasticity
-class pylith::mmstests::TestIsotropicLinearIncompElasticity : public pylith::mmstests::TestIncompressibleElasticity {
+/// C++ unit testing for IsotropicLinearPoroelasticity
+class pylith::mmstests::TestIsotropicLinearPoroelasticity : public pylith::mmstests::TestPoroelasticity {
     // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
 
@@ -51,10 +51,10 @@ public:
     // PROTECTED MEMBERS ///////////////////////////////////////////////////////////////////////////////////////////////
 protected:
 
-    pylith::materials::IsotropicLinearIncompElasticity* _rheology; ///< Rheology for testing.
+    pylith::materials::IsotropicLinearPoroelasticity* _rheology; ///< Rheology for testing.
 
-}; // class TestIsotropicLinearIncompElasticity
+}; // class TestIsotropicLinearPoroelasticity
 
-#endif // pylith_mmstests_testisotropiclinearincompelasticity_hh
+#endif // pylith_mmstests_testisotropiclinearporoelasticity_hh
 
 // End of file

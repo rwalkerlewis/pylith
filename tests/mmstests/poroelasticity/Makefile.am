@@ -16,22 +16,19 @@
 # ----------------------------------------------------------------------
 #
 
-subpackage = incompressibleelasticity
+subpackage = poroelasticity
 include $(top_srcdir)/subpackage.am
 include $(top_srcdir)/check.am
 
-TESTS = test_isotropiclinearelasticity
+TESTS = test_isotropiclinearporoelasticity
 
 check_PROGRAMS = $(TESTS)
 
 
-test_isotropiclinearelasticity_SOURCES = \
-	TestIncompressibleElasticity.cc \
-	TestIsotropicLinearIncompElasticity.cc \
-	TestIsotropicLinearIncompElasticity2D_UniformPressure.cc \
-	TestIsotropicLinearIncompElasticity2D_UniformShear.cc \
-	TestIsotropicLinearIncompElasticity2D_Gravity.cc \
-	TestIsotropicLinearIncompElasticity2D_BodyForce.cc \
+test_isotropiclinearporoelasticity_SOURCES = \
+	TestPoroelasticity.cc \
+	TestIsotropicLinearPoroelasticity.cc \
+	TestIsotropicLinearPoroelasticity2D_Terzaghi.cc \
 	test_driver.cc
 
 
@@ -66,7 +63,7 @@ dist_noinst_DATA = \
 noinst_TMP =
 
 # 'export' the input files by performing a mock install
-export_datadir = $(abs_top_builddir)/tests/mmstests/incompressibleelasticity/data
+export_datadir = $(abs_top_builddir)/tests/mmstests/poroelasticity/data
 export-data: $(dist_noinst_DATA)
 	if [ "X$(abs_top_srcdir)" != "X$(abs_top_builddir)" ]; then mkdir $(export_datadir);  for f in $(dist_noinst_DATA); do $(install_sh_DATA) $(srcdir)/$$f $(export_datadir); done; fi
 
