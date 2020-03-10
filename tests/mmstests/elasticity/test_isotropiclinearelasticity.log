@@ -1,0 +1,157 @@
+pylith::mmstests::TestIsotropicLinearElasticity2D_UniformStrain_QuadQ3::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_UniformStrain_QuadQ3::testResidual : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_UniformStrain_QuadQ3::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_UniformStrain_QuadQ3::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    Run with -snes_test_jacobian_view and optionally -snes_test_jacobian <threshold> to show difference
+      of hand-coded and finite difference Jacobian entries greater than <threshold>.
+    Testing hand-coded Jacobian, if (for double precision runs) ||J - Jfd||_F/||J||_F is
+      O(1.e-8), the hand-coded Jacobian is probably correct.
+    ||J - Jfd||_F/||J||_F = 1.91142e-08, ||J - Jfd||_F = 4.18813e-06
+    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 1.9268e-09, ||J - Jfd||_F = 4.22182e-07
+ : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_UniformStrain_QuadQ2::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_UniformStrain_QuadQ2::testResidual : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_UniformStrain_QuadQ2::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_UniformStrain_QuadQ2::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 1.2589e-08, ||J - Jfd||_F = 1.01894e-06
+    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 2.34833e-09, ||J - Jfd||_F = 1.90072e-07
+ : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_UniformStrain_QuadQ1::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_UniformStrain_QuadQ1::testResidual : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_UniformStrain_QuadQ1::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_UniformStrain_QuadQ1::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 2.0893e-08, ||J - Jfd||_F = 3.67596e-07
+ : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_UniformStrain_TriP3::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_UniformStrain_TriP3::testResidual : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_UniformStrain_TriP3::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_UniformStrain_TriP3::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 1.98056e-08, ||J - Jfd||_F = 3.45601e-06
+    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 2.26537e-09, ||J - Jfd||_F = 3.95298e-07
+ : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_UniformStrain_TriP2::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_UniformStrain_TriP2::testResidual : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_UniformStrain_TriP2::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_UniformStrain_TriP2::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 1.51967e-08, ||J - Jfd||_F = 1.15562e-06
+    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 2.54018e-09, ||J - Jfd||_F = 1.93165e-07
+ : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_UniformStrain_TriP1::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_UniformStrain_TriP1::testResidual : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_UniformStrain_TriP1::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_UniformStrain_TriP1::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 2.09594e-09, ||J - Jfd||_F = 4.94216e-08
+    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 6.58907e-09, ||J - Jfd||_F = 1.55368e-07
+ : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_Gravity_QuadQ3::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_Gravity_QuadQ3::testResidual : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_Gravity_QuadQ3::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_Gravity_QuadQ3::testJacobianFiniteDiff >> testing/MMSTest.cc:173:void pylith::testing::MMSTest::testJacobianFiniteDiff()
+ >> TestIsotropicLinearElasticity2D_Gravity(error)
+ -- Skipping Jacobian finite-difference check. Test disabled.
+ : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_Gravity_QuadQ2::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_Gravity_QuadQ2::testResidual : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_Gravity_QuadQ2::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_Gravity_QuadQ2::testJacobianFiniteDiff >> testing/MMSTest.cc:173:void pylith::testing::MMSTest::testJacobianFiniteDiff()
+ >> TestIsotropicLinearElasticity2D_Gravity(error)
+ -- Skipping Jacobian finite-difference check. Test disabled.
+ : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_Gravity_TriP3::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_Gravity_TriP3::testResidual : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_Gravity_TriP3::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_Gravity_TriP3::testJacobianFiniteDiff >> testing/MMSTest.cc:173:void pylith::testing::MMSTest::testJacobianFiniteDiff()
+ >> TestIsotropicLinearElasticity2D_Gravity(error)
+ -- Skipping Jacobian finite-difference check. Test disabled.
+ : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_Gravity_TriP2::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_Gravity_TriP2::testResidual : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_Gravity_TriP2::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_Gravity_TriP2::testJacobianFiniteDiff >> testing/MMSTest.cc:173:void pylith::testing::MMSTest::testJacobianFiniteDiff()
+ >> TestIsotropicLinearElasticity2D_Gravity(error)
+ -- Skipping Jacobian finite-difference check. Test disabled.
+ : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_GravityRefState_QuadQ3::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_GravityRefState_QuadQ3::testResidual : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_GravityRefState_QuadQ3::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_GravityRefState_QuadQ3::testJacobianFiniteDiff >> testing/MMSTest.cc:173:void pylith::testing::MMSTest::testJacobianFiniteDiff()
+ >> TestIsotropicLinearElasticity2D_GravityRefState(error)
+ -- Skipping Jacobian finite-difference check. Test disabled.
+ : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_GravityRefState_QuadQ2::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_GravityRefState_QuadQ2::testResidual : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_GravityRefState_QuadQ2::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_GravityRefState_QuadQ2::testJacobianFiniteDiff >> testing/MMSTest.cc:173:void pylith::testing::MMSTest::testJacobianFiniteDiff()
+ >> TestIsotropicLinearElasticity2D_GravityRefState(error)
+ -- Skipping Jacobian finite-difference check. Test disabled.
+ : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_GravityRefState_QuadQ1::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_GravityRefState_QuadQ1::testResidual : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_GravityRefState_QuadQ1::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_GravityRefState_QuadQ1::testJacobianFiniteDiff >> testing/MMSTest.cc:173:void pylith::testing::MMSTest::testJacobianFiniteDiff()
+ >> TestIsotropicLinearElasticity2D_GravityRefState(error)
+ -- Skipping Jacobian finite-difference check. Test disabled.
+ : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_GravityRefState_TriP3::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_GravityRefState_TriP3::testResidual : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_GravityRefState_TriP3::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_GravityRefState_TriP3::testJacobianFiniteDiff >> testing/MMSTest.cc:173:void pylith::testing::MMSTest::testJacobianFiniteDiff()
+ >> TestIsotropicLinearElasticity2D_GravityRefState(error)
+ -- Skipping Jacobian finite-difference check. Test disabled.
+ : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_GravityRefState_TriP2::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_GravityRefState_TriP2::testResidual : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_GravityRefState_TriP2::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_GravityRefState_TriP2::testJacobianFiniteDiff >> testing/MMSTest.cc:173:void pylith::testing::MMSTest::testJacobianFiniteDiff()
+ >> TestIsotropicLinearElasticity2D_GravityRefState(error)
+ -- Skipping Jacobian finite-difference check. Test disabled.
+ : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_GravityRefState_TriP1::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_GravityRefState_TriP1::testResidual : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_GravityRefState_TriP1::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_GravityRefState_TriP1::testJacobianFiniteDiff >> testing/MMSTest.cc:173:void pylith::testing::MMSTest::testJacobianFiniteDiff()
+ >> TestIsotropicLinearElasticity2D_GravityRefState(error)
+ -- Skipping Jacobian finite-difference check. Test disabled.
+ : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_QuadQ3::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_QuadQ3::testResidual : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_QuadQ3::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_QuadQ3::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 2.03758e-11, ||J - Jfd||_F = 4.46455e-09
+    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 7.43293e-12, ||J - Jfd||_F = 1.62863e-09
+ : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_QuadQ2::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_QuadQ2::testResidual : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_QuadQ2::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_QuadQ2::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 1.57132e-11, ||J - Jfd||_F = 1.27181e-09
+    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 6.14023e-12, ||J - Jfd||_F = 4.96985e-10
+ : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_TriP3::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_TriP3::testResidual : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_TriP3::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_TriP3::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 1.96189e-11, ||J - Jfd||_F = 3.42342e-09
+    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 6.83808e-12, ||J - Jfd||_F = 1.19322e-09
+ : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_TriP2::testDiscretization : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_TriP2::testResidual : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_TriP2::testJacobianTaylorSeries : OK
+pylith::mmstests::TestIsotropicLinearElasticity2D_BodyForce_TriP2::testJacobianFiniteDiff    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 1.83766e-11, ||J - Jfd||_F = 1.39743e-09
+    ---------- Testing Jacobian -------------
+    ||J - Jfd||_F/||J||_F = 7.22901e-12, ||J - Jfd||_F = 5.49722e-10
+ : OK
+
+OK (80 tests)
+
+
+PASS test_isotropiclinearelasticity (exit status: 0)

@@ -440,8 +440,8 @@ protected:
         _material->setDescriptiveLabel("Isotropic Linear Poroelasticity");
         _material->setMaterialId(24);
 
-        static const PylithInt constrainedDispDOF[2] = {0, 1};
-        static const PylithInt numConstrainedDisp = 2;
+        static const PylithInt constrainedDispDOF[1] = {1};
+        static const PylithInt numConstrainedDisp = 1;
         _bcDisplacement->setConstrainedDOF(constrainedDispDOF, numConstrainedDisp);
         _bcDisplacement->setMarkerLabel("boundary");
         _bcDisplacement->setSubfieldName("displacement");
