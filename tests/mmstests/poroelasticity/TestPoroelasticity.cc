@@ -35,6 +35,7 @@
 #include "pylith/problems/SolutionFactory.hh" // USES SolutionFactory
 #include "pylith/meshio/MeshIOAscii.hh" // USES MeshIOAscii
 #include "pylith/bc/DirichletUserFn.hh" // USES DirichletUserFn
+#include "pylith/bc/NeumannTimeDependent.hh" // USES NeumannTimeDependent
 #include "pylith/utils/error.hh" // USES PYLITH_METHOD_BEGIN/END
 
 #include "spatialdata/spatialdb/UserFunctionDB.hh" // USES UserFunctionDB
@@ -51,8 +52,11 @@ pylith::mmstests::TestPoroelasticity::setUp(void) {
     MMSTest::setUp();
 
     _material = new pylith::materials::Poroelasticity;CPPUNIT_ASSERT(_material);
-    _bcDisplacement = new pylith::bc::DirichletUserFn;CPPUNIT_ASSERT(_bcDisplacement);
-    _bcPressure = new pylith::bc::DirichletUserFn;CPPUNIT_ASSERT(_bcPressure);
+    _bcDisplacement_xneg = new pylith::bc::DirichletUserFn;CPPUNIT_ASSERT(_bcDisplacement_xneg);
+    _bcDisplacement_xpos = new pylith::bc::DirichletUserFn;CPPUNIT_ASSERT(_bcDisplacement_xpos);
+    _bcDisplacement_yneg = new pylith::bc::DirichletUserFn;CPPUNIT_ASSERT(_bcDisplacement_yneg);
+    _bcPressure_ypos = new pylith::bc::DirichletUserFn;CPPUNIT_ASSERT(_bcPressure_ypos);
+    _bcTraction_ypos = new pylith::bc::NeumannTimeDependent;CPPUNIT_ASSERT(_bcTraction_ypos);
     _data = NULL;
 } // setUp
 
@@ -62,8 +66,11 @@ pylith::mmstests::TestPoroelasticity::setUp(void) {
 void
 pylith::mmstests::TestPoroelasticity::tearDown(void) {
     delete _material;_material = NULL;
-    delete _bcDisplacement;_bcDisplacement = NULL;
-    delete _bcPressure;_bcPressure = NULL;
+    delete _bcDisplacement_xneg;_bcDisplacement_xneg = NULL;
+    delete _bcDisplacement_xpos;_bcDisplacement_xpos = NULL;
+    delete _bcDisplacement_yneg;_bcDisplacement_yneg = NULL;
+    delete _bcPressure_ypos;_bcPressure_ypos = NULL;
+    delete _bcTraction_ypos;_bcTraction_ypos = NULL;
     delete _data;_data = NULL;
 
     MMSTest::tearDown();
@@ -100,6 +107,16 @@ pylith::mmstests::TestPoroelasticity::_initialize(void) {
                                                       _data->spaceDim, info.isBasisContinuous, info.feSpace);
     } // for
 
+    // Set up traction
+    CPPUNIT_ASSERT(_bcTraction_ypos);
+    _bcTraction_ypos->setAuxiliaryFieldDB(_data->tractionDB);
+
+    for (int i = 0; i < _data->numTractionSubfields; ++i) {
+        const pylith::topology::FieldBase::Discretization& info = _data->tractionDiscretizations[i];
+        _bcTraction_ypos->setAuxiliarySubfieldDiscretization(_data->tractionSubfields[i], info.basisOrder, info.quadOrder,
+                                                             _data->spaceDim, info.isBasisContinuous, info.feSpace);
+    } // for
+
     // Set up problem.
     CPPUNIT_ASSERT(_problem);
     CPPUNIT_ASSERT(_data->normalizer);
@@ -107,8 +124,10 @@ pylith::mmstests::TestPoroelasticity::_initialize(void) {
     _problem->setGravityField(_data->gravityField);
     pylith::materials::Material* materials[1] = { _material };
     _problem->setMaterials(materials, 1);
-    pylith::bc::BoundaryCondition* bcs[2] = { _bcDisplacement, _bcPressure };
-    _problem->setBoundaryConditions(bcs, 2);
+
+    // Boundary conditions set for Terzaghi Problem
+    pylith::bc::BoundaryCondition* bcs[5] = { _bcDisplacement_xpos, _bcDisplacement_xneg, _bcDisplacement_yneg, _bcPressure_ypos, _bcTraction_ypos };
+    _problem->setBoundaryConditions(bcs, 5);
     _problem->setStartTime(_data->startTime);
     _problem->setEndTime(_data->endTime);
     _problem->setInitialTimeStep(_data->timeStep);
@@ -128,7 +147,7 @@ pylith::mmstests::TestPoroelasticity::_initialize(void) {
     if (_data->isExplicit) {
         factory.addVelocity(_data->solnDiscretizations[iField++]);
     } else {
-        factory.addTraceStrain(_data->solnDiscretizations[iField++]);  
+        factory.addTraceStrain(_data->solnDiscretizations[iField++]);
     } // if else
 
     _problem->setSolution(_solution);
@@ -161,11 +180,17 @@ pylith::mmstests::TestPoroelasticity_Data::TestPoroelasticity_Data(void) :
     auxDiscretizations(NULL),
     auxDB(new spatialdata::spatialdb::UserFunctionDB),
 
+    numTractionSubfields(0),
+    tractionSubfields(NULL),
+    tractionDiscretizations(NULL),
+    tractionDB(new spatialdata::spatialdb::UserFunctionDB),
+
     isExplicit(false) {
     CPPUNIT_ASSERT(normalizer);
 
     CPPUNIT_ASSERT(auxDB);
     auxDB->label("auxiliary field spatial database");
+    tractionDB->label("traction boundary field spatial database");
 } // constructor
 
 
@@ -176,6 +201,7 @@ pylith::mmstests::TestPoroelasticity_Data::~TestPoroelasticity_Data(void) {
     delete gravityField;gravityField = NULL;
     delete normalizer;normalizer = NULL;
     delete auxDB;auxDB = NULL;
+    delete tractionDB;tractionDB = NULL;
 } // destructor
 
 

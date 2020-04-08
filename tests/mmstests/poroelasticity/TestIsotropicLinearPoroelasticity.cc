@@ -20,8 +20,8 @@
 
 #include "TestIsotropicLinearPoroelasticity.hh" // Implementation of class methods
 
-#include "pylith/materials/Poroelasticity.hh" // USES IncompressibleElasticity
-#include "pylith/materials/IsotropicLinearPoroelasticity.hh" // USES IsotropicLinearIncompElasticity
+#include "pylith/materials/Poroelasticity.hh" // USES Poroelasticity
+#include "pylith/materials/IsotropicLinearPoroelasticity.hh" // USES IsotropicLinearPoroelasticity
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Setup testing data.

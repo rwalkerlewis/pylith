@@ -83,7 +83,7 @@ mesh = {
   } 
   group = {
     type = vertices
-    name = xneg
+    name = ypos
     count = 4
     indices = {
       12 13 14 15

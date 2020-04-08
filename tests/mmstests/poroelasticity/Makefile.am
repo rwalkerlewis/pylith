@@ -28,7 +28,7 @@ check_PROGRAMS = $(TESTS)
 test_isotropiclinearporoelasticity_SOURCES = \
 	TestPoroelasticity.cc \
 	TestIsotropicLinearPoroelasticity.cc \
-	TestIsotropicLinearPoroelasticity2D_Terzaghi.cc \
+	TestIsotropicLinearPoroelasticity_Terzaghi.cc \
 	test_driver.cc
 
 

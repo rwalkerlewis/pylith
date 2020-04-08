@@ -82,7 +82,6 @@ pylith::materials::AuxiliaryFactoryPoroelastic::addPorosity(void)
 
     const char* fieldName = "porosity";
 
-    const PylithReal lengthScale = _normalizer->lengthScale();
     const PylithReal noScale = 1;
 
     pylith::topology::Field::Description description;
@@ -195,7 +194,6 @@ pylith::materials::AuxiliaryFactoryPoroelastic::addBiotCoefficient(void)
 
     const char* fieldName = "biot_coefficient";
 
-    const PylithReal lengthScale = _normalizer->lengthScale();
     const PylithReal noScale = 1;
 
     pylith::topology::Field::Description description;

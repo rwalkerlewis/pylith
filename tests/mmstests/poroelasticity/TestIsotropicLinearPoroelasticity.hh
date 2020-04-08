@@ -27,9 +27,9 @@
 #if !defined(pylith_mmstests_testisotropiclinearporoelasticity_hh)
 #define pylith_mmstests_testisotropiclinearporoelasticity_hh
 
-#include "TestPoroelasticity.hh" // ISA TestIncompressibleElasticity
+#include "TestPoroelasticity.hh" // ISA TestPoroelasticity
 
-#include "pylith/materials/IsotropicLinearPoroelasticity.hh" // HOLDSA IsotropicLinearIncompElasticity
+#include "pylith/materials/IsotropicLinearPoroelasticity.hh" // HOLDSA IsotropicLinearPoroelasticity
 
 namespace pylith {
     namespace mmstests {

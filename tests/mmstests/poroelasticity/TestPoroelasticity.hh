@@ -67,8 +67,11 @@ protected:
 protected:
 
     pylith::materials::Poroelasticity* _material; ///< Material for testing.
-    pylith::bc::DirichletUserFn* _bcDisplacement; ///< Dirichlet boundary condition for displacement.
-    pylith::bc::DirichletUserFn* _bcPressure; ///< Dirichlet boundary condition for pressure.
+    pylith::bc::DirichletUserFn* _bcDisplacement_xneg; ///< Dirichlet boundary condition for displacement, xneg.
+    pylith::bc::DirichletUserFn* _bcDisplacement_xpos; ///< Dirichlet boundary condition for displacement, xpos.
+    pylith::bc::DirichletUserFn* _bcDisplacement_yneg; ///< Dirichlet boundary condition for displacement, yneg.
+    pylith::bc::DirichletUserFn* _bcPressure_ypos; ///< Dirichlet boundary condition for pressure.
+    pylith::bc::NeumannTimeDependent* _bcTraction_ypos; ///< Neumann boundary condition for traction.
     TestPoroelasticity_Data* _data; ///< Test parameters.
 
 }; // class TestElasticity
@@ -106,6 +109,11 @@ public:
     const char** auxSubfields; ///< Names of auxiliary subfields.
     pylith::topology::Field::Discretization* auxDiscretizations; ///< Discretizations for auxiliary subfields.
     spatialdata::spatialdb::UserFunctionDB* auxDB; ///< Spatial database with auxiliary field.
+
+    int numTractionSubfields; ///< Number of traction subfields.
+    const char** tractionSubfields; ///< Names of traction subfields.
+    pylith::topology::Field::Discretization* tractionDiscretizations; ///< Discretizations for traction subfields.
+    spatialdata::spatialdb::UserFunctionDB* tractionDB; ///< Spatial database with traction field.
 
     bool isExplicit; ///< True for explicit time stepping.
 }; // TestPoroelasticity_Data

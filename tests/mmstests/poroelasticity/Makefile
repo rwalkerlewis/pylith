@@ -172,7 +172,7 @@ am__EXEEXT_1 = test_isotropiclinearporoelasticity$(EXEEXT)
 am_test_isotropiclinearporoelasticity_OBJECTS =  \
 	TestPoroelasticity.$(OBJEXT) \
 	TestIsotropicLinearPoroelasticity.$(OBJEXT) \
-	TestIsotropicLinearPoroelasticity2D_Terzaghi.$(OBJEXT) \
+	TestIsotropicLinearPoroelasticity_Terzaghi.$(OBJEXT) \
 	test_driver.$(OBJEXT)
 test_isotropiclinearporoelasticity_OBJECTS =  \
 	$(am_test_isotropiclinearporoelasticity_OBJECTS)
@@ -649,7 +649,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/libsrc $(PYTHON_EGG_CPPFLAGS) \
 test_isotropiclinearporoelasticity_SOURCES = \
 	TestPoroelasticity.cc \
 	TestIsotropicLinearPoroelasticity.cc \
-	TestIsotropicLinearPoroelasticity2D_Terzaghi.cc \
+	TestIsotropicLinearPoroelasticity_Terzaghi.cc \
 	test_driver.cc
 
 noinst_HEADERS = 
@@ -724,7 +724,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 include ./$(DEPDIR)/TestIsotropicLinearPoroelasticity.Po
-include ./$(DEPDIR)/TestIsotropicLinearPoroelasticity2D_Terzaghi.Po
+include ./$(DEPDIR)/TestIsotropicLinearPoroelasticity_Terzaghi.Po
 include ./$(DEPDIR)/TestPoroelasticity.Po
 include ./$(DEPDIR)/test_driver.Po
 

@@ -144,7 +144,6 @@ pylith::materials::AuxiliaryFactoryPoroelasticity::addPorosity(void)
 
     const char* fieldName = "porosity";
 
-    const PylithReal lengthScale = _normalizer->lengthScale();
     const PylithReal noScale = 1;
 
     pylith::topology::Field::Description description;

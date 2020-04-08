@@ -240,11 +240,11 @@ pylith::bc::NeumannTimeDependent::createAuxiliaryField(const pylith::topology::F
     } else if (_scaleName == std::string("velocity")) {
         description.scale = _normalizer->lengthScale() / _normalizer->pressureScale();
     } else if (_scaleName == std::string("length")) {
-        description.scale = _normalizer->pressureScale();
+        description.scale = _normalizer->lengthScale();
     } else if (_scaleName == std::string("time")) {
-        description.scale = _normalizer->pressureScale();
-    } else if (_scaleName == std::string("debsuty")) {
-        description.scale = _normalizer->pressureScale();
+        description.scale = _normalizer->timeScale();
+    } else if (_scaleName == std::string("density")) {
+        description.scale = _normalizer->pressureScale() / _normalizer->lengthScale() / _normalizer->lengthScale() * _normalizer->timeScale() * _normalizer->timeScale();
     } else {
         std::ostringstream msg;
         msg << "Unknown name of scale ("<<_scaleName<<") for Neumann boundary condition for '" << _boundaryLabel << "'.";

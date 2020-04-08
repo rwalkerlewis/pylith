@@ -382,6 +382,7 @@ TestPoroelasticity.o: TestPoroelasticity.cc /usr/include/stdc-predef.h \
  ../../../libsrc/pylith/bc/DirichletUserFn.hh \
  ../../../libsrc/pylith/bc/BoundaryCondition.hh \
  ../../../libsrc/pylith/bc/bcfwd.hh \
+ ../../../libsrc/pylith/bc/NeumannTimeDependent.hh \
  /home/dockimble/build/pylith/include/spatialdata/spatialdb/UserFunctionDB.hh \
  /home/dockimble/build/pylith/include/spatialdata/spatialdb/SpatialDB.hh \
  /home/dockimble/build/pylith/include/spatialdata/spatialdb/spatialdbfwd.hh \
@@ -1360,6 +1361,8 @@ TestPoroelasticity.hh:
 ../../../libsrc/pylith/bc/BoundaryCondition.hh:
 
 ../../../libsrc/pylith/bc/bcfwd.hh:
+
+../../../libsrc/pylith/bc/NeumannTimeDependent.hh:
 
 /home/dockimble/build/pylith/include/spatialdata/spatialdb/UserFunctionDB.hh:
 
