@@ -1,0 +1,1341 @@
+pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP2::testResidual >> bc/NeumannTimeDependent.cc:128:void pylith::bc::NeumannTimeDependent::useInitial(bool)
+ >> neumanntimedependent(debug)
+ -- Component 'unknown': useInitial(value=1)
+ >> bc/NeumannTimeDependent.cc:146:void pylith::bc::NeumannTimeDependent::useRate(bool)
+ >> neumanntimedependent(debug)
+ -- Component 'unknown': useRate(value=0)
+ >> bc/NeumannTimeDependent.cc:182:void pylith::bc::NeumannTimeDependent::setScaleName(const char*)
+ >> neumanntimedependent(debug)
+ -- Component 'unknown': setScaleName(valuepressure)
+ >> bc/BoundaryCondition.cc:64:void pylith::bc::BoundaryCondition::setMarkerLabel(const char*)
+ >> neumanntimedependent(debug)
+ -- Component 'unknown': setMarkerLabel(value=ypos)
+ >> bc/BoundaryCondition.cc:86:void pylith::bc::BoundaryCondition::setSubfieldName(const char*)
+ >> neumanntimedependent(debug)
+ -- Component 'unknown': setSubfieldName(value=displacement)
+ >> problems/Physics.cc:92:void pylith::problems::Physics::setAuxiliaryFieldDB(spatialdata::spatialdb::SpatialDB*)
+ >> neumanntimedependent(debug)
+ -- Component 'unknown': setAuxiliaryFieldDB(value=0x5647e67b0560)
+ >> problems/Physics.cc:111:void pylith::problems::Physics::setAuxiliarySubfieldDiscretization(const char*, int, int, int, bool, pylith::topology::FieldBase::SpaceEnum)
+ >> neumanntimedependent(debug)
+ -- Component 'unknown': setAuxiliarySubfieldDiscretization(subfieldName=initial_amplitude, basisOrder=0, quadOrder=2, dimension=1, isBasisContinuous=1)
+ >> problems/Problem.cc:115:void pylith::problems::Problem::setNormalizer(const spatialdata::units::Nondimensional&)
+ >> timedependent(debug)
+ -- Component 'unknown': Problem::setNormalizer(dim=N11spatialdata5units14NondimensionalE)
+ >> problems/Problem.cc:129:void pylith::problems::Problem::setGravityField(spatialdata::spatialdb::GravityField*)
+ >> timedependent(debug)
+ -- Component 'unknown': Problem::setGravityField(g=PN11spatialdata9spatialdb12GravityFieldE)
+ >> problems/Problem.cc:181:void pylith::problems::Problem::setMaterials(pylith::materials::Material**, int)
+ >> timedependent(debug)
+ -- Component 'unknown': Problem::setMaterials(0x7ffe767fcc20, numMaterials=1)
+ >> problems/Problem.cc:200:void pylith::problems::Problem::setBoundaryConditions(pylith::bc::BoundaryCondition**, int)
+ >> timedependent(debug)
+ -- Component 'unknown': Problem::setBoundaryConditions(0x7ffe767fcd70, numBC=5)
+ >> problems/TimeDependent.cc:95:void pylith::problems::TimeDependent::setStartTime(double)
+ >> timedependent(debug)
+ -- Component 'unknown': startTime(value=0)
+ >> problems/TimeDependent.cc:114:void pylith::problems::TimeDependent::setEndTime(double)
+ >> timedependent(debug)
+ -- Component 'unknown': endTime(value=5)
+ >> problems/TimeDependent.cc:166:void pylith::problems::TimeDependent::setInitialTimeStep(double)
+ >> timedependent(debug)
+ -- Component 'unknown': setInitialTimeStep(value=1)
+ >> problems/Problem.cc:169:void pylith::problems::Problem::setSolution(pylith::topology::Field*)
+ >> timedependent(debug)
+ -- Component 'unknown': Problem::setSolution(field=N6pylith8topology5FieldE)
+ >> problems/Problem.cc:97:void pylith::problems::Problem::setSolverType(pylith::problems::Problem::SolverTypeEnum)
+ >> timedependent(debug)
+ -- Component 'unknown': Problem::setSolverType(value=1)
+ >> problems/TimeDependent.cc:140:void pylith::problems::TimeDependent::setMaxTimeSteps(size_t)
+ >> timedependent(debug)
+ -- Component 'unknown': maxTimeSteps(value=1)
+ >> problems/Problem.cc:237:virtual void pylith::problems::Problem::preinitialize(const pylith::topology::Mesh&)
+ >> timedependent(debug)
+ -- Component 'unknown': Problem::preinitialzie(mesh=N6pylith8topology4MeshE)
+ >> problems/Physics.cc:65:void pylith::problems::Physics::setNormalizer(const spatialdata::units::Nondimensional&)
+ >> neumanntimedependent(debug)
+ -- Component 'unknown': setNormalizer(dim=N11spatialdata5units14NondimensionalE)
+ >> problems/TimeDependent.cc:256:virtual void pylith::problems::TimeDependent::verifyConfiguration() const
+ >> timedependent(debug)
+ -- Component 'unknown': Problem::verifyConfiguration(void)
+ >> problems/Problem.cc:269:virtual void pylith::problems::Problem::verifyConfiguration() const
+ >> timedependent(debug)
+ -- Component 'unknown': Problem::verifyConfiguration(void)
+ >> bc/BoundaryCondition.cc:151:virtual void pylith::bc::BoundaryCondition::verifyConfiguration(const pylith::topology::Field&) const
+ >> neumanntimedependent(debug)
+ -- Component 'unknown': verifyConfiguration(solution=solution)
+ >> problems/Problem.cc:606:void pylith::problems::Problem::_checkMaterialIds() const
+ >> timedependent(debug)
+ -- Component 'unknown': Problem::_checkMaterialIds()
+ >> problems/TimeDependent.cc:278:virtual void pylith::problems::TimeDependent::initialize()
+ >> timedependent(debug)
+ -- Component 'unknown': initialize()
+ >> problems/Problem.cc:308:virtual void pylith::problems::Problem::initialize()
+ >> timedependent(debug)
+ -- Component 'unknown': Problem::initialize()
+ >> problems/Problem.cc:633:void pylith::problems::Problem::_createIntegrators()
+ >> timedependent(debug)
+ -- Component 'unknown': Problem::_createIntegrators()
+ >> bc/NeumannTimeDependent.cc:203:virtual pylith::feassemble::Integrator* pylith::bc::NeumannTimeDependent::createIntegrator(const pylith::topology::Field&)
+ >> neumanntimedependent(debug)
+ -- Component 'unknown': createIntegrator(solution=solution)
+ >> bc/NeumannTimeDependent.cc:361:static void pylith::bc::_NeumannTimeDependent::setKernelsRHSResidual(pylith::feassemble::IntegratorBoundary*, const pylith::bc::NeumannTimeDependent&, const pylith::topology::Field&)
+ >> neumanntimedependent(debug)
+ -- setKernelsRHSResidual(integrator=0x5647e67ae170, bc=N6pylith2bc20NeumannTimeDependentE, solution=solution)
+ >> bc/NeumannTimeDependent.cc:230:virtual pylith::topology::Field* pylith::bc::NeumannTimeDependent::createAuxiliaryField(const pylith::topology::Field&, const pylith::topology::Mesh&)
+ >> neumanntimedependent(debug)
+ -- Component 'unknown': createAuxiliaryField(solution=solution, domainMesh=)N6pylith8topology4MeshE)
+ >> bc/NeumannTimeDependent.cc:279:virtual pylith::topology::Field* pylith::bc::NeumannTimeDependent::createAuxiliaryField(const pylith::topology::Field&, const pylith::topology::Mesh&)
+ >> neumanntimedependent(debug)
+ -- Component 'unknown': Displaying auxiliary field
+Viewing field 'NeumannTimeDependent auxiliary field' Neumann auxiliary field.
+  Subfields:
+    Subfield initial_amplitude, index: 0, components: initial_amplitude_tangential initial_amplitude_normal, scale: 1, basisOrder: 0, quadOrder: 2, dimension: 1
+  dimensionalize flag: 0
+DM Object: NeumannTimeDependent auxiliary field 1 MPI processes
+  type: plex
+NeumannTimeDependent auxiliary field in 1 dimension:
+  Cells are at height 1
+  0-cells: 3
+  1-cells: 2
+Labels:
+  depth: 3 strata with value/size (0 (3), 1 (2), 2 (2))
+Field initial_amplitude:
+  adjacency FEM
+PetscSection Object: 1 MPI processes
+  type not yet set
+1 fields
+  field 0 with 2 components
+Process 0:
+  (   0) dim  0 offset   0
+  (   1) dim  0 offset   0
+  (   2) dim  0 offset   0
+  (   3) dim  0 offset   0
+  (   4) dim  0 offset   0
+  (   5) dim  2 offset   0
+  (   6) dim  2 offset   2
+Proc 0 local vector
+Vec Object: NeumannTimeDependent auxiliary field 1 MPI processes
+  type: seq
+0.
+0.
+0.
+0.
+ >> bc/NeumannTimeDependent.cc:302:virtual pylith::topology::Field* pylith::bc::NeumannTimeDependent::createDerivedField(const pylith::topology::Field&, const pylith::topology::Mesh&)
+ >> neumanntimedependent(debug)
+ -- Component 'unknown': createDerivedField(solution=solution, domainMesh=)N6pylith8topology4MeshE) empty method
+ >> problems/Problem.cc:676:void pylith::problems::Problem::_createConstraints()
+ >> timedependent(debug)
+ -- Component 'unknown': Problem::_createConstraints()
+ >> bc/NeumannTimeDependent.cc:218:virtual pylith::feassemble::Constraint* pylith::bc::NeumannTimeDependent::createConstraint(const pylith::topology::Field&)
+ >> neumanntimedependent(debug)
+ -- Component 'unknown': createConstraint(solution=solution) empty method
+ >> problems/Problem.cc:344:virtual void pylith::problems::Problem::initialize()
+ >> timedependent(debug)
+ -- Component 'unknown': Displaying solution field layout
+Viewing field 'solution' Solution field.
+  Subfields:
+    Subfield displacement, index: 0, components: displacement_x displacement_y, scale: 1, basisOrder: 2, quadOrder: 2, dimension: -1
+    Subfield pressure, index: 1, components: pressure, scale: 1, basisOrder: 1, quadOrder: 2, dimension: -1
+    Subfield trace_strain, index: 2, components: trace_strain, scale: 1, basisOrder: 1, quadOrder: 2, dimension: -1
+  dimensionalize flag: 0
+DM Object: solution_global 1 MPI processes
+  type: plex
+solution_global in 2 dimensions:
+  0-cells: 12
+  1-cells: 25
+  2-cells: 14
+Labels:
+  depth: 3 strata with value/size (0 (12), 1 (25), 2 (14))
+  material-id: 1 strata with value/size (24 (14))
+  boundary: 1 strata with value/size (1 (16))
+  xneg: 1 strata with value/size (1 (5))
+  xpos: 1 strata with value/size (1 (5))
+  yneg: 1 strata with value/size (1 (5))
+  ypos: 1 strata with value/size (1 (5))
+Field displacement:
+  adjacency FEM
+Field pressure:
+  adjacency FEM
+Field trace_strain:
+  adjacency FEM
+PetscSection Object: 1 MPI processes
+  type not yet set
+3 fields
+  field 0 with 2 components
+Process 0:
+  (   0) dim  0 offset   0
+  (   1) dim  0 offset   0
+  (   2) dim  0 offset   0
+  (   3) dim  0 offset   0
+  (   4) dim  0 offset   0
+  (   5) dim  0 offset   0
+  (   6) dim  0 offset   0
+  (   7) dim  0 offset   0
+  (   8) dim  0 offset   0
+  (   9) dim  0 offset   0
+  (  10) dim  0 offset   0
+  (  11) dim  0 offset   0
+  (  12) dim  0 offset   0
+  (  13) dim  0 offset   0
+  (  14) dim  2 offset   0 constrained 0 1
+  (  15) dim  2 offset   4 constrained 1
+  (  16) dim  2 offset   8 constrained 0 1
+  (  17) dim  2 offset  12
+  (  18) dim  2 offset  16
+  (  19) dim  2 offset  20 constrained 0
+  (  20) dim  2 offset  24 constrained 0
+  (  21) dim  2 offset  28
+  (  22) dim  2 offset  32
+  (  23) dim  2 offset  36 constrained 0
+  (  24) dim  2 offset  40
+  (  25) dim  2 offset  44 constrained 0
+  (  26) dim  2 offset  48
+  (  27) dim  2 offset  50
+  (  28) dim  2 offset  52 constrained 1
+  (  29) dim  2 offset  54
+  (  30) dim  2 offset  56
+  (  31) dim  2 offset  58
+  (  32) dim  2 offset  60 constrained 1
+  (  33) dim  2 offset  62 constrained 0
+  (  34) dim  2 offset  64
+  (  35) dim  2 offset  66
+  (  36) dim  2 offset  68 constrained 0
+  (  37) dim  2 offset  70
+  (  38) dim  2 offset  72
+  (  39) dim  2 offset  74
+  (  40) dim  2 offset  76
+  (  41) dim  2 offset  78
+  (  42) dim  2 offset  80
+  (  43) dim  2 offset  82 constrained 0
+  (  44) dim  2 offset  84
+  (  45) dim  2 offset  86
+  (  46) dim  2 offset  88 constrained 0
+  (  47) dim  2 offset  90
+  (  48) dim  2 offset  92
+  (  49) dim  2 offset  94
+  (  50) dim  2 offset  96
+  field 1 with 1 components
+Process 0:
+  (   0) dim  0 offset   0
+  (   1) dim  0 offset   0
+  (   2) dim  0 offset   0
+  (   3) dim  0 offset   0
+  (   4) dim  0 offset   0
+  (   5) dim  0 offset   0
+  (   6) dim  0 offset   0
+  (   7) dim  0 offset   0
+  (   8) dim  0 offset   0
+  (   9) dim  0 offset   0
+  (  10) dim  0 offset   0
+  (  11) dim  0 offset   0
+  (  12) dim  0 offset   0
+  (  13) dim  0 offset   0
+  (  14) dim  1 offset   2
+  (  15) dim  1 offset   6
+  (  16) dim  1 offset  10
+  (  17) dim  1 offset  14
+  (  18) dim  1 offset  18
+  (  19) dim  1 offset  22
+  (  20) dim  1 offset  26
+  (  21) dim  1 offset  30
+  (  22) dim  1 offset  34
+  (  23) dim  1 offset  38 constrained 0
+  (  24) dim  1 offset  42 constrained 0
+  (  25) dim  1 offset  46 constrained 0
+  (  26) dim  0 offset  50
+  (  27) dim  0 offset  52
+  (  28) dim  0 offset  54
+  (  29) dim  0 offset  56
+  (  30) dim  0 offset  58
+  (  31) dim  0 offset  60
+  (  32) dim  0 offset  62
+  (  33) dim  0 offset  64
+  (  34) dim  0 offset  66
+  (  35) dim  0 offset  68
+  (  36) dim  0 offset  70
+  (  37) dim  0 offset  72
+  (  38) dim  0 offset  74
+  (  39) dim  0 offset  76
+  (  40) dim  0 offset  78
+  (  41) dim  0 offset  80
+  (  42) dim  0 offset  82
+  (  43) dim  0 offset  84
+  (  44) dim  0 offset  86
+  (  45) dim  0 offset  88
+  (  46) dim  0 offset  90
+  (  47) dim  0 offset  92
+  (  48) dim  0 offset  94
+  (  49) dim  0 offset  96
+  (  50) dim  0 offset  98
+  field 2 with 1 components
+Process 0:
+  (   0) dim  0 offset   0
+  (   1) dim  0 offset   0
+  (   2) dim  0 offset   0
+  (   3) dim  0 offset   0
+  (   4) dim  0 offset   0
+  (   5) dim  0 offset   0
+  (   6) dim  0 offset   0
+  (   7) dim  0 offset   0
+  (   8) dim  0 offset   0
+  (   9) dim  0 offset   0
+  (  10) dim  0 offset   0
+  (  11) dim  0 offset   0
+  (  12) dim  0 offset   0
+  (  13) dim  0 offset   0
+  (  14) dim  1 offset   3
+  (  15) dim  1 offset   7
+  (  16) dim  1 offset  11
+  (  17) dim  1 offset  15
+  (  18) dim  1 offset  19
+  (  19) dim  1 offset  23
+  (  20) dim  1 offset  27
+  (  21) dim  1 offset  31
+  (  22) dim  1 offset  35
+  (  23) dim  1 offset  39
+  (  24) dim  1 offset  43
+  (  25) dim  1 offset  47
+  (  26) dim  0 offset  50
+  (  27) dim  0 offset  52
+  (  28) dim  0 offset  54
+  (  29) dim  0 offset  56
+  (  30) dim  0 offset  58
+  (  31) dim  0 offset  60
+  (  32) dim  0 offset  62
+  (  33) dim  0 offset  64
+  (  34) dim  0 offset  66
+  (  35) dim  0 offset  68
+  (  36) dim  0 offset  70
+  (  37) dim  0 offset  72
+  (  38) dim  0 offset  74
+  (  39) dim  0 offset  76
+  (  40) dim  0 offset  78
+  (  41) dim  0 offset  80
+  (  42) dim  0 offset  82
+  (  43) dim  0 offset  84
+  (  44) dim  0 offset  86
+  (  45) dim  0 offset  88
+  (  46) dim  0 offset  90
+  (  47) dim  0 offset  92
+  (  48) dim  0 offset  94
+  (  49) dim  0 offset  96
+  (  50) dim  0 offset  98
+ >> problems/TimeDependent.cc:316:virtual void pylith::problems::TimeDependent::initialize()
+ >> timedependent(debug)
+ -- Component 'unknown': Recognized PetscTS as implicit time stepping.
+ >> problems/TimeDependent.cc:331:virtual void pylith::problems::TimeDependent::initialize()
+ >> timedependent(debug)
+ -- Component 'unknown': Setting PetscTS problem type to 'nonlinear'.
+ >> problems/TimeDependent.cc:341:virtual void pylith::problems::TimeDependent::initialize()
+ >> timedependent(debug)
+ -- Component 'unknown': Setting PetscTS parameters: dtInitial=1, startTime=0, maxTimeSteps=1, endTime=5
+ >> problems/TimeDependent.cc:352:virtual void pylith::problems::TimeDependent::initialize()
+ >> timedependent(debug)
+ -- Component 'unknown': Setting PetscTS initial conditions using global vector for solution.
+ >> problems/TimeDependent.cc:365:virtual void pylith::problems::TimeDependent::initialize()
+ >> timedependent(debug)
+ -- Component 'unknown': Setting PetscTS callbacks prestep(), poststep(), computeRHSJacobian(), and computeRHSFunction().
+ >> problems/TimeDependent.cc:372:virtual void pylith::problems::TimeDependent::initialize()
+ >> timedependent(debug)
+ -- Component 'unknown': Setting PetscTS callbacks computeLHSJacobian(), and computeLHSFunction().
+Viewing field 'solution' Solution field.
+  Subfields:
+    Subfield displacement, index: 0, components: displacement_x displacement_y, scale: 1, basisOrder: 2, quadOrder: 2, dimension: -1
+    Subfield pressure, index: 1, components: pressure, scale: 1, basisOrder: 1, quadOrder: 2, dimension: -1
+    Subfield trace_strain, index: 2, components: trace_strain, scale: 1, basisOrder: 1, quadOrder: 2, dimension: -1
+  dimensionalize flag: 0
+DM Object: residual_global_mmstest 1 MPI processes
+  type: plex
+residual_global_mmstest in 2 dimensions:
+  0-cells: 12
+  1-cells: 25
+  2-cells: 14
+Labels:
+  depth: 3 strata with value/size (0 (12), 1 (25), 2 (14))
+  material-id: 1 strata with value/size (24 (14))
+  boundary: 1 strata with value/size (1 (16))
+  xneg: 1 strata with value/size (1 (5))
+  xpos: 1 strata with value/size (1 (5))
+  yneg: 1 strata with value/size (1 (5))
+  ypos: 1 strata with value/size (1 (5))
+Field displacement:
+  adjacency FEM
+Field pressure:
+  adjacency FEM
+Field trace_strain:
+  adjacency FEM
+PetscSection Object: 1 MPI processes
+  type not yet set
+3 fields
+  field 0 with 2 components
+Process 0:
+  (   0) dim  0 offset   0
+  (   1) dim  0 offset   0
+  (   2) dim  0 offset   0
+  (   3) dim  0 offset   0
+  (   4) dim  0 offset   0
+  (   5) dim  0 offset   0
+  (   6) dim  0 offset   0
+  (   7) dim  0 offset   0
+  (   8) dim  0 offset   0
+  (   9) dim  0 offset   0
+  (  10) dim  0 offset   0
+  (  11) dim  0 offset   0
+  (  12) dim  0 offset   0
+  (  13) dim  0 offset   0
+  (  14) dim  2 offset   0 constrained 0 1
+  (  15) dim  2 offset   4 constrained 1
+  (  16) dim  2 offset   8 constrained 0 1
+  (  17) dim  2 offset  12
+  (  18) dim  2 offset  16
+  (  19) dim  2 offset  20 constrained 0
+  (  20) dim  2 offset  24 constrained 0
+  (  21) dim  2 offset  28
+  (  22) dim  2 offset  32
+  (  23) dim  2 offset  36 constrained 0
+  (  24) dim  2 offset  40
+  (  25) dim  2 offset  44 constrained 0
+  (  26) dim  2 offset  48
+  (  27) dim  2 offset  50
+  (  28) dim  2 offset  52 constrained 1
+  (  29) dim  2 offset  54
+  (  30) dim  2 offset  56
+  (  31) dim  2 offset  58
+  (  32) dim  2 offset  60 constrained 1
+  (  33) dim  2 offset  62 constrained 0
+  (  34) dim  2 offset  64
+  (  35) dim  2 offset  66
+  (  36) dim  2 offset  68 constrained 0
+  (  37) dim  2 offset  70
+  (  38) dim  2 offset  72
+  (  39) dim  2 offset  74
+  (  40) dim  2 offset  76
+  (  41) dim  2 offset  78
+  (  42) dim  2 offset  80
+  (  43) dim  2 offset  82 constrained 0
+  (  44) dim  2 offset  84
+  (  45) dim  2 offset  86
+  (  46) dim  2 offset  88 constrained 0
+  (  47) dim  2 offset  90
+  (  48) dim  2 offset  92
+  (  49) dim  2 offset  94
+  (  50) dim  2 offset  96
+  field 1 with 1 components
+Process 0:
+  (   0) dim  0 offset   0
+  (   1) dim  0 offset   0
+  (   2) dim  0 offset   0
+  (   3) dim  0 offset   0
+  (   4) dim  0 offset   0
+  (   5) dim  0 offset   0
+  (   6) dim  0 offset   0
+  (   7) dim  0 offset   0
+  (   8) dim  0 offset   0
+  (   9) dim  0 offset   0
+  (  10) dim  0 offset   0
+  (  11) dim  0 offset   0
+  (  12) dim  0 offset   0
+  (  13) dim  0 offset   0
+  (  14) dim  1 offset   2
+  (  15) dim  1 offset   6
+  (  16) dim  1 offset  10
+  (  17) dim  1 offset  14
+  (  18) dim  1 offset  18
+  (  19) dim  1 offset  22
+  (  20) dim  1 offset  26
+  (  21) dim  1 offset  30
+  (  22) dim  1 offset  34
+  (  23) dim  1 offset  38 constrained 0
+  (  24) dim  1 offset  42 constrained 0
+  (  25) dim  1 offset  46 constrained 0
+  (  26) dim  0 offset  50
+  (  27) dim  0 offset  52
+  (  28) dim  0 offset  54
+  (  29) dim  0 offset  56
+  (  30) dim  0 offset  58
+  (  31) dim  0 offset  60
+  (  32) dim  0 offset  62
+  (  33) dim  0 offset  64
+  (  34) dim  0 offset  66
+  (  35) dim  0 offset  68
+  (  36) dim  0 offset  70
+  (  37) dim  0 offset  72
+  (  38) dim  0 offset  74
+  (  39) dim  0 offset  76
+  (  40) dim  0 offset  78
+  (  41) dim  0 offset  80
+  (  42) dim  0 offset  82
+  (  43) dim  0 offset  84
+  (  44) dim  0 offset  86
+  (  45) dim  0 offset  88
+  (  46) dim  0 offset  90
+  (  47) dim  0 offset  92
+  (  48) dim  0 offset  94
+  (  49) dim  0 offset  96
+  (  50) dim  0 offset  98
+  field 2 with 1 components
+Process 0:
+  (   0) dim  0 offset   0
+  (   1) dim  0 offset   0
+  (   2) dim  0 offset   0
+  (   3) dim  0 offset   0
+  (   4) dim  0 offset   0
+  (   5) dim  0 offset   0
+  (   6) dim  0 offset   0
+  (   7) dim  0 offset   0
+  (   8) dim  0 offset   0
+  (   9) dim  0 offset   0
+  (  10) dim  0 offset   0
+  (  11) dim  0 offset   0
+  (  12) dim  0 offset   0
+  (  13) dim  0 offset   0
+  (  14) dim  1 offset   3
+  (  15) dim  1 offset   7
+  (  16) dim  1 offset  11
+  (  17) dim  1 offset  15
+  (  18) dim  1 offset  19
+  (  19) dim  1 offset  23
+  (  20) dim  1 offset  27
+  (  21) dim  1 offset  31
+  (  22) dim  1 offset  35
+  (  23) dim  1 offset  39
+  (  24) dim  1 offset  43
+  (  25) dim  1 offset  47
+  (  26) dim  0 offset  50
+  (  27) dim  0 offset  52
+  (  28) dim  0 offset  54
+  (  29) dim  0 offset  56
+  (  30) dim  0 offset  58
+  (  31) dim  0 offset  60
+  (  32) dim  0 offset  62
+  (  33) dim  0 offset  64
+  (  34) dim  0 offset  66
+  (  35) dim  0 offset  68
+  (  36) dim  0 offset  70
+  (  37) dim  0 offset  72
+  (  38) dim  0 offset  74
+  (  39) dim  0 offset  76
+  (  40) dim  0 offset  78
+  (  41) dim  0 offset  80
+  (  42) dim  0 offset  82
+  (  43) dim  0 offset  84
+  (  44) dim  0 offset  86
+  (  45) dim  0 offset  88
+  (  46) dim  0 offset  90
+  (  47) dim  0 offset  92
+  (  48) dim  0 offset  94
+  (  49) dim  0 offset  96
+  (  50) dim  0 offset  98
+ >> problems/TimeDependent.cc:559:static PetscErrorCode pylith::problems::TimeDependent::computeLHSResidual(PetscTS, PetscReal, PetscVec, PetscVec, PetscVec, void*)
+ >> timedependent(debug)
+ -- computeLHSResidual(ts=0x5647e6882320, t=0, solutionVec=0x5647e7b13b80, solutionDotVec=0x5647e7a6d710, residualVec=0x5647e7b1c9d0, context=0x5647e673aec0)
+ >> problems/Problem.cc:481:void pylith::problems::Problem::computeLHSResidual(PetscVec, PylithReal, PylithReal, PetscVec, PetscVec)
+ >> timedependent(debug)
+ -- Component 'unknown': Problem::computeLHSResidual(t=0, dt=1, solutionVec=0x5647e7b13b80, solutionDotVec=0x5647e7a6d710, residualVec=0x5647e7b1c9d0)
+ >> problems/Problem.cc:364:void pylith::problems::Problem::setSolutionLocal(PylithReal, PetscVec, PetscVec)
+ >> timedependent(debug)
+ -- Component 'unknown': setSolutionLocal(t=0, solutionVec=0x5647e7b13b80, solutionDotVec=0x5647e7a6d710)
+Cell 0 Element Residual
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | -2.90189e-09 |
+  | -2.90324e-09 |
+  | -2.37495e-09 |
+  | 0. |
+  | 0. |
+  | 0. |
+Cell 1 Element Residual
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | -1.31973e-09 |
+  | -1.84802e-09 |
+  | -7.91437e-10 |
+  | 0. |
+  | 0. |
+  | 0. |
+Cell 2 Element Residual
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | -2.64499e-10 |
+  | 2.63791e-10 |
+  | 2.62438e-10 |
+  | 0. |
+  | 0. |
+  | 0. |
+Cell 3 Element Residual
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | -3.42883e-09 |
+  | -3.42883e-09 |
+  | -3.43018e-09 |
+  | 0. |
+  | 0. |
+  | 0. |
+Cell 4 Element Residual
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 7.89376e-10 |
+  | 7.90728e-10 |
+  | 7.89376e-10 |
+  | 0. |
+  | 0. |
+  | 0. |
+Cell 5 Element Residual
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | -3.43153e-09 |
+  | -3.43018e-09 |
+  | -3.43153e-09 |
+  | 0. |
+  | 0. |
+  | 0. |
+Cell 6 Element Residual
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | -4.75261e-09 |
+  | -4.75261e-09 |
+  | -2.63945e-09 |
+  | 0. |
+  | 0. |
+  | 0. |
+Cell 7 Element Residual
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | -2.63945e-09 |
+  | -5.26294e-10 |
+  | -5.26294e-10 |
+  | 0. |
+  | 0. |
+  | 0. |
+Cell 8 Element Residual
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 7.9208e-10 |
+  | 7.9208e-10 |
+  | 7.90728e-10 |
+  | 0. |
+  | 0. |
+  | 0. |
+Cell 9 Element Residual
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | -2.90189e-09 |
+  | -2.37495e-09 |
+  | -2.90324e-09 |
+  | 0. |
+  | 0. |
+  | 0. |
+Cell 10 Element Residual
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 2.63791e-10 |
+  | -2.64499e-10 |
+  | 2.62438e-10 |
+  | 0. |
+  | 0. |
+  | 0. |
+Cell 11 Element Residual
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | -2.37631e-09 |
+  | -1.84802e-09 |
+  | -1.84802e-09 |
+  | 0. |
+  | 0. |
+  | 0. |
+Cell 12 Element Residual
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | -1.84802e-09 |
+  | -1.31973e-09 |
+  | -7.91437e-10 |
+  | 0. |
+  | 0. |
+  | 0. |
+Cell 13 Element Residual
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | -2.63147e-10 |
+  | -7.91437e-10 |
+  | -7.91437e-10 |
+  | 0. |
+  | 0. |
+  | 0. |
+Residual:
+Vec Object: 1 MPI processes
+  type: seq
+0.
+0.
+-6.33072e-09
+0.
+0.
+0.
+-3.95918e-09
+0.
+0.
+0.
+1.05181e-09
+0.
+0.
+0.
+-1.9005e-08
+0.
+0.
+0.
+5.28869e-10
+0.
+0.
+0.
+-9.7609e-09
+0.
+0.
+0.
+1.84254e-09
+0.
+0.
+0.
+-1.53117e-08
+0.
+0.
+0.
+-3.16446e-09
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+0.
+ >> problems/TimeDependent.cc:500:static PetscErrorCode pylith::problems::TimeDependent::computeRHSResidual(PetscTS, PetscReal, PetscVec, PetscVec, void*)
+ >> timedependent(debug)
+ -- computeRHSResidual(ts=0x5647e6882320, t=0, solutionVec=0x5647e7b13b80, residualVec=0x5647e7cb2640, context=0x5647e673aec0)
+ >> problems/Problem.cc:398:void pylith::problems::Problem::computeRHSResidual(PetscVec, PylithReal, PylithReal, PetscVec)
+ >> timedependent(debug)
+ -- Component 'unknown': Problem::computeRHSResidual(t=0, dt=1, solutionVec=0x5647e7b13b80, residualVec=0x5647e7cb2640)
+ >> problems/Problem.cc:364:void pylith::problems::Problem::setSolutionLocal(PylithReal, PetscVec, PetscVec)
+ >> timedependent(debug)
+ -- Component 'unknown': setSolutionLocal(t=0, solutionVec=0x5647e7b13b80, solutionDotVec=0)
+Cell 0 Element Residual
+  | -17.1004 |
+  | -64.2467 |
+  | 12.3576 |
+  | 64.2467 |
+  | 19.5474 |
+  | -14.729 |
+  | 7.95735 |
+  | -12.3983 |
+  | -15.9903 |
+  | -7.86741e-14 |
+  | -6.77166 |
+  | 27.1273 |
+  | -1995. |
+  | 570. |
+  | 1425. |
+  | 2.96969e-25 |
+  | -4.09063e-25 |
+  | -8.37607e-25 |
+Cell 1 Element Residual
+  | 2.44699 |
+  | -108.509 |
+  | 54.1732 |
+  | -29.5336 |
+  | -56.6202 |
+  | 108.509 |
+  | -13.5433 |
+  | 3.69051e-14 |
+  | -7.99515 |
+  | -12.3605 |
+  | 21.5385 |
+  | 41.8941 |
+  | -570. |
+  | -1425. |
+  | 1995. |
+  | 1.34799e-24 |
+  | 1.17587e-24 |
+  | 5.09e-25 |
+Cell 2 Element Residual
+  | 41.8156 |
+  | -152.772 |
+  | 71.2737 |
+  | 152.772 |
+  | -127.894 |
+  | -14.729 |
+  | -6.77166 |
+  | -27.1273 |
+  | 43.0769 |
+  | 1.6539e-14 |
+  | -21.5007 |
+  | 41.8563 |
+  | -1995. |
+  | 570. |
+  | 1425. |
+  | -4.08821e-25 |
+  | -3.69409e-25 |
+  | -3.68073e-26 |
+Cell 3 Element Residual
+  | 1.44914e-14 |
+  | -99.111 |
+  | -31.905 |
+  | 49.5933 |
+  | 31.905 |
+  | 49.5933 |
+  | 7.95735 |
+  | -12.3983 |
+  | -7.95735 |
+  | -12.3983 |
+  | 1.18079e-14 |
+  | 24.7211 |
+  | -1995. |
+  | -1425. |
+  | 3420. |
+  | 1.3238e-24 |
+  | 1.37877e-25 |
+  | 4.99967e-25 |
+Cell 4 Element Residual
+  | -86.0783 |
+  | -167.425 |
+  | 86.0783 |
+  | -167.425 |
+  | -1.102e-14 |
+  | 334.926 |
+  | -21.5007 |
+  | 41.8563 |
+  | -1.44137e-15 |
+  | -83.7883 |
+  | 21.5007 |
+  | 41.8563 |
+  | 1425. |
+  | -3420. |
+  | 1995. |
+  | 2.98776e-25 |
+  | 5.49106e-25 |
+  | -5.66475e-25 |
+Cell 5 Element Residual
+  | 31.905 |
+  | -49.4421 |
+  | -31.905 |
+  | -49.4421 |
+  | 1.75991e-14 |
+  | 98.9598 |
+  | 7.99515 |
+  | 12.3605 |
+  | -2.82319e-16 |
+  | -24.7966 |
+  | -7.99515 |
+  | 12.3605 |
+  | 1425. |
+  | -3420. |
+  | 1995. |
+  | -8.09561e-25 |
+  | -2.00379e-24 |
+  | -3.71768e-25 |
+Cell 6 Element Residual
+  | -4.82969e-15 |
+  | -157.951 |
+  | 54.1732 |
+  | -59.0672 |
+  | -54.1732 |
+  | 157.951 |
+  | 15.9903 |
+  | 6.06978e-15 |
+  | -15.9903 |
+  | -24.7211 |
+  | 1.55849e-15 |
+  | 83.7883 |
+  | -570. |
+  | -2850. |
+  | 3420. |
+  | 2.71728e-25 |
+  | 4.64481e-25 |
+  | -9.7982e-25 |
+Cell 7 Element Residual
+  | 54.1732 |
+  | -276.086 |
+  | -1.21953e-13 |
+  | 276.086 |
+  | -54.1732 |
+  | -59.0672 |
+  | -2.00123e-14 |
+  | -24.7211 |
+  | 43.0769 |
+  | -3.45032e-14 |
+  | -43.0769 |
+  | 83.7883 |
+  | -3420. |
+  | 570. |
+  | 2850. |
+  | -6.36094e-25 |
+  | -1.30813e-24 |
+  | -1.5975e-24 |
+Cell 8 Element Residual
+  | -1.87335e-14 |
+  | -335.078 |
+  | 86.0783 |
+  | 167.577 |
+  | -86.0783 |
+  | 167.577 |
+  | -21.5385 |
+  | -41.8941 |
+  | 21.5385 |
+  | -41.8941 |
+  | 5.90396e-15 |
+  | 83.7127 |
+  | -1995. |
+  | -1425. |
+  | 3420. |
+  | 1.20923e-24 |
+  | 3.92291e-25 |
+  | -4.57255e-26 |
+Cell 9 Element Residual
+  | -3.51356e-14 |
+  | -99.111 |
+  | -31.905 |
+  | 49.5933 |
+  | 31.905 |
+  | 49.5933 |
+  | 7.95735 |
+  | -12.3983 |
+  | -7.95735 |
+  | -12.3983 |
+  | 1.18079e-14 |
+  | 24.7211 |
+  | -1995. |
+  | -1425. |
+  | 3420. |
+  | 1.3238e-24 |
+  | 1.37877e-25 |
+  | 4.99967e-25 |
+Cell 10 Element Residual
+  | 86.0783 |
+  | -167.425 |
+  | -3.19744e-14 |
+  | 334.926 |
+  | -86.0783 |
+  | -167.425 |
+  | -8.94855e-15 |
+  | -83.7883 |
+  | 21.5007 |
+  | 41.8563 |
+  | -21.5007 |
+  | 41.8563 |
+  | -3420. |
+  | 1995. |
+  | 1425. |
+  | 6.70411e-25 |
+  | 4.9877e-25 |
+  | -3.97755e-25 |
+Cell 11 Element Residual
+  | 17.1004 |
+  | -64.2467 |
+  | -19.5474 |
+  | -14.729 |
+  | -12.3576 |
+  | 64.2467 |
+  | 15.9903 |
+  | -2.06702e-14 |
+  | -7.95735 |
+  | -12.3983 |
+  | 6.77166 |
+  | 27.1273 |
+  | -570. |
+  | -1425. |
+  | 1995. |
+  | 6.75321e-26 |
+  | -1.44075e-25 |
+  | -1.68113e-25 |
+Cell 12 Element Residual
+  | -2.44699 |
+  | -108.509 |
+  | 56.6202 |
+  | 108.509 |
+  | -54.1732 |
+  | -29.5336 |
+  | 7.99515 |
+  | -12.3605 |
+  | 13.5433 |
+  | -3.01454e-14 |
+  | -21.5385 |
+  | 41.8941 |
+  | -1995. |
+  | 570. |
+  | 1425. |
+  | 6.68143e-25 |
+  | 1.18498e-24 |
+  | 2.81022e-25 |
+Cell 13 Element Residual
+  | -41.8156 |
+  | -152.772 |
+  | 127.894 |
+  | -14.729 |
+  | -71.2737 |
+  | 152.772 |
+  | -43.0769 |
+  | 3.50102e-14 |
+  | 6.77166 |
+  | -27.1273 |
+  | 21.5007 |
+  | 41.8563 |
+  | -570. |
+  | -1425. |
+  | 1995. |
+  | -6.6278e-25 |
+  | -3.15729e-25 |
+  | -8.62177e-26 |
+Residual:
+Vec Object: 1 MPI processes
+  type: seq
+0.
+0.
+-3990.
+0.
+-27.0866
+0.
+-1140.
+0.
+0.
+0.
+2850.
+0.
+0.
+0.
+8.67726e-08
+0.
+0.
+0.
+-8.67724e-08
+0.
+0.
+-49.5933
+-6840.
+0.
+0.
+167.425
+6840.
+0.
+0.
+0.
+8.67722e-08
+0.
+0.
+0.
+-8.67725e-08
+0.
+0.
+-24.7966
+0.
+0.
+27.0866
+0.
+0.
+0.
+0.
+83.7127
+0.
+0.
+14.8046
+-14.6534
+14.8046
+-44.2626
+19.5474
+0.
+0.
+-88.6008
+-14.8046
+-44.2626
+-14.8046
+-14.6534
+-127.894
+0.
+0.
+-99.111
+0.
+0.151189
+0.
+0.151189
+0.
+334.926
+0.
+0.151189
+0.
+-58.9916
+0.
+-88.6008
+0.
+-118.134
+0.
+-58.9916
+0.
+0.151189
+0.
+-99.111
+-14.8046
+-14.6534
+14.8046
+-14.6534
+0.
+334.926
+-19.5474
+-14.729
+-14.8046
+-44.2626
+14.8046
+-44.2626
+127.894
+-14.729
+ >> bc/NeumannTimeDependent.cc:339:virtual void pylith::bc::NeumannTimeDependent::_updateKernelConstants(PylithReal)
+ >> neumanntimedependent(debug)
+ -- Component 'unknown': _updateKernelConstants(dt=1)
+Cell 47 Element BdResidual
+  | -1.4803e-13 |
+  | -1.64346e-29 |
+  | -666.667 |
+  | -7.40149e-14 |
+  | 2.46716e-14 |
+  | 2.7391e-30 |
+  | 2.15877e-14 |
+  | 2.39671e-30 |
+  | -166.667 |
+  | -1.85037e-14 |
+  | -166.667 |
+  | -1.85037e-14 |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+Cell 50 Element BdResidual
+  | -1.4803e-13 |
+  | -1.64346e-29 |
+  | -666.667 |
+  | -7.40149e-14 |
+  | 2.46716e-14 |
+  | 2.7391e-30 |
+  | 2.15877e-14 |
+  | 2.39671e-30 |
+  | -166.667 |
+  | -1.85037e-14 |
+  | -166.667 |
+  | -1.85037e-14 |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+  | 0. |
+ : assertion
+
+!!!FAILURES!!!
+Test Results:
+Run:  1   Failures: 1   Errors: 0
+
+
+1) test: pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP2::testResidual (F) line: 129 testing/MMSTest.cc
+double equality assertion failed
+- Expected: 0
+- Actual  : 10959.7187576051
+- Delta   : 1e-10
+- Test of F(s) - G(s) == 0 failed.
+
+
+WARNING! There are options you set that were not used!
+WARNING! could be spelling mistake, etc!
+There is one unused database option. It is:
+Option left: name:--tests=pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP2::testResidual (no value)

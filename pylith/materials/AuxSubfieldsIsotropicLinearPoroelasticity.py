@@ -39,7 +39,7 @@ class AuxSubfieldsIsotropicLinearPoroelasticity(PetscComponent):
       - *reference_stress* Reference stress subfield.
       - *references_strain* Reference strain.
       - *shear_modulus* Shear modulus subfield.
-      - *bulk_modulus* Solid Bulk modulus subfield.
+      - *solid_bulk_modulus* Solid Bulk modulus subfield.
       - *biot_coefficient* Biot Coefficient subfield.
       - *isotropic_permeability* Isotropic Permeability subfield.
       - *fluid_bulk_modulus* Fluid Bulk Modulus subfield.
@@ -52,7 +52,7 @@ class AuxSubfieldsIsotropicLinearPoroelasticity(PetscComponent):
     # \b Facilities
     # @li \b density Density subfield.
     # @li \b shear_modulus Shear modulus subfield.
-    # @li \b bulk_modulus Bulk modulus subfield.
+    # @li \b solid_bulk_modulus Bulk modulus subfield.
     # @li \b body_force Body force.
     # @li \b reference_stress Reference stress subfield.
     # @li \b references_strain Reference strain.
@@ -77,8 +77,8 @@ class AuxSubfieldsIsotropicLinearPoroelasticity(PetscComponent):
     shearModulus = pyre.inventory.facility("shear_modulus", family="auxiliary_subfield", factory=Subfield)
     shearModulus.meta['tip'] = "Shear modulus subfield."
 
-    bulkModulus = pyre.inventory.facility("bulk_modulus", family="auxiliary_subfield", factory=Subfield)
-    bulkModulus.meta['tip'] = "Bulk modulus subfield."
+    bulkModulus = pyre.inventory.facility("solid_bulk_modulus", family="auxiliary_subfield", factory=Subfield)
+    bulkModulus.meta['tip'] = "Solid bulk modulus subfield."
 
     biotCoefficient = pyre.inventory.facility("biot_coefficient", family="auxiliary_subfield", factory=Subfield)
     biotCoefficient.meta['tip'] = "Biot coefficient subfield."

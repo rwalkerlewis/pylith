@@ -174,7 +174,7 @@ pylith::problems::SolutionFactory::addTraceStrain(const pylith::topology::Field:
     description.numComponents = 1;
     description.componentNames.resize(1);
     description.componentNames[0] = componentNames[0];
-    description.scale = NULL;
+    description.scale = 1.0;
     description.validator = NULL;
 
     _solution.subfieldAdd(description, discretization);

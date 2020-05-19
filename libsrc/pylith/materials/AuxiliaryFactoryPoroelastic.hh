@@ -42,23 +42,11 @@ public:
     /// Add isotropic permeability subfield to auxiliary subfields.
     void addIsotropicPermeability(void);
 
-    /// Add porosity subfield to auxiliary subfields.
-    void addPorosity(void);
-
-    /// Add fluid density subfield to auxiliary subfields.
-    void addFluidDensity(void);
-
-    /// Add fluid viscosity subfield to auxiliary subfields.
-    void addFluidViscosity(void);
-
     /// Add fluid Bulk Modulus subfield to auxiliary subfields.
     void addFluidBulkModulus(void);
 
     /// Add fluid Bulk Modulus subfield to auxiliary subfields.
     void addBiotCoefficient(void);
-
-    /// Add reference sourceDensity subfield to auxiliary fields.
-    void addSourceDensity(void);
 
     /// Add reference stress subfield to auxiliary fields.
     void addReferenceStress(void);
@@ -69,8 +57,14 @@ public:
     /// Add shear modulus subfield to auxiliary subfields.
     void addShearModulus(void);
 
-    /// Add bulk subfield to auxiliary subfields.
-    void addBulkModulus(void);
+    /// Add solid bulk modulus subfield to auxiliary subfields.
+    void addSolidBulkModulus(void);
+
+    /// Add shear modulus subfield to auxiliary subfields.
+    void addYoungsModulus(void);
+
+    /// Add solid bulk modulus subfield to auxiliary subfields.
+    void addPoissonsRatio(void);
 
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:

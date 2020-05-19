@@ -118,14 +118,14 @@ class pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi :
     } // shear_modulus_units
 
     // Solid Bulk Modulus
-    static double bulk_modulus(const double x,
+    static double solid_bulk_modulus(const double x,
                                const double y) {
         return 3.6e10;
-    } // bulk_modulus
+    } // solid_bulk_modulus
 
-    static const char* bulk_modulus_units(void) {
+    static const char* solid_bulk_modulus_units(void) {
         return "Pa";
-    } // bulk_modulus_units
+    } // solid_bulk_modulus_units
 
     // Biot coefficient
     static double biot_coefficient(const double x,
@@ -176,7 +176,7 @@ class pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi :
     // Biot Modulus
     static double biot_modulus(const double x,
                               const double y){
-        return bulk_modulus(x,y) / (biot_coefficient(x,y) - porosity(x,y)*(1.0 - bulk_modulus(x,y)/fluid_bulk_modulus(x,y)));
+        return solid_bulk_modulus(x,y) / (biot_coefficient(x,y) - porosity(x,y)*(1.0 - solid_bulk_modulus(x,y)/fluid_bulk_modulus(x,y)));
     } // biot_modulus
 
     static const char* biot_modulus_units(void) {
@@ -186,7 +186,7 @@ class pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi :
     // Drained Bulk Modulus
     static double drained_bulk_modulus(const double x,
                                       const double y){
-        return bulk_modulus(x,y) * (1.0 - biot_coefficient(x,y));
+        return solid_bulk_modulus(x,y) * (1.0 - biot_coefficient(x,y));
     } // drained_bulk_modulus
 
     static const char* drained_bulk_modulus_units(void) {
@@ -391,7 +391,11 @@ protected:
         // Overwrite component names for control of debugging info at test level.
         GenericComponent::setName("TestIsotropicLinearPoroelasticity_Terzaghi");
         journal::debug_t debug(GenericComponent::getName());
-        //debug.activate(); // DEBUGGING
+        journal::debug_t debugNeumann("neumanntimedependent");
+        journal::debug_t debugTimeDependent("timedependent");
+        debug.activate(); // DEBUGGING
+        debugNeumann.activate(); // DEBUGGING
+        debugTimeDependent.activate(); // DEBUGGING
 
         CPPUNIT_ASSERT(!_data);
         _data = new TestPoroelasticity_Data();CPPUNIT_ASSERT(_data);
@@ -439,7 +443,7 @@ protected:
             pylith::topology::Field::Discretization(0, 1), // fluid_density
             pylith::topology::Field::Discretization(0, 1), // fluid_viscosity
             pylith::topology::Field::Discretization(0, 1), // shear_modulus
-            pylith::topology::Field::Discretization(0, 1), // bulk_modulus
+            pylith::topology::Field::Discretization(0, 1), // solid_bulk_modulus
             pylith::topology::Field::Discretization(0, 1), // biot_coefficient
             pylith::topology::Field::Discretization(0, 1), // isotropic_permeability
             pylith::topology::Field::Discretization(0, 1), // fluid_bulk_modulus
@@ -459,16 +463,14 @@ protected:
         _data->auxDB->coordsys(*_data->cs);
 
         // Traction DB
-        _data->numTractionSubfields = 2;
-        static const char* _tractionSubfields[2] = {
-            "initial_amplitude_tangential",
-            "initial_amplitude_normal",
+        _data->numTractionSubfields = 1;
+        static const char* _tractionSubfields[1] = {
+            "initial_amplitude"
         };
         _data->tractionSubfields = _tractionSubfields;
 
-        static const pylith::topology::Field::Discretization _tractionDiscretizations[2] = {
-            pylith::topology::Field::Discretization(0, 1), // initial_amplitude_tangential
-            pylith::topology::Field::Discretization(0, 1), // initial_amplitude_normal
+        static const pylith::topology::Field::Discretization _tractionDiscretizations[1] = {
+          pylith::topology::Field::Discretization(0, 1, 1) // initial_amplitude_tangential
         };
         _data->tractionDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_tractionDiscretizations);
 
@@ -541,7 +543,7 @@ protected:
 }; // TestIsotropicLinearPoroelasticity_Terzaghi
 const double pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi::LENGTHSCALE = 1.0;
 const double pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi::TIMESCALE = 1.0;
-const double pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi::PRESSURESCALE = 1.0;
+const double pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi::PRESSURESCALE = 10000.0;
 const double pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi::GACC = 9.80665;
 const double pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi::YMAX = +1.0;
 const double pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi::YMIN = -1.0;
@@ -575,7 +577,7 @@ class pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP1 :
             pylith::topology::Field::Discretization(0, 1), // fluid_density
             pylith::topology::Field::Discretization(0, 1), // fluid_viscosity
             pylith::topology::Field::Discretization(0, 1), // shear_modulus
-            pylith::topology::Field::Discretization(0, 1), // bulk_modulus
+            pylith::topology::Field::Discretization(0, 1), // solid_bulk_modulus
             pylith::topology::Field::Discretization(0, 1), // biot_coefficient
             pylith::topology::Field::Discretization(0, 1), // isotropic_permeability
             pylith::topology::Field::Discretization(0, 1), // fluid_bulk_modulus
@@ -583,9 +585,8 @@ class pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP1 :
         };
         _data->auxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_auxDiscretizations);
 
-        static const pylith::topology::Field::Discretization _tractionDiscretizations[2] = {
-            pylith::topology::Field::Discretization(0, 1), // initial_amplitude_tangential
-            pylith::topology::Field::Discretization(0, 1), // initial_amplitude_normal
+        static const pylith::topology::Field::Discretization _tractionDiscretizations[1] = {
+            pylith::topology::Field::Discretization(0, 1, 1) // initial_amplitude_tangential
         };
         _data->tractionDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_tractionDiscretizations);
 
@@ -621,7 +622,7 @@ class pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP2 :
             pylith::topology::Field::Discretization(0, 2), // fluid_density
             pylith::topology::Field::Discretization(0, 2), // fluid_viscosity
             pylith::topology::Field::Discretization(0, 2), // shear_modulus
-            pylith::topology::Field::Discretization(0, 2), // bulk_modulus
+            pylith::topology::Field::Discretization(0, 2), // solid_bulk_modulus
             pylith::topology::Field::Discretization(0, 2), // biot_coefficient
             pylith::topology::Field::Discretization(0, 2), // isotropic_permeability
             pylith::topology::Field::Discretization(0, 2), // fluid_bulk_modulus
@@ -629,9 +630,8 @@ class pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP2 :
         };
         _data->auxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_auxDiscretizations);
 
-        static const pylith::topology::Field::Discretization _tractionDiscretizations[2] = {
-            pylith::topology::Field::Discretization(0, 2), // initial_amplitude_tangential
-            pylith::topology::Field::Discretization(0, 2), // initial_amplitude_normal
+        static const pylith::topology::Field::Discretization _tractionDiscretizations[1] = {
+            pylith::topology::Field::Discretization(0, 2, 1) // initial_amplitude_tangential
         };
         _data->tractionDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_tractionDiscretizations);
 
@@ -667,16 +667,15 @@ class pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_TriP3 :
             pylith::topology::Field::Discretization(0, 3), // fluid_density
             pylith::topology::Field::Discretization(0, 3), // fluid_viscosity
             pylith::topology::Field::Discretization(0, 3), // shear_modulus
-            pylith::topology::Field::Discretization(0, 3), // bulk_modulus
+            pylith::topology::Field::Discretization(0, 3), // solid_bulk_modulus
             pylith::topology::Field::Discretization(0, 3), // biot_coefficient
             pylith::topology::Field::Discretization(0, 3), // isotropic_permeability
             pylith::topology::Field::Discretization(0, 3), // fluid_bulk_modulus
         };
         _data->auxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_auxDiscretizations);
 
-        static const pylith::topology::Field::Discretization _tractionDiscretizations[2] = {
-            pylith::topology::Field::Discretization(0, 3), // initial_amplitude_tangential
-            pylith::topology::Field::Discretization(0, 3), // initial_amplitude_normal
+        static const pylith::topology::Field::Discretization _tractionDiscretizations[1] = {
+            pylith::topology::Field::Discretization(0, 3, 1) // initial_amplitude_tangential
         };
         _data->tractionDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_tractionDiscretizations);
 
@@ -711,16 +710,15 @@ class pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_QuadQ2 :
             pylith::topology::Field::Discretization(0, 2), // fluid_density
             pylith::topology::Field::Discretization(0, 2), // fluid_viscosity
             pylith::topology::Field::Discretization(0, 2), // shear_modulus
-            pylith::topology::Field::Discretization(0, 2), // bulk_modulus
+            pylith::topology::Field::Discretization(0, 2), // solid_bulk_modulus
             pylith::topology::Field::Discretization(0, 2), // biot_coefficient
             pylith::topology::Field::Discretization(0, 2), // isotropic_permeability
             pylith::topology::Field::Discretization(0, 2), // fluid_bulk_modulus
         };
         _data->auxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_auxDiscretizations);
 
-        static const pylith::topology::Field::Discretization _tractionDiscretizations[2] = {
-            pylith::topology::Field::Discretization(0, 2), // initial_amplitude_tangential
-            pylith::topology::Field::Discretization(0, 2), // initial_amplitude_normal
+        static const pylith::topology::Field::Discretization _tractionDiscretizations[1] = {
+            pylith::topology::Field::Discretization(0, 2, 1) // initial_amplitude_tangential
         };
         _data->tractionDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_tractionDiscretizations);
 
@@ -755,7 +753,7 @@ class pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_QuadQ3 :
             pylith::topology::Field::Discretization(0, 3), // fluid_density
             pylith::topology::Field::Discretization(0, 3), // fluid_viscosity
             pylith::topology::Field::Discretization(0, 3), // shear_modulus
-            pylith::topology::Field::Discretization(0, 3), // bulk_modulus
+            pylith::topology::Field::Discretization(0, 3), // solid_bulk_modulus
             pylith::topology::Field::Discretization(0, 3), // biot_coefficient
             pylith::topology::Field::Discretization(0, 3), // isotropic_permeability
             pylith::topology::Field::Discretization(0, 3), // fluid_bulk_modulus
@@ -763,9 +761,8 @@ class pylith::mmstests::TestIsotropicLinearPoroelasticity_Terzaghi_QuadQ3 :
         };
         _data->auxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_auxDiscretizations);
 
-        static const pylith::topology::Field::Discretization _tractionDiscretizations[2] = {
-            pylith::topology::Field::Discretization(0, 3), // initial_amplitude_tangential
-            pylith::topology::Field::Discretization(0, 3), // initial_amplitude_normal
+        static const pylith::topology::Field::Discretization _tractionDiscretizations[1] = {
+            pylith::topology::Field::Discretization(0, 3, 1) // initial_amplitude_tangential
         };
         _data->tractionDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_tractionDiscretizations);
 

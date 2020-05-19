@@ -72,91 +72,6 @@ pylith::materials::AuxiliaryFactoryPoroelastic::addIsotropicPermeability(void)
     PYLITH_METHOD_END;
 } // addIsotropicPermeability
 
-// ----------------------------------------------------------------------
-// Add porosity subfield to auxiliary fields.
-void
-pylith::materials::AuxiliaryFactoryPoroelastic::addPorosity(void)
-{ // porosity
-    PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("porosity(void)");
-
-    const char* fieldName = "porosity";
-
-    const PylithReal noScale = 1;
-
-    pylith::topology::Field::Description description;
-    description.label = fieldName;
-    description.alias = fieldName;
-    description.vectorFieldType = pylith::topology::Field::SCALAR;
-    description.numComponents = 1;
-    description.componentNames.resize(1);
-    description.componentNames[0] = fieldName;
-    description.scale = noScale;
-    description.validator = NULL;
-
-    _field->subfieldAdd(description, getSubfieldDiscretization(fieldName));
-    _setSubfieldQueryFn(fieldName, pylith::topology::FieldQuery::dbQueryGeneric);
-
-    PYLITH_METHOD_END;
-} // addPorosity
-
-// ----------------------------------------------------------------------
-// Add fluid density subfield to auxiliary fields.
-void
-pylith::materials::AuxiliaryFactoryPoroelastic::addFluidDensity(void)
-{ // fluidDensity
-    PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("fluidDensity(void)");
-
-    const char* fieldName = "fluid_density";
-    const PylithReal densityScale = _normalizer->densityScale();
-
-    pylith::topology::Field::Description description;
-    description.label = fieldName;
-    description.alias = fieldName;
-    description.vectorFieldType = pylith::topology::Field::SCALAR;
-    description.numComponents = 1;
-    description.componentNames.resize(1);
-    description.componentNames[0] = fieldName;
-    description.scale = densityScale;
-    description.validator = pylith::topology::FieldQuery::validatorPositive;
-
-    _field->subfieldAdd(description, getSubfieldDiscretization(fieldName));
-    _setSubfieldQueryFn(fieldName, pylith::topology::FieldQuery::dbQueryGeneric);
-
-    PYLITH_METHOD_END;
-} // addFluidDensity
-
-// ----------------------------------------------------------------------
-// Add fluid viscosity subfield to auxiliary fields.
-void
-pylith::materials::AuxiliaryFactoryPoroelastic::addFluidViscosity(void)
-{ // fluidViscosity
-    PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("fluidViscosity(void)");
-
-    const char* fieldName = "fluid_viscosity";
-    const PylithReal pressureScale = _normalizer->pressureScale();
-    const PylithReal timeScale = _normalizer->timeScale();
-    const PylithReal viscosityScale = pressureScale*timeScale;
-
-    pylith::topology::Field::Description description;
-    description.label = fieldName;
-    description.alias = fieldName;
-    description.vectorFieldType = pylith::topology::Field::SCALAR;
-    description.numComponents = 1;
-    description.componentNames.resize(1);
-    description.componentNames[0] = fieldName;
-    description.scale = viscosityScale;
-    description.validator = pylith::topology::FieldQuery::validatorPositive;
-
-    _field->subfieldAdd(description, getSubfieldDiscretization(fieldName));
-    _setSubfieldQueryFn(fieldName, pylith::topology::FieldQuery::dbQueryGeneric);
-
-    PYLITH_METHOD_END;
-
-} // addFluidViscosity
-
 // --------------------------------------------------------------------
 // Add fluid bulk modulus subfield to auxiliary fields.
 void
@@ -211,36 +126,6 @@ pylith::materials::AuxiliaryFactoryPoroelastic::addBiotCoefficient(void)
 
     PYLITH_METHOD_END;
 } // addBiotCoefficient
-
-// ----------------------------------------------------------------------
-// Add source density subfield to auxiliary fields.
-void
-pylith::materials::AuxiliaryFactoryPoroelastic::addSourceDensity(void)
-{ // sourceDensity
-    PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("sourceDensity(void)");
-
-    const char* fieldName = "source_density";
-    const PylithReal lengthScale = _normalizer->lengthScale();
-    const PylithReal timeScale = _normalizer->timeScale();
-    const PylithReal sourceDensityScale = lengthScale/timeScale;
-
-    pylith::topology::Field::Description description;
-    description.label = fieldName;
-    description.alias = fieldName;
-    description.vectorFieldType = pylith::topology::Field::SCALAR;
-    description.numComponents = 1;
-    description.componentNames.resize(1);
-    description.componentNames[0] = fieldName;
-    description.scale = sourceDensityScale;
-    description.validator = pylith::topology::FieldQuery::validatorPositive;
-
-    _field->subfieldAdd(description, getSubfieldDiscretization(fieldName));
-    _setSubfieldQueryFn(fieldName, pylith::topology::FieldQuery::dbQueryGeneric);
-
-    PYLITH_METHOD_END;
-
-} // addSourceDensity
 
 // ----------------------------------------------------------------------
 // Add reference stress subfield to auxiliary fields.
@@ -332,13 +217,13 @@ pylith::materials::AuxiliaryFactoryPoroelastic::addShearModulus(void) {
 } // addShearModulus
 
 // ---------------------------------------------------------------------------------------------------------------------
-// Add bulk modulus subfield to auxiliary fields.
+// Add solid bulk modulus subfield to auxiliary fields.
 void
-pylith::materials::AuxiliaryFactoryPoroelastic::addBulkModulus(void) {
+pylith::materials::AuxiliaryFactoryPoroelastic::addSolidBulkModulus(void) {
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("addBulkModulus(void)");
+    PYLITH_JOURNAL_DEBUG("addSolidBulkModulus(void)");
 
-    const char* fieldName = "bulk_modulus";
+    const char* fieldName = "solid_bulk_modulus";
     const PylithReal pressureScale = _normalizer->pressureScale();
 
     pylith::topology::Field::Description description;
@@ -353,9 +238,65 @@ pylith::materials::AuxiliaryFactoryPoroelastic::addBulkModulus(void) {
 
     _field->subfieldAdd(description, getSubfieldDiscretization(fieldName));
     _setSubfieldQueryFn(fieldName, pylith::topology::FieldQuery::dbQueryGeneric);
-    //_setSubfieldQueryFn(fieldName, pylith::materials::Query::dbQueryBulkModulus);
+    //_setSubfieldQueryFn(fieldName, pylith::materials::Query::dbQuerySolidBulkModulus);
 
     PYLITH_METHOD_END;
-} // addBulkModulus
+} // addSolidBulkModulus
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Add young's modulus subfield to auxiliary fields.
+void
+pylith::materials::AuxiliaryFactoryPoroelastic::addYoungsModulus(void) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addYoungsModulus(void)");
+
+    const char* fieldName = "youngs_modulus";
+    const PylithReal pressureScale = _normalizer->pressureScale();
+
+    pylith::topology::Field::Description description;
+    description.label = fieldName;
+    description.alias = fieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = fieldName;
+    description.scale = pressureScale;
+    description.validator = pylith::topology::FieldQuery::validatorPositive;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(fieldName));
+    _setSubfieldQueryFn(fieldName, pylith::topology::FieldQuery::dbQueryGeneric);
+    //_setSubfieldQueryFn(fieldName, pylith::materials::Query::dbQueryYoungsModulus);
+
+    PYLITH_METHOD_END;
+} // addYoungsModulus
+
+// ----------------------------------------------------------------------
+// Add poisson's ratio subfield to auxiliary fields.
+void
+pylith::materials::AuxiliaryFactoryPoroelasticity::addPoissonsRatio(void)
+{ // porosity
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addPoissonsRatio(void)");
+
+    const char* fieldName = "poissons_ratio";
+
+    const PylithReal noScale = 1;
+
+    pylith::topology::Field::Description description;
+    description.label = fieldName;
+    description.alias = fieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = fieldName;
+    description.scale = noScale;
+    description.validator = NULL;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(fieldName));
+    _setSubfieldQueryFn(fieldName, pylith::topology::FieldQuery::dbQueryGeneric);
+
+    PYLITH_METHOD_END;
+} // addPoissonsRatio
+
 
 // End of file

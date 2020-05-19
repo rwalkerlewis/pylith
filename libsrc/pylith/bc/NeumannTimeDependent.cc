@@ -274,14 +274,20 @@ pylith::bc::NeumannTimeDependent::createAuxiliaryField(const pylith::topology::F
     auxiliaryField->allocate();
     auxiliaryField->zeroLocal();
 
-    assert(_auxiliaryFactory);
-    _auxiliaryFactory->setValuesFromDB();
-
     journal::debug_t debug(PyreComponent::getName());
     if (debug.state()) {
         PYLITH_COMPONENT_DEBUG("Displaying auxiliary field");
         auxiliaryField->view("Neumann auxiliary field");
     } // if
+
+    assert(_auxiliaryFactory);
+    _auxiliaryFactory->setValuesFromDB();
+
+    // journal::debug_t debug(PyreComponent::getName());
+    // if (debug.state()) {
+    //     PYLITH_COMPONENT_DEBUG("Displaying auxiliary field");
+    //     auxiliaryField->view("Neumann auxiliary field");
+    // } // if
 
     PYLITH_METHOD_RETURN(auxiliaryField);
 } // createAuxiliaryField

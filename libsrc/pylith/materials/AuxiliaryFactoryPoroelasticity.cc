@@ -47,11 +47,11 @@ pylith::materials::AuxiliaryFactoryPoroelasticity::~AuxiliaryFactoryPoroelastici
 // ---------------------------------------------------------------------------------------------------------------------
 // Add density subfield to auxiliary fields.
 void
-pylith::materials::AuxiliaryFactoryPoroelasticity::addDensity(void) {
+pylith::materials::AuxiliaryFactoryPoroelasticity::addSolidDensity(void) {
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("addDensity(void)");
+    PYLITH_JOURNAL_DEBUG("addSolidDensity(void)");
 
-    const char* fieldName = "density";
+    const char* fieldName = "solid_density";
     const PylithReal densityScale = _normalizer->densityScale();
 
     pylith::topology::Field::Description description;
@@ -68,7 +68,7 @@ pylith::materials::AuxiliaryFactoryPoroelasticity::addDensity(void) {
     _setSubfieldQueryFn(fieldName, pylith::topology::FieldQuery::dbQueryGeneric);
 
     PYLITH_METHOD_END;
-} // addDensity
+} // addSolidDensity
 
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -140,7 +140,7 @@ void
 pylith::materials::AuxiliaryFactoryPoroelasticity::addPorosity(void)
 { // porosity
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("porosity(void)");
+    PYLITH_JOURNAL_DEBUG("addPorosity(void)");
 
     const char* fieldName = "porosity";
 
@@ -168,7 +168,7 @@ void
 pylith::materials::AuxiliaryFactoryPoroelasticity::addFluidDensity(void)
 { // fluidDensity
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("fluidDensity(void)");
+    PYLITH_JOURNAL_DEBUG("addFluidDensity(void)");
 
     const char* fieldName = "fluid_density";
     const PylithReal densityScale = _normalizer->densityScale();
@@ -195,7 +195,7 @@ void
 pylith::materials::AuxiliaryFactoryPoroelasticity::addFluidViscosity(void)
 { // fluidViscosity
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("fluidViscosity(void)");
+    PYLITH_JOURNAL_DEBUG("addFluidViscosity(void)");
 
     const char* fieldName = "fluid_viscosity";
     const PylithReal pressureScale = _normalizer->pressureScale();
@@ -225,7 +225,7 @@ void
 pylith::materials::AuxiliaryFactoryPoroelasticity::addSourceDensity(void)
 { // sourceDensity
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("sourceDensity(void)");
+    PYLITH_JOURNAL_DEBUG("addSourceDensity(void)");
 
     const char* fieldName = "source_density";
     const PylithReal lengthScale = _normalizer->lengthScale();

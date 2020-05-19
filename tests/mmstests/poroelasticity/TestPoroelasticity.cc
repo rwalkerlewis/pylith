@@ -114,7 +114,7 @@ pylith::mmstests::TestPoroelasticity::_initialize(void) {
     for (int i = 0; i < _data->numTractionSubfields; ++i) {
         const pylith::topology::FieldBase::Discretization& info = _data->tractionDiscretizations[i];
         _bcTraction_ypos->setAuxiliarySubfieldDiscretization(_data->tractionSubfields[i], info.basisOrder, info.quadOrder,
-                                                             _data->spaceDim, info.isBasisContinuous, info.feSpace);
+                                                             info.dimension, info.isBasisContinuous, info.feSpace);
     } // for
 
     // Set up problem.

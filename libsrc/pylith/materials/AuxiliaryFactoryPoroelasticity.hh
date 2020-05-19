@@ -42,7 +42,7 @@ public:
     virtual ~AuxiliaryFactoryPoroelasticity(void);
 
     /// Add density subfield to auxiliary subfields.
-    void addDensity(void);
+    void addSolidDensity(void);
 
     /// Add body force subfield to auxiliary subfields.
     void addBodyForce(void);
