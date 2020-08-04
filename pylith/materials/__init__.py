@@ -38,6 +38,11 @@ __all__ = [
     "Material",
     "RheologyElasticity",
     "RheologyIncompressibleElasticity",
+    "Poroelasticity",
+    "RheologyPoroelasticity",
+    "IsotropicLinearPoroelasticity",
+    "AuxSubfieldsPoroelasticity",
+    "AuxSubfieldsIsotropicPoroelasticity"
 ]
 
 
