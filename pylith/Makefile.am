@@ -112,6 +112,7 @@ nobase_pkgpyexec_PYTHON = \
 	problems/ProgressMonitor.py \
 	problems/ProgressMonitorTime.py \
 	problems/SolnDispPresTracStrain.py \
+	problems/SolnDispPresVel.py \
 	problems/SubfieldTraceStrain.py \
 	topology/__init__.py \
 	topology/Distributor.py \
