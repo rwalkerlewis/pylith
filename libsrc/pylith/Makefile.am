@@ -46,9 +46,6 @@ libpylith_la_SOURCES = \
 	faults/KinSrc.cc \
 	faults/KinSrcStep.cc \
 	faults/KinSrcConstRate.cc \
-	faults/KinSrcBrune.cc \
-	faults/KinSrcLiuCos.cc \
-	faults/KinSrcTimeHistory.hh \
 	faults/KinSrcAuxiliaryFactory.cc \
 	faults/TopologyOps.cc \
 	feassemble/PhysicsImplementation.cc \
@@ -70,13 +67,13 @@ libpylith_la_SOURCES = \
 	fekernels/IsotropicPowerLaw.cc \
 	fekernels/IncompressibleElasticity.cc \
 	fekernels/IsotropicLinearIncompElasticity.cc \
+  fekernels/Poroelasticity.cc \
+  fekernels/IsotropicLinearPoroelasticity.cc \
 	fekernels/DispVel.cc \
 	fekernels/TimeDependentFn.cc \
 	fekernels/NeumannTimeDependent.cc \
 	fekernels/AbsorbingDampers.cc \
 	fekernels/FaultCohesiveKin.cc \
-	fekernels/IsotropicLinearPoroelasticity.cc \
-	fekernels/Poroelasticity.cc \
 	materials/Material.cc \
 	materials/Elasticity.cc \
 	materials/RheologyElasticity.cc \
@@ -88,14 +85,15 @@ libpylith_la_SOURCES = \
 	materials/IsotropicPowerLaw.cc \
 	materials/AuxiliaryFactoryElastic.cc \
 	materials/AuxiliaryFactoryViscoelastic.cc \
+	materials/AuxiliaryFactoryPoroelasticity.cc \
+	materials/AuxiliaryFactoryPoroelastic.cc \
 	materials/IncompressibleElasticity.cc \
 	materials/RheologyIncompressibleElasticity.cc \
 	materials/IsotropicLinearIncompElasticity.cc \
+  materials/Poroelasticity.cc \
+  materials/RheologyPoroelasticity.cc \
+  materials/IsotropicLinearPoroelasticity.cc \
 	materials/Query.cc \
-	materials/AuxiliaryFactoryPoroelastic.cc \
-	materials/AuxiliaryFactoryPoroelasticity.cc \
-	materials/IsotropicLinearPoroelasticity.cc \
-	materials/Poroelasticity.cc \
 	meshio/BinaryIO.cc \
 	meshio/GMVFile.cc \
 	meshio/GMVFileAscii.cc \
