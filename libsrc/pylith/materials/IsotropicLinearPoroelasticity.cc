@@ -112,15 +112,14 @@ pylith::materials::IsotropicLinearPoroelasticity::addAuxiliarySubfields(void) {
     // functions (kernels).
 
     if (_useReferenceState) {
-        _auxiliaryFactory->addReferenceStress();
-        _auxiliaryFactory->addReferenceStrain();
+        _auxiliaryFactory->addReferenceStress(); // numA - 7
+        _auxiliaryFactory->addReferenceStrain(); // numA - 6
     } // if
-    _auxiliaryFactory->addShearModulus(); //4
- //   _auxiliaryFactory->addSolidBulkModulus();  //5
-    _auxiliaryFactory->addPoissonsRatio();  //5
-    _auxiliaryFactory->addBiotCoefficient();  //6
-    _auxiliaryFactory->addIsotropicPermeability();  //7
-    _auxiliaryFactory->addFluidBulkModulus();  //8
+    _auxiliaryFactory->addShearModulus(); // Shear Modulus, G, numA - 5
+    _auxiliaryFactory->addUndrainedBulkModulus(); // K_u, numA - 4
+    _auxiliaryFactory->addBiotCoefficient();  // alpha, numA - 3
+    _auxiliaryFactory->addBiotModulus(); // M, numA - 2
+    _auxiliaryFactory->addIsotropicPermeability();  // k, numA - 1
 
     PYLITH_METHOD_END;
 } // addAuxiliarySubfields
@@ -133,9 +132,10 @@ pylith::materials::IsotropicLinearPoroelasticity::getKernelRHSResidualEffectiveS
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("getKernelRHSResidualEffectiveStress(coordsys="<<typeid(coordsys).name()<<")");
 
-    PetscPointFunc g1u = (!_useReferenceState) ?
-                          pylith::fekernels::IsotropicLinearPoroelasticity::g1v :
-                          pylith::fekernels::IsotropicLinearPoroelasticity::g1v_refstate;
+    PetscPointFunc g1u =   (!_useInertia && !_useReferenceState) ? pylith::fekernels::IsotropicLinearPoroelasticity::g1u :
+                           (!_useInertia && _useReferenceState) ? pylith::fekernels::IsotropicLinearPoroelasticity::g1u_refstate :
+                           ( _useInertia && !_useReferenceState) ? pylith::fekernels::IsotropicLinearPoroelasticity::g1v :
+                           ( _useInertia && _useReferenceState) ? pylith::fekernels::IsotropicLinearPoroelasticity::g1v_refstate;
 
     PYLITH_METHOD_RETURN(g1u);
 } // getKernelRHSResidualEffectiveStress
@@ -163,7 +163,9 @@ pylith::materials::IsotropicLinearPoroelasticity::getKernelRHSJacobianElasticCon
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("getKernelRHSJacobianElasticConstants(coordsys="<<typeid(coordsys).name()<<")");
 
-    PetscPointJac Jg3uu = pylith::fekernels::IsotropicLinearPoroelasticity::Jg3vu;
+    PetscPointJac Jg3uu = (!_useInertia) ?
+                          pylith::fekernels::IsotropicLinearPoroelasticity::Jg3uu :
+                          pylith::fekernels::IsotropicLinearPoroelasticity::Jg3vu;
 
     PYLITH_METHOD_RETURN(Jg3uu);
 } // getKernelRHSJacobianElasticConstants
@@ -175,9 +177,11 @@ pylith::materials::IsotropicLinearPoroelasticity::getKernelRHSJacobianBiotCoeffi
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("getKernelRHSJacobianBiotCoefficient(coordsys="<<typeid(coordsys).name()<<")");
 
-    PetscPointJac Jg2vp = pylith::fekernels::IsotropicLinearPoroelasticity::Jg2vp;
+    PetscPointJac Jg2up = (!_useInertia) ?
+                          pylith::fekernels::IsotropicLinearPoroelasticity::Jg2up :
+                          pylith::fekernels::IsotropicLinearPoroelasticity::Jg2vp;
 
-    PYLITH_METHOD_RETURN(Jg2vp);
+    PYLITH_METHOD_RETURN(Jg2up);
 } // getKernelRHSJacobianBiotCoefficient
 
 // ---------------------------------------------------------------------------------------------------------------------

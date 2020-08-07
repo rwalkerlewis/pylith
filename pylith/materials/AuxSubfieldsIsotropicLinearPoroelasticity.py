@@ -89,6 +89,21 @@ class AuxSubfieldsIsotropicLinearPoroelasticity(PetscComponent):
     fluidBulkModulus = pyre.inventory.facility("fluid_bulk_modulus", family="auxiliary_subfield", factory=Subfield)
     fluidBulkModulus.meta['tip'] = "Fluid bulk modulus subfield."
 
+    drainedBulkModulus = pyre.inventory.facility("drained_bulk_modulus", family="auxiliary_subfield", factory=Subfield)
+    drainedBulkModulus.meta['tip'] = "Drained bulk modulus subfield."
+
+    undrainedBulkModulus = pyre.inventory.facility("undrained_bulk_modulus", family="auxiliary_subfield", factory=Subfield)
+    undrainedBulkModulus.meta['tip'] = "Undrained bulk modulus subfield."
+
+    biotModulus = pyre.inventory.facility("biot_modulus", family="auxiliary_subfield", factory=Subfield)
+    biotModulus.meta['tip'] = "Biot modulus subfield."
+
+    youngsModulus = pyre.inventory.facility("youngs_modulus", family="auxiliary_subfield", factory=Subfield)
+    youngsModulus.meta['tip'] = "Young's modulus subfield."
+
+    poissonsRatio = pyre.inventory.facility("poissons_ratio", family="auxiliary_subfield", factory=Subfield)
+    poissonsRatio.meta['tip'] = "Poisson's ratio subfield."
+
     # PUBLIC METHODS /////////////////////////////////////////////////////
 
     def __init__(self, name="auxfieldsisotropiclinearporoelasticity"):

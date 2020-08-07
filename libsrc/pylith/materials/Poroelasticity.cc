@@ -217,10 +217,10 @@ pylith::materials::Poroelasticity::createAuxiliaryField(const pylith::topology::
 
     // ---------------------------------
     // Required Auxiliary
-    auxiliaryFactory->addPorosity();      // 0
-    auxiliaryFactory->addSolidDensity();  // 1 Rock Density
-    auxiliaryFactory->addFluidDensity();  // 2 Fluid Density
-    auxiliaryFactory->addFluidViscosity();// 3 Fluid Viscosity
+    //auxiliaryFactory->addPorosity();      // 0
+    auxiliaryFactory->addSolidDensity();  // 0 Rock Density
+    auxiliaryFactory->addFluidDensity();  // 1 Fluid Density
+    auxiliaryFactory->addFluidViscosity();// 2 Fluid Viscosity
 
     // ---------------------------------
     // Optional Auxiliary

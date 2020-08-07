@@ -42,11 +42,20 @@ public:
     /// Add isotropic permeability subfield to auxiliary subfields.
     void addIsotropicPermeability(void);
 
+    /// Add drained Bulk Modulus subfield to auxiliary subfields.
+    void addDrainedBulkModulus(void);
+
+    /// Add undrained Bulk Modulus subfield to auxiliary subfields.
+    void addUndrainedBulkModulus(void);
+
     /// Add fluid Bulk Modulus subfield to auxiliary subfields.
     void addFluidBulkModulus(void);
 
-    /// Add fluid Bulk Modulus subfield to auxiliary subfields.
+    /// Add fluid Biot Coefficient subfield to auxiliary subfields.
     void addBiotCoefficient(void);
+
+    /// Add fluid Biot Modulus subfield to auxiliary subfields.
+    void addBiotModulus(void);
 
     /// Add reference stress subfield to auxiliary fields.
     void addReferenceStress(void);
