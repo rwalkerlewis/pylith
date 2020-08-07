@@ -73,6 +73,60 @@ pylith::materials::AuxiliaryFactoryPoroelastic::addIsotropicPermeability(void)
 } // addIsotropicPermeability
 
 // --------------------------------------------------------------------
+// Add drained bulk modulus subfield to auxiliary fields.
+void
+pylith::materials::AuxiliaryFactoryPoroelastic::addDrainedBulkModulus(void)
+{ // DrainedBulkModulus
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("drainedBulkModulus(void)");
+
+    const char* fieldName = "drained_bulk_modulus";
+    const PylithReal pressureScale = _normalizer->pressureScale();
+
+    pylith::topology::Field::Description description;
+    description.label = fieldName;
+    description.alias = fieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = fieldName;
+    description.scale = pressureScale;
+    description.validator = NULL;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(fieldName));
+    _setSubfieldQueryFn(fieldName, pylith::topology::FieldQuery::dbQueryGeneric);
+
+    PYLITH_METHOD_END;
+} // addDrainedBulkModulus
+
+// --------------------------------------------------------------------
+// Add undrained bulk modulus subfield to auxiliary fields.
+void
+pylith::materials::AuxiliaryFactoryPoroelastic::addUndrainedBulkModulus(void)
+{ // UndrainedBulkModulus
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("undrainedBulkModulus(void)");
+
+    const char* fieldName = "undrained_bulk_modulus";
+    const PylithReal pressureScale = _normalizer->pressureScale();
+
+    pylith::topology::Field::Description description;
+    description.label = fieldName;
+    description.alias = fieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = fieldName;
+    description.scale = pressureScale;
+    description.validator = NULL;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(fieldName));
+    _setSubfieldQueryFn(fieldName, pylith::topology::FieldQuery::dbQueryGeneric);
+
+    PYLITH_METHOD_END;
+} // addUndrainedBulkModulus
+
+// --------------------------------------------------------------------
 // Add fluid bulk modulus subfield to auxiliary fields.
 void
 pylith::materials::AuxiliaryFactoryPoroelastic::addFluidBulkModulus(void)
@@ -126,6 +180,34 @@ pylith::materials::AuxiliaryFactoryPoroelastic::addBiotCoefficient(void)
 
     PYLITH_METHOD_END;
 } // addBiotCoefficient
+
+// ---------------------------------------------------------------------
+// Add biot modulus subfield to auxiliary fields.
+void
+pylith::materials::AuxiliaryFactoryPoroelastic::addBiotModulus(void)
+{ // biotCoefficient
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("biotModulus(void)");
+
+    const char* fieldName = "biot_modulus";
+    const PylithReal pressureScale = _normalizer->pressureScale();
+
+    pylith::topology::Field::Description description;
+    description.label = fieldName;
+    description.alias = fieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = fieldName;
+    description.scale = pressureScale;
+    description.validator = NULL;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(fieldName));
+    _setSubfieldQueryFn(fieldName, pylith::topology::FieldQuery::dbQueryGeneric);
+
+    PYLITH_METHOD_END;
+} // addBiotModulus
+
 
 // ----------------------------------------------------------------------
 // Add reference stress subfield to auxiliary fields.
