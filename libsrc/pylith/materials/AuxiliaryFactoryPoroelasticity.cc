@@ -38,38 +38,9 @@ pylith::materials::AuxiliaryFactoryPoroelasticity::AuxiliaryFactoryPoroelasticit
     GenericComponent::setName("auxiliaryfactoryporoelasticity");
 } // constructor
 
-
 // ---------------------------------------------------------------------------------------------------------------------
 // Destructor.
 pylith::materials::AuxiliaryFactoryPoroelasticity::~AuxiliaryFactoryPoroelasticity(void) {}
-
-
-// ---------------------------------------------------------------------------------------------------------------------
-// Add density subfield to auxiliary fields.
-void
-pylith::materials::AuxiliaryFactoryPoroelasticity::addSolidDensity(void) {
-    PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("addSolidDensity(void)");
-
-    const char* fieldName = "solid_density";
-    const PylithReal densityScale = _normalizer->densityScale();
-
-    pylith::topology::Field::Description description;
-    description.label = fieldName;
-    description.alias = fieldName;
-    description.vectorFieldType = pylith::topology::Field::SCALAR;
-    description.numComponents = 1;
-    description.componentNames.resize(1);
-    description.componentNames[0] = fieldName;
-    description.scale = densityScale;
-    description.validator = pylith::topology::FieldQuery::validatorPositive;
-
-    _field->subfieldAdd(description, getSubfieldDiscretization(fieldName));
-    _setSubfieldQueryFn(fieldName, pylith::topology::FieldQuery::dbQueryGeneric);
-
-    PYLITH_METHOD_END;
-} // addSolidDensity
-
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Add body force subfield to auxiliary fields.
@@ -143,7 +114,6 @@ pylith::materials::AuxiliaryFactoryPoroelasticity::addPorosity(void)
     PYLITH_JOURNAL_DEBUG("addPorosity(void)");
 
     const char* fieldName = "porosity";
-
     const PylithReal noScale = 1;
 
     pylith::topology::Field::Description description;
@@ -161,6 +131,32 @@ pylith::materials::AuxiliaryFactoryPoroelasticity::addPorosity(void)
 
     PYLITH_METHOD_END;
 } // addPorosity
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Add density subfield to auxiliary fields.
+void
+pylith::materials::AuxiliaryFactoryPoroelasticity::addSolidDensity(void) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addSolidDensity(void)");
+
+    const char* fieldName = "solid_density";
+    const PylithReal densityScale = _normalizer->densityScale();
+
+    pylith::topology::Field::Description description;
+    description.label = fieldName;
+    description.alias = fieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = fieldName;
+    description.scale = densityScale;
+    description.validator = pylith::topology::FieldQuery::validatorPositive;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(fieldName));
+    _setSubfieldQueryFn(fieldName, pylith::topology::FieldQuery::dbQueryGeneric);
+
+    PYLITH_METHOD_END;
+} // addSolidDensity
 
 // ----------------------------------------------------------------------
 // Add fluid density subfield to auxiliary fields.

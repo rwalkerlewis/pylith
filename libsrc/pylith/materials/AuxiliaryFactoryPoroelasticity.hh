@@ -41,9 +41,6 @@ public:
     /// Destructor.
     virtual ~AuxiliaryFactoryPoroelasticity(void);
 
-    /// Add density subfield to auxiliary subfields.
-    void addSolidDensity(void);
-
     /// Add body force subfield to auxiliary subfields.
     void addBodyForce(void);
 
@@ -55,6 +52,9 @@ public:
 
     /// Add porosity subfield to auxiliary subfields.
     void addPorosity(void);
+
+    /// Add solid density subfield to auxiliary subfields.
+    void addSolidDensity(void);
 
     /// Add fluid density subfield to auxiliary subfields.
     void addFluidDensity(void);
