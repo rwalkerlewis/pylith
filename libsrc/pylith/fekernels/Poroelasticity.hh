@@ -253,9 +253,9 @@ public:
 
 
      // ----------------------------------------------------------------------
-     // g0E function for isotropic linear Poroelasticity plane strain.
+     // g0e function for isotropic linear Poroelasticity.
      static
-     void g0e_(const PylithInt dim,
+     void g0e(const PylithInt dim,
               const PylithInt numS,
               const PylithInt numA,
               const PylithInt sOff[],
