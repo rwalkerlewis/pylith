@@ -562,7 +562,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity::g1v_refstate(const PylithInt d
     const PylithInt sOffCouple_x[3] = { sOff_x[i_disp], sOff_x[i_poro_pres], sOff_x[i_velocity] };
 
     const PylithInt numAMean = 5; // Number passed to mean stress kernel.
-    const PylithInt aOffMean[5] = { aOff[i_undrainedBulkModulus], aOff[i_biotCoefficient], aOff[i_biotModulus], aOff aOff[i_rstress], aOff[i_rstrain] };
+    const PylithInt aOffMean[5] = { aOff[i_undrainedBulkModulus], aOff[i_biotCoefficient], aOff[i_biotModulus], aOff[i_rstress], aOff[i_rstrain] };
     const PylithInt aOffMean_x[5] = { aOff_x[i_undrainedBulkModulus], aOff_x[i_biotCoefficient], aOff_x[i_biotModulus], aOff_x[i_rstress], aOff_x[i_rstrain] };
 
     const PylithInt numADev = 3; // Number passed to deviatoric stress kernel.
