@@ -358,12 +358,11 @@ pylith::fekernels::IsotropicLinearPoroelasticity::g1u(const PylithInt dim,
     const PylithInt aOffDev[1] = { aOff[i_shearModulus] };
     const PylithInt aOffDev_x[1] = { aOff_x[i_shearModulus] };
 
-    if (dim == 2) {
-      PylithScalar stressTensor[4] = {0.0, 0.0, 0.0, 0.0}; // Full stress tensor
-    } else if (dim == 3) {
-      PylithScalar stressTensor[9] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}; // Full stress tensor
-    } else {
-      PylithScalar stressTensor[1] = {0.0}; // Full stress tensor
+    PylithScalar stressTensor[dim];
+    PylithInt d;
+
+    for (d = 0; d < dim*dim; ++d) {
+      stressTensor[d] = 0.0;
     }
 
     meanStress(dim, _numS, numAMean,sOffCouple, sOffCouple_x, s, s_t, s_x,
@@ -373,8 +372,9 @@ pylith::fekernels::IsotropicLinearPoroelasticity::g1u(const PylithInt dim,
     deviatoricStress(dim, _numS, numADev,sOffCouple, sOffCouple_x, s, s_t, s_x,
                      aOffDev, aOffDev_x, a, a_t, a_x,t, x, numConstants, constants,
                       stressTensor);
-    for (PylithInt i = 0; i < dim*dim; ++i) {
-        g1[i] -= stressTensor[i];
+
+    for (d = 0; d < dim*dim; ++d) {
+        g1[d] -= stressTensor[d];
     } // for
 } // g1u
 
