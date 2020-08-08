@@ -131,7 +131,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity::f0p_DYN(const PylithInt dim,
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
     const PylithScalar biotModulus = a[aOff[i_biotModulus]];
 
-    f0p[0] += biotCoefficient*trace_strain_t
+    f0p[0] += biotCoefficient*trace_strain_t;
     f0p[0] += poro_pres_t/biotModulus;
 } // f0p_DYN
 
@@ -303,7 +303,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity::g1p_NoGrav(const PylithInt dim
     const PylithScalar isotropicPerm = a[aOff[i_isotropicPerm]];
     const PylithScalar fluidViscosity = a[aOff[i_fluidViscosity]];
 
-    const PylithScalar kappa = isotropicPerm / viscosity;
+    const PylithScalar kappa = isotropicPerm / fluidViscosity;
 
     for (PylithInt i = 0; i < dim; ++i) {
         g1p[i] -= kappa * poro_pres_x[i];
@@ -358,12 +358,12 @@ pylith::fekernels::IsotropicLinearPoroelasticity::g1u(const PylithInt dim,
     const PylithInt aOffDev[1] = { aOff[i_shearModulus] };
     const PylithInt aOffDev_x[1] = { aOff_x[i_shearModulus] };
 
-    if (dim == 1) {
-      PylithScalar stressTensor[1] = {0.0}; // Full stress tensor
-    } else if (dim == 2) {
+    if (dim == 2) {
       PylithScalar stressTensor[4] = {0.0, 0.0, 0.0, 0.0}; // Full stress tensor
     } else if (dim == 3) {
       PylithScalar stressTensor[9] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}; // Full stress tensor
+    } else {
+      PylithScalar stressTensor[1] = {0.0}; // Full stress tensor
     }
 
     meanStress(dim, _numS, numAMean,sOffCouple, sOffCouple_x, s, s_t, s_x,
