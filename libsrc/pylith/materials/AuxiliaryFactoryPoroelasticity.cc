@@ -49,14 +49,14 @@ pylith::materials::AuxiliaryFactoryPoroelasticity::addBodyForce(void) {
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addBodyForce(void)");
 
-    const char* fieldName = "body_force";
+    const char* subfieldName = "body_force";
     const char* componentNames[3] = { "body_force_x", "body_force_y", "body_force_z" };
 
     const PylithReal forceScale = _normalizer->getPressureScale() / _normalizer->getLengthScale();
 
     pylith::topology::Field::Description description;
-    description.label = fieldName;
-    description.alias = fieldName;
+    description.label = subfieldName;
+    description.alias = subfieldName;
     description.vectorFieldType = pylith::topology::Field::VECTOR;
     description.numComponents = _spaceDim;
     description.componentNames.resize(_spaceDim);
@@ -80,7 +80,7 @@ pylith::materials::AuxiliaryFactoryPoroelasticity::addGravityField(spatialdata::
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addGravityField(void)");
 
-    const char* fieldName = "gravitational_acceleration";
+    const char* subfieldName = "gravitational_acceleration";
     const char* componentNames[3] = { "gravitational_acceleration_x", "gravitational_acceleration_y", "gravitational_acceleration_z" };
 
     const PylithReal lengthScale = _normalizer->getLengthScale();
@@ -88,8 +88,8 @@ pylith::materials::AuxiliaryFactoryPoroelasticity::addGravityField(spatialdata::
     const PylithReal accelerationScale = lengthScale / (timeScale * timeScale);
 
     pylith::topology::Field::Description description;
-    description.label = fieldName;
-    description.alias = fieldName;
+    description.label = subfieldName;
+    description.alias = subfieldName;
     description.vectorFieldType = pylith::topology::Field::VECTOR;
     description.numComponents = _spaceDim;
     description.componentNames.resize(_spaceDim);
@@ -113,16 +113,16 @@ pylith::materials::AuxiliaryFactoryPoroelasticity::addPorosity(void)
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addPorosity(void)");
 
-    const char* fieldName = "porosity";
+    const char* subfieldName = "porosity";
     const PylithReal noScale = 1;
 
     pylith::topology::Field::Description description;
-    description.label = fieldName;
-    description.alias = fieldName;
+    description.label = subfieldName;
+    description.alias = subfieldName;
     description.vectorFieldType = pylith::topology::Field::SCALAR;
     description.numComponents = 1;
     description.componentNames.resize(1);
-    description.componentNames[0] = fieldName;
+    description.componentNames[0] = subfieldName;
     description.scale = noScale;
     description.validator = NULL;
 
@@ -139,16 +139,16 @@ pylith::materials::AuxiliaryFactoryPoroelasticity::addSolidDensity(void) {
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addSolidDensity(void)");
 
-    const char* fieldName = "solid_density";
+    const char* subfieldName = "solid_density";
     const PylithReal densityScale = _normalizer->getDensityScale();
 
     pylith::topology::Field::Description description;
-    description.label = fieldName;
-    description.alias = fieldName;
+    description.label = subfieldName;
+    description.alias = subfieldName;
     description.vectorFieldType = pylith::topology::Field::SCALAR;
     description.numComponents = 1;
     description.componentNames.resize(1);
-    description.componentNames[0] = fieldName;
+    description.componentNames[0] = subfieldName;
     description.scale = densityScale;
     description.validator = pylith::topology::FieldQuery::validatorPositive;
 
@@ -166,16 +166,16 @@ pylith::materials::AuxiliaryFactoryPoroelasticity::addFluidDensity(void)
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addFluidDensity(void)");
 
-    const char* fieldName = "fluid_density";
+    const char* subfieldName = "fluid_density";
     const PylithReal densityScale = _normalizer->getDensityScale();
 
     pylith::topology::Field::Description description;
-    description.label = fieldName;
-    description.alias = fieldName;
+    description.label = subfieldName;
+    description.alias = subfieldName;
     description.vectorFieldType = pylith::topology::Field::SCALAR;
     description.numComponents = 1;
     description.componentNames.resize(1);
-    description.componentNames[0] = fieldName;
+    description.componentNames[0] = subfieldName;
     description.scale = densityScale;
     description.validator = pylith::topology::FieldQuery::validatorPositive;
 
@@ -193,18 +193,18 @@ pylith::materials::AuxiliaryFactoryPoroelasticity::addFluidViscosity(void)
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addFluidViscosity(void)");
 
-    const char* fieldName = "fluid_viscosity";
+    const char* subfieldName = "fluid_viscosity";
     const PylithReal pressureScale = _normalizer->getPressureScale();
     const PylithReal timeScale = _normalizer->getTimeScale();
     const PylithReal viscosityScale = pressureScale*timeScale;
 
     pylith::topology::Field::Description description;
-    description.label = fieldName;
-    description.alias = fieldName;
+    description.label = subfieldName;
+    description.alias = subfieldName;
     description.vectorFieldType = pylith::topology::Field::SCALAR;
     description.numComponents = 1;
     description.componentNames.resize(1);
-    description.componentNames[0] = fieldName;
+    description.componentNames[0] = subfieldName;
     description.scale = viscosityScale;
     description.validator = pylith::topology::FieldQuery::validatorPositive;
 
@@ -223,18 +223,18 @@ pylith::materials::AuxiliaryFactoryPoroelasticity::addSourceDensity(void)
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addSourceDensity(void)");
 
-    const char* fieldName = "source_density";
+    const char* subfieldName = "source_density";
     const PylithReal lengthScale = _normalizer->getLengthScale();
     const PylithReal timeScale = _normalizer->getTimeScale();
     const PylithReal sourceDensityScale = lengthScale/timeScale;
 
     pylith::topology::Field::Description description;
-    description.label = fieldName;
-    description.alias = fieldName;
+    description.label = subfieldName;
+    description.alias = subfieldName;
     description.vectorFieldType = pylith::topology::Field::SCALAR;
     description.numComponents = 1;
     description.componentNames.resize(1);
-    description.componentNames[0] = fieldName;
+    description.componentNames[0] = subfieldName;
     description.scale = sourceDensityScale;
     description.validator = pylith::topology::FieldQuery::validatorPositive;
 
