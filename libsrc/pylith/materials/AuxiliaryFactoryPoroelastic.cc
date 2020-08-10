@@ -352,7 +352,7 @@ pylith::materials::AuxiliaryFactoryPoroelastic::addYoungsModulus(void) {
 // ----------------------------------------------------------------------
 // Add poisson's ratio subfield to auxiliary fields.
 void
-pylith::materials::AuxiliaryFactoryPoroelasticity::addPoissonsRatio(void)
+pylith::materials::AuxiliaryFactoryPoroelastic::addPoissonsRatio(void)
 { // porosity
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addPoissonsRatio(void)");
