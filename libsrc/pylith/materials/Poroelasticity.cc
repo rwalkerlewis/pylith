@@ -195,7 +195,7 @@ pylith::materials::Poroelasticity::createAuxiliaryField(const pylith::topology::
     PYLITH_COMPONENT_DEBUG("createAuxiliaryField(solution="<<solution.getLabel()<<", domainMesh=)"<<typeid(domainMesh).name()<<")");
 
     pylith::topology::Field* auxiliaryField = new pylith::topology::Field(domainMesh);assert(auxiliaryField);
-    auxiliaryField->getLabel("Poroelasticity auxiliary field");
+    auxiliaryField->setLabel("Poroelasticity auxiliary field");
 
     assert(_rheology);
     pylith::materials::AuxiliaryFactoryPoroelasticity* auxiliaryFactory = _rheology->getAuxiliaryFactory();assert(auxiliaryFactory);
@@ -257,7 +257,7 @@ pylith::materials::Poroelasticity::createDerivedField(const pylith::topology::Fi
     } // if
 
     pylith::topology::Field* derivedField = new pylith::topology::Field(domainMesh);assert(derivedField);
-    derivedField->getLabel("Poroelasticity derived field");
+    derivedField->setLabel("Poroelasticity derived field");
 
     assert(_normalizer);
     _derivedFactory->initialize(derivedField, *_normalizer, domainMesh.dimension());
@@ -749,7 +749,7 @@ pylith::materials::Poroelasticity::_setKernelsDerivedField(pylith::feassemble::I
     std::vector<ProjectKernels> kernels(2);
     kernels[0] = ProjectKernels("cauchy_stress", _rheology->getKernelDerivedCauchyStress(coordsys));
 
-    const int spaceDim = coordsys->spaceDim();
+    const int spaceDim = coordsys->getSpaceDim();
     const PetscPointFunc strainKernel =
         //(3 == spaceDim) ? pylith::fekernels::Elasticity3D::cauchyStrain :
         //(2 == spaceDim) ? pylith::fekernels::ElasticityPlaneStrain::cauchyStrain :
