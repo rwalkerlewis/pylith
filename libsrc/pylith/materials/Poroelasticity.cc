@@ -121,7 +121,6 @@ pylith::materials::Poroelasticity::useSourceDensity(const bool value) {
     _useSourceDensity = value;
 } // useSourceDensity
 
-
 // ----------------------------------------------------------------------
 // Include source density?
 bool
@@ -136,7 +135,6 @@ pylith::materials::Poroelasticity::setBulkRheology(pylith::materials::RheologyPo
     _rheology = rheology;
 } // setBulkRheology
 
-
 // ---------------------------------------------------------------------------------------------------------------------
 // Get bulk rheology.
 pylith::materials::RheologyPoroelasticity*
@@ -144,13 +142,12 @@ pylith::materials::Poroelasticity::getBulkRheology(void) const {
     return _rheology;
 } // getBulkRheology
 
-
 // ----------------------------------------------------------------------
 // Verify configuration is acceptable.
 void
 pylith::materials::Poroelasticity::verifyConfiguration(const pylith::topology::Field& solution) const {
     PYLITH_METHOD_BEGIN;
-    PYLITH_COMPONENT_DEBUG("verifyConfiguration(solution="<<solution.label()<<")");
+    PYLITH_COMPONENT_DEBUG("verifyConfiguration(solution="<<solution.getLabel()<<")");
 
     // Verify solution contains expected fields.
     if (!solution.hasSubfield("displacement")) {
@@ -174,7 +171,7 @@ pylith::materials::Poroelasticity::verifyConfiguration(const pylith::topology::F
 pylith::feassemble::Integrator*
 pylith::materials::Poroelasticity::createIntegrator(const pylith::topology::Field& solution) {
     PYLITH_METHOD_BEGIN;
-    PYLITH_COMPONENT_DEBUG("createIntegrator(solution="<<solution.label()<<")");
+    PYLITH_COMPONENT_DEBUG("createIntegrator(solution="<<solution.getLabel()<<")");
 
     pylith::feassemble::IntegratorDomain* integrator = new pylith::feassemble::IntegratorDomain(this);assert(integrator);
     integrator->setMaterialId(getMaterialId());
@@ -189,14 +186,13 @@ pylith::materials::Poroelasticity::createIntegrator(const pylith::topology::Fiel
     PYLITH_METHOD_RETURN(integrator);
 } // createIntegrator
 
-
 // ---------------------------------------------------------------------------------------------------------------------
 // Create auxiliary field.
 pylith::topology::Field*
 pylith::materials::Poroelasticity::createAuxiliaryField(const pylith::topology::Field& solution,
                                                         const pylith::topology::Mesh& domainMesh) {
     PYLITH_METHOD_BEGIN;
-    PYLITH_COMPONENT_DEBUG("createAuxiliaryField(solution="<<solution.label()<<", domainMesh=)"<<typeid(domainMesh).name()<<")");
+    PYLITH_COMPONENT_DEBUG("createAuxiliaryField(solution="<<solution.getLabel()<<", domainMesh=)"<<typeid(domainMesh).name()<<")");
 
     pylith::topology::Field* auxiliaryField = new pylith::topology::Field(domainMesh);assert(auxiliaryField);
     auxiliaryField->label("Poroelasticity auxiliary field");
@@ -253,7 +249,7 @@ pylith::topology::Field*
 pylith::materials::Poroelasticity::createDerivedField(const pylith::topology::Field& solution,
                                                       const pylith::topology::Mesh& domainMesh) {
     PYLITH_METHOD_BEGIN;
-    PYLITH_COMPONENT_DEBUG("createDerivedField(solution="<<solution.label()<<", domainMesh=)"<<typeid(domainMesh).name()<<")");
+    PYLITH_COMPONENT_DEBUG("createDerivedField(solution="<<solution.getLabel()<<", domainMesh=)"<<typeid(domainMesh).name()<<")");
 
     assert(_derivedFactory);
     if (_derivedFactory->getNumSubfields() == 1) {
@@ -309,7 +305,7 @@ pylith::materials::Poroelasticity::_setKernelsRHSResidual(pylith::feassemble::In
                                                             const topology::Field& solution) const {
 
     PYLITH_METHOD_BEGIN;
-    PYLITH_COMPONENT_DEBUG("_setKernelsRHSResidual(integrator="<<integrator<<", solution="<<solution.label()<<")");
+    PYLITH_COMPONENT_DEBUG("_setKernelsRHSResidual(integrator="<<integrator<<", solution="<<solution.getLabel()<<")");
 
     const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().coordsys();
 
@@ -414,7 +410,7 @@ pylith::materials::Poroelasticity::_setKernelsRHSResidual(pylith::feassemble::In
 void
 pylith::materials::Poroelasticity::_setKernelsRHSJacobian(pylith::feassemble::IntegratorDomain* integrator, const topology::Field& solution) const {
     PYLITH_METHOD_BEGIN;
-    PYLITH_COMPONENT_DEBUG("_setKernelsRHSJacobian(integrator="<<integrator<<",solution="<<solution.label()<<")");
+    PYLITH_COMPONENT_DEBUG("_setKernelsRHSJacobian(integrator="<<integrator<<",solution="<<solution.getLabel()<<")");
 
     const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().coordsys();
 
@@ -553,7 +549,7 @@ void
 pylith::materials::Poroelasticity::_setKernelsLHSResidual(pylith::feassemble::IntegratorDomain* integrator,
                                                             const topology::Field& solution) const {
     PYLITH_METHOD_BEGIN;
-    PYLITH_COMPONENT_DEBUG("_setKernelsLHSResidual(integrator="<<integrator<<",solution="<<solution.label()<<")");
+    PYLITH_COMPONENT_DEBUG("_setKernelsLHSResidual(integrator="<<integrator<<",solution="<<solution.getLabel()<<")");
 
     std::vector<ResidualKernels> kernels;
     const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().coordsys();
@@ -607,7 +603,7 @@ void
 pylith::materials::Poroelasticity::_setKernelsLHSJacobian(pylith::feassemble::IntegratorDomain* integrator,
                                                                                       const topology::Field& solution) const {
     PYLITH_METHOD_BEGIN;
-    PYLITH_COMPONENT_DEBUG("_setKernelsLHSJacobian(integrator="<<integrator<<",solution="<<solution.label()<<")");
+    PYLITH_COMPONENT_DEBUG("_setKernelsLHSJacobian(integrator="<<integrator<<",solution="<<solution.getLabel()<<")");
     const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().coordsys();
     std::vector<JacobianKernels> kernels;
 
@@ -745,7 +741,7 @@ void
 pylith::materials::Poroelasticity::_setKernelsDerivedField(pylith::feassemble::IntegratorDomain* integrator,
                                                        const topology::Field& solution) const {
     PYLITH_METHOD_BEGIN;
-    PYLITH_COMPONENT_DEBUG("_setKernelsDerivedField(integrator="<<integrator<<", solution="<<solution.label()<<")");
+    PYLITH_COMPONENT_DEBUG("_setKernelsDerivedField(integrator="<<integrator<<", solution="<<solution.getLabel()<<")");
 
     const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().coordsys();
     assert(coordsys);
