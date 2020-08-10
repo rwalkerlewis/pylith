@@ -195,7 +195,7 @@ pylith::materials::Poroelasticity::createAuxiliaryField(const pylith::topology::
     PYLITH_COMPONENT_DEBUG("createAuxiliaryField(solution="<<solution.getLabel()<<", domainMesh=)"<<typeid(domainMesh).name()<<")");
 
     pylith::topology::Field* auxiliaryField = new pylith::topology::Field(domainMesh);assert(auxiliaryField);
-    auxiliaryField->label("Poroelasticity auxiliary field");
+    auxiliaryField->getLabel("Poroelasticity auxiliary field");
 
     assert(_rheology);
     pylith::materials::AuxiliaryFactoryPoroelasticity* auxiliaryFactory = _rheology->getAuxiliaryFactory();assert(auxiliaryFactory);
@@ -257,7 +257,7 @@ pylith::materials::Poroelasticity::createDerivedField(const pylith::topology::Fi
     } // if
 
     pylith::topology::Field* derivedField = new pylith::topology::Field(domainMesh);assert(derivedField);
-    derivedField->label("Poroelasticity derived field");
+    derivedField->getLabel("Poroelasticity derived field");
 
     assert(_normalizer);
     _derivedFactory->initialize(derivedField, *_normalizer, domainMesh.dimension());
@@ -307,7 +307,7 @@ pylith::materials::Poroelasticity::_setKernelsRHSResidual(pylith::feassemble::In
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_setKernelsRHSResidual(integrator="<<integrator<<", solution="<<solution.getLabel()<<")");
 
-    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().coordsys();
+    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().getCoordsys();
 
     std::vector<ResidualKernels> kernels;
 
@@ -371,7 +371,7 @@ pylith::materials::Poroelasticity::_setKernelsRHSResidual(pylith::feassemble::In
         const PetscPointFunc g1u = _rheology->getKernelRHSResidualEffectiveStress(coordsys);
 
         // 2) Volumetric Strain
-        const PetscPointFunc g0e =  pylith::fekernels::Poroelasticity::g0e_trace_strain;
+        const PetscPointFunc g0e =  pylith::fekernels::Poroelasticity::g0e;
         const PetscPointFunc g1e =  NULL;
 
         kernels.resize(3);
@@ -412,7 +412,7 @@ pylith::materials::Poroelasticity::_setKernelsRHSJacobian(pylith::feassemble::In
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_setKernelsRHSJacobian(integrator="<<integrator<<",solution="<<solution.getLabel()<<")");
 
-    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().coordsys();
+    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().getCoordsys();
 
     std::vector<JacobianKernels> kernels;
 
@@ -552,7 +552,7 @@ pylith::materials::Poroelasticity::_setKernelsLHSResidual(pylith::feassemble::In
     PYLITH_COMPONENT_DEBUG("_setKernelsLHSResidual(integrator="<<integrator<<",solution="<<solution.getLabel()<<")");
 
     std::vector<ResidualKernels> kernels;
-    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().coordsys();
+    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().getCoordsys();
 
   // Both  and dynamics use pressure
   const PetscPointFunc f0p = _rheology->getKernelLHSVariationInFluidContent(coordsys, _useInertia);
@@ -743,7 +743,7 @@ pylith::materials::Poroelasticity::_setKernelsDerivedField(pylith::feassemble::I
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_setKernelsDerivedField(integrator="<<integrator<<", solution="<<solution.getLabel()<<")");
 
-    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().coordsys();
+    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().getCoordsys();
     assert(coordsys);
 
     std::vector<ProjectKernels> kernels(2);
