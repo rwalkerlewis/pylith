@@ -278,16 +278,16 @@ pylith::materials::AuxiliaryFactoryPoroelastic::addShearModulus(void) {
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addShearModulus(void)");
 
-    const char* fieldName = "shear_modulus";
+    const char* subfieldName = "shear_modulus";
     const PylithReal pressureScale = _normalizer->getPressureScale();
 
     pylith::topology::Field::Description description;
-    description.label = fieldName;
-    description.alias = fieldName;
+    description.label = subfieldName;
+    description.alias = subfieldName;
     description.vectorFieldType = pylith::topology::Field::SCALAR;
     description.numComponents = 1;
     description.componentNames.resize(1);
-    description.componentNames[0] = fieldName;
+    description.componentNames[0] = subfieldName;
     description.scale = pressureScale;
     description.validator = pylith::topology::FieldQuery::validatorNonnegative;
 
