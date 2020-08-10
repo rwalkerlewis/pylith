@@ -29,8 +29,7 @@
 
 #include "spatialdata/geocoords/CoordSys.hh" // USES CoordSys
 
-#include <typeinfo> \
-    // USES typeid()
+#include <typeinfo> // USES typeid()
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Default constructor.
@@ -135,7 +134,8 @@ pylith::materials::IsotropicLinearPoroelasticity::getKernelRHSResidualEffectiveS
     PetscPointFunc g1u =   (!_useInertia && !_useReferenceState) ? pylith::fekernels::IsotropicLinearPoroelasticity::g1u :
                            (!_useInertia && _useReferenceState) ? pylith::fekernels::IsotropicLinearPoroelasticity::g1u_refstate :
                            ( _useInertia && !_useReferenceState) ? pylith::fekernels::IsotropicLinearPoroelasticity::g1v :
-                           ( _useInertia && _useReferenceState) ? pylith::fekernels::IsotropicLinearPoroelasticity::g1v_refstate;
+                           ( _useInertia && _useReferenceState) ? pylith::fekernels::IsotropicLinearPoroelasticity::g1v_refstate :
+                           NULL;
 
     PYLITH_METHOD_RETURN(g1u);
 } // getKernelRHSResidualEffectiveStress
@@ -150,7 +150,7 @@ pylith::materials::IsotropicLinearPoroelasticity::getKernelRHSDarcyVelocity(cons
 
     PetscPointFunc g1p = (!_gravityField) ?
                           pylith::fekernels::IsotropicLinearPoroelasticity::g1p_NoGrav :
-                          pylith::fekernels::IsotropicLinearPoroelasticity::g1p_Grav;
+                          pylith::fekernels::IsotropicLinearPoroelasticity::g1p_Grav :
 
     PYLITH_METHOD_RETURN(g1p);
   } // getKernelRHSDarcyVelocity
@@ -247,7 +247,7 @@ pylith::materials::IsotropicLinearPoroelasticity::getKernelDerivedCauchyStress(c
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("getKernelDerivedCauchyStress(coordsys="<<typeid(coordsys).name()<<")");
 
-    const int spaceDim = coordsys->spaceDim();
+    const int spaceDim = coordsys->getSpaceDim();
     PetscPointFunc kernel = (!_useReferenceState) ?
                               pylith::fekernels::IsotropicLinearPoroelasticity::cauchyStress :
                               pylith::fekernels::IsotropicLinearPoroelasticity::cauchyStress_refstate;
