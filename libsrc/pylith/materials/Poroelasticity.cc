@@ -307,7 +307,7 @@ pylith::materials::Poroelasticity::_setKernelsRHSResidual(pylith::feassemble::In
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_setKernelsRHSResidual(integrator="<<integrator<<", solution="<<solution.getLabel()<<")");
 
-    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().getCoordsys();
+    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().getCoordSys();
 
     std::vector<ResidualKernels> kernels;
 
@@ -412,7 +412,7 @@ pylith::materials::Poroelasticity::_setKernelsRHSJacobian(pylith::feassemble::In
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_setKernelsRHSJacobian(integrator="<<integrator<<",solution="<<solution.getLabel()<<")");
 
-    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().getCoordsys();
+    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().getCoordSys();
 
     std::vector<JacobianKernels> kernels;
 
@@ -552,7 +552,7 @@ pylith::materials::Poroelasticity::_setKernelsLHSResidual(pylith::feassemble::In
     PYLITH_COMPONENT_DEBUG("_setKernelsLHSResidual(integrator="<<integrator<<",solution="<<solution.getLabel()<<")");
 
     std::vector<ResidualKernels> kernels;
-    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().getCoordsys();
+    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().getCoordSys();
 
   // Both  and dynamics use pressure
   const PetscPointFunc f0p = _rheology->getKernelLHSVariationInFluidContent(coordsys, _useInertia);
@@ -604,7 +604,7 @@ pylith::materials::Poroelasticity::_setKernelsLHSJacobian(pylith::feassemble::In
                                                                                       const topology::Field& solution) const {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_setKernelsLHSJacobian(integrator="<<integrator<<",solution="<<solution.getLabel()<<")");
-    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().coordsys();
+    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().getCoordSys();
     std::vector<JacobianKernels> kernels;
 
     if (!solution.hasSubfield("velocity")) {
@@ -743,7 +743,7 @@ pylith::materials::Poroelasticity::_setKernelsDerivedField(pylith::feassemble::I
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_setKernelsDerivedField(integrator="<<integrator<<", solution="<<solution.getLabel()<<")");
 
-    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().getCoordsys();
+    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().getCoordSys();
     assert(coordsys);
 
     std::vector<ProjectKernels> kernels(2);
