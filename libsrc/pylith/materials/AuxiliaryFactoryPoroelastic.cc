@@ -138,8 +138,8 @@ pylith::materials::AuxiliaryFactoryPoroelastic::addFluidBulkModulus(void)
     const PylithReal pressureScale = _normalizer->getPressureScale();
 
     pylith::topology::Field::Description description;
-    description.label = fieldName;
-    description.alias = fieldName;
+    description.label = subfieldName;
+    description.alias = subfieldName;
     description.vectorFieldType = pylith::topology::Field::SCALAR;
     description.numComponents = 1;
     description.componentNames.resize(1);
@@ -217,14 +217,14 @@ pylith::materials::AuxiliaryFactoryPoroelastic::addReferenceStress(void)
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("referenceStress(void)");
 
-    const char* fieldName = "reference_stress";
+    const char* subfieldName = "reference_stress";
     const char* componentNames[6] = { "reference_stress_xx", "reference_stress_yy", "reference_stress_zz", "reference_stress_xy", "reference_stress_yz", "reference_stress_xz" };
     const int stressSize = (3 == _spaceDim) ? 6 : (2 == _spaceDim) ? 4 : 1;
     const PylithReal pressureScale = _normalizer->getPressureScale();
 
     pylith::topology::Field::Description description;
-    description.label = fieldName;
-    description.alias = fieldName;
+    description.label = subfieldName;
+    description.alias = subfieldName;
     description.vectorFieldType = pylith::topology::Field::OTHER;
     description.numComponents = stressSize;
     description.componentNames.resize(stressSize);
@@ -304,16 +304,16 @@ pylith::materials::AuxiliaryFactoryPoroelastic::addSolidBulkModulus(void) {
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addSolidBulkModulus(void)");
 
-    const char* fieldName = "solid_bulk_modulus";
+    const char* subfieldName = "solid_bulk_modulus";
     const PylithReal pressureScale = _normalizer->getPressureScale();
 
     pylith::topology::Field::Description description;
-    description.label = fieldName;
-    description.alias = fieldName;
+    description.label = subfieldName;
+    description.alias = subfieldName;
     description.vectorFieldType = pylith::topology::Field::SCALAR;
     description.numComponents = 1;
     description.componentNames.resize(1);
-    description.componentNames[0] = fieldName;
+    description.componentNames[0] = subfieldName;
     description.scale = pressureScale;
     description.validator = pylith::topology::FieldQuery::validatorPositive;
 
@@ -330,16 +330,16 @@ pylith::materials::AuxiliaryFactoryPoroelastic::addYoungsModulus(void) {
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addYoungsModulus(void)");
 
-    const char* fieldName = "youngs_modulus";
+    const char* subfieldName = "youngs_modulus";
     const PylithReal pressureScale = _normalizer->getPressureScale();
 
     pylith::topology::Field::Description description;
-    description.label = fieldName;
-    description.alias = fieldName;
+    description.label = subfieldName;
+    description.alias = subfieldName;
     description.vectorFieldType = pylith::topology::Field::SCALAR;
     description.numComponents = 1;
     description.componentNames.resize(1);
-    description.componentNames[0] = fieldName;
+    description.componentNames[0] = subfieldName;
     description.scale = pressureScale;
     description.validator = pylith::topology::FieldQuery::validatorPositive;
 
@@ -357,17 +357,17 @@ pylith::materials::AuxiliaryFactoryPoroelasticity::addPoissonsRatio(void)
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addPoissonsRatio(void)");
 
-    const char* fieldName = "poissons_ratio";
+    const char* subfieldName = "poissons_ratio";
 
     const PylithReal noScale = 1;
 
     pylith::topology::Field::Description description;
-    description.label = fieldName;
-    description.alias = fieldName;
+    description.label = subfieldName;
+    description.alias = subfieldName;
     description.vectorFieldType = pylith::topology::Field::SCALAR;
     description.numComponents = 1;
     description.componentNames.resize(1);
-    description.componentNames[0] = fieldName;
+    description.componentNames[0] = subfieldName;
     description.scale = noScale;
     description.validator = NULL;
 
