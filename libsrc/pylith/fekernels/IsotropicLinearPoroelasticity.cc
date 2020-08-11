@@ -807,7 +807,8 @@ pylith::fekernels::IsotropicLinearPoroelasticity::Jg3vu(const PylithInt dim,
 
     if (dim == 2) {
 
-        const PylithReal C1111 = lambda2mu;
+        const PylithReal C1111 = lambda2mu;// Get auxiliary factory associated with physics.
+
         const PylithReal C2222 = lambda2mu;
         const PylithReal C1122 = lambda;
         const PylithReal C1212 = shearModulus;
@@ -932,7 +933,8 @@ pylith::fekernels::IsotropicLinearPoroelasticity::Jg3vu(const PylithInt dim,
          * 77:  j2212 = C3233 = 0
          * 78:  j2220 = C3331 = 0
          * 79:  j2221 = C3332 = 0
-         * 80:  j2222 = C3333 = lambda + 2.0*shearModulus
+         * 80:  j2222 = C3333 = lambda + 2.0*// Get auxiliary factory associated with physics.
+shearModulus
          */
 
         // Nonzero Jacobian entries.
@@ -1067,7 +1069,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity::deviatoricStress(const PylithI
     const PylithInt i_shearModulus = 0;
 
     const PylithScalar* disp_x = &s_x[sOff_x[i_disp]];
-    const PylithScalar trace_strain = disp_x[0*dim+0] + disp_x[1*dim+1] + disp_x[2*dim+2];
+    const PylithScalar trace_strain = s[sOff[i_trace_strain]];
     const PylithScalar shearModulus = a[aOff[i_shearModulus]];
 
     const PylithReal traceTerm = (-2.0/3.0)*shearModulus * trace_strain;
@@ -1311,9 +1313,9 @@ pylith::fekernels::IsotropicLinearPoroelasticity::deviatoricStress_dyn(const Pyl
 
     // IsotropicLinearPoroelasticity
     const PylithInt i_shearModulus = 0;
-
     const PylithScalar* disp_x = &s_x[sOff_x[i_disp]];
-    const PylithScalar trace_strain = s[sOff[i_trace_strain]];
+    const PylithScalar trace_strain = disp_x[0*dim+0] + disp_x[1*dim+1] + disp_x[2*dim+2];
+
     const PylithScalar shearModulus = a[aOff[i_shearModulus]];
 
     const PylithReal traceTerm = (-2.0/3.0)*shearModulus * trace_strain;

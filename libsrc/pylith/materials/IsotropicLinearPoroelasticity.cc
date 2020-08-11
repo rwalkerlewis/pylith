@@ -29,7 +29,7 @@
 
 #include "spatialdata/geocoords/CoordSys.hh" // USES CoordSys
 
-#include <typeinfo> // USES typeid()
+#include <typeinfo>  // USES typeid()
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Default constructor.
@@ -127,15 +127,14 @@ pylith::materials::IsotropicLinearPoroelasticity::addAuxiliarySubfields(void) {
 // ---------------------------------------------------------------------------------------------------------------------
 // Get stress kernel for RHS residual, G(t,s).
 PetscPointFunc
-pylith::materials::IsotropicLinearPoroelasticity::getKernelRHSResidualEffectiveStress(const spatialdata::geocoords::CoordSys* coordsys) const {
+pylith::materials::IsotropicLinearPoroelasticity::getKernelRHSResidualEffectiveStress(const spatialdata::geocoords::CoordSys* coordsys,  const bool _useInertia) const {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("getKernelRHSResidualEffectiveStress(coordsys="<<typeid(coordsys).name()<<")");
 
     PetscPointFunc g1u =   (!_useInertia && !_useReferenceState) ? pylith::fekernels::IsotropicLinearPoroelasticity::g1u :
                            (!_useInertia && _useReferenceState) ? pylith::fekernels::IsotropicLinearPoroelasticity::g1u_refstate :
                            ( _useInertia && !_useReferenceState) ? pylith::fekernels::IsotropicLinearPoroelasticity::g1v :
-                           ( _useInertia && _useReferenceState) ? pylith::fekernels::IsotropicLinearPoroelasticity::g1v_refstate :
-                           NULL;
+                           ( _useInertia && _useReferenceState) ? pylith::fekernels::IsotropicLinearPoroelasticity::g1v_refstate;
 
     PYLITH_METHOD_RETURN(g1u);
 } // getKernelRHSResidualEffectiveStress
@@ -150,7 +149,7 @@ pylith::materials::IsotropicLinearPoroelasticity::getKernelRHSDarcyVelocity(cons
 
     PetscPointFunc g1p = (!_gravityField) ?
                           pylith::fekernels::IsotropicLinearPoroelasticity::g1p_NoGrav :
-                          pylith::fekernels::IsotropicLinearPoroelasticity::g1p_Grav :
+                          pylith::fekernels::IsotropicLinearPoroelasticity::g1p_Grav;
 
     PYLITH_METHOD_RETURN(g1p);
   } // getKernelRHSDarcyVelocity

@@ -368,7 +368,7 @@ pylith::materials::Poroelasticity::_setKernelsRHSResidual(pylith::feassemble::In
                                    (_gravityField) ? pylith::fekernels::Poroelasticity::g0v_grav :
                                    (_useBodyForce) ? pylith::fekernels::Poroelasticity::g0v_bodyforce :
                                    NULL;
-        const PetscPointFunc g1u = _rheology->getKernelRHSResidualEffectiveStress(coordsys);
+        const PetscPointFunc g1u = _rheology->getKernelRHSResidualEffectiveStress(coordsys, _useInertia);
 
         // 2) Volumetric Strain
         const PetscPointFunc g0e =  pylith::fekernels::Poroelasticity::g0e;
@@ -390,7 +390,7 @@ pylith::materials::Poroelasticity::_setKernelsRHSResidual(pylith::feassemble::In
                                  (_gravityField) ? pylith::fekernels::Elasticity::g0v_grav :
                                  (_useBodyForce) ? pylith::fekernels::Elasticity::g0v_bodyforce :
                                  NULL;
-      const PetscPointFunc g1v = _rheology->getKernelRHSResidualEffectiveStress(coordsys);
+      const PetscPointFunc g1v = _rheology->getKernelRHSResidualEffectiveStress(coordsys, _useInertia);
 
       kernels.resize(3);
       kernels[0] = ResidualKernels("displacement",  g0u, g1u);

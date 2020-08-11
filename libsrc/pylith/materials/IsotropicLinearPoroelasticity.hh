@@ -56,19 +56,6 @@ public:
      */
     bool useReferenceState(void) const;
 
-    /** Is the run an MMS test?
-     *
-     * @param value Flag indicating whether the run is a test of the 
-     * Method of Manufactured Solutions.
-     */
-    void is_ILP_MMS(const bool value);
-
-    /** Is the run an MMS test?
-     *
-     * @returns True if using MMS, false otherwise.
-     */
-    bool is_ILP_MMS(void) const;
-
     /** Get auxiliary factory associated with physics.
      *
      * @return Auxiliary factory for physics object.
@@ -89,7 +76,7 @@ public:
      *
      * @return RHS residual kernel for stress.
      */
-    PetscPointFunc getKernelRHSResidualEffectiveStress(const spatialdata::geocoords::CoordSys* coordsys) const;
+    PetscPointFunc getKernelRHSResidualEffectiveStressQS(const spatialdata::geocoords::CoordSys* coordsys) const;
 
     /** Get pressure kernel for RHS residual, G(t,s).
      *
@@ -97,6 +84,16 @@ public:
      *
      * @return RHS residual kernel for Darcy velocity.
      */
+
+   PetscPointFunc getKernelRHSResidualEffectiveStressDynamic(const spatialdata::geocoords::CoordSys* coordsys) const;
+
+   /** Get pressure kernel for RHS residual, G(t,s).
+    *
+    * @param[in] coordsys Coordinate system.
+    *
+    * @return RHS residual kernel for Darcy velocity.
+    */
+
     PetscPointFunc getKernelRHSDarcyVelocity(const spatialdata::geocoords::CoordSys* coordsys) const;
 
     /** Get elastic constants kernel for RHS Jacobian G(t,s).
@@ -139,7 +136,7 @@ public:
      *
      * @return LHS residual kernel for variation in fluid contenty.
      */
-    PetscPointFunc getKernelLHSVariationInFluidContent(const spatialdata::geocoords::CoordSys* coordsys, const bool _useInertia) const;
+    PetscPointFunc getKernelLHSVariationInFluidContentQS(const spatialdata::geocoords::CoordSys* coordsys, const bool _useInertia) const;
 
     /** Get biot coefficient for LHS residual, F(t,s,\dot{s})
      *
@@ -147,6 +144,15 @@ public:
      *
      * @return LHS jacobian kernel for biot coefficient.
      */
+
+   PetscPointFunc getKernelLHSVariationInFluidContentDynamic(const spatialdata::geocoords::CoordSys* coordsys, const bool _useInertia) const;
+
+   /** Get biot coefficient for LHS residual, F(t,s,\dot{s})
+    *
+    * @param[in] coordsys Coordinate system.
+    *
+    * @return LHS jacobian kernel for biot coefficient.
+
     PetscPointJac getKernelLHSJacobianTshiftBiotCoefficient(const spatialdata::geocoords::CoordSys* coordsys) const;
 
 
