@@ -135,6 +135,15 @@ public:
      *
      * @return LHS jacobian kernel for biot coefficient.
      */
+    PetscPointJac getKernelLHSJacobianTshiftBiotCoefficient(const spatialdata::geocoords::CoordSys* coordsys) const;
+
+    /** Get specific storage for LHS residual, F(t,s,\dot{s})
+     *
+     * @param[in] coordsys Coordinate system.
+     *
+     * @return LHS jacobian kernel for specific storage.
+     */
+    PetscPointJac getKernelLHSJacobianSpecificStorage(const spatialdata::geocoords::CoordSys* coordsys) const;
 
     // ============================ DERIVED FIELDS ========================== //
 
