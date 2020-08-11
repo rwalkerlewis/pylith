@@ -103,15 +103,6 @@ public:
     virtual
     PetscPointJac getKernelRHSJacobianBiotCoefficient(const spatialdata::geocoords::CoordSys* coordsys, const bool _useInertia) const = 0;
 
-    /** Get kernel for RHS Jacobian G(t,s).
-     *
-     * @param[in] coordsys Coordinate system.
-     *
-     * @return RHS Jacobian kernel for tshift * 1/M (Jf0pp)
-     */
-    virtual
-    PetscPointJac getKernelLHSJacobianSpecificStorage(const spatialdata::geocoords::CoordSys* coordsys) const = 0;
-
     /** Get stress kernel for derived field.
      *
      * @param[in] coordsys Coordinate system.
@@ -131,6 +122,15 @@ public:
      */
     virtual
     PetscPointFunc getKernelLHSVariationInFluidContent(const spatialdata::geocoords::CoordSys* coordsys, const bool _useInertia) const = 0;
+
+    /** Get kernel for RHS Jacobian G(t,s).
+     *
+     * @param[in] coordsys Coordinate system.
+     *
+     * @return RHS Jacobian kernel for tshift * 1/M (Jf0pp)
+     */
+    virtual
+    PetscPointJac getKernelLHSJacobianSpecificStorage(const spatialdata::geocoords::CoordSys* coordsys) const = 0;
 
     /** Get biot coefficient for LHS residual, F(t,s,\dot{s})
      *
