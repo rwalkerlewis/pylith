@@ -127,7 +127,7 @@ pylith::materials::IsotropicLinearPoroelasticity::addAuxiliarySubfields(void) {
 // ---------------------------------------------------------------------------------------------------------------------
 // Get stress kernel for RHS residual, G(t,s).
 PetscPointFunc
-pylith::materials::IsotropicLinearPoroelasticity::getKernelRHSResidualEffectiveStress(const spatialdata::geocoords::CoordSys* coordsys,  const bool _useInertia) const {
+pylith::materials::IsotropicLinearPoroelasticity::getKernelRHSResidualEffectiveStress(const spatialdata::geocoords::CoordSys* coordsys, const bool _useInertia) const {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("getKernelRHSResidualEffectiveStress(coordsys="<<typeid(coordsys).name()<<")");
 

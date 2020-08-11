@@ -74,7 +74,7 @@ public:
      * @return RHS residual kernel for stress.
      */
     virtual
-    PetscPointFunc getKernelRHSResidualEffectiveStress(const spatialdata::geocoords::CoordSys* coordsys) const = 0;
+    PetscPointFunc getKernelRHSResidualEffectiveStress(const spatialdata::geocoords::CoordSys* coordsys,  const bool _useInertia) const = 0;
 
     /** Get pressure kernel for RHS residual, G(t,s).
      *
@@ -92,7 +92,7 @@ public:
      * @return RHS Jacobian kernel for elastic constants.
      */
     virtual
-    PetscPointJac getKernelRHSJacobianElasticConstants(const spatialdata::geocoords::CoordSys* coordsys) const = 0;
+    PetscPointJac getKernelRHSJacobianElasticConstants(const spatialdata::geocoords::CoordSys* coordsys, const bool _useInertia) const = 0;
 
     /** Get Biot Coefficient for RHS Jacobian G(t,s).
      *
@@ -101,7 +101,7 @@ public:
      * @return RHS Jacobian kernel for Biot Coefficient.
      */
     virtual
-    PetscPointJac getKernelRHSJacobianBiotCoefficient(const spatialdata::geocoords::CoordSys* coordsys) const = 0;
+    PetscPointJac getKernelRHSJacobianBiotCoefficient(const spatialdata::geocoords::CoordSys* coordsys, const bool _useInertia) const = 0;
 
     /** Get kernel for RHS Jacobian G(t,s).
      *
