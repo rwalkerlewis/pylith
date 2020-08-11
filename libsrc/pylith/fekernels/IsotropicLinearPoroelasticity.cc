@@ -933,8 +933,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity::Jg3vu(const PylithInt dim,
          * 77:  j2212 = C3233 = 0
          * 78:  j2220 = C3331 = 0
          * 79:  j2221 = C3332 = 0
-         * 80:  j2222 = C3333 = lambda + 2.0*// Get auxiliary factory associated with physics.
-shearModulus
+         * 80:  j2222 = C3333 = lambda + 2.0*shearModulus
          */
 
         // Nonzero Jacobian entries.
@@ -1061,7 +1060,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity::deviatoricStress(const PylithI
 
     // Incoming solution field.
     const PylithInt i_disp = 0;
-    //const PylithInt i_velocity = 2;
+    const PylithInt i_trace_strain = 2;
 
     // Incoming auxiliary field.
 
