@@ -158,7 +158,7 @@ pylith::materials::IsotropicLinearPoroelasticity::getKernelRHSDarcyVelocity(cons
 // ---------------------------------------------------------------------------------------------------------------------
 // Get elastic constants kernel for RHS Jacobian G(t,s).
 PetscPointJac
-pylith::materials::IsotropicLinearPoroelasticity::getKernelRHSJacobianElasticConstants(const spatialdata::geocoords::CoordSys* coordsys) const {
+pylith::materials::IsotropicLinearPoroelasticity::getKernelRHSJacobianElasticConstants(const spatialdata::geocoords::CoordSys* coordsys, const bool _useInertia) const {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("getKernelRHSJacobianElasticConstants(coordsys="<<typeid(coordsys).name()<<")");
 
@@ -172,7 +172,7 @@ pylith::materials::IsotropicLinearPoroelasticity::getKernelRHSJacobianElasticCon
 // ---------------------------------------------------------------------------------------------------------------------
 // Get biot coefficient kernel for RHS Jacobian G(t,s).
 PetscPointJac
-pylith::materials::IsotropicLinearPoroelasticity::getKernelRHSJacobianBiotCoefficient(const spatialdata::geocoords::CoordSys* coordsys) const {
+pylith::materials::IsotropicLinearPoroelasticity::getKernelRHSJacobianBiotCoefficient(const spatialdata::geocoords::CoordSys* coordsys, const bool _useInertia) const {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("getKernelRHSJacobianBiotCoefficient(coordsys="<<typeid(coordsys).name()<<")");
 
