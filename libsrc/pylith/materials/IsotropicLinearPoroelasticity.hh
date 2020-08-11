@@ -93,7 +93,7 @@ public:
      *
      * @return RHS Jacobian kernel for elastic constants.
      */
-    PetscPointJac getKernelRHSJacobianElasticConstants(const spatialdata::geocoords::CoordSys* coordsys) const;
+    PetscPointJac getKernelRHSJacobianElasticConstants(const spatialdata::geocoords::CoordSys* coordsys, const bool _useInertia) const;
 
     /** Get Biot Coefficient for RHS Jacobian G(t,s).
      *
@@ -101,7 +101,7 @@ public:
      *
      * @return RHS Jacobian kernel for Biot Coefficient.
      */
-    PetscPointJac getKernelRHSJacobianBiotCoefficient(const spatialdata::geocoords::CoordSys* coordsys) const;
+    PetscPointJac getKernelRHSJacobianBiotCoefficient(const spatialdata::geocoords::CoordSys* coordsys, const bool _useInertia) const;
 
     /** Get kernel for RHS Jacobian G(t,s).
      *
