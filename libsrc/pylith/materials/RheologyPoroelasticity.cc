@@ -38,7 +38,6 @@ pylith::materials::RheologyPoroelasticity::~RheologyPoroelasticity(void) {
     deallocate();
 } // destructor
 
-
 // ---------------------------------------------------------------------------------------------------------------------
 // Deallocate PETSc and local data structures.
 void

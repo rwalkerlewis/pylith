@@ -15,7 +15,7 @@
 #
 # @file pylith/materials/RheologyPoroelasticity.py
 #
-# @brief Python material for isotropic, linearly elastic, plane
+# @brief Python material for isotropic, linearly poroelastic, plane
 # strain material.
 #
 # Factory: poroelasticity_rheology
