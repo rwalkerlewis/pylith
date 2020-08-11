@@ -75,24 +75,6 @@ pylith::materials::IsotropicLinearPoroelasticity::useReferenceState(void) const 
 } // useReferenceState
 
 // ---------------------------------------------------------------------------------------------------------------------
-// Is an MMS test?
-void
-pylith::materials::IsotropicLinearPoroelasticity::is_ILP_MMS(const bool value) {
-    PYLITH_COMPONENT_DEBUG("is_ILP_MMS="<<value<<")");
-
-    _is_ILP_MMS = value;
-} // is_ILP_MMS
-
-
-// ---------------------------------------------------------------------------------------------------------------------
-// Is an MMS test?
-bool
-pylith::materials::IsotropicLinearPoroelasticity::is_ILP_MMS(void) const {
-    return _is_ILP_MMS;
-} // is_ILP_MMS
-
-
-// ---------------------------------------------------------------------------------------------------------------------
 // Get auxiliary factory associated with physics.
 pylith::materials::AuxiliaryFactoryPoroelastic*
 pylith::materials::IsotropicLinearPoroelasticity::getAuxiliaryFactory(void) {
@@ -134,7 +116,8 @@ pylith::materials::IsotropicLinearPoroelasticity::getKernelRHSResidualEffectiveS
     PetscPointFunc g1u =   (!_useInertia && !_useReferenceState) ? pylith::fekernels::IsotropicLinearPoroelasticity::g1u :
                            (!_useInertia && _useReferenceState) ? pylith::fekernels::IsotropicLinearPoroelasticity::g1u_refstate :
                            ( _useInertia && !_useReferenceState) ? pylith::fekernels::IsotropicLinearPoroelasticity::g1v :
-                           ( _useInertia && _useReferenceState) ? pylith::fekernels::IsotropicLinearPoroelasticity::g1v_refstate;
+                           ( _useInertia && _useReferenceState) ? pylith::fekernels::IsotropicLinearPoroelasticity::g1v_refstate :
+                           NULL;
 
     PYLITH_METHOD_RETURN(g1u);
 } // getKernelRHSResidualEffectiveStress
@@ -225,7 +208,7 @@ pylith::materials::IsotropicLinearPoroelasticity::getKernelLHSJacobianTshiftBiot
 
 
 // ---------------------------------------------------------------------------------------------------------------------
-// Get biot coefficient kernel for LHS Jacobian F(t,s, \dot{s}).
+// Get Specific storage kernel for LHS Jacobian F(t,s, \dot{s}).
 PetscPointJac
 pylith::materials::IsotropicLinearPoroelasticity::getKernelLHSJacobianSpecificStorage(const spatialdata::geocoords::CoordSys* coordsys) const {
   PYLITH_METHOD_BEGIN;
