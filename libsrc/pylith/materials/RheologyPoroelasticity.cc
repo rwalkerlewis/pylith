@@ -71,12 +71,4 @@ pylith::materials::RheologyPoroelasticity::addKernelsUpdateStateVars(std::vector
     PYLITH_METHOD_END;
 } // addKernelsUpdateStateVars
 
-// ---------------------------------------------------------------------------------------------------------------------
-// Set gravity field.
-void
-pylith::materials::RheologyPoroelasticity::setGravityField(spatialdata::spatialdb::GravityField* const g) {
-    _gravityField = g;
-} // setGravityField
-
-
 // End of file

@@ -50,10 +50,6 @@ public:
     /// Deallocate PETSc and local data structures.
     void deallocate(void);
 
-    // Add _gravityField
-    virtual
-    void setGravityField(spatialdata::spatialdb::GravityField* const g);
-
     /** Get auxiliary factory associated with physics.
      *
      * @return Auxiliary factory for physics object.
