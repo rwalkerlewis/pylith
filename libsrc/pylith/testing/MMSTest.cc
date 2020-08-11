@@ -79,7 +79,7 @@ pylith::testing::MMSTest::testDiscretization(void) {
     const pylith::string_vector subfieldNames = _solution->subfieldNames();
     const size_t numSubfields = subfieldNames.size();
     pylith::real_array error(numSubfields);
-    err = DMSNESCheckDiscretization(_problem->getPetscSNES(), _problem->getPetscDM(), NULL, _solution->scatterVector("mmstest"),
+    err = DMSNESCheckDiscretization(_problem->getPetscSNES(), _problem->getPetscDM(), 0.0, _solution->scatterVector("mmstest"),
                                     tolerance, &error[0]);CPPUNIT_ASSERT(!err);
 
     bool fail = false;
