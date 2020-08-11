@@ -55,11 +55,11 @@ nobase_pkgpyexec_PYTHON = \
 	materials/AuxSubfieldsIsotropicLinearElasticity.py \
 	materials/AuxSubfieldsIsotropicLinearMaxwell.py \
 	materials/AuxSubfieldsIsotropicLinearGenMaxwell.py \
+	materials/AuxSubfieldsIsotropicLinearPoroelasticity.py \
 	materials/IncompressibleElasticity.py \
 	materials/AuxSubfieldsIsotropicPowerLaw.py \
 	materials/RheologyIncompressibleElasticity.py \
 	materials/IsotropicLinearIncompElasticity.py \
-	materials/AuxSubfieldsIsotropicPoroelasticity.py \
 	materials/AuxSubfieldsPoroelasticity.py \
 	materials/IsotropicLinearPoroelasticity.py \
 	materials/Poroelasticity.py \
