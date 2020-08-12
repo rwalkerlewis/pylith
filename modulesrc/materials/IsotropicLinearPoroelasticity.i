@@ -114,15 +114,6 @@ public:
        */
       PetscPointFunc getKernelLHSVariationInFluidContent(const spatialdata::geocoords::CoordSys* coordsys, const bool _useInertia) const;
 
-      /** Get kernel for RHS Jacobian G(t,s).
-       *
-       * @param[in] coordsys Coordinate system.
-       *
-       * @return RHS Jacobian kernel for tshift * 1/M (Jf0pp)
-       */
-      PetscPointJac getKernelLHSJacobianSpecificStorage(const spatialdata::geocoords::CoordSys* coordsys) const;
-
-
       /** Get biot coefficient for LHS residual, F(t,s,\dot{s})
        *
        * @param[in] coordsys Coordinate system.
@@ -131,6 +122,13 @@ public:
        */
       PetscPointJac getKernelLHSJacobianTshiftBiotCoefficient(const spatialdata::geocoords::CoordSys* coordsys) const;
 
+      /** Get kernel for RHS Jacobian G(t,s).
+       *
+       * @param[in] coordsys Coordinate system.
+       *
+       * @return RHS Jacobian kernel for tshift * 1/M (Jf0pp)
+       */
+      PetscPointJac getKernelLHSJacobianSpecificStorage(const spatialdata::geocoords::CoordSys* coordsys) const;
 
       // ============================ DERIVED FIELDS ========================== //
 
