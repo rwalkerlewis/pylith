@@ -23,7 +23,7 @@
 
 #if !defined(pylith_materials_rheologyporoelasticity_hh)
 #define pylith_materials_rheologyporoelasticity_hh
-#include "spatialdata/spatialdb/GravityField.hh" // USES GravityField
+
 #include "materialsfwd.hh" // forward declarations
 #include "pylith/utils/PyreComponent.hh" // ISA PyreComponent
 
