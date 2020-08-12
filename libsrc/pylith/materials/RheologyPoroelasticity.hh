@@ -165,11 +165,7 @@ public:
     virtual
     void updateKernelConstants(pylith::real_array* kernelConstants,
                                const PylithReal dt) const;
-
-protected:
-
-    spatialdata::spatialdb::GravityField* _gravityField; ///< Gravity field for gravitational body forces.
-
+                               
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
 
