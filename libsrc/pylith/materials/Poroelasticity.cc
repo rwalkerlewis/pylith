@@ -357,8 +357,7 @@ pylith::materials::Poroelasticity::_setKernelsRHSResidual(pylith::feassemble::In
     } // switch
 
     // g1p is darcy velocity, ship over to rheology section
-    const PetscPointFunc g1p = _rheology->getKernelRHSDarcyVelocity(coordsys);  //JS: OK fixed this.
-    //PetscPointFunc g1p = (!_gravityField) ? pylith::fekernels::IsotropicLinearPoroelasticity::g1p_NoGrav : pylith::fekernels::IsotropicLinearPoroelasticity::g1p_Grav;
+    const PetscPointFunc g1p = _rheology->getKernelRHSDarcyVelocity(coordsys, _gravityField);  //JS: OK fixed this.
 
     // Remaining parts of RHS residuals change with dynamics.
     if (!solution.hasSubfield("velocity")) {

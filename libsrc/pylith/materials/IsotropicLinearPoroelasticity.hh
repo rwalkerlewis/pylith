@@ -85,7 +85,7 @@ public:
      * @return RHS residual kernel for Darcy velocity.
      */
 
-    PetscPointFunc getKernelRHSDarcyVelocity(const spatialdata::geocoords::CoordSys* coordsys) const;
+    PetscPointFunc getKernelRHSDarcyVelocity(const spatialdata::geocoords::CoordSys* coordsys, const bool _gravityField) const;
 
     /** Get elastic constants kernel for RHS Jacobian G(t,s).
      *

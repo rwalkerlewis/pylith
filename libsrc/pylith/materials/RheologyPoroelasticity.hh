@@ -70,7 +70,7 @@ public:
      * @return RHS residual kernel for stress.
      */
     virtual
-    PetscPointFunc getKernelRHSResidualEffectiveStress(const spatialdata::geocoords::CoordSys* coordsys,  const bool _useInertia) const = 0;
+    PetscPointFunc getKernelRHSResidualEffectiveStress(const spatialdata::geocoords::CoordSys* coordsys, const bool _useInertia) const = 0;
 
     /** Get pressure kernel for RHS residual, G(t,s).
      *
@@ -79,7 +79,7 @@ public:
      * @return RHS residual kernel for pressure.
      */
     virtual
-    PetscPointFunc getKernelRHSDarcyVelocity(const spatialdata::geocoords::CoordSys* coordsys) const = 0;
+    PetscPointFunc getKernelRHSDarcyVelocity(const spatialdata::geocoords::CoordSys* coordsys, const bool _gravityField) const = 0;
 
     /** Get elastic constants kernel for RHS Jacobian G(t,s).
      *
@@ -165,7 +165,7 @@ public:
     virtual
     void updateKernelConstants(pylith::real_array* kernelConstants,
                                const PylithReal dt) const;
-                               
+
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
 
