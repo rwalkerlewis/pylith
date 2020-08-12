@@ -30,8 +30,8 @@
 #include "pylith/materials/RheologyIncompressibleElasticity.hh"
 #include "pylith/materials/IsotropicLinearIncompElasticity.hh"
 #include "pylith/materials/Poroelasticity.hh"
-#include "pylith/materials/IsotropicLinearPoroelasticity.hh"
 #include "pylith/materials/RheologyPoroelasticity.hh"
+#include "pylith/materials/IsotropicLinearPoroelasticity.hh"
 
 #include "pylith/utils/arrayfwd.hh"
 %}
@@ -72,7 +72,7 @@ import_array();
 %include "RheologyIncompressibleElasticity.i"
 %include "IsotropicLinearIncompElasticity.i"
 %include "Poroelasticity.i"
-%include "IsotropicLinearPoroelasticity.i"
 %include "RheologyPoroelasticity.i"
+%include "IsotropicLinearPoroelasticity.i"
 
 // End of file
