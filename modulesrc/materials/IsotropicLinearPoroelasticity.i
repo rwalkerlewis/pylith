@@ -16,9 +16,9 @@
 // ----------------------------------------------------------------------
 //
 
-/** @file modulesrc/materials/IsotropicLinearElasticity.i
+/** @file modulesrc/materials/IsotropicLinearPoroelasticity.i
  *
- * Python interface to C++ IsotropicLinearElasticity.
+ * Python interface to C++ IsotropicLinearPoroelasticity.
  */
 
 namespace pylith {
