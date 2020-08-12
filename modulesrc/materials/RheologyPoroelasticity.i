@@ -16,9 +16,9 @@
 // ----------------------------------------------------------------------
 //
 
-/** @file modulesrc/materials/RheologyElasticity.i
+/** @file modulesrc/materials/RheologyPoroelasticity.i
  *
- * Python interface to C++ abstract base class RheologyElasticity.
+ * Python interface to C++ abstract base class RheologyPoroelasticity.
  */
 
 namespace pylith {
