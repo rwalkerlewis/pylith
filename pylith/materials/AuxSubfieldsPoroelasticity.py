@@ -31,7 +31,7 @@ class AuxSubfieldsPoroelasticity(PetscComponent):
 
     Facilities
       - *porosity* Porosity subfield.
-      - *density* Rock Density subfield.
+      - *solid_density* Rock Density subfield.
       - *fluid_density* Fluid Density subfield.
       - *fluid_viscosity* Fluid viscosity subfield.
       - *body_force* Body force.
@@ -46,7 +46,7 @@ class AuxSubfieldsPoroelasticity(PetscComponent):
     porosity.meta['tip'] = "Porosity subfield."
 
     solidDensity = pyre.inventory.facility("solid_density", family="auxiliary_subfield", factory=Subfield)
-    soliddensity.meta['tip'] = "Solid density subfield."
+    solidDensity.meta['tip'] = "Solid density subfield."
 
     fluidDensity = pyre.inventory.facility("fluid_density", family="auxiliary_subfield", factory=Subfield)
     fluidDensity.meta['tip'] = "Fluid density subfield."
