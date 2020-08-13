@@ -127,12 +127,12 @@ pylith::fekernels::IsotropicLinearPoroelasticity::f0p_DYN(const PylithInt dim,
     for (PylithInt d = 0; d < dim; ++d) {
       trace_strain_t += vel_x[d*dim+d];
     }
+
     const PylithScalar shearModulus = a[aOff[i_shearModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
     const PylithScalar biotModulus = a[aOff[i_biotModulus]];
 
-    f0p[0] += biotCoefficient*trace_strain_t;
-    f0p[0] += poro_pres_t/biotModulus;
+    f0p[0] += biotCoefficient*trace_strain_t + poro_pres_t/biotModulus;
 } // f0p_DYN
 
 // -----------------------------------------------------------------------------
@@ -358,7 +358,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity::g1u(const PylithInt dim,
     const PylithInt aOffDev[1] = { aOff[i_shearModulus] };
     const PylithInt aOffDev_x[1] = { aOff_x[i_shearModulus] };
 
-    PylithScalar stressTensor[dim];
+    PylithScalar stressTensor[dim*dim];
     PylithInt d;
 
     for (d = 0; d < dim*dim; ++d) {
@@ -429,7 +429,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity::g1u_refstate(const PylithInt d
     const PylithInt aOffDev[3] = { aOff[i_shearModulus], aOff[i_rstress], aOff[i_rstrain] };
     const PylithInt aOffDev_x[3] = { aOff_x[i_shearModulus], aOff_x[i_rstress], aOff_x[i_rstrain] };
 
-    PylithScalar stressTensor[dim];
+    PylithScalar stressTensor[dim*dim];
     PylithInt d;
 
     for (d = 0; d < dim*dim; ++d) {
@@ -498,7 +498,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity::g1v(const PylithInt dim,
     const PylithInt aOffDev[1] = { aOff[i_shearModulus] };
     const PylithInt aOffDev_x[1] = { aOff_x[i_shearModulus] };
 
-    PylithScalar stressTensor[dim];
+    PylithScalar stressTensor[dim*dim];
     PylithInt d;
 
     for (d = 0; d < dim*dim; ++d) {
@@ -569,7 +569,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity::g1v_refstate(const PylithInt d
     const PylithInt aOffDev[3] = { aOff[i_shearModulus], aOff[i_rstress], aOff[i_rstrain] };
     const PylithInt aOffDev_x[3] = { aOff_x[i_shearModulus], aOff_x[i_rstress], aOff_x[i_rstrain] };
 
-    PylithScalar stressTensor[dim];
+    PylithScalar stressTensor[dim*dim];
     PylithInt d;
 
     for (d = 0; d < dim*dim; ++d) {
