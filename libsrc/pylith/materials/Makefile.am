@@ -23,6 +23,8 @@ subpkginclude_HEADERS = \
 	Material.hh \
 	Elasticity.hh \
 	RheologyElasticity.hh \
+	Poroelasticity.hh \
+	RheologyPoroelasticity.hh \
 	AuxiliaryFactoryElasticity.hh \
 	AuxiliaryFactoryPoroelasticity.hh \
 	AuxiliaryFactoryPoroelastic.hh \
@@ -32,12 +34,11 @@ subpkginclude_HEADERS = \
 	IsotropicLinearGenMaxwell.hh \
 	IsotropicPowerLaw.hh \
 	IsotropicLinearIncompElasticity.hh \
+	IsotropicLinearPoroelasticity.hh \
 	AuxiliaryFactoryElastic.hh \
 	AuxiliaryFactoryViscoelastic.hh \
 	IncompressibleElasticity.hh \
 	RheologyIncompressibleElasticity.hh \
-  Poroelasticity.hh \
-	RheologyPoroelasticity.hh \
 	Query.hh \
 	materialsfwd.hh
 
