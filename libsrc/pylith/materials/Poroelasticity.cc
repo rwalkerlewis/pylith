@@ -221,13 +221,13 @@ pylith::materials::Poroelasticity::createAuxiliaryField(const pylith::topology::
     // ---------------------------------
     // Optional Auxiliary
     if (_useBodyForce) {
-        auxiliaryFactory->addBodyForce();
+        auxiliaryFactory->addBodyForce(); // +1
     } // if
     if (_gravityField) {
-        auxiliaryFactory->addGravityField(_gravityField);
+        auxiliaryFactory->addGravityField(_gravityField); // +1
     } // if
     if (_useSourceDensity) {
-        auxiliaryFactory->addSourceDensity();
+        auxiliaryFactory->addSourceDensity();  // +1
     } // if
     _rheology->addAuxiliarySubfields();
 
@@ -565,7 +565,7 @@ pylith::materials::Poroelasticity::_setKernelsLHSResidual(pylith::feassemble::In
         const PetscPointFunc f0u = NULL;
         const PetscPointFunc f1u = NULL;
 
-        // Volumetric Stress
+        // Volumetric Strain
         const PetscPointFunc f0e = NULL;
         const PetscPointFunc f1e = NULL;
 
