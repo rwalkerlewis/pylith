@@ -108,7 +108,7 @@ pylith::materials::IsotropicLinearPoroelasticity::addAuxiliarySubfields(void) {
 // ---------------------------------------------------------------------------------------------------------------------
 // Get stress kernel for RHS residual, G(t,s).
 PetscPointFunc
-pylith::materials::IsotropicLinearPoroelasticity::getKernelg1u(const spatialdata::geocoords::CoordSys* coordsys, const bool _useInertia) const {
+pylith::materials::IsotropicLinearPoroelasticity::getKernelg1u(const spatialdata::geocoords::CoordSys* coordsys) const {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("getKernelg1u(coordsys="<<typeid(coordsys).name()<<")");
 
@@ -123,7 +123,7 @@ pylith::materials::IsotropicLinearPoroelasticity::getKernelg1u(const spatialdata
 // ---------------------------------------------------------------------------------------------------------------------
 // Get stress kernel for RHS residual, G(t,s).
 PetscPointFunc
-pylith::materials::IsotropicLinearPoroelasticity::getKernelg1v(const spatialdata::geocoords::CoordSys* coordsys, const bool _useInertia) const {
+pylith::materials::IsotropicLinearPoroelasticity::getKernelg1v(const spatialdata::geocoords::CoordSys* coordsys) const {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("getKernelg1v(coordsys="<<typeid(coordsys).name()<<")");
 
@@ -157,7 +157,7 @@ pylith::materials::IsotropicLinearPoroelasticity::getKernelJg3uu(const spatialda
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("getKernelJg3uu(coordsys="<<typeid(coordsys).name()<<")");
 
-    PetscPointJac Jg3uu = pylith::fekernels::IsotropicLinearPoroelasticity::Jg3uu :
+    PetscPointJac Jg3uu = pylith::fekernels::IsotropicLinearPoroelasticity::Jg3uu;
 
 
     PYLITH_METHOD_RETURN(Jg3uu);
