@@ -357,7 +357,7 @@ pylith::materials::Poroelasticity::_setKernelsRHSResidual(pylith::feassemble::In
     } // switch
 
     // g1p is darcy velocity, ship over to rheology section
-    const PetscPointFunc g1p = _rheology->getKernelRHSDarcyVelocity(coordsys, _gravityField);  //JS: OK fixed this.
+    const PetscPointFunc g1p = _rheology->getKernelg1p(coordsys, _gravityField);  //JS: OK fixed this.
 
     // Remaining parts of RHS residuals change with dynamics.
     if (!solution.hasSubfield("velocity")) {
@@ -367,7 +367,7 @@ pylith::materials::Poroelasticity::_setKernelsRHSResidual(pylith::feassemble::In
                                    (_gravityField) ? pylith::fekernels::Poroelasticity::g0v_grav :
                                    (_useBodyForce) ? pylith::fekernels::Poroelasticity::g0v_bodyforce :
                                    NULL;
-        const PetscPointFunc g1u = _rheology->getKernelRHSResidualEffectiveStress(coordsys, _useInertia);
+        const PetscPointFunc g1u = _rheology->getKernelg1u(coordsys);
 
         // 2) Volumetric Strain
         const PetscPointFunc g0e =  pylith::fekernels::Poroelasticity::g0e;
@@ -389,7 +389,7 @@ pylith::materials::Poroelasticity::_setKernelsRHSResidual(pylith::feassemble::In
                                  (_gravityField) ? pylith::fekernels::Elasticity::g0v_grav :
                                  (_useBodyForce) ? pylith::fekernels::Elasticity::g0v_bodyforce :
                                  NULL;
-      const PetscPointFunc g1v = _rheology->getKernelRHSResidualEffectiveStress(coordsys, _useInertia);
+      const PetscPointFunc g1v = _rheology->getKernelg1v(coordsys);
 
       kernels.resize(3);
       kernels[0] = ResidualKernels("displacement",  g0u, g1u);
@@ -420,11 +420,11 @@ pylith::materials::Poroelasticity::_setKernelsRHSJacobian(pylith::feassemble::In
         const PetscPointJac Jg0uu = NULL;
         const PetscPointJac Jg1uu = NULL;
         const PetscPointJac Jg2uu = NULL;
-        const PetscPointJac Jg3uu = _rheology->getKernelRHSJacobianElasticConstants(coordsys, _useInertia);
+        const PetscPointJac Jg3uu = _rheology->getKernelJg3uu(coordsys);
 
         const PetscPointJac Jg0up = NULL;
         const PetscPointJac Jg1up = NULL;
-        const PetscPointJac Jg2up = _rheology->getKernelRHSJacobianBiotCoefficient(coordsys, _useInertia);
+        const PetscPointJac Jg2up = _rheology->getKernelJg2up(coordsys);
         const PetscPointJac Jg3up = NULL;
 
         const PetscPointJac Jg0ue = NULL;
@@ -440,7 +440,7 @@ pylith::materials::Poroelasticity::_setKernelsRHSJacobian(pylith::feassemble::In
         const PetscPointJac Jg0pp = NULL;
         const PetscPointJac Jg1pp = NULL;
         const PetscPointJac Jg2pp = NULL;
-        const PetscPointJac Jg3pp = _rheology->getKernelRHSJacobianDarcyConductivity(coordsys);
+        const PetscPointJac Jg3pp = _rheology->getKernelJg3pp(coordsys);
 
         const PetscPointJac Jg0pe = NULL;
         const PetscPointJac Jg1pe = NULL;
@@ -501,7 +501,7 @@ pylith::materials::Poroelasticity::_setKernelsRHSJacobian(pylith::feassemble::In
         const PetscPointJac Jg0pp = NULL;
         const PetscPointJac Jg1pp = NULL;
         const PetscPointJac Jg2pp = NULL;
-        const PetscPointJac Jg3pp =  _rheology->getKernelRHSJacobianDarcyConductivity(coordsys);
+        const PetscPointJac Jg3pp =  _rheology->getKernelJg3pp(coordsys);
 
         const PetscPointJac Jg0pv = NULL;
         const PetscPointJac Jg1pv = NULL;
@@ -511,11 +511,11 @@ pylith::materials::Poroelasticity::_setKernelsRHSJacobian(pylith::feassemble::In
         const PetscPointJac Jg0vu = NULL;
         const PetscPointJac Jg1vu = NULL;
         const PetscPointJac Jg2vu = NULL;
-        const PetscPointJac Jg3vu = _rheology->getKernelRHSJacobianElasticConstants(coordsys, _useInertia);
+        const PetscPointJac Jg3vu = _rheology->getKernelJg3vu(coordsys);
 
         const PetscPointJac Jg0vp = NULL;
         const PetscPointJac Jg1vp = NULL;
-        const PetscPointJac Jg2vp = _rheology->getKernelRHSJacobianBiotCoefficient(coordsys, _useInertia);
+        const PetscPointJac Jg2vp = _rheology->getKernelJg2vp(coordsys);
         const PetscPointJac Jg3vp = NULL;
 
         const PetscPointJac Jg0vv = NULL;
@@ -554,7 +554,7 @@ pylith::materials::Poroelasticity::_setKernelsLHSResidual(pylith::feassemble::In
     const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().getCoordSys();
 
   // Both  and dynamics use pressure
-  const PetscPointFunc f0p = _rheology->getKernelLHSVariationInFluidContent(coordsys, _useInertia);
+  const PetscPointFunc f0p = _rheology->getKernelf0p(coordsys, _useInertia);
   const PetscPointFunc f1p = NULL;
 
     if (!solution.hasSubfield("velocity")) {
@@ -628,12 +628,12 @@ pylith::materials::Poroelasticity::_setKernelsLHSJacobian(pylith::feassemble::In
         const PetscPointJac Jf2pu = NULL;
         const PetscPointJac Jf3pu = NULL;
 
-        const PetscPointJac Jf0pp = _rheology->getKernelLHSJacobianSpecificStorage(coordsys);
+        const PetscPointJac Jf0pp = _rheology->getKernelJf0pp(coordsys);
         const PetscPointJac Jf1pp = NULL;
         const PetscPointJac Jf2pp = NULL;
         const PetscPointJac Jf3pp = NULL;
 
-        const PetscPointJac Jf0pe = _rheology->getKernelLHSJacobianTshiftBiotCoefficient(coordsys);
+        const PetscPointJac Jf0pe = _rheology->getKernelJf0pe(coordsys);
         const PetscPointJac Jf1pe = NULL;
         const PetscPointJac Jf2pe = NULL;
         const PetscPointJac Jf3pe = NULL;
@@ -689,7 +689,7 @@ pylith::materials::Poroelasticity::_setKernelsLHSJacobian(pylith::feassemble::In
         const PetscPointJac Jf2pu = NULL;
         const PetscPointJac Jf3pu = NULL;
 
-        const PetscPointJac Jf0pp = _rheology->getKernelLHSJacobianSpecificStorage(coordsys);
+        const PetscPointJac Jf0pp = _rheology->getKernelJf0pp(coordsys);
         const PetscPointJac Jf1pp = NULL;
         const PetscPointJac Jf2pp = NULL;
         const PetscPointJac Jf3pp = NULL;

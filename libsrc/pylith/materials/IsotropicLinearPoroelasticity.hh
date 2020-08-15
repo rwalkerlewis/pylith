@@ -153,14 +153,6 @@ public:
      */
     PetscPointFunc getKernelf0p(const spatialdata::geocoords::CoordSys* coordsys, const bool _useInertia) const;
 
-    /** Get biot coefficient for LHS residual, F(t,s,\dot{s})
-     *
-     * @param[in] coordsys Coordinate system.
-     *
-     * @return LHS jacobian kernel for biot coefficient.
-     */
-    PetscPointJac getKernelJf0pe(const spatialdata::geocoords::CoordSys* coordsys) const;
-
     /** Get specific storage kernel for LHS Jacobian G(t,s).
      *
      * @param[in] coordsys Coordinate system.
@@ -169,6 +161,13 @@ public:
      */
     PetscPointJac getKernelJf0pp(const spatialdata::geocoords::CoordSys* coordsys) const;
 
+    /** Get biot coefficient for LHS residual, F(t,s,\dot{s})
+     *
+     * @param[in] coordsys Coordinate system.
+     *
+     * @return LHS jacobian kernel for biot coefficient.
+     */
+    PetscPointJac getKernelJf0pe(const spatialdata::geocoords::CoordSys* coordsys) const;
 
     // ============================ DERIVED FIELDS ========================== //
 
