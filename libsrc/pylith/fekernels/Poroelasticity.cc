@@ -66,14 +66,13 @@ pylith::fekernels::Poroelasticity::g0v_grav(const PylithInt dim,
     // Incoming auxililary fields.
 
     // Poroelasticity
-    const PylithInt i_porosity     = 0;
-    const PylithInt i_density      = 1;
-    const PylithInt i_fluidDensity = 2;
+    const PylithInt i_solid_density     = 0;
+    const PylithInt i_fluid_density     = 1;
 
     // 3 + n
     const PylithInt i_gravityField = 4;
 
-    const PylithScalar bulk_density = (1 - a[aOff[i_porosity]]) * a[aOff[i_density]] + a[aOff[i_porosity]] * a[aOff[i_fluidDensity]];
+    const PylithScalar bulk_density = a[aOff[i_solid_density]]; //(1 - a[aOff[i_porosity]]) * a[aOff[i_density]] + a[aOff[i_porosity]] * a[aOff[i_fluidDensity]];
     const PylithScalar* gravityField = &a[aOff[i_gravityField]];
 
     for (PylithInt i = 0; i < dim; ++i) {
@@ -144,15 +143,14 @@ pylith::fekernels::Poroelasticity::g0v_gravbodyforce(const PylithInt dim,
     // Incoming auxiliary fields.
 
     // Poroelasticity
-    const PylithInt i_porosity = 0;
-    const PylithInt i_density = 1;
-    const PylithInt i_fluidDensity = 2;
+    const PylithInt i_solid_density = 0;
+    const PylithInt i_fluid_density = 1;
 
     // 3 + n
     const PylithInt i_bodyForce = 4;
     const PylithInt i_gravityField = 5;
 
-    const PylithScalar bulk_density = (1 - a[aOff[i_porosity]]) * a[aOff[i_density]] + a[aOff[i_porosity]] * a[aOff[i_fluidDensity]];
+    const PylithScalar bulk_density =  a[aOff[i_solid_density]] //(1 - a[aOff[i_porosity]]) * a[aOff[i_density]] + a[aOff[i_porosity]] * a[aOff[i_fluidDensity]];
     const PylithScalar* gravityField = &a[aOff[i_gravityField]];
     const PylithScalar* bodyForce = &a[aOff[i_bodyForce]];
 
@@ -417,14 +415,14 @@ pylith::fekernels::Poroelasticity::g0e(const PylithInt dim,
 
     // Incoming solution fields.
     const PylithInt i_disp = 0;
-    const PylithInt i_trace = 2;
+    const PylithInt i_trace_strain = 2;
 
     // Incoming auxiliary fields.
 
 
     const PylithScalar* disp = &s[sOff[i_disp]];
     const PylithScalar* disp_x = &s_x[sOff_x[i_disp]];
-    const PylithScalar trace_strain = s[sOff[i_trace]];
+    const PylithScalar trace_strain = s[sOff[i_trace_strain]];
 
     for (PylithInt d = 0; d < dim; ++d) {
       g0e[0] += disp_x[d*dim+d];

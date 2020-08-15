@@ -354,7 +354,28 @@ void g1v_refstate(const PylithInt dim,
                   const PylithScalar constants[],
                   PylithScalar g1[]);
 
-
+// -----------------------------------------------------------------------------
+// Jg2ue function for isotropic linear poroelasticity.
+static
+void Jg2ue(const PylithInt dim,
+            const PylithInt numS,
+            const PylithInt numA,
+            const PylithInt sOff[],
+            const PylithInt sOff_x[],
+            const PylithScalar s[],
+            const PylithScalar s_t[],
+            const PylithScalar s_x[],
+            const PylithInt aOff[],
+            const PylithInt aOff_x[],
+            const PylithScalar a[],
+            const PylithScalar a_t[],
+            const PylithScalar a_x[],
+            const PylithReal t,
+            const PylithReal utshift,
+            const PylithScalar x[],
+            const PylithInt numConstants,
+            const PylithScalar constants[],
+            PylithScalar Jg2[]);
 // ----------------------------------------------------------------------
  /** Jg2_up entry function for isotropic linear poroelasticity.
   * Solution fields: [...]
@@ -382,7 +403,7 @@ void g1v_refstate(const PylithInt dim,
             PylithScalar Jg2[]);
 
 // ----------------------------------------------------------------------
- /** Jg2_up entry function for isotropic linear poroelasticity.
+ /** Jg2_vp entry function for isotropic linear poroelasticity.
   * vp refers to dynamic formulation (velocity / pressure)
   * Solution fields: [...]
   * Auxiliary fields: [density(1), shear_modulus(1), bulk_modulus(1), other poroelastic related param ...]

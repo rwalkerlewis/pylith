@@ -103,6 +103,14 @@ public:
      */
     PetscPointJac getKernelRHSJacobianBiotCoefficient(const spatialdata::geocoords::CoordSys* coordsys, const bool _useInertia) const;
 
+    /** Get lambda for RHS Jacobian G(t,s).
+     *
+     * @param[in] coordsys Coordinate system.
+     *
+     * @return RHS Jacobian kernel for lambda.
+     */
+    PetscPointJac getKernelJg2ue(const spatialdata::geocoords::CoordSys* coordsys) const;
+
     /** Get stress kernel for derived field.
      *
      * @param[in] coordsys Coordinate system.
