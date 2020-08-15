@@ -28,7 +28,7 @@
 #include "pylith/topology/Field.hh" // USES Field::SubfieldInfo
 #include "pylith/topology/FieldOps.hh" // USES FieldOps
 
-#include "pylith/fekernels/Poroelasticity.hh" // USES Elasticity kernels
+#include "pylith/fekernels/Poroelasticity.hh" // USES Poroelasticity kernels
 #include "pylith/fekernels/Elasticity.hh" // USES Elasticity kernels
 #include "pylith/fekernels/DispVel.hh" // USES DispVel kernels
 
@@ -132,6 +132,8 @@ pylith::materials::Poroelasticity::useSourceDensity(void) const {
 // Set bulk rheology.
 void
 pylith::materials::Poroelasticity::setBulkRheology(pylith::materials::RheologyPoroelasticity* const rheology) {
+    PYLITH_COMPONENT_DEBUG("setBulkRheology(rheology="<<rheology<<")");
+
     _rheology = rheology;
 } // setBulkRheology
 
@@ -413,7 +415,7 @@ pylith::materials::Poroelasticity::_setKernelsRHSJacobian(pylith::feassemble::In
 
     const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().getCoordSys();
 
-    std::vector<JacobianKernels> kernels;
+    std::vector<JacobianKernels> kernels(9);
 
     // Quasi - Static
     if (!solution.hasSubfield("velocity")) {
@@ -461,8 +463,6 @@ pylith::materials::Poroelasticity::_setKernelsRHSJacobian(pylith::feassemble::In
         const PetscPointJac Jg1ee = NULL;
         const PetscPointJac Jg2ee = NULL;
         const PetscPointJac Jg3ee = NULL;
-
-        kernels.resize(9);
 
         kernels[0] = JacobianKernels("displacement", "displacement", Jg0uu, Jg1uu, Jg2uu, Jg3uu);
         kernels[1] = JacobianKernels("displacement", "pressure",     Jg0up, Jg1up, Jg2up, Jg3up);
@@ -523,7 +523,6 @@ pylith::materials::Poroelasticity::_setKernelsRHSJacobian(pylith::feassemble::In
         const PetscPointJac Jg2vv = NULL;
         const PetscPointJac Jg3vv = NULL;
 
-        kernels.resize(9);
         kernels[0] = JacobianKernels("displacement",  "displacement",  Jg0uu, Jg1uu, Jg2uu, Jg3uu);
         kernels[1] = JacobianKernels("displacement",  "pressure",      Jg0up, Jg1up, Jg2up, Jg3up);
         kernels[2] = JacobianKernels("displacement",  "velocity",      Jg0uv, Jg1uv, Jg2uv, Jg3uv);
@@ -580,7 +579,7 @@ pylith::materials::Poroelasticity::_setKernelsLHSResidual(pylith::feassemble::In
         const PetscPointFunc f1u = NULL;
 
         // Velocity
-        const PetscPointFunc f0v = (_useInertia) ? pylith::fekernels::DispVel::f0v : NULL;
+        const PetscPointFunc f0v = pylith::fekernels::DispVel::f0v;
         const PetscPointFunc f1v = NULL;
 
         kernels.resize(2);
@@ -604,7 +603,7 @@ pylith::materials::Poroelasticity::_setKernelsLHSJacobian(pylith::feassemble::In
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_setKernelsLHSJacobian(integrator="<<integrator<<",solution="<<solution.getLabel()<<")");
     const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().getCoordSys();
-    std::vector<JacobianKernels> kernels;
+    std::vector<JacobianKernels> kernels(9);
 
     if (!solution.hasSubfield("velocity")) {
         // Jacobian kernels
@@ -652,8 +651,6 @@ pylith::materials::Poroelasticity::_setKernelsLHSJacobian(pylith::feassemble::In
         const PetscPointJac Jf1ee = NULL;
         const PetscPointJac Jf2ee = NULL;
         const PetscPointJac Jf3ee = NULL;
-
-        kernels.resize(9);
 
         kernels[0] = JacobianKernels("displacement",  "displacement",  Jf0uu, Jf1uu, Jf2uu, Jf3uu);
         kernels[1] = JacobianKernels("displacement",  "pressure",      Jf0up, Jf1up, Jf2up, Jf3up);
@@ -715,8 +712,6 @@ pylith::materials::Poroelasticity::_setKernelsLHSJacobian(pylith::feassemble::In
         const PetscPointJac Jf2vv = NULL;
         const PetscPointJac Jf3vv = NULL;
 
-        kernels.resize(9);
-
         kernels[0] = JacobianKernels("displacement",  "displacement",  Jf0uu, Jf1uu, Jf2uu, Jf3uu);
         kernels[1] = JacobianKernels("displacement",  "pressure",      Jf0up, Jf1up, Jf2up, Jf3up);
         kernels[2] = JacobianKernels("displacement",  "velocity",      Jf0uv, Jf1uv, Jf2uv, Jf3uv);
@@ -735,6 +730,25 @@ pylith::materials::Poroelasticity::_setKernelsLHSJacobian(pylith::feassemble::In
 } // _setKernelsLHSJacobian
 
 // ---------------------------------------------------------------------------------------------------------------------
+// Set kernels for computing updated state variables in auxiliary field.
+void
+pylith::materials::Poroelasticity::_setKernelsUpdateStateVars(pylith::feassemble::IntegratorDomain* integrator,
+                                                                        const topology::Field& solution) const {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_COMPONENT_DEBUG("_setKernelsUpdateStateVars(integrator="<<integrator<<", solution="<<solution.getLabel()<<")");
+
+    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().getCoordSys();
+    assert(coordsys);
+
+    std::vector<ProjectKernels> kernels;
+    _rheology->addKernelsUpdateStateVars(&kernels, coordsys);
+
+    integrator->setKernelsUpdateStateVars(kernels);
+
+    PYLITH_METHOD_END;
+} // _setKernelsUpdateStateVars
+
+// ---------------------------------------------------------------------------------------------------------------------
 // Set kernels for computing derived field.
 void
 pylith::materials::Poroelasticity::_setKernelsDerivedField(pylith::feassemble::IntegratorDomain* integrator,
@@ -749,11 +763,7 @@ pylith::materials::Poroelasticity::_setKernelsDerivedField(pylith::feassemble::I
     kernels[0] = ProjectKernels("cauchy_stress", _rheology->getKernelDerivedCauchyStress(coordsys));
 
     const int spaceDim = coordsys->getSpaceDim();
-    const PetscPointFunc strainKernel =
-        //(3 == spaceDim) ? pylith::fekernels::Elasticity3D::cauchyStrain :
-        //(2 == spaceDim) ? pylith::fekernels::ElasticityPlaneStrain::cauchyStrain :
-        //NULL;
-        pylith::fekernels::Poroelasticity::cauchyStrain;
+    const PetscPointFunc strainKernel = pylith::fekernels::Poroelasticity::cauchyStrain;
     kernels[1] = ProjectKernels("cauchy_strain", strainKernel);
 
     assert(integrator);

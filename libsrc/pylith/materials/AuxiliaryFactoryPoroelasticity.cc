@@ -124,7 +124,7 @@ pylith::materials::AuxiliaryFactoryPoroelasticity::addPorosity(void)
     description.componentNames.resize(1);
     description.componentNames[0] = subfieldName;
     description.scale = noScale;
-    description.validator = NULL;
+    description.validator = pylith::topology::FieldQuery::validatorNonnegative;
 
     _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
     this->setSubfieldQuery(subfieldName);
