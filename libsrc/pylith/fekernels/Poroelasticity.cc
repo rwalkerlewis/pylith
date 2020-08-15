@@ -150,7 +150,7 @@ pylith::fekernels::Poroelasticity::g0v_gravbodyforce(const PylithInt dim,
     const PylithInt i_bodyForce = 4;
     const PylithInt i_gravityField = 5;
 
-    const PylithScalar bulk_density =  a[aOff[i_solid_density]] //(1 - a[aOff[i_porosity]]) * a[aOff[i_density]] + a[aOff[i_porosity]] * a[aOff[i_fluidDensity]];
+    const PylithScalar bulk_density =  a[aOff[i_solid_density]]; //(1 - a[aOff[i_porosity]]) * a[aOff[i_density]] + a[aOff[i_porosity]] * a[aOff[i_fluidDensity]];
     const PylithScalar* gravityField = &a[aOff[i_gravityField]];
     const PylithScalar* bodyForce = &a[aOff[i_bodyForce]];
 
