@@ -106,7 +106,7 @@ public:
      * @return RHS Jacobian kernel for lambda.
      */
     virtual
-    PetscPointJac getKernelJg2ue(const spatialdata::geocoords::CoordSys* coordsys) const;
+    PetscPointJac getKernelJg2ue(const spatialdata::geocoords::CoordSys* coordsys) const = 0;
 
     /** Get stress kernel for derived field.
      *
