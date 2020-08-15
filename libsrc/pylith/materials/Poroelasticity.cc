@@ -429,7 +429,7 @@ pylith::materials::Poroelasticity::_setKernelsRHSJacobian(pylith::feassemble::In
 
         const PetscPointJac Jg0ue = NULL;
         const PetscPointJac Jg1ue = NULL;
-        const PetscPointJac Jg2ue = NULL;
+        const PetscPointJac Jg2ue = _rheology->getKernelJg2ue(coordsys);
         const PetscPointJac Jg3ue = NULL;
 
         const PetscPointJac Jg0pu = NULL;

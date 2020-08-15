@@ -167,6 +167,19 @@ pylith::materials::IsotropicLinearPoroelasticity::getKernelRHSJacobianBiotCoeffi
 } // getKernelRHSJacobianBiotCoefficient
 
 // ---------------------------------------------------------------------------------------------------------------------
+// Get lambda kernel for RHS Jacobian G(t,s).
+PetscPointJac
+pylith::materials::IsotropicLinearPoroelasticity::getKernelJg2ue(const spatialdata::geocoords::CoordSys* coordsys) const {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_COMPONENT_DEBUG("getKernelJg2ue(coordsys="<<typeid(coordsys).name()<<")");
+
+    PetscPointJac Jg2ue = pylith::fekernels::IsotropicLinearPoroelasticity::Jg2ue;
+
+    PYLITH_METHOD_RETURN(Jg2ue);
+} // getKernelJg2ue
+
+
+// ---------------------------------------------------------------------------------------------------------------------
 // Get Darcy Conductivity kernel for RHS Jacobian G(t,s).
 PetscPointJac
 pylith::materials::IsotropicLinearPoroelasticity::getKernelRHSJacobianDarcyConductivity(const spatialdata::geocoords::CoordSys* coordsys) const {
