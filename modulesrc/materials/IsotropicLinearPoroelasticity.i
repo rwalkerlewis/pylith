@@ -54,7 +54,7 @@ public:
        *
        * @return Auxiliary factory for physics object.
        */
-      pylith::materials::AuxiliaryFactoryPoroelastic* getAuxiliaryFactory(void);
+      pylith::materials::AuxiliaryFactoryPoroelasticity* getAuxiliaryFactory(void);
 
       /** Add rheology subfields to auxiliary field.
        *
@@ -172,7 +172,9 @@ public:
        */
       PetscPointFunc getKernelDerivedCauchyStress(const spatialdata::geocoords::CoordSys* coordsys) const;
 
-      };        // class IsotropicLinearElasticity
+      };
+
+      // class IsotropicLinearElasticity
 
     } // materials
 } // pylith

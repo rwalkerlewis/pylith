@@ -18,7 +18,7 @@
 
 # @file pylith/problems/SolnDispPresVel.py
 ##
-# @brief Python subfields container with displacement, pore pressure, and trace strain subfields.
+# @brief Python subfields container with displacement, pore pressure, and velocity subfields.
 
 from pylith.utils.PetscComponent import PetscComponent
 from .Solution import Solution as SolutionBase
@@ -53,8 +53,8 @@ class SolnDispPresVel(PetscComponent):
     pressure.meta['tip'] = "Pressure subfield."
 
     from .SubfieldVelocity import SubfieldVelocity
-    traceStrain = pyre.inventory.facility("velocity", family="soln_subfield", factory=SubfieldTraceStrain)
-    traceStrain.meta['tip'] = "Velocity subfield."
+    velocity = pyre.inventory.facility("velocity", family="soln_subfield", factory=SubfieldVelocity)
+    velocity.meta['tip'] = "Velocity subfield."
 
     # PUBLIC METHODS /////////////////////////////////////////////////////
 

@@ -173,7 +173,7 @@ pylith::materials::AuxiliaryFactoryPoroelastic::addBiotCoefficient(void)
     description.componentNames.resize(1);
     description.componentNames[0] = subfieldName;
     description.scale = noScale;
-    description.validator = NULL;
+    description.validator = pylith::topology::FieldQuery::validatorPositive;
 
     _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
     this->setSubfieldQuery(subfieldName);
@@ -369,7 +369,7 @@ pylith::materials::AuxiliaryFactoryPoroelastic::addPoissonsRatio(void)
     description.componentNames.resize(1);
     description.componentNames[0] = subfieldName;
     description.scale = noScale;
-    description.validator = NULL;
+    description.validator = pylith::topology::FieldQuery::validatorNonnegative;
 
     _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
     this->setSubfieldQuery(subfieldName);
