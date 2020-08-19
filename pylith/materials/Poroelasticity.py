@@ -45,6 +45,7 @@ class Poroelasticity(Material, ModulePoroelasticity):
 
     from pylith.topology.Subfield import subfieldFactory
     from pylith.utils.EmptyBin import EmptyBin
+
     from .AuxSubfieldsPoroelasticity import AuxSubfieldsPoroelasticity
     auxiliarySubfields = pyre.inventory.facilityArray(
         "auxiliary_subfields", itemFactory=subfieldFactory, factory=AuxSubfieldsPoroelasticity)
