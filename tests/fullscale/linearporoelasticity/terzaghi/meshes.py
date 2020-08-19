@@ -25,42 +25,37 @@ class Tri(object):
     Mesh information for tri mesh.
     """
     DOMAIN = {
-        "ncells": 124,
+        "ncells": 234,
         "ncorners": 3,
-        "nvertices": 79,
+        "nvertices": 138,
     }
     MATERIALS = {
-        "poroelastic_xpos": {
-            "ncells": 64,
+        "poroelastic": {
+            "ncells": 234,
             "ncorners": 3,
-            "nvertices": 45,
-        },
-        "poroelastic_xneg": {
-            "ncells": 60,
-            "ncorners": 3,
-            "nvertices": 43,
+            "nvertices": 138,
         }
     }
     BOUNDARIES = {
-        "bc_xneg": {
-            "ncells": 8,
+        "edge_xneg": {
+            "ncells": 10,
             "ncorners": 2,
-            "nvertices": 9,
+            "nvertices": 11,
         },
-        "bc_xpos": {
-            "ncells": 8,
+        "edge_xpos": {
+            "ncells": 10,
             "ncorners": 2,
-            "nvertices": 9,
+            "nvertices": 11,
         },
-        "bc_yneg": {
-            "ncells": 8,
+        "edge_yneg": {
+            "ncells": 10,
             "ncorners": 2,
-            "nvertices": 9,
+            "nvertices": 11,
         },
-        "bc_ypos": {
-            "ncells": 8,
+        "edge_ypos": {
+            "ncells": 10,
             "ncorners": 2,
-            "nvertices": 9,
+            "nvertices": 11,
         },
     }
 
@@ -70,42 +65,37 @@ class Quad(object):
     Mesh information for quad mesh.
     """
     DOMAIN = {
-        "ncells": 64,
+        "ncells": 100,
         "ncorners": 4,
-        "nvertices": 81,
+        "nvertices": 121,
     }
     MATERIALS = {
         "poroelastic_xpos": {
-            "ncells": 32,
+            "ncells": 100,
             "ncorners": 4,
-            "nvertices": 45,
-        },
-        "poroelastic_xneg": {
-            "ncells": 32,
-            "ncorners": 4,
-            "nvertices": 45,
+            "nvertices": 121,
         }
     }
     BOUNDARIES = {
-        "bc_xneg": {
-            "ncells": 8,
+        "edge_xneg": {
+            "ncells": 10,
             "ncorners": 2,
-            "nvertices": 9,
+            "nvertices": 11,
         },
-        "bc_xpos": {
-            "ncells": 8,
+        "edge_xpos": {
+            "ncells": 10,
             "ncorners": 2,
-            "nvertices": 9,
+            "nvertices": 11,
         },
-        "bc_yneg": {
-            "ncells": 8,
+        "edge_yneg": {
+            "ncells": 10,
             "ncorners": 2,
-            "nvertices": 9,
+            "nvertices": 11,
         },
-        "bc_ypos": {
-            "ncells": 8,
+        "edge_ypos": {
+            "ncells": 10,
             "ncorners": 2,
-            "nvertices": 9,
+            "nvertices": 11,
         },
     }
 

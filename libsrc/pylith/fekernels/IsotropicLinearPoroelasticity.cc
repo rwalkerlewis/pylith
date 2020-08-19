@@ -78,7 +78,8 @@ pylith::fekernels::IsotropicLinearPoroelasticity::f0p_QS(const PylithInt dim,
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
     const PylithScalar biotModulus = a[aOff[i_biotModulus]];
 
-    f0p[0] += biotCoefficient*trace_strain_t + pressure_t/biotModulus;
+    f0p[0] += biotCoefficient*trace_strain_t;
+    f0p[0] += pressure_t/biotModulus;
 } // f0p_QS
 
 // ----------------------------------------------------------------------
@@ -128,7 +129,8 @@ pylith::fekernels::IsotropicLinearPoroelasticity::f0p_DYN(const PylithInt dim,
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
     const PylithScalar biotModulus = a[aOff[i_biotModulus]];
 
-    f0p[0] += biotCoefficient*trace_strain_t + poro_pres_t/biotModulus;
+    f0p[0] += biotCoefficient*trace_strain_t;
+    f0p[0] += poro_pres_t/biotModulus;
 } // f0p_DYN
 
 // -----------------------------------------------------------------------------
@@ -343,10 +345,10 @@ pylith::fekernels::IsotropicLinearPoroelasticity::g1u(const PylithInt dim,
 
     for (c = 0; c < dim; ++c) {
       for (d = 0; d < dim; ++d) {
-        g1[c*dim+d] -= shearModulus * (disp_x[c*dim+d] + disp_x[d*dim+c]);
+        g1[c*dim+d] += shearModulus * (disp_x[c*dim+d] + disp_x[d*dim+c]);
       } // for
-      g1[c*dim+c] -= (drainedBulkModulus - (2.0*shearModulus)/3.0) * trace_strain;
-      g1[c*dim+c] += biotCoefficient*pressure;
+      g1[c*dim+c] += (drainedBulkModulus - (2.0*shearModulus)/3.0) * trace_strain;
+      g1[c*dim+c] -= biotCoefficient*pressure;
     } // for
 } // g1u
 

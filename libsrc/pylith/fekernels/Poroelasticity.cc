@@ -425,9 +425,9 @@ pylith::fekernels::Poroelasticity::g0e(const PylithInt dim,
     const PylithScalar trace_strain = s[sOff[i_trace_strain]];
 
     for (PylithInt d = 0; d < dim; ++d) {
-      g0e[0] += disp_x[d*dim+d];
+      g0e[0] -= disp_x[d*dim+d];
     }
-    g0e[0] -= trace_strain;
+    g0e[0] += trace_strain;
 } // g0e
 
 

@@ -35,7 +35,8 @@ class TestCase(FullTestCase):
     Test suite for testing PyLith with one dimensional poroelasticity
     by means of Terzaghi's problem.
     """
-    DIRICHLET_BOUNDARIES = ["bc_xneg", "bc_xpos", "bc_yneg", "bc_ypos"]
+    DIRICHLET_BOUNDARIES = ["edge_xneg", "edge_xpos", "edge_yneg", "edge_ypos"]
+    NEUMANN_BOUNDARIES = ["edge_yneg"]
 
     def setUp(self):
         """
@@ -51,12 +52,12 @@ class TestCase(FullTestCase):
 
     def test_domain_solution(self):
         filename = "output/{}-domain.h5".format(self.NAME)
-        vertexFields = ["displacement"]
+        vertexFields = ["displacement", "pressure", "trace_strain"]
         check_data(filename, self, self.DOMAIN, vertexFields=vertexFields)
         return
 
     def test_material_info(self):
-        cellFields = ["density", "bulk_modulus", "shear_modulus"]
+        cellFields = ["solid_density", "fluid_density", "fluid_viscosity", "shear_modulus", "undrained_bulk_modulus", "biot_coefficient", "biot_modulus", "isotropic_permeability"]
         for material in self.MATERIALS.keys():
             filename = "output/{}-{}_info.h5".format(self.NAME, material)
             check_data(filename, self, self.MATERIALS[material], cellFields=cellFields)
@@ -77,30 +78,45 @@ class TestCase(FullTestCase):
         return
 
     def test_bcdirichlet_solution(self):
-        vertexFields = ["displacement"]
+        vertexFields = ["displacement", "pressure", "trace_strain"]
         for bc in self.DIRICHLET_BOUNDARIES:
             filename = "output/{}-{}.h5".format(self.NAME, bc)
             check_data(filename, self, self.BOUNDARIES[bc], vertexFields=vertexFields)
         return
 
 
+    def test_bcneumann_info(self):
+        vertexFields = ["initial_amplitude"]
+        for bc in self.NEUMANN_BOUNDARIES:
+            self.exactsoln.key = bc
+            filename = "output/{}-{}_info.h5".format(self.NAME, bc)
+            check_data(filename, self, self.BOUNDARIES[bc], vertexFields=vertexFields)
+        return
+
+    def test_bcneumann_solution(self):
+        vertexFields = ["displacement", "pressure", "trace_strain"]
+        for bc in self.NEUMANN_BOUNDARIES:
+            filename = "output/{}-{}.h5".format(self.NAME, bc)
+            check_data(filename, self, self.BOUNDARIES[bc], vertexFields=vertexFields)
+        return
+
 # ----------------------------------------------------------------------------------------------------------------------
 class TestQuad(TestCase, meshes.Quad):
-    NAME = "axialdisp_quad"
+    NAME = "terzaghi_quad"
 
     def setUp(self):
         TestCase.setUp(self)
-        TestCase.run_pylith(self, self.NAME, ["axialdisp.cfg", "axialdisp_quad.cfg"])
+        TestCase.run_pylith(self, self.NAME, ["terzaghi.cfg", "terzaghi_quad.cfg"])
         return
 
 
 # ----------------------------------------------------------------------------------------------------------------------
 class TestTri(TestCase, meshes.Tri):
-    NAME = "axialdisp_tri"
+    NAME = "terzaghi_tri"
 
     def setUp(self):
         TestCase.setUp(self)
-        TestCase.run_pylith(self, self.NAME, ["axialdisp.cfg", "axialdisp_tri.cfg"])
+        TestCase.run_pylith(self, self.NAME, ["terzaghi.cfg", "terzaghi_tri.cfg"])
         return
 
 
