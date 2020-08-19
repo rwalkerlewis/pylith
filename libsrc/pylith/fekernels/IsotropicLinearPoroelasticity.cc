@@ -293,7 +293,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity::g1p_NoGrav(const PylithInt dim
     const PylithScalar fluidViscosity = a[aOff[i_fluidViscosity]];
 
     for (PylithInt d = 0; d < dim; ++d) {
-        g1p[d] -= (isotropicPerm / fluidViscosity) * pressure_x[d];
+        g1p[d] += (isotropicPerm / fluidViscosity) * pressure_x[d];
     } // for
 } // g1p_NoGrav
 
