@@ -22,7 +22,7 @@
 
 #include "pylith/materials/RheologyPoroelasticity.hh" // HASA RheologyPoroelasticity
 #include "pylith/materials/AuxiliaryFactoryPoroelastic.hh" // USES AuxiliaryFactory
-#include "pylith/materials/DerivedFactoryElasticity.hh" // USES DerivedFactoryElasticity
+#include "pylith/materials/DerivedFactoryPoroelasticity.hh" // USES DerivedFactoryPoroelasticity
 #include "pylith/feassemble/IntegratorDomain.hh" // USES IntegratorDomain
 #include "pylith/topology/Mesh.hh" // USES Mesh
 #include "pylith/topology/Field.hh" // USES Field::SubfieldInfo
@@ -53,7 +53,7 @@ pylith::materials::Poroelasticity::Poroelasticity(void) :
     _useSourceDensity(false),
     _useReferenceState(false),
     _rheology(NULL),
-    _derivedFactory(new pylith::materials::DerivedFactoryElasticity) {
+    _derivedFactory(new pylith::materials::DerivedFactoryPoroelasticity) {
     pylith::utils::PyreComponent::setName("poroelasticity");
 } // constructor
 
@@ -388,8 +388,8 @@ pylith::materials::Poroelasticity::_setKernelsRHSResidual(pylith::feassemble::In
 
       // 2) Velocity - same kernels as displacement in quasi-static
       const PetscPointFunc g0v = (_gravityField && _useBodyForce) ? pylith::fekernels::Poroelasticity::g0v_gravbodyforce :
-                                 (_gravityField) ? pylith::fekernels::Elasticity::g0v_grav :
-                                 (_useBodyForce) ? pylith::fekernels::Elasticity::g0v_bodyforce :
+                                 (_gravityField) ? pylith::fekernels::Poroelasticity::g0v_grav :
+                                 (_useBodyForce) ? pylith::fekernels::Poroelasticity::g0v_bodyforce :
                                  NULL;
       const PetscPointFunc g1v = _rheology->getKernelg1v(coordsys);
 
