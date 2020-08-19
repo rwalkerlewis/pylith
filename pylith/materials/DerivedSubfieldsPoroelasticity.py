@@ -46,7 +46,7 @@ class DerivedSubfieldsPoroelasticity(PetscComponent):
 
     # PUBLIC METHODS /////////////////////////////////////////////////////
 
-    def __init__(self, name="derivedsubfieldselasticity"):
+    def __init__(self, name="derivedsubfieldsporoelasticity"):
         """
         Constructor.
         """
