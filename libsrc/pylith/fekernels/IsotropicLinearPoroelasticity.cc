@@ -244,7 +244,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity::g1p_Grav(const PylithInt dim,
     const PylithScalar* gravityField = &a[aOff[i_gravityField]];
 
     for (PylithInt d = 0; d < dim; ++d) {
-        g1p[d] -= (isotropicPerm / fluidViscosity) * (pressure_x[d] - fluidDensity*gravityField[d]);
+        g1p[d] += (isotropicPerm / fluidViscosity) * (pressure_x[d] - fluidDensity*gravityField[d]);
     } // for
 
 } // g1p_Grav
