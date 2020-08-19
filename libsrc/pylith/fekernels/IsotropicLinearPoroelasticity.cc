@@ -244,7 +244,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity::g1p_Grav(const PylithInt dim,
     const PylithScalar* gravityField = &a[aOff[i_gravityField]];
 
     for (PylithInt d = 0; d < dim; ++d) {
-        g1p[d] += (isotropicPerm / fluidViscosity) * (pressure_x[d] - fluidDensity*gravityField[d]);
+        g1p[d] -= (isotropicPerm / fluidViscosity) * (pressure_x[d] - fluidDensity*gravityField[d]);
     } // for
 
 } // g1p_Grav
@@ -293,7 +293,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity::g1p_NoGrav(const PylithInt dim
     const PylithScalar fluidViscosity = a[aOff[i_fluidViscosity]];
 
     for (PylithInt d = 0; d < dim; ++d) {
-        g1p[d] += (isotropicPerm / fluidViscosity) * pressure_x[d];
+        g1p[d] -= (isotropicPerm / fluidViscosity) * pressure_x[d];
     } // for
 } // g1p_NoGrav
 
@@ -345,10 +345,10 @@ pylith::fekernels::IsotropicLinearPoroelasticity::g1u(const PylithInt dim,
 
     for (c = 0; c < dim; ++c) {
       for (d = 0; d < dim; ++d) {
-        g1[c*dim+d] -= shearModulus * (disp_x[c*dim+d] + disp_x[d*dim+c]);
+        g1[c*dim+d] += shearModulus * (disp_x[c*dim+d] + disp_x[d*dim+c]);
       } // for
-      g1[c*dim+c] -= (drainedBulkModulus - (2.0*shearModulus)/3.0) * trace_strain;
-      g1[c*dim+c] += biotCoefficient*pressure;
+      g1[c*dim+c] += (drainedBulkModulus - (2.0*shearModulus)/3.0) * trace_strain;
+      g1[c*dim+c] -= biotCoefficient*pressure;
     } // for
 } // g1u
 
@@ -479,10 +479,10 @@ pylith::fekernels::IsotropicLinearPoroelasticity::g1v(const PylithInt dim,
 
    for (c = 0; c < dim; ++c) {
      for (d = 0; d < dim; ++d) {
-       g1[c*dim+d] -= shearModulus * (disp_x[c*dim+d] + disp_x[d*dim+c]);
+       g1[c*dim+d] += shearModulus * (disp_x[c*dim+d] + disp_x[d*dim+c]);
      } // for
-     g1[c*dim+c] -= (drainedBulkModulus - (2.0*shearModulus)/3.0) * trace_strain;
-     g1[c*dim+c] += biotCoefficient*pressure;
+     g1[c*dim+c] += (drainedBulkModulus - (2.0*shearModulus)/3.0) * trace_strain;
+     g1[c*dim+c] -= biotCoefficient*pressure;
    } // for
 } // g1v
 
