@@ -174,7 +174,7 @@ public:
 
       };
 
-      // class IsotropicLinearElasticity
+      // class IsotropicLinearPoroelasticity
 
     } // materials
 } // pylith
