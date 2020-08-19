@@ -159,7 +159,6 @@ pylith::materials::IsotropicLinearPoroelasticity::getKernelJg3uu(const spatialda
 
     PetscPointJac Jg3uu = pylith::fekernels::IsotropicLinearPoroelasticity::Jg3uu;
 
-
     PYLITH_METHOD_RETURN(Jg3uu);
 } // getKernelRHSJacobianElasticConstants
 
