@@ -597,7 +597,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity::Jg2ue(const PylithInt dim,
     const PylithScalar drainedBulkModulus = undrainedBulkModulus - biotCoefficient*biotCoefficient*biotModulus;
 
     for (PylithInt d = 0; d < dim; ++d) {
-        Jg2[d*dim+d] -= drainedBulkModulus - (2.0*shearModulus) / 3.0;
+        Jg2[d*dim+d] += drainedBulkModulus - (2.0*shearModulus) / 3.0;
     } // for
 } // Jg2ue
 
@@ -631,7 +631,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity::Jg2up(const PylithInt dim,
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
     for (PylithInt d = 0; d < dim; ++d) {
-        Jg2[d*dim+d] += biotCoefficient;
+        Jg2[d*dim+d] -= biotCoefficient;
     } // for
 } // Jg2up
 
@@ -664,7 +664,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity::Jg2vp(const PylithInt dim,
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
     for (PylithInt d = 0; d < dim; ++d) {
-        Jg2[d*dim+d] += biotCoefficient ;
+        Jg2[d*dim+d] -= biotCoefficient ;
     } // for
 } // Jg2vp
 
@@ -702,8 +702,8 @@ pylith::fekernels::IsotropicLinearPoroelasticity::Jg3uu(const PylithInt dim,
 
     for (PylithInt c = 0; c < Nc; ++c) {
       for (PylithInt d = 0; d < dim; ++d) {
-        Jg3[((c*Nc + c)*dim + d)*dim + d] -= shearModulus;
-        Jg3[((c*Nc + d)*dim + d)*dim + c] -= shearModulus;
+        Jg3[((c*Nc + c)*dim + d)*dim + d] += shearModulus;
+        Jg3[((c*Nc + d)*dim + d)*dim + c] += shearModulus;
       } // for
     } // for
 } // Jg3uu
@@ -742,7 +742,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity::Jg3pp(const PylithInt dim,
     const PylithScalar fluidViscosity = a[aOff[i_fluidViscosity]];
 
     for (PylithInt d = 0; d < dim; ++d) {
-      Jg3[d*dim+d] += isotropicPermeablity/fluidViscosity;
+      Jg3[d*dim+d] -= isotropicPermeablity/fluidViscosity;
     }
 } // Jg3pp
 

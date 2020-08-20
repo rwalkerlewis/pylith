@@ -468,7 +468,7 @@ pylith::fekernels::Poroelasticity::Jg0ee(const PylithInt dim,
     assert(aOff);
     assert(a);
 
-    Jg0[0] = -1;
+    Jg0[0] = 1;
 } // Jg0ee
 
 // -----------------------------------------------------------------------------
@@ -495,7 +495,7 @@ pylith::fekernels::Poroelasticity::Jg1eu(const PylithInt dim,
                                                 PylithScalar Jg1[]) {
 
     for (PylithInt d = 0; d < dim; ++d) {
-        Jg1[d*dim+d] = 1.0;
+        Jg1[d*dim+d] = -1.0;
     } // for
 } // Jg1eu
 
