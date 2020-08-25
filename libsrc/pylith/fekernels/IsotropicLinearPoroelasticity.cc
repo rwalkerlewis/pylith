@@ -83,7 +83,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity::f0_quadratic_linear_u(const Py
   for (d = 0; d < dim-1; ++d) {
     f0u[d] -= 2.0*shearModulus - biotCoefficient*t;
   }
-  f0u[dim-1] -= 2.0*lambda + 4.0*G - biotCoefficient*t;
+  f0u[dim-1] -= 2.0*lambda + 4.0*shearModulus - biotCoefficient*t;
 } // f0_quadratic_linear_u
 
 // ----------------------------------------------------------------------
@@ -124,8 +124,8 @@ pylith::fekernels::IsotropicLinearPoroelasticity::f0_quadratic_linear_p(const Py
  for (d = 0; d < dim; ++d) {
    sum += x[d];
  }
- f0p[0] += u_t ? biotCoefficient*u_t[uOff[i_trace_strain]] : 0.0;
- f0p[0] += u_t ? u_t[uOff[i_pressure]]/biotModulus     : 0.0;
+ f0p[0] += s_t ? biotCoefficient*s_t[sOff[i_trace_strain]] : 0.0;
+ f0p[0] += s_t ? s_t[sOff[i_pressure]]/biotModulus     : 0.0;
  f0p[0] -= sum/biotModulus;
 } // f0_quadratic_linear_p
 
@@ -167,9 +167,6 @@ pylith::fekernels::IsotropicLinearPoroelasticity::f0_quadratic_trig_u(const Pyli
  const PylithInt i_biotCoefficient = numA - 3;
  const PylithInt i_biotModulus = numA - 2;
 
- const PylithScalar pressure_t = s_t[sOff[i_pressure]];
- const PylithScalar trace_strain_t = s_t[sOff[i_trace_strain]];
-
  const PylithScalar shearModulus = a[aOff[i_shearModulus]];
  const PylithScalar undrainedBulkModulus = a[aOff[i_undrainedBulkModulus]];
  const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
@@ -178,9 +175,9 @@ pylith::fekernels::IsotropicLinearPoroelasticity::f0_quadratic_trig_u(const Pyli
  const PylithScalar lambda = drainedBulkModulus - 2.0/3.0*shearModulus;
 
   for (d = 0; d < dim-1; ++d) {
-    f0u[d] -= 2.0*shearModulus - biotCoefficient*PylithCosReal(t);
+    f0u[d] -= 2.0*shearModulus - biotCoefficient*PetscCosReal(t);
   }
-  f0u[dim-1] -= 2.0*lambda + 4.0*shearModulus - biotCoefficient*PylithCosReal(t);
+  f0u[dim-1] -= 2.0*lambda + 4.0*shearModulus - biotCoefficient*PetscCosReal(t);
 } // f0_quadratic_trig_u
 
 // ----------------------------------------------------------------------
@@ -221,9 +218,9 @@ pylith::fekernels::IsotropicLinearPoroelasticity::f0_quadratic_trig_p(const Pyli
  for (d = 0; d < dim; ++d) {
    sum += x[d];
  }
- f0p[0] += u_t ? biotCoefficient*u_t[uOff[i_trace_strain]] : 0.0;
- f0p[0] += u_t ? u_t[uOff[i_pressure]]/biotModulus     : 0.0;
- f0p[0] += PylithSinReal(t)*sum/biotModulus;
+ f0p[0] += s_t ? biotCoefficient*s_t[sOff[i_trace_strain]] : 0.0;
+ f0p[0] += s_t ? s_t[sOff[i_pressure]]/biotModulus     : 0.0;
+ f0p[0] += PetscSinReal(t)*sum/biotModulus;
 } // f0_quadratic_trig_p
 
 // ----------------------------------------------------------------------
@@ -272,9 +269,9 @@ pylith::fekernels::IsotropicLinearPoroelasticity::f0_trig_linear_u(const PylithI
  const PylithScalar lambda = drainedBulkModulus - 2.0/3.0*shearModulus;
 
  for (d = 0; d < dim-1; ++d) {
-   f0u[d] += PylithSqr(2.*PETSC_PI)*PylithSinReal(2.*PETSC_PI*x[d])*(2.*shearModulus + lambda) + 2.0*(shearModulus + lambda) - 2.*PETSC_PI*biotCoefficient*PylithSinReal(2.*PETSC_PI*x[d])*t;
+   f0u[d] += PetscSqr(2.*PETSC_PI)*PetscSinReal(2.*PETSC_PI*x[d])*(2.*shearModulus + lambda) + 2.0*(shearModulus + lambda) - 2.*PETSC_PI*biotCoefficient*PylithSinReal(2.*PETSC_PI*x[d])*t;
  }
- f0u[dim-1] += PylithSqr(2.*PETSC_PI)*PylithSinReal(2.*PETSC_PI*x[dim-1])*(2.*shearModulus + lambda) - 2.*PETSC_PI*biotCoefficient*PylithSinReal(2.*PETSC_PI*x[dim-1])*t;
+ f0u[dim-1] += PetscSqr(2.*PETSC_PI)*PetscSinReal(2.*PETSC_PI*x[dim-1])*(2.*shearModulus + lambda) - 2.*PETSC_PI*biotCoefficient*PylithSinReal(2.*PETSC_PI*x[dim-1])*t;
 } // f0_trig_linear_u
 
 // ----------------------------------------------------------------------
@@ -318,11 +315,11 @@ pylith::fekernels::IsotropicLinearPoroelasticity::f0_trig_linear_p(const PylithI
  PylithScalar       sum    = 0.0;
 
  for (d = 0; d < dim; ++d) sum{
-   += PylithCosReal(2.*PETSC_PI*x[d]);
+   += PetscCosReal(2.*PETSC_PI*x[d]);
  }
  f0p[0] += u_t ? biotCoefficient*u_t[i_trace_strain] : 0.0;
  f0p[0] += u_t ? u_t[uOff[i_pressure]]/biotModulus     : 0.0;
- f0p[0] -= sum/biotModulus - 4*PylithSqr(PETSC_PI)*kappa*sum*t;
+ f0p[0] -= sum/biotModulus - 4*PetscSqr(PETSC_PI)*kappa*sum*t;
 } // f0_quadratic_trig_p
 
 // ================================= STD =======================================
