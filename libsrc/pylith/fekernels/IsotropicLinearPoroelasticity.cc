@@ -30,6 +30,302 @@
 // =====================================================================================================================
 // ----------------------------------------------------------------------
 
+// ================================= MMS =======================================
+
+// ----------------------------------------------------------------------
+// f0u function for quadratic space and linear time MMS.
+void
+pylith::fekernels::IsotropicLinearPoroelasticity::f0_quadratic_linear_u(const PylithInt dim,
+                                             const PylithInt numS,
+                                             const PylithInt numA,
+                                             const PylithInt sOff[],
+                                             const PylithInt sOff_x[],
+                                             const PylithScalar s[],
+                                             const PylithScalar s_t[],
+                                             const PylithScalar s_x[],
+                                             const PylithInt aOff[],
+                                             const PylithInt aOff_x[],
+                                             const PylithScalar a[],
+                                             const PylithScalar a_t[],
+                                             const PylithScalar a_x[],
+                                             const PylithReal t,
+                                             const PylithScalar x[],
+                                             const PylithInt numConstants,
+                                             const PylithScalar constants[],
+                                             PylithScalar f0u[]) {
+
+ PylithInt d;
+
+ // Incoming re-packed solution field.
+ const PylithInt i_pressure = 1;
+ const PylithInt i_trace_strain = 2;
+
+ // Incoming re-packed auxiliary field.
+
+ // Poroelasticity
+
+ // IsotropicLinearPoroelasticity
+ const PylithInt i_shearModulus = numA - 5;
+ const PylithInt i_undrainedBulkModulus = numA - 4;
+ const PylithInt i_biotCoefficient = numA - 3;
+ const PylithInt i_biotModulus = numA - 2;
+
+ const PylithScalar pressure_t = s_t[sOff[i_pressure]];
+ const PylithScalar trace_strain_t = s_t[sOff[i_trace_strain]];
+
+ const PylithScalar shearModulus = a[aOff[i_shearModulus]];
+ const PylithScalar undrainedBulkModulus = a[aOff[i_undrainedBulkModulus]];
+ const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
+ const PylithScalar biotModulus = a[aOff[i_biotModulus]];
+ const PylithScalar drainedBulkModulus = undrainedBulkModulus - biotCoefficient*biotCoefficient*biotModulus;
+ const PylithScalar lambda = drainedBulkModulus - 2.0/3.0*shearModulus;
+
+  for (d = 0; d < dim-1; ++d) {
+    f0u[d] -= 2.0*shearModulus - biotCoefficient*t;
+  }
+  f0u[dim-1] -= 2.0*lambda + 4.0*G - biotCoefficient*t;
+} // f0_quadratic_linear_u
+
+// ----------------------------------------------------------------------
+// f0p function for quadratic space and linear time MMS.
+void
+pylith::fekernels::IsotropicLinearPoroelasticity::f0_quadratic_linear_p(const PylithInt dim,
+                                             const PylithInt numS,
+                                             const PylithInt numA,
+                                             const PylithInt sOff[],
+                                             const PylithInt sOff_x[],
+                                             const PylithScalar s[],
+                                             const PylithScalar s_t[],
+                                             const PylithScalar s_x[],
+                                             const PylithInt aOff[],
+                                             const PylithInt aOff_x[],
+                                             const PylithScalar a[],
+                                             const PylithScalar a_t[],
+                                             const PylithScalar a_x[],
+                                             const PylithReal t,
+                                             const PylithScalar x[],
+                                             const PylithInt numConstants,
+                                             const PylithScalar constants[],
+                                             PylithScalar f0p[]) {
+ PylithInt        d;
+
+ // Incoming re-packed solution field.
+ const PylithInt i_pressure = 1;
+ const PylithInt i_trace_strain = 2;
+
+ const PylithInt i_biotCoefficient = numA - 3;
+ const PylithInt i_biotModulus = numA - 2;
+
+ const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
+ const PylithScalar biotModulus = a[aOff[i_biotModulus]];
+
+ PylithScalar       sum    = 0.0;
+
+ for (d = 0; d < dim; ++d) {
+   sum += x[d];
+ }
+ f0p[0] += u_t ? biotCoefficient*u_t[uOff[i_trace_strain]] : 0.0;
+ f0p[0] += u_t ? u_t[uOff[i_pressure]]/biotModulus     : 0.0;
+ f0p[0] -= sum/biotModulus;
+} // f0_quadratic_linear_p
+
+// ----------------------------------------------------------------------
+// f0u function for quadratic space and trigonometric time MMS.
+void
+pylith::fekernels::IsotropicLinearPoroelasticity::f0_quadratic_trig_u(const PylithInt dim,
+                                             const PylithInt numS,
+                                             const PylithInt numA,
+                                             const PylithInt sOff[],
+                                             const PylithInt sOff_x[],
+                                             const PylithScalar s[],
+                                             const PylithScalar s_t[],
+                                             const PylithScalar s_x[],
+                                             const PylithInt aOff[],
+                                             const PylithInt aOff_x[],
+                                             const PylithScalar a[],
+                                             const PylithScalar a_t[],
+                                             const PylithScalar a_x[],
+                                             const PylithReal t,
+                                             const PylithScalar x[],
+                                             const PylithInt numConstants,
+                                             const PylithScalar constants[],
+                                             PylithScalar f0u[]) {
+
+ PylithInt d;
+
+ // Incoming re-packed solution field.
+ const PylithInt i_pressure = 1;
+ const PylithInt i_trace_strain = 2;
+
+ // Incoming re-packed auxiliary field.
+
+ // Poroelasticity
+
+ // IsotropicLinearPoroelasticity
+ const PylithInt i_shearModulus = numA - 5;
+ const PylithInt i_undrainedBulkModulus = numA - 4;
+ const PylithInt i_biotCoefficient = numA - 3;
+ const PylithInt i_biotModulus = numA - 2;
+
+ const PylithScalar pressure_t = s_t[sOff[i_pressure]];
+ const PylithScalar trace_strain_t = s_t[sOff[i_trace_strain]];
+
+ const PylithScalar shearModulus = a[aOff[i_shearModulus]];
+ const PylithScalar undrainedBulkModulus = a[aOff[i_undrainedBulkModulus]];
+ const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
+ const PylithScalar biotModulus = a[aOff[i_biotModulus]];
+ const PylithScalar drainedBulkModulus = undrainedBulkModulus - biotCoefficient*biotCoefficient*biotModulus;
+ const PylithScalar lambda = drainedBulkModulus - 2.0/3.0*shearModulus;
+
+  for (d = 0; d < dim-1; ++d) {
+    f0u[d] -= 2.0*shearModulus - biotCoefficient*PylithCosReal(t);
+  }
+  f0u[dim-1] -= 2.0*lambda + 4.0*shearModulus - biotCoefficient*PylithCosReal(t);
+} // f0_quadratic_trig_u
+
+// ----------------------------------------------------------------------
+// f0p function for quadratic space and trigonometric time MMS.
+void
+pylith::fekernels::IsotropicLinearPoroelasticity::f0_quadratic_trig_p(const PylithInt dim,
+                                             const PylithInt numS,
+                                             const PylithInt numA,
+                                             const PylithInt sOff[],
+                                             const PylithInt sOff_x[],
+                                             const PylithScalar s[],
+                                             const PylithScalar s_t[],
+                                             const PylithScalar s_x[],
+                                             const PylithInt aOff[],
+                                             const PylithInt aOff_x[],
+                                             const PylithScalar a[],
+                                             const PylithScalar a_t[],
+                                             const PylithScalar a_x[],
+                                             const PylithReal t,
+                                             const PylithScalar x[],
+                                             const PylithInt numConstants,
+                                             const PylithScalar constants[],
+                                             PylithScalar f0p[]) {
+ PylithInt        d;
+
+ // Incoming re-packed solution field.
+ const PylithInt i_pressure = 1;
+ const PylithInt i_trace_strain = 2;
+
+ const PylithInt i_biotCoefficient = numA - 3;
+ const PylithInt i_biotModulus = numA - 2;
+
+ const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
+ const PylithScalar biotModulus = a[aOff[i_biotModulus]];
+
+ PylithScalar       sum    = 0.0;
+
+ for (d = 0; d < dim; ++d) {
+   sum += x[d];
+ }
+ f0p[0] += u_t ? biotCoefficient*u_t[uOff[i_trace_strain]] : 0.0;
+ f0p[0] += u_t ? u_t[uOff[i_pressure]]/biotModulus     : 0.0;
+ f0p[0] += PylithSinReal(t)*sum/biotModulus;
+} // f0_quadratic_trig_p
+
+// ----------------------------------------------------------------------
+// f0u function for trigonometric space and linear time MMS.
+void
+pylith::fekernels::IsotropicLinearPoroelasticity::f0_trig_linear_u(const PylithInt dim,
+                                             const PylithInt numS,
+                                             const PylithInt numA,
+                                             const PylithInt sOff[],
+                                             const PylithInt sOff_x[],
+                                             const PylithScalar s[],
+                                             const PylithScalar s_t[],
+                                             const PylithScalar s_x[],
+                                             const PylithInt aOff[],
+                                             const PylithInt aOff_x[],
+                                             const PylithScalar a[],
+                                             const PylithScalar a_t[],
+                                             const PylithScalar a_x[],
+                                             const PylithReal t,
+                                             const PylithScalar x[],
+                                             const PylithInt numConstants,
+                                             const PylithScalar constants[],
+                                             PylithScalar f0u[]) {
+
+ PylithInt d;
+
+ // Incoming re-packed solution field.
+ const PylithInt i_pressure = 1;
+ const PylithInt i_trace_strain = 2;
+
+ // Incoming re-packed auxiliary field.
+
+ // Poroelasticity
+
+ // IsotropicLinearPoroelasticity
+ const PylithInt i_shearModulus = numA - 5;
+ const PylithInt i_undrainedBulkModulus = numA - 4;
+ const PylithInt i_biotCoefficient = numA - 3;
+ const PylithInt i_biotModulus = numA - 2;
+
+ const PylithScalar shearModulus = a[aOff[i_shearModulus]];
+ const PylithScalar undrainedBulkModulus = a[aOff[i_undrainedBulkModulus]];
+ const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
+ const PylithScalar biotModulus = a[aOff[i_biotModulus]];
+ const PylithScalar drainedBulkModulus = undrainedBulkModulus - biotCoefficient*biotCoefficient*biotModulus;
+ const PylithScalar lambda = drainedBulkModulus - 2.0/3.0*shearModulus;
+
+ for (d = 0; d < dim-1; ++d) {
+   f0u[d] += PylithSqr(2.*PETSC_PI)*PylithSinReal(2.*PETSC_PI*x[d])*(2.*shearModulus + lambda) + 2.0*(shearModulus + lambda) - 2.*PETSC_PI*biotCoefficient*PylithSinReal(2.*PETSC_PI*x[d])*t;
+ }
+ f0u[dim-1] += PylithSqr(2.*PETSC_PI)*PylithSinReal(2.*PETSC_PI*x[dim-1])*(2.*shearModulus + lambda) - 2.*PETSC_PI*biotCoefficient*PylithSinReal(2.*PETSC_PI*x[dim-1])*t;
+} // f0_trig_linear_u
+
+// ----------------------------------------------------------------------
+// f0p function for trigonometric space and linear time MMS.
+void
+pylith::fekernels::IsotropicLinearPoroelasticity::f0_trig_linear_p(const PylithInt dim,
+                                             const PylithInt numS,
+                                             const PylithInt numA,
+                                             const PylithInt sOff[],
+                                             const PylithInt sOff_x[],
+                                             const PylithScalar s[],
+                                             const PylithScalar s_t[],
+                                             const PylithScalar s_x[],
+                                             const PylithInt aOff[],
+                                             const PylithInt aOff_x[],
+                                             const PylithScalar a[],
+                                             const PylithScalar a_t[],
+                                             const PylithScalar a_x[],
+                                             const PylithReal t,
+                                             const PylithScalar x[],
+                                             const PylithInt numConstants,
+                                             const PylithScalar constants[],
+                                             PylithScalar f0p[]) {
+ PylithInt        d;
+
+ // Incoming re-packed solution field.
+ const PylithInt i_pressure = 1;
+ const PylithInt i_trace_strain = 2;
+
+ // Poroelasticity
+ const PylithInt i_fluidViscosity = 2;
+
+ // IsotropicLinearPoroelasticity
+ const PylithInt i_isotropicPerm = numA - 1;
+ const PylithInt i_biotCoefficient = numA - 3;
+ const PylithInt i_biotModulus = numA - 2;
+
+ const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
+ const PylithScalar biotModulus = a[aOff[i_biotModulus]];
+ const PylithScalar kappa = a[aOff[i_isotropicPerm]] / a[aOff[i_fluidViscosity]];
+ PylithScalar       sum    = 0.0;
+
+ for (d = 0; d < dim; ++d) sum{
+   += PylithCosReal(2.*PETSC_PI*x[d]);
+ }
+ f0p[0] += u_t ? biotCoefficient*u_t[i_trace_strain] : 0.0;
+ f0p[0] += u_t ? u_t[uOff[i_pressure]]/biotModulus     : 0.0;
+ f0p[0] -= sum/biotModulus - 4*PylithSqr(PETSC_PI)*kappa*sum*t;
+} // f0_quadratic_trig_p
+
+// ================================= STD =======================================
 
 
 // ================================= LHS =======================================
