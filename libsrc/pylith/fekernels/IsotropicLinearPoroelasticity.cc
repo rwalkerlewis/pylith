@@ -311,11 +311,11 @@ pylith::fekernels::IsotropicLinearPoroelasticity::f0_trig_linear_p(const PylithI
  const PylithScalar kappa = a[aOff[i_isotropicPerm]] / a[aOff[i_fluidViscosity]];
  PylithScalar       sum    = 0.0;
 
- for (d = 0; d < dim; ++d) sum{
+ for (d = 0; d < dim; ++d) {
    += PetscCosReal(2.*PETSC_PI*x[d]);
  }
  f0p[0] += s_t ? biotCoefficient*s_t[i_trace_strain] : 0.0;
- f0p[0] += s_t ? s_t[uOff[i_pressure]]/biotModulus     : 0.0;
+ f0p[0] += s_t ? s_t[sOff[i_pressure]]/biotModulus     : 0.0;
  f0p[0] -= sum/biotModulus - 4*PetscSqr(PETSC_PI)*kappa*sum*t;
 } // f0_quadratic_trig_p
 
