@@ -84,7 +84,6 @@ class TestCase(FullTestCase):
             check_data(filename, self, self.BOUNDARIES[bc], vertexFields=vertexFields)
         return
 
-
     def test_bcneumann_info(self):
         vertexFields = ["initial_amplitude"]
         for bc in self.NEUMANN_BOUNDARIES:
