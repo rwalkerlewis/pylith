@@ -17,24 +17,26 @@
 #
 # @brief Analytical solution to Terzaghi's problem.
 #
-#          1 Pa
+#          Uy=0
 #       ----------
 #       |        |
 # Ux=0  |        | Ux=0
 #       |        |
 #       |        |
 #       ----------
-#         Uy=0
+#         +1 Pa
 #
 # Dirichlet boundary conditions
 #   Ux(+-1,0) = 0
-#   Uy(x,-1) = 0
+#   Uy(x,+1) = 0
 # Neumann boundary conditions
 #   \tau_normal(x,+1) = 1*Pa
 
 import numpy
 
 # Physical properties
+p_solid_density = 2500 # kg / m**3
+p_fluid_density = 1000 # kg / m**3
 p_shear_modulus = 3.0 # Pa
 p_undrained_bulk_modulus = 9.76 # Pa
 p_biot_coefficient = 0.6 # -
@@ -61,7 +63,7 @@ p_S = (3.0*p_undrained_bulk_modulus + 4.0*p_shear_modulus) / (p_biot_modulus*(3.
 p_c = (p_isotropic_permeability / p_fluid_dynamic_viscosity) / p_S # m^2 / s, Cheng (B.16)
 
 # Time steps
-tsteps = numpy.arange(1.0, 5.01, 1.0) + 1 # sec
+tsteps = numpy.arange(0.0, 10.0, 1.0) + 1 # sec
 
 # ----------------------------------------------------------------------
 class AnalyticalSoln(object):
@@ -77,11 +79,97 @@ class AnalyticalSoln(object):
             "displacement": self.displacement,
             "pressure": self.pressure,
             "trace_strain": self.trace_strain,
+            "solid_density": self.solid_density,
+            "fluid_density": self.fluid_density,
+            "fluid_viscosity": self.fluid_viscosity,
+            "shear_modulus": self.shear_modulus,
+            "undrained_bulk_modulus": self.undrained_bulk_modulus,
+            "biot_coefficient": self.biot_coefficient,
+            "biot_modulus": self.biot_modulus,
+            "isotropic_permeability": self.isotropic_permeability,
+            "initial_amplitude": {
+                "x_neg": self.displacement,
+                "x_pos": self.displacement,
+                "y_neg_neu": self.zero_scalar,
+                "y_neg_dir": self.vertical_stress,
+                "y_pos": self.zero_vector,
+            }
         }
         return
 
     def getField(self, name, pts):
         return self.fields[name](pts)
+
+    def zero_scalar(self, locs):
+        (npts, dim) = locs.shape
+
+    def zero_vector(self, locs):
+        (npts, dim) = locs.shape
+        return numpy.zeros((1, npts, self.SPACE_DIM), dtype=numpy.float64)
+
+    def solid_density(self, locs):
+        """
+        Compute solid_density field at locations.
+        """
+        (npts, dim) = locs.shape
+        solid_density = p_solid_density * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        return solid_density
+
+    def fluid_density(self, locs):
+        """
+        Compute fluid density field at locations.
+        """
+        (npts, dim) = locs.shape
+        fluid_density = p_fluid_density * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        return fluid_density
+
+    def shear_modulus(self, locs):
+        """
+        Compute shear modulus field at locations.
+        """
+        (npts, dim) = locs.shape
+        shear_modulus = p_shear_modulus * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        return shear_modulus
+
+    def fluid_viscosity(self, locs):
+        """
+        Compute fluid_viscosity field at locations.
+        """
+        (npts, dim) = locs.shape
+        fluid_viscosity = p_fluid_dynamic_viscosity * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        return fluid_viscosity
+
+    def undrained_bulk_modulus(self, locs):
+        """
+        Compute undrained bulk modulus field at locations.
+        """
+        (npts, dim) = locs.shape
+        undrained_bulk_modulus = p_undrained_bulk_modulus * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        return undrained_bulk_modulus
+
+    def biot_coefficient(self, locs):
+        """
+        Compute biot coefficient field at locations.
+        """
+        (npts, dim) = locs.shape
+        biot_coefficient = p_biot_coefficient * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        return biot_coefficient
+
+    def biot_modulus(self, locs):
+        """
+        Compute biot modulus field at locations.
+        """
+        (npts, dim) = locs.shape
+        biot_modulus = p_biot_modulus * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        return biot_modulus
+
+    def isotropic_permeability(self, locs):
+        """
+        Compute isotropic permeability field at locations.
+        """
+        (npts, dim) = locs.shape
+        isotropic_permeability = p_isotropic_permeability * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        return isotropic_permeability
 
     def displacement(self, locs):
         """
@@ -139,7 +227,6 @@ class AnalyticalSoln(object):
 
         return trace_strain
 
-
     # Series functions
 
     def F1(self, z_star, t_star):
@@ -159,5 +246,43 @@ class AnalyticalSoln(object):
         for m in numpy.arange(1, self.ITERATIONS*2+1,2):
             F3 += (-4.0 / (m*numpy.pi*L)) * numpy.sin(0.5*m*numpy.pi*z_star) * (1.0 - numpy.exp(-(m*numpy.pi)*t_star))
         return F3
+
+    def strain(self, locs):
+        """
+        Compute strain field at locations.
+        """
+        (npts, dim) = locs.shape
+        ntpts = tsteps.shape[0]
+        e_xx = 0.0
+        e_yy = self.trace_strain(locs)
+        e_zz = 0.0
+        e_xy = 0.0
+
+        strain = numpy.zeros((ntpts, npts, self.TENSOR_SIZE), dtype=numpy.float64)
+        strain[:, :, 0] = exx
+        strain[:, :, 1] = eyy
+        strain[:, :, 2] = ezz
+        strain[:, :, 3] = exy
+        return strain
+
+    def stress(self, locs):
+        """
+        Compute stress field at locations.
+        """
+        (npts, dim) = locs.shape
+        ntpts = tsteps.shape[0]
+        p_poisson_ratio = (3*p_drained_bulk_modulus - 2*p_shear_modulus) / (2*(3*p_drained_bulk_modulus + p_shear_modulus))
+        trace_strain = self.trace_strain(locs)
+        pressure = self.pressure(locs)
+        e_xx = 0.0
+        e_yy = self.trace_strain(locs)
+        e_xy = 0.0
+
+        stress = numpy.zeros((ntpts, npts, self.TENSOR_SIZE), dtype=numpy.float64)
+        stress[:, :, 0] = ( (2*p_shear_modulus*p_poisson_ratio) / (1 - 2*p_poisson_ratio) )*trace_strain + 2*p_shear_modulus*e_xx - p_biot_coefficient*pressure
+        stress[:, :, 1] = ( (2*p_shear_modulus*p_poisson_ratio) / (1 - 2*p_poisson_ratio) )*trace_strain + 2*p_shear_modulus*e_yy - p_biot_coefficient*pressure
+        stress[:, :, 2] = ( (2*p_shear_modulus*p_poisson_ratio) / (1 - 2*p_poisson_ratio) )*trace_strain - p_biot_coefficient*pressure
+        stress[:, :, 3] = 2*p_shear_modulus*e_xy
+        return stress
 
 # End of file
