@@ -52,7 +52,7 @@ p_xmin = 0.0 # m
 p_vertical_stress = 1.0 # Pa
 
 # Height of column, m
-H = zmax - zmin
+H = p_zmax - p_zmin
 L = H
 
 p_drained_bulk_modulus = p_undrained_bulk_modulus - p_biot_coefficient*p_biot_coefficient*p_biot_modulus # Pa,      Cheng (B.5)
