@@ -26,7 +26,7 @@ from pylith.tests.FullTestApp import TestCase as FullTestCase
 
 import meshes
 from terzaghi_soln import AnalyticalSoln
-from terzaghi_gendb import GenerateDB
+#from terzaghi_gendb import GenerateDB
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -35,8 +35,8 @@ class TestCase(FullTestCase):
     Test suite for testing PyLith with one dimensional poroelasticity
     by means of Terzaghi's problem.
     """
-    DIRICHLET_BOUNDARIES = ["edge_xneg", "edge_xpos", "edge_yneg", "edge_ypos"]
-    NEUMANN_BOUNDARIES = ["edge_yneg"]
+    DIRICHLET_BOUNDARIES = ["x_neg", "x_pos", "y_neg_dir", "y_pos"]
+    NEUMANN_BOUNDARIES = ["y_neg_neu"]
 
     def setUp(self):
         """
@@ -47,7 +47,7 @@ class TestCase(FullTestCase):
         return
 
     def run_pylith(self, testName, args):
-        FullTestCase.run_pylith(self, testName, args, GenerateDB)
+        FullTestCase.run_pylith(self, testName, args)
         return
 
     def test_domain_solution(self):
@@ -70,34 +70,35 @@ class TestCase(FullTestCase):
             check_data(filename, self, self.MATERIALS[material], vertexFields=vertexFields)
         return
 
-    def test_bcdirichlet_info(self):
-        vertexFields = ["initial_amplitude"]
-        for bc in self.DIRICHLET_BOUNDARIES:
-            filename = "output/{}-{}_info.h5".format(self.NAME, bc)
-            check_data(filename, self, self.BOUNDARIES[bc], vertexFields=vertexFields)
-        return
+#    def test_bcdirichlet_info(self):
+#        vertexFields = ["initial_amplitude"]
+#        for bc in self.DIRICHLET_BOUNDARIES:
+#            self.exactsoln.key = bc
+#            filename = "output/{}-{}_info.h5".format(self.NAME, bc)
+#            check_data(filename, self, self.BOUNDARIES[bc], vertexFields=vertexFields)
+#        return
 
-    def test_bcdirichlet_solution(self):
-        vertexFields = ["displacement", "pressure", "trace_strain"]
-        for bc in self.DIRICHLET_BOUNDARIES:
-            filename = "output/{}-{}.h5".format(self.NAME, bc)
-            check_data(filename, self, self.BOUNDARIES[bc], vertexFields=vertexFields)
-        return
+#    def test_bcdirichlet_solution(self):
+#        vertexFields = ["displacement", "pressure", "trace_strain"]
+#        for bc in self.DIRICHLET_BOUNDARIES:
+#            filename = "output/{}-{}.h5".format(self.NAME, bc)
+#            check_data(filename, self, self.BOUNDARIES[bc], vertexFields=vertexFields)
+#        return
 
-    def test_bcneumann_info(self):
-        vertexFields = ["initial_amplitude"]
-        for bc in self.NEUMANN_BOUNDARIES:
-            self.exactsoln.key = bc
-            filename = "output/{}-{}_info.h5".format(self.NAME, bc)
-            check_data(filename, self, self.BOUNDARIES[bc], vertexFields=vertexFields)
-        return
+#    def test_bcneumann_info(self):
+#        vertexFields = ["initial_amplitude"]
+#        for bc in self.NEUMANN_BOUNDARIES:
+#            self.exactsoln.key = bc
+#            filename = "output/{}-{}_info.h5".format(self.NAME, bc)
+#            check_data(filename, self, self.BOUNDARIES[bc], vertexFields=vertexFields)
+#        return
 
-    def test_bcneumann_solution(self):
-        vertexFields = ["displacement", "pressure", "trace_strain"]
-        for bc in self.NEUMANN_BOUNDARIES:
-            filename = "output/{}-{}.h5".format(self.NAME, bc)
-            check_data(filename, self, self.BOUNDARIES[bc], vertexFields=vertexFields)
-        return
+#    def test_bcneumann_solution(self):
+#        vertexFields = ["displacement", "pressure", "trace_strain"]
+#        for bc in self.NEUMANN_BOUNDARIES:
+#            filename = "output/{}-{}.h5".format(self.NAME, bc)
+#            check_data(filename, self, self.BOUNDARIES[bc], vertexFields=vertexFields)
+#        return
 
 # ----------------------------------------------------------------------------------------------------------------------
 class TestQuad(TestCase, meshes.Quad):
@@ -123,7 +124,7 @@ class TestTri(TestCase, meshes.Tri):
 def test_cases():
     return [
         TestQuad,
-        TestTri,
+#        TestTri,
     ]
 
 

@@ -37,22 +37,27 @@ class Tri(object):
         }
     }
     BOUNDARIES = {
-        "edge_xneg": {
+        "x_neg": {
             "ncells": 10,
             "ncorners": 2,
             "nvertices": 11,
         },
-        "edge_xpos": {
+        "x_pos": {
             "ncells": 10,
             "ncorners": 2,
             "nvertices": 11,
         },
-        "edge_yneg": {
+        "y_neg_neu": {
             "ncells": 10,
             "ncorners": 2,
             "nvertices": 11,
         },
-        "edge_ypos": {
+        "y_neg_dir": {
+            "ncells": 10,
+            "ncorners": 2,
+            "nvertices": 11,
+        },
+        "y_pos": {
             "ncells": 10,
             "ncorners": 2,
             "nvertices": 11,
@@ -70,29 +75,34 @@ class Quad(object):
         "nvertices": 121,
     }
     MATERIALS = {
-        "poroelastic_xpos": {
+        "poroelastic": {
             "ncells": 100,
             "ncorners": 4,
             "nvertices": 121,
         }
     }
     BOUNDARIES = {
-        "edge_xneg": {
+        "x_neg": {
             "ncells": 10,
             "ncorners": 2,
             "nvertices": 11,
         },
-        "edge_xpos": {
+        "x_pos": {
             "ncells": 10,
             "ncorners": 2,
             "nvertices": 11,
         },
-        "edge_yneg": {
+        "y_neg_neu": {
             "ncells": 10,
             "ncorners": 2,
             "nvertices": 11,
         },
-        "edge_ypos": {
+        "y_neg_dir": {
+            "ncells": 10,
+            "ncorners": 2,
+            "nvertices": 11,
+        },
+        "y_pos": {
             "ncells": 10,
             "ncorners": 2,
             "nvertices": 11,
