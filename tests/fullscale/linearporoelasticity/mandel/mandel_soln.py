@@ -15,16 +15,16 @@
 #
 # @file tests/fullscale/linearporoelasticity/terzaghi/terzaghi_soln.py
 #
-# @brief Analytical solution to Terzaghi's problem.
+# @brief Analytical solution to Mandel's problem.
 #
-#          Uy=0
+#          -2F
 #       ----------
 #       |        |
-# Ux=0  |        | Ux=0
+#  P=0  |        | P=0
 #       |        |
 #       |        |
 #       ----------
-#         +1 Pa
+#         +2F
 #
 # Dirichlet boundary conditions
 #   Ux(+-1,0) = 0
@@ -35,33 +35,37 @@
 import numpy
 
 # Physical properties
-p_solid_density = 2500 # kg / m**3
-p_fluid_density = 1000 # kg / m**3
-p_fluid_dynamic_viscosity = 1.0 # Pa*s
-p_G = 3.0 # Pa
-p_K_u = 9.76 # Pa
-p_alpha = 0.6 # -
-p_M = 16.0 # Pa
-p_isotropic_permeability = 1.5 # m**2
+solid_density = 2500 # kg / m**3
+fluid_density = 1000 # kg / m**3
+fluid_dynamic_viscosity = 1.0 # Pa*s
+G = 0.75 # Pa
+K_u = 2.6941176470588233 # Pa
+alpha = 0.6 # -
+M = 4.705882352941176 # Pa
+isotropic_permeability = 1.5 # m**2
 
-p_zmax = 10.0 # m
-p_zmin = 0.0 # m
-p_ymax = 10.0 # m
-p_ymin = 0.0 # m
-p_xmax = 10.0 # m
-p_xmin = 0.0 # m
-p_vertical_stress = 1.0 # Pa
+zmax = 0.1 # m
+zmin = 0.0 # m
+ymax = 0.1 # m
+ymin = 0.0 # m
+xmax = 1.0 # m
+xmin = 0.0 # m
+vertical_stress = 1.0 # Pa
+F = vertical_stress
 
 # Height of column, m
-H = p_zmax - p_zmin
+H = zmax - zmin
 L = H
+a = (xmax - xmin) 
+b = (ymax - ymin)
 
-p_K_d = p_K_u - p_alpha*p_alpha*p_M # Pa,      Cheng (B.5)
-p_nu = (3.0*p_K_d - 2.0*p_G) / (2.0*(3.0*p_K_d + p_G)) # -,       Cheng (B.8)
-p_nu_u = (3.0*p_K_u - 2.0*p_G) / (2.0*(3.0*p_K_u + p_G)) # -,       Cheng (B.9)
-p_eta = (3.0*p_alpha*p_G) /(3.0*p_K_d + 4.0*p_G) #  -,       Cheng (B.11)
-p_S = (3.0*p_K_u + 4.0*p_G) / (p_M*(3.0*p_K_d + 4.0*p_G)) # Pa^{-1}, Cheng (B.14)
-p_c = (p_isotropic_permeability / p_fluid_dynamic_viscosity) / p_S # m^2 / s, Cheng (B.16)
+K_d = K_u - alpha*alpha*M # Pa,      Cheng (B.5)
+nu = (3.0*K_d - 2.0*G) / (2.0*(3.0*K_d + G)) # -,       Cheng (B.8)
+nu_u = (3.0*K_u - 2.0*G) / (2.0*(3.0*K_u + G)) # -,       Cheng (B.9)
+eta = (3.0*alpha*G) /(3.0*K_d + 4.0*G) #  -,       Cheng (B.11)
+S = (3.0*K_u + 4.0*G) / (M*(3.0*K_d + 4.0*G)) # Pa^{-1}, Cheng (B.14)
+c = (isotropic_permeability / fluid_dynamic_viscosity) / S # m^2 / s, Cheng (B.16)
+B = (3. * (nu_u - nu) )/(alpha*(1.-2.*nu)*(1.+nu_u))
 
 # Time steps
 tsteps = numpy.arange(0.0, 0.0057333334, 0.0028666667) # sec
@@ -69,11 +73,12 @@ tsteps = numpy.arange(0.0, 0.0057333334, 0.0028666667) # sec
 # ----------------------------------------------------------------------
 class AnalyticalSoln(object):
     """
-    Analytical solution to Terzaghi's problem
+    Analytical solution to Mandel's problem
     """
     SPACE_DIM = 2
     TENSOR_SIZE = 4
-    ITERATIONS = 500
+    ITERATIONS = 1000
+    EPS = 1e-5
 
     def __init__(self):
         self.fields = {
@@ -91,8 +96,7 @@ class AnalyticalSoln(object):
             "initial_amplitude": {
                 "x_neg": self.zero_vector,
                 "x_pos": self.zero_vector,
-                "y_neg_neu": self.y_neg_neu,
-                "y_neg_dir": self.zero_scalar,
+                "y_neg": self.zero_scalar,
                 "y_pos": self.zero_vector,
             }
         }
@@ -121,7 +125,7 @@ class AnalyticalSoln(object):
         Compute solid_density field at locations.
         """
         (npts, dim) = locs.shape
-        solid_density = p_solid_density * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        solid_density = solid_density * numpy.ones((1, npts, 1), dtype=numpy.float64)
         return solid_density
 
     def fluid_density(self, locs):
@@ -129,7 +133,7 @@ class AnalyticalSoln(object):
         Compute fluid density field at locations.
         """
         (npts, dim) = locs.shape
-        fluid_density = p_fluid_density * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        fluid_density = fluid_density * numpy.ones((1, npts, 1), dtype=numpy.float64)
         return fluid_density
 
     def shear_modulus(self, locs):
@@ -137,7 +141,7 @@ class AnalyticalSoln(object):
         Compute shear modulus field at locations.
         """
         (npts, dim) = locs.shape
-        shear_modulus = p_G * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        shear_modulus = G * numpy.ones((1, npts, 1), dtype=numpy.float64)
         return shear_modulus
 
     def fluid_viscosity(self, locs):
@@ -145,7 +149,7 @@ class AnalyticalSoln(object):
         Compute fluid_viscosity field at locations.
         """
         (npts, dim) = locs.shape
-        fluid_viscosity = p_fluid_dynamic_viscosity * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        fluid_viscosity = fluid_dynamic_viscosity * numpy.ones((1, npts, 1), dtype=numpy.float64)
         return fluid_viscosity
 
     def undrained_bulk_modulus(self, locs):
@@ -153,7 +157,7 @@ class AnalyticalSoln(object):
         Compute undrained bulk modulus field at locations.
         """
         (npts, dim) = locs.shape
-        undrained_bulk_modulus = p_K_u * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        undrained_bulk_modulus = K_u * numpy.ones((1, npts, 1), dtype=numpy.float64)
         return undrained_bulk_modulus
 
     def biot_coefficient(self, locs):
@@ -161,7 +165,7 @@ class AnalyticalSoln(object):
         Compute biot coefficient field at locations.
         """
         (npts, dim) = locs.shape
-        biot_coefficient = p_alpha * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        biot_coefficient = alpha * numpy.ones((1, npts, 1), dtype=numpy.float64)
         return biot_coefficient
 
     def biot_modulus(self, locs):
@@ -169,7 +173,7 @@ class AnalyticalSoln(object):
         Compute biot modulus field at locations.
         """
         (npts, dim) = locs.shape
-        biot_modulus = p_M * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        biot_modulus = M * numpy.ones((1, npts, 1), dtype=numpy.float64)
         return biot_modulus
 
     def isotropic_permeability(self, locs):
@@ -177,7 +181,7 @@ class AnalyticalSoln(object):
         Compute isotropic permeability field at locations.
         """
         (npts, dim) = locs.shape
-        isotropic_permeability = p_isotropic_permeability * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        isotropic_permeability = isotropic_permeability * numpy.ones((1, npts, 1), dtype=numpy.float64)
         return isotropic_permeability
 
     def displacement(self, locs):
@@ -187,13 +191,26 @@ class AnalyticalSoln(object):
         (npts, dim) = locs.shape
         ntpts = tsteps.shape[0]
         displacement = numpy.zeros((ntpts, npts, dim), dtype=numpy.float64)
+        x = locs[:,0]
         z = locs[:,1] 
         t_track = 0
-        z_star = z/L
+        zeroArray = self.mandelZeros()
 
         for t in tsteps:
-            t_star = (p_c*t) / ( (2*L)**2 )
-            displacement[t_track,:,1] = ((p_vertical_stress*L*(1.0 - 2.0*p_nu_u)) / (2.0*p_G*(1.0 - p_nu_u))) * (1.0 - z_star) + ((p_vertical_stress*L*(p_nu_u - p_nu)) / (2.0*p_G*(1.0 - p_nu_u)*(1.0 - p_nu)))*self.F2(z_star, t_star)
+            if t == 0.0:
+                displacement[t_track,:,0] = (F*nu_u*x)/(2.*G*a)
+                displacement[t_track,:,1] = -1.*(F*(1.-nu_u)*z)/(2.*G*a)
+            else:
+                A_x = 0.0
+                B_x = 0.0
+
+                for n in numpy.arange(1,self.ITERATIONS+1,1):            
+                    a_n = zeroArray[n-1]
+                    A_x += (numpy.sin(a_n)*numpy.cos(a_n) / (a_n - numpy.sin(a_n)*numpy.cos(a_n)))*numpy.exp(-1.0*(a_n*a_n*c*t)/(a*a))
+                    B_x += (numpy.cos(a_n) / (a_n - numpy.sin(a_n)*numpy.cos(a_n))) * numpy.sin( (a_n*x)/a) * numpy.exp(-1.0*(a_n*a_n*c*t)/(a*a))
+                
+                displacement[t_track,:,0] = ((F*nu)/(2.0*G*a) - (F*nu_u)/(G*a) * A_x ) * x + F/G * B_x
+                displacement[t_track,:,1] = (-1*(F*(1.0-nu))/(2*G*a) + (F*(1-nu_u))/(G*a) * A_x)*z
             t_track += 1
 
         return displacement
@@ -205,13 +222,21 @@ class AnalyticalSoln(object):
         (npts, dim) = locs.shape
         ntpts = tsteps.shape[0]
         pressure = numpy.zeros((ntpts, npts), dtype=numpy.float64)
+        x = locs[:,0]
         z = locs[:,1] 
         t_track = 0
+        zeroArray = self.mandelZeros()
 
         for t in tsteps:
-            z_star = z/L
-            t_star = (c*t) / (4*L**2)
-            pressure[t_track,:] = (p_vertical_stress * p_eta) / (p_G * p_S) * self.F1(z_star, t_star)
+            
+            if t == 0.0:
+                pressure[t_track,:] = (1./(3.*a))*(B*(1.+nu_u))*F
+            else:          
+                p = 0.0
+                for n in numpy.arange(1, self.ITERATIONS+1,1):
+                    x_n = zeroArray[n-1]
+                    p += (numpy.sin(x_n) / (x_n - numpy.sin(x_n)*numpy.cos(x_n))) * (numpy.cos( (x_n*x) / a) - numpy.cos(x_n)) * numpy.exp(-1.0*(x_n*x_n * c * t)/(a*a))
+                pressure[t_track,:] = ( (2.0 * (F*B*(1.0 + nu_u)) ) / (3.0*a) ) * p
             t_track += 1
 
         return pressure
@@ -223,37 +248,53 @@ class AnalyticalSoln(object):
         (npts, dim) = locs.shape
         ntpts = tsteps.shape[0]
         trace_strain = numpy.zeros((ntpts, npts), dtype=numpy.float64)
+        x = locs[:,0]        
         z = locs[:,1] 
         t_track = 0
+        zeroArray = self.mandelZeros()        
 
         for t in tsteps:
-            z_star = z/L
-            t_star = (c*t) / (4*L**2)
-            trace_strain[t_track,:] = -((p_vertical_stress*L*(1.0 - 2.0*p_nu_u)) / (2.0*p_G*(1.0 - p_nu_u)*L)) \
-                                      + ((p_vertical_stress*L*(p_nu_u - p_nu)) / (2.0*p_G*(1.0 - p_nu_u)*(1.0 - p_nu)))*self.F3(z_star, t_star)
+        
+            eps_A = 0.0
+            eps_B = 0.0
+            eps_C = 0.0
+            
+            for i in numpy.arange(1, self.ITERATIONS+1,1):
+                x_n = zeroArray[i-1]
+                eps_A += (x_n * numpy.exp( (-1.0*x_n*x_n*c*t)/(a*a)) * numpy.cos(x_n)*numpy.cos( (x_n*x)/a)) / (a  (x_n - numpy.sin(x_n)*numpy.cos(x_n)))
+                eps_B += ( numpy.exp( (-1.0*x_n*x_n*c*t)/(a*a)) * numpy.sin(x_n)*numpy.cos(x_n)) / (x_n - numpy.sin(x_n)*numpy.cos(x_n))
+                eps_C += ( numpy.exp( (-1.0*x_n*x_n*c*t)/(x_n*x_n)) * numpy.sin(x_n)*numpy.cos(x_n)) / (x_n - numpy.sin(x_n)*numpy.cos(x_n))
+
+            trace_strain[t_track,:] = (F/G)*eps_A + ( (F*nu)/(2.0*G*a)) - eps_B/(G*a) - (F*(1.0-nu))/(2/0*G*a) + eps_C/(G*a)
             t_track += 1
 
         return trace_strain
 
     # Series functions
 
-    def F1(self, z_star, t_star):
-        F1 = 0
-        for m in numpy.arange(1,2*self.ITERATIONS+1,2):
-            F1 += 4./(m*numpy.pi) * numpy.sin((m*numpy.pi*z_star)/2)*numpy.exp( -(m*numpy.pi)**2*t_star)
-        return F1
-
-    def F2(self, z_star, t_star):
-        F2 = 0
-        for m in numpy.arange(1,2*self.ITERATIONS+1,2):
-            F2 += ( 8. / (m*numpy.pi)**2 )  * numpy.cos(0.5*m*numpy.pi*z_star) * (1. - numpy.exp( -(m * numpy.pi)**2 * t_star) )
-        return F2
-
-    def F3(self, z_star, t_star):
-        F3 = 0
-        for m in numpy.arange(1,2*self.ITERATIONS+1,2):
-            F3 += (-4.0 / (m*numpy.pi*L)) * numpy.sin(0.5*m*numpy.pi*z_star) * (1.0 - numpy.exp( -(m*numpy.pi)*t_star))
-        return F3
+    def mandelZeros(self):
+        """
+        Compute roots for analytical mandel problem solutions
+        """   
+        zeroArray = numpy.zeros(self.ITERATIONS)
+        
+        for i in numpy.arange(1, self.ITERATIONS+1,1):
+            a1 = (i - 1.0) * numpy.pi * numpy.pi / 4.0 + self.EPS
+            a2 = a1 + numpy.pi / 2
+            am = a1
+            for j in numpy.arange(0, self.ITERATIONS,1):
+                y1 = numpy.tan(a1) - ((1.0 - nu) / (nu_u - nu))*a1
+                y2 = numpy.tan(a2) - ((1.0 - nu) / (nu_u - nu))*a2
+                am = (a1 + a2) / 2.0 
+                ym = numpy.tan(am) - (1 - nu) / (nu_u - nu)*am                
+                if ((ym*y1) > 0):
+                    a1 = am
+                else:
+                    a2 = am
+                if (numpy.abs(y2) < self.EPS):
+                    am = a2
+            zeroArray[i-1] = am
+        return zeroArray
 
     def strain(self, locs):
         """
@@ -293,14 +334,31 @@ class AnalyticalSoln(object):
         stress[:, :, 3] = 2*p_G*e_xy
         return stress
 
-    def y_neg_neu(self, locs):
-        """Compute initial traction at locations.
+    def y_pos(self, locs):
+        """Compute traction at locations.
         """
         (npts, dim) = locs.shape
         ntpts = tsteps.shape[0]
         traction = numpy.zeros((ntpts, npts, self.SPACE_DIM), dtype=numpy.float64)
-        traction[:, :, 0] = 0.0
-        traction[:, :, 1] = p_vertical_stress
+        x = locs[:,0]
+        z = locs[:,1] 
+        t_track = 0
+        zeroArray = self.mandelZeros()
+        
+        for t in tsteps:
+                    
+            sigma_zz_A = 0.0
+            sigma_zz_B = 0.0
+            
+            for i in np.arange(1, self.ITERATIONS+1,1):
+                x_n = zeroArray[i-1]
+                sigma_zz_A += ( numpy.sin(x_n) / (x_n - numpy.sin(x_n)*numpy.cos(x_n)) )*numpy.cos( (x_n*x)/a )*numpy.exp(-1.0*(x_n*x_n*c*t)/(a*a))
+                sigma_zz_B += ( (numpy.sin(x_n)*numpy.cos(x_n)) / (x_n - numpy.sin(x_n)*numpy.cos(x_n) ) )*numpy.exp(-1.0*(x_n*x_n*c*t)/(a*a))
+            
+            traction[t_track, :, 0] = 0.0
+            traction[t_track, :, 1] = -(F/a) - ( (2.0*F*(nu_u - nu)) / (a*(1.0-nu)) ) * sigma_zz_A + ( (2.0*F)/a )*sigma_zz_B
+            t_track += 1
+                        
         return traction
         
     def initial_displacement(self, locs):
@@ -309,10 +367,12 @@ class AnalyticalSoln(object):
         """
         (npts, dim) = locs.shape
         displacement = numpy.zeros((1, npts, dim), dtype=numpy.float64)
-        z = locs[:,1] - p_ymax 
-        z_star = z/L        
-        
-        displacement[0,:,1] = ( (p_vertical_stress*L*(1.0 - 2.0*p_nu_u) ) / (2.0*p_G*(1.0 - p_nu_u)) ) * (1.0 - z_star)
+        x = locs[:,0]        
+        z = locs[:,1] 
+
+        displacement[0,:,0] = (F*nu_u*x)/(2.*G*a)
+        displacement[0,:,1] = -1.*(F*(1.-nu_u)*z)/(2.*G*a)
+
         return displacement
 
     def initial_pressure(self, locs):
@@ -320,11 +380,12 @@ class AnalyticalSoln(object):
         Compute initial pressure at locations
         """
         (npts, dim) = locs.shape
-        pressure = numpy.zeros((ntpts, npts), dtype=numpy.float64)
-        z = locs[:,1] - p_ymax 
-        z_star = z/L        
+        pressure = numpy.zeros((1, npts), dtype=numpy.float64)
+        x = locs[:,0]        
+        z = locs[:,1]
+        t = 0.0
 
-        pressure[0,:] = (p_vertical_stress * p_eta) / (p_G * p_S)
+        pressure[0,:] = (1./(3.*a))*B*(1.+nu_u)*F
         
         return pressure
         
@@ -333,12 +394,13 @@ class AnalyticalSoln(object):
         Compute initial trace strain field at locations.
         """
         (npts, dim) = locs.shape
-
+        zeroArray = self.mandelZeros()
         trace_strain = numpy.zeros((1, npts), dtype=numpy.float64)
-        z = locs[:,1] - p_ymax
-        z_star = z/L
+        x = locs[:,0]        
+        z = locs[:,1]
+        t = 0.0
 
-        trace_strain[0,:] = -((p_vertical_stress(1.0 - 2.0*p_nu_u)) / (2.0*p_G*(1.0 - p_nu_u)))
+        trace_strain[0,:] = 0.0
 
         return trace_strain        
         
