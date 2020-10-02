@@ -23,10 +23,11 @@
 import numpy
 
 
+
 class GenerateDB(object):
     """
-    Python object to generate spatial database with displacement
-    boundary conditions for the axial displacement test.
+    Python object to generate spatial database with initial conditions 
+    for the terzaghi poroelastic test.
     """
 
     def run(self):
@@ -34,8 +35,8 @@ class GenerateDB(object):
         Generate the database.
         """
         # Domain
-        x = numpy.arange(0.0, 10.1, 0.5)
-        y = numpy.arange(0.0, 10.1, 0.5)
+        x = numpy.arange(0.0, 10.1, 1.0)
+        y = numpy.arange(0.0, 10.1, 1.0)
         npts = x.shape[0]
 
         xx = x * numpy.ones((npts, 1), dtype=numpy.float64)
@@ -57,29 +58,29 @@ class GenerateDB(object):
         data = {'points': xy,
                 'coordsys': cs,
                 'data_dim': 2,
-                'values': [{'name': "initial_amplitude_x",
+                'values': [{'name': "displacement_x",
                             'units': "m",
                             'data': numpy.ravel(disp[0, :, 0])},
-                           {'name': "initial_amplitude_y",
+                           {'name': "displacement_y",
                             'units': "m",
                             'data': numpy.ravel(disp[0, :, 1])},
-                           {'name': "initial_pressure",
+                           {'name': "pressure",
                             'units': "Pa",
                             'data': numpy.ravel(pres[0, :])},
-                           {'name': "initial_trace_strain",
+                           {'name': "trace_strain",
                             'units': "none",
                             'data': numpy.ravel(trace_strain[0, :])}]}
 
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
-        io = createWriter("terzaghi_bc.spatialdb")
-        io.write(data)
-
-        data["values"][0]["name"] = "displacement_x"
-        data["values"][1]["name"] = "displacement_y"
-        data["values"][2]["name"] = "pressure"
-        data["values"][3]["name"] = "trace_strain"
         io = createWriter("terzaghi_ic.spatialdb")
         io.write(data)
+
+#        data["values"][0]["name"] = "displacement_x"
+#        data["values"][1]["name"] = "displacement_y"
+#        data["values"][2]["name"] = "pressure"
+#        data["values"][3]["name"] = "trace_strain"
+#        io = createWriter("terzaghi_ic.spatialdb")
+#        io.write(data)
         return
 
 

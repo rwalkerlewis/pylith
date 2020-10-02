@@ -195,8 +195,11 @@ class AnalyticalSoln(object):
         z_star = z/L
 
         for t in tsteps:
-            t_star = (c*t) / ( (2*L)**2 )
-            displacement[t_track,:,1] = ((P_0*L*(1.0 - 2.0*nu_u)) / (2.0*G*(1.0 - nu_u))) * (1.0 - z_star) + ((P_0*L*(nu_u - nu)) / (2.0*G*(1.0 - nu_u)*(1.0 - nu)))*self.F2(z_star, t_star)
+            if t < 0.0:
+                displacement[0,:,1] = ( (P_0*L*(1.0 - 2.0*nu_u) ) / (2.0*G*(1.0 - nu_u)) ) * (1.0 - z_star)
+            else:
+                t_star = (c*t) / ( (2*L)**2 )
+                displacement[t_track,:,1] = ((P_0*L*(1.0 - 2.0*nu_u)) / (2.0*G*(1.0 - nu_u))) * (1.0 - z_star) + ((P_0*L*(nu_u - nu)) / (2.0*G*(1.0 - nu_u)*(1.0 - nu)))*self.F2(z_star, t_star)
             t_track += 1
 
         return displacement
@@ -212,9 +215,12 @@ class AnalyticalSoln(object):
         t_track = 0
 
         for t in tsteps:
-            z_star = z/L
-            t_star = (c*t) / (4.*L**2)
-            pressure[t_track,:,0] = ( (P_0 * eta) / (G * S) ) * self.F1(z_star, t_star)
+            if t <= 0.0:
+                pressure[t_track,:,0] = ( (P_0 * eta) / (G * S) )
+            else:
+                z_star = z/L
+                t_star = (c*t) / (4.*L**2)
+                pressure[t_track,:,0] = ( (P_0 * eta) / (G * S) ) * self.F1(z_star, t_star)
             t_track += 1
 
         return pressure
@@ -241,19 +247,19 @@ class AnalyticalSoln(object):
     # Series functions
 
     def F1(self, z_star, t_star):
-        F1 = 0
+        F1 = 0.
         for m in numpy.arange(1,2*self.ITERATIONS+1,2):
             F1 += 4./(m*numpy.pi) * numpy.sin(0.5*m*numpy.pi*z_star)*numpy.exp( -(m*numpy.pi)**2 * t_star)
         return F1
 
     def F2(self, z_star, t_star):
-        F2 = 0
+        F2 = 0.
         for m in numpy.arange(1,2*self.ITERATIONS+1,2):
             F2 += ( 8. / (m*numpy.pi)**2 )  * numpy.cos(0.5*m*numpy.pi*z_star) * (1. - numpy.exp( -(m * numpy.pi)**2 * t_star) )
         return F2
 
     def F3(self, z_star, t_star):
-        F3 = 0
+        F3 = 0.
         for m in numpy.arange(1,2*self.ITERATIONS+1,2):
             F3 += (-4.0 / (m*numpy.pi*L)) * numpy.sin(0.5*m*numpy.pi*z_star) * (1.0 - numpy.exp( -(m*numpy.pi)**2 * t_star))
         return F3
@@ -312,7 +318,7 @@ class AnalyticalSoln(object):
         """
         (npts, dim) = locs.shape
         displacement = numpy.zeros((1, npts, dim), dtype=numpy.float64)
-        z = locs[:,1] - ymax 
+        z = locs[:,1] 
         z_star = z/L        
         
         displacement[0,:,1] = ( (P_0*L*(1.0 - 2.0*nu_u) ) / (2.0*G*(1.0 - nu_u)) ) * (1.0 - z_star)
@@ -324,7 +330,7 @@ class AnalyticalSoln(object):
         """
         (npts, dim) = locs.shape
         pressure = numpy.zeros((1, npts), dtype=numpy.float64)
-        z = locs[:,1] - ymax 
+        z = locs[:,1] 
         z_star = z/L        
 
         pressure[0,:] = (P_0 * eta) / (G * S)
@@ -338,7 +344,7 @@ class AnalyticalSoln(object):
         (npts, dim) = locs.shape
 
         trace_strain = numpy.zeros((1, npts), dtype=numpy.float64)
-        z = locs[:,1] - ymax
+        z = locs[:,1] 
         z_star = z/L
 
         trace_strain[0,:] = -(P_0*(1.0 - 2.0*nu_u)) / (2.0*G*(1.0 - nu_u))

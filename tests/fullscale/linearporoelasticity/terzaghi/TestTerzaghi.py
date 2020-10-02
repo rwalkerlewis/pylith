@@ -60,14 +60,14 @@ class TestCase(FullTestCase):
         cellFields = ["solid_density", "fluid_density", "fluid_viscosity", "shear_modulus", "undrained_bulk_modulus", "biot_coefficient", "biot_modulus", "isotropic_permeability"]
         for material in self.MATERIALS.keys():
             filename = "output/{}-{}_info.h5".format(self.NAME, material)
-            check_data(filename, self, self.MATERIALS[material], cellFields=cellFields)
+            check_data(filename, self, self.MATERIALS[material], cellFields=cellFields, tolerance=tolerance)
         return
 
     def test_material_solution(self):
         vertexFields = ["displacement", "pressure", "trace_strain"]
         for material in self.MATERIALS.keys():
             filename = "output/{}-{}.h5".format(self.NAME, material)
-            check_data(filename, self, self.MATERIALS[material], vertexFields=vertexFields)
+            check_data(filename, self, self.MATERIALS[material], vertexFields=vertexFields, tolerance=tolerance)
         return
 
 #    def test_bcdirichlet_info(self):
