@@ -26,9 +26,9 @@ from pylith.tests.FullTestApp import TestCase as FullTestCase
 
 import meshes
 from terzaghi_soln import AnalyticalSoln
-#from terzaghi_gendb import GenerateDB
+from terzaghi_gendb import GenerateDB
 
-
+tolerance = 1e-2
 # ----------------------------------------------------------------------------------------------------------------------
 class TestCase(FullTestCase):
     """
@@ -47,13 +47,13 @@ class TestCase(FullTestCase):
         return
 
     def run_pylith(self, testName, args):
-        FullTestCase.run_pylith(self, testName, args)
+        FullTestCase.run_pylith(self, testName, args, GenerateDB)
         return
 
     def test_domain_solution(self):
         filename = "output/{}-domain.h5".format(self.NAME)
         vertexFields = ["displacement", "pressure", "trace_strain"]
-        check_data(filename, self, self.DOMAIN, vertexFields=vertexFields)
+        check_data(filename, self, self.DOMAIN, vertexFields=vertexFields, tolerance=tolerance)
         return
 
     def test_material_info(self):

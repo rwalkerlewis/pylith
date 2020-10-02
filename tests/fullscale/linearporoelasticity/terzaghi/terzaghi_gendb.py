@@ -34,8 +34,8 @@ class GenerateDB(object):
         Generate the database.
         """
         # Domain
-        x = numpy.arange(0.0, 10.1, 1.0)
-        y = numpy.arange(0.0, 10.1, 1.0)
+        x = numpy.arange(0.0, 10.1, 0.5)
+        y = numpy.arange(0.0, 10.1, 0.5)
         npts = x.shape[0]
 
         xx = x * numpy.ones((npts, 1), dtype=numpy.float64)
@@ -44,7 +44,7 @@ class GenerateDB(object):
         xy[:, 0] = numpy.ravel(xx)
         xy[:, 1] = numpy.ravel(numpy.transpose(yy))
 
-        from axialdisp_soln import AnalyticalSoln
+        from terzaghi_soln import AnalyticalSoln
         soln = AnalyticalSoln()
         disp = soln.initial_displacement(xy)
         pres = soln.initial_pressure(xy)
@@ -56,7 +56,7 @@ class GenerateDB(object):
         cs._configure()
         data = {'points': xy,
                 'coordsys': cs,
-                'data_dim': 4,
+                'data_dim': 2,
                 'values': [{'name': "initial_amplitude_x",
                             'units': "m",
                             'data': numpy.ravel(disp[0, :, 0])},
@@ -65,10 +65,10 @@ class GenerateDB(object):
                             'data': numpy.ravel(disp[0, :, 1])},
                            {'name': "initial_pressure",
                             'units': "Pa",
-                            'data': numpy.ravel(pres[0, :, 0])},
+                            'data': numpy.ravel(pres[0, :])},
                            {'name': "initial_trace_strain",
-                            'units': "",
-                            'data': numpy.ravel(trace_strain[0, :, 0])}]}
+                            'units': "none",
+                            'data': numpy.ravel(trace_strain[0, :])}]}
 
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
         io = createWriter("terzaghi_bc.spatialdb")
