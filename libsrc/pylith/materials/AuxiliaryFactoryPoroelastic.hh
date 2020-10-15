@@ -75,6 +75,18 @@ public:
     /// Add solid bulk modulus subfield to auxiliary subfields.
     void addPoissonsRatio(void);
 
+    // Add vector young's modulus subfield to auxiliary fields.
+    void addVectorYoungsModulus(void);
+
+    // Add tensor poisson's ratio subfield to auxiliary fields.
+    void addTensorPoissonRatio(void);
+
+    // Add vector young's modulus subfield to auxiliary fields.
+    void addVectorShearModulus(void);
+
+    // Add full tensor permeability subfield to auxiliary fields.
+    void addTensorPermeability(void);
+
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
 

@@ -37,7 +37,6 @@ pylith::materials::AuxiliaryFactoryPoroelastic::AuxiliaryFactoryPoroelastic(void
     GenericComponent::setName("AuxiliaryFactoryPoroelastic");
 } // constructor
 
-
 // ---------------------------------------------------------------------------------------------------------------------
 // Destructor.
 pylith::materials::AuxiliaryFactoryPoroelastic::~AuxiliaryFactoryPoroelastic(void) {}
@@ -218,7 +217,14 @@ pylith::materials::AuxiliaryFactoryPoroelastic::addReferenceStress(void)
     PYLITH_JOURNAL_DEBUG("referenceStress(void)");
 
     const char* subfieldName = "reference_stress";
-    const char* componentNames[6] = { "reference_stress_xx", "reference_stress_yy", "reference_stress_zz", "reference_stress_xy", "reference_stress_yz", "reference_stress_xz" };
+    const char* componentNames[6] = {
+      "reference_stress_xx",
+      "reference_stress_yy",
+      "reference_stress_zz",
+      "reference_stress_xy",
+      "reference_stress_yz",
+      "reference_stress_xz"
+    };
     const int stressSize = (3 == _spaceDim) ? 6 : (2 == _spaceDim) ? 4 : 1;
     const PylithReal pressureScale = _normalizer->getPressureScale();
 
@@ -250,7 +256,14 @@ pylith::materials::AuxiliaryFactoryPoroelastic::addReferenceStrain(void)
     PYLITH_JOURNAL_DEBUG("refrenceStrain(void)");
 
     const char* subfieldName = "reference_strain";
-    const char* componentNames[6] = { "reference_strain_xx", "reference_strain_yy", "reference_strain_zz", "reference_strain_xy", "reference_strain_yz", "reference_strain_xz" };
+    const char* componentNames[6] = {
+      "reference_strain_xx",
+      "reference_strain_yy",
+      "reference_strain_zz",
+      "reference_strain_xy",
+      "reference_strain_yz",
+      "reference_strain_xz"
+    };
     const int strainSize = (3 == _spaceDim) ? 6 : (2 == _spaceDim) ? 4 : 1;
 
     pylith::topology::Field::Description description;
@@ -376,6 +389,192 @@ pylith::materials::AuxiliaryFactoryPoroelastic::addPoissonsRatio(void)
 
     PYLITH_METHOD_END;
 } // addPoissonsRatio
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Add vector young's modulus subfield to auxiliary fields.
+void
+pylith::materials::AuxiliaryFactoryPoroelastic::addVectorYoungsModulus(void) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addVectorYoungsModulus(void)");
+
+    const char* subfieldName = "vector_youngs_modulus";
+    const char* componentNames[3] = {
+      "youngs_modulus_x",
+      "youngs_modulus_y",
+      "youngs_modulus_z"
+    };
+    const int tensorSize = (3 == _spaceDim) ? 3 : (2 == _spaceDim) ? 2 : 1;
+
+    const PylithReal pressureScale = _normalizer->getPressureScale();
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::VECTOR;
+    description.numComponents = _spaceDim;
+    for (int i = 0; i < _spaceDim; ++i) {
+        description.componentNames[i] = componentNames[i];
+    } // for
+    description.scale = pressureScale;
+    description.validator = pylith::topology::FieldQuery::validatorNonnegative;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addVectorYoungsModulus
+
+
+// ----------------------------------------------------------------------
+// Add tensor poisson's ratio subfield to auxiliary fields.
+void
+pylith::materials::AuxiliaryFactoryPoroelastic::addTensorPoissonRatio(void)
+{ // addReferenceStrain
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("tensorPoissonRatio(void)");
+
+    const char* subfieldName = "tensor_poisson_ratio";
+    const PylithReal noScale = 1;
+    const char* componentNames[6] = {
+      "poissons_ratio_xy",
+      "poissons_ratio_yx",
+      "poissons_ratio_xz",
+      "poissons_ratio_zx",
+      "poissons_ratio_yz",
+      "poissons_ratio_zy"
+
+    };
+    const int tensorSize = (3 == _spaceDim) ? 6 : (2 == _spaceDim) ? 2 : 1;
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = (3 == _spaceDim) ? pylith::topology::Field::TENSOR : pylith::topology::Field::OTHER;
+    description.numComponents = tensorSize;
+    description.componentNames.resize(tensorSize);
+    for (int i = 0; i < tensorSize; ++i) {
+        description.componentNames[i] = componentNames[i];
+    } // for
+    description.scale = noScale;
+    description.validator = pylith::topology::FieldQuery::validatorNonnegative;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addTensorPoissonRatio
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Add vector shear modulus subfield to auxiliary fields.
+void
+pylith::materials::AuxiliaryFactoryPoroelastic::addVectorShearModulus(void) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addVectorYoungsModulus(void)");
+
+    const char* subfieldName = "vector_youngs_modulus";
+    const char* componentNames[3] = {
+      "shear_modulus_xy",
+      "shear_modulus_yz",
+      "shear_modulus_xz"
+    };
+    const int tensorSize = (3 == _spaceDim) ? 3 : (2 == _spaceDim) ? 1 : 1;
+
+    const PylithReal pressureScale = _normalizer->getPressureScale();
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::VECTOR;
+    description.numComponents = _spaceDim;
+    for (int i = 0; i < tensorSize; ++i) {
+        description.componentNames[i] = componentNames[i];
+    } // for
+    description.scale = pressureScale;
+    description.validator = pylith::topology::FieldQuery::validatorNonnegative;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addVectorShearModulus
+
+// ----------------------------------------------------------------------
+// Add full tensor permeability subfield to auxiliary fields.
+void
+pylith::materials::AuxiliaryFactoryPoroelastic::addTensorPermeability(void)
+{
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("tensor_permeability(void)");
+
+    const char* subfieldName = "tensor_permeability";
+    const char* componentNames[6] = {
+      "permeability_xx",
+      "permeability_yy",
+      "permeability_zz",
+      "permeability_xy",
+      "permeability_yz",
+      "permeability_xz"
+    };
+    const int tensorSize = (3 == _spaceDim) ? 6 : (2 == _spaceDim) ? 4 : 1;
+    const PylithReal lengthScale = _normalizer->getLengthScale();
+    const PylithReal permeabilityScale = lengthScale*lengthScale;
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = (3 == _spaceDim) ? pylith::topology::Field::TENSOR : pylith::topology::Field::OTHER;
+    description.numComponents = tensorSize;
+    description.componentNames.resize(tensorSize);
+    for (int i = 0; i < tensorSize; ++i) {
+        description.componentNames[i] = componentNames[i];
+    } // for
+    description.scale = permeabilityScale;
+    description.validator = NULL;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addTensorPermeability
+
+// ----------------------------------------------------------------------
+// Add full tensor permeability subfield to auxiliary fields.
+void
+pylith::materials::AuxiliaryFactoryPoroelastic::addTensorBiotCoefficient(void)
+{
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("tensor_biot_coefficient(void)");
+
+    const char* subfieldName = "tensor_biot_coefficient";
+    const char* componentNames[6] = {
+      "biot_coefficient_xx",
+      "biot_coefficient_yy",
+      "biot_coefficient_zz",
+      "biot_coefficient_xy",
+      "biot_coefficient_yz",
+      "permeability_xz"
+    };
+    const int tensorSize = (3 == _spaceDim) ? 6 : (2 == _spaceDim) ? 4 : 1;
+    const PylithReal lengthScale = _normalizer->getLengthScale();
+    const PylithReal permeabilityScale = lengthScale*lengthScale;
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = (3 == _spaceDim) ? pylith::topology::Field::TENSOR : pylith::topology::Field::OTHER;
+    description.numComponents = tensorSize;
+    description.componentNames.resize(tensorSize);
+    for (int i = 0; i < tensorSize; ++i) {
+        description.componentNames[i] = componentNames[i];
+    } // for
+    description.scale = permeabilityScale;
+    description.validator = NULL;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addTensorPermeability
 
 
 // End of file

@@ -18,7 +18,7 @@
 
 #include <portinfo>
 
-#include "pylith/fekernels/IsotropicLinearPoroelasticity.hh"
+#include "pylith/fekernels/AnisotropicLinearPoroelasticity.hh"
 #include "pylith/fekernels/Poroelasticity.hh" // USES Poroelasticity kernels
 #include "pylith/fekernels/Elasticity.hh" // USES Elasticity kernels
 
@@ -26,7 +26,7 @@
 #include <iostream> // use to print out data on screen
 
 // =====================================================================================================================
-// Kernels for isotropic, linear poroelasticity
+// Kernels for anisotropic, linear poroelasticity
 // =====================================================================================================================
 // ----------------------------------------------------------------------
 
@@ -35,7 +35,7 @@
 // ----------------------------------------------------------------------
 // f0u function for quadratic space and linear time MMS.
 void
-pylith::fekernels::IsotropicLinearPoroelasticity::f0_quadratic_linear_u(const PylithInt dim,
+pylith::fekernels::AnisotropicLinearPoroelasticity::f0_quadratic_linear_u(const PylithInt dim,
                                              const PylithInt numS,
                                              const PylithInt numA,
                                              const PylithInt sOff[],
