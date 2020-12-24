@@ -42,6 +42,8 @@ namespace pylith {
         class KinSrcTimeHistory;
         class KinSrcAuxiliaryFactory;
 
+        class PointSource;
+
         class TopologyOps;
     } // faults
 } // pylith

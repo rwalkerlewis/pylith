@@ -31,6 +31,7 @@ subpkginclude_HEADERS = \
 	KinSrcLiuCos.hh \
 	KinSrcTimeHistory.hh \
 	KinSrcAuxiliaryFactory.hh \
+	PointSource.hh \
 	faultsfwd.hh
 
 noinst_HEADERS = \

@@ -41,10 +41,9 @@ public:
     PointSource(void);
 
     /// Destructor.
-    virtual ~PointSource(void);
+    ~PointSource(void);
 
     /// Deallocate PETSc and local data structures.
-    virtual
     void deallocate(void);
 
     /** Set user identified full moment tensor.
@@ -52,6 +51,7 @@ public:
      * @param vec Reference direction unit vector.
      */
     void setMomentTensor(const PylithReal vec[9]);
+
 
     /** Set origin for point source.
      *
@@ -99,13 +99,18 @@ public:
     pylith::topology::Field* createDerivedField(const pylith::topology::Field& solution,
                                                 const pylith::topology::Mesh& domainMesh);
 
-    /** Update auxiliary subfields at beginning of time step.
+    /** Verify configuration is acceptable.
      *
-     * @param[out] auxiliaryField Auxiliary field.
-     * @param[in] t Current time.
+     * @param[in] solution Solution field.
      */
-    void updateAuxiliaryField(pylith::topology::Field* auxiliaryField,
-                              const double t);
+    void verifyConfiguration(const pylith::topology::Field& solution) const;
+    // PROTECTED METHODS ///////////////////////////////////////////////////////////////////////////////////////////////
+protected:
+    /** Get auxiliary factory associated with physics.
+     *
+     * @return Auxiliary factory for physics object.
+     */
+    pylith::feassemble::AuxiliaryFactory* _getAuxiliaryFactory(void);
 
     // PROTECTED MEMBERS ///////////////////////////////////////////////////////////////////////////////////////////////
 protected:
@@ -117,9 +122,8 @@ protected:
     // PRIVATE MEMBERS /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
 
-    int _interfaceId; ///< Identifier for cohesive cells.
-    std::string _interfaceLabel; ///< Label identifying vertices associated with fault.
-    std::string _buriedEdgesLabel; ///< Label identifying vertices along buried edges of fault.
+    std::string _sourceLabel; ///< Label identifying point source.
+    std::string _momentTensorConvention; ///< Label identifying convention of moment tensor reference frame.
 
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
