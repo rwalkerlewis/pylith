@@ -41,6 +41,9 @@
 #include <typeinfo> // USES typeid()
 
 // ---------------------------------------------------------------------------------------------------------------------
+typedef pylith::feassemble::IntegratorInterface::ResidualKernels ResidualKernels;
+
+// ---------------------------------------------------------------------------------------------------------------------
 namespace pylith {
     namespace faults {
         class _PointSource {
@@ -54,7 +57,7 @@ public:
               * @param[in] solution Solution field.
               */
               static
-              void setKernelsLHSResidual(pylith::feassemble::IntegratorBoundary* integrator,
+              void setKernelsRHSResidual(pylith::feassemble::IntegratorDomain* integrator,
                                          const pylith:faults:PointSource& pointSource,
                                          const pylith::topology::Field& solution);
               static const char* pyreComponent;
@@ -151,6 +154,58 @@ pylith::feassemble::AuxiliaryFactory*
 pylith::faults::PointSource::_getAuxiliaryFactory(void) {
     return NULL;
 } // _getAuxiliaryFactory
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Update kernel constants.
+void
+pylith::faults::PointSource::_updateKernelConstants(const PylithReal dt) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_COMPONENT_DEBUG("_setKernelConstants(dt="<<dt<<")");
+
+    if (10 != _kernelConstants.size()) { _kernelConstants.resize(10);}
+    _kernelConstants[0] = _momentTensor[0];
+    _kernelConstants[1] = _momentTensor[1];
+    _kernelConstants[2] = _momentTensor[2];
+    _kernelConstants[3] = _momentTensor[3];
+    _kernelConstants[4] = _momentTensor[4];
+    _kernelConstants[5] = _momentTensor[5];
+    _kernelConstants[6] = _pointLocation[0];
+    _kernelConstants[7] = _pointLocation[1];
+    _kernelConstants[8] = _pointLocation[2];
+    _kernelConstants[9] = _pointElapsed;
+
+    PYLITH_METHOD_END;
+} // _updateKernelConstants
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Set kernels for RHS residual.
+void
+pylith::faults::_FaultCohesiveKin::setKernelsRHSResidual(pylith::feassemble::IntegratorDomain* integrator,
+                                                         const pylith::faults::PointSource& pointSource,
+                                                         const pylith::topology::Field& solution) {
+
+    PYLITH_METHOD_BEGIN;
+    journal::debug_t debug(_PointSource::pyreComponent);
+    debug << journal::at(__HERE__)
+          << "setKernelsRHSResidual(integrator="<<integrator<<", pointsource="<<typeid(pointSource).name()<<", solution="
+          << solution.getLabel()<<")"
+          << journal::endl;
+
+    PetscPointFunc g0 = NULL;
+    PetscPointFunc g1 = NULL;
+
+    // Assign specific kernel based on source / time function selected
+
+    g0 = pylith::fekernels::PointSource::g0_ricker;
+
+    std::vector<ResidualKernels> kernels(1);
+    kernels[0] = ResidualKernels(pointSource.getSubfieldName(), g0, g1);
+
+    assert(integrator);
+    integrator->setKernelsRHSResidual(kernels);
+
+    PYLITH_METHOD_END
+} // setKernelsRHSResidual
 
 
 // End of file
