@@ -52,12 +52,23 @@ public:
      */
     void setMomentTensor(const PylithReal vec[9]);
 
-
     /** Set origin for point source.
      *
      * @param vec Reference direction unit vector.
      */
     void setPointLocation(const PylithReal vec[3]);
+
+    /** Set time delay of point source.
+     *
+     * @param vec Reference direction unit vector.
+     */
+    void setPointShift(const PylithReal vec[1]);
+
+    /** Set dominant frequency of Ricker function.
+     *
+     * @param vec Reference direction unit vector.
+     */
+    void setDominantFrequency(const PylithReal vec[1]);    
 
     /** Adjust mesh topology for point source implementation.
      *
@@ -118,6 +129,7 @@ protected:
     PylithReal _momentTensor[9]; ///< Full representation of the moment tensor.
     PylithReal _pointLocation[3]; ///< Cartesian representation of the origin of the point source.
     PylithReal _pointElapsed[1]; ///< Elapsed time to pass for implementation of the point source.
+    PylithReal _dominantFrequency[1]; ///< Dominant frequency (Hz) for Ricker source function.
 
     // PRIVATE MEMBERS /////////////////////////////////////////////////////////////////////////////////////////////////
 private:

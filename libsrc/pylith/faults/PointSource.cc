@@ -73,18 +73,20 @@ public:
 pylith::faults::PointSource::PointSource(void) :
     _momentTensorConvention(""),
     _sourceLabel("") {
-    _momentTensor[0] = 0.0; // Mrr
-    _momentTensor[1] = 0.0; // Mtt
-    _momentTensor[2] = 0.0; // Mpp
-    _momentTensor[3] = 0.0; // Mrt
-    _momentTensor[4] = 0.0; // Mrp
-    _momentTensor[5] = 0.0; // Mtp
+    _momentTensor[0] = 0.0; // Mrr / Mxx
+    _momentTensor[1] = 0.0; // Mtt / Myy
+    _momentTensor[2] = 0.0; // Mpp / Mzz
+    _momentTensor[3] = 0.0; // Mrt / Mxy
+    _momentTensor[4] = 0.0; // Mrp / Mxz
+    _momentTensor[5] = 0.0; // Mtp / Myz
 
     _pointLocation[0] = 0.0; // x
     _pointLocation[1] = 0.0; // y
     _pointLocation[2] = 0.0; // z
 
-    _pointElapsed = 0.0; // t
+    _pointShift = 0.0; // t
+
+    _dominantFrequency = 10; // f_0, Hz
 } // constructor
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -119,6 +121,34 @@ pylith::faults::PointSource::setMomentTensor(const PylithReal vec[6]) {
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Set location of point source
+void
+pylith::faults::PointSource::setPointLocation(const PylithReal vec[3]) {
+    PYLITH_COMPONENT_DEBUG("setPointLocation(x="<<vec[0]<<", y="<<vec[1]<<", z="<<vec[2]<<")");
+
+     for (int i = 0; i < 3; ++i) {
+        _pointLocation[i] = vec[i];
+     } // for
+} // setPointLocation
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Set time delay of point source
+void
+pylith::faults::PointSource::setPointShift(const PylithReal vec[1]]) {
+    PYLITH_COMPONENT_DEBUG("setPointShift(t="<<vec[0]<<")");
+
+    _pointShift = vec;
+
+} // setPointShift
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Set dominant frequency of Ricker function
+void
+pylith::faults::PointSource::setDominantFrequency(const PylithReal vec[1]]) {
+    PYLITH_COMPONENT_DEBUG("setDominantFrequency(f="<<vec[0]<<")");
+
+    _dominantFrequency = vec;
+
+} // setDominantFrequency
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Verify configuration is acceptable.
@@ -162,17 +192,18 @@ pylith::faults::PointSource::_updateKernelConstants(const PylithReal dt) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_setKernelConstants(dt="<<dt<<")");
 
-    if (10 != _kernelConstants.size()) { _kernelConstants.resize(10);}
-    _kernelConstants[0] = _momentTensor[0];
-    _kernelConstants[1] = _momentTensor[1];
-    _kernelConstants[2] = _momentTensor[2];
-    _kernelConstants[3] = _momentTensor[3];
-    _kernelConstants[4] = _momentTensor[4];
-    _kernelConstants[5] = _momentTensor[5];
+    if (10 != _kernelConstants.size()) { _kernelConstants.resize(11);}
+    _kernelConstants[0] = _momentTensor[0]; // Mrr / Mxx
+    _kernelConstants[1] = _momentTensor[1]; // Mtt / Myy
+    _kernelConstants[2] = _momentTensor[2]; // Mpp / Mzz
+    _kernelConstants[3] = _momentTensor[3]; // Mrt / Mxy
+    _kernelConstants[4] = _momentTensor[4]; // Mrp / Mxz
+    _kernelConstants[5] = _momentTensor[5]; // Mtp / Myz
     _kernelConstants[6] = _pointLocation[0];
     _kernelConstants[7] = _pointLocation[1];
     _kernelConstants[8] = _pointLocation[2];
-    _kernelConstants[9] = _pointElapsed;
+    _kernelConstants[9] = _pointShift;
+    _kernelConstants[10] = _dominantFrequency;
 
     PYLITH_METHOD_END;
 } // _updateKernelConstants
@@ -183,7 +214,7 @@ void
 pylith::faults::_FaultCohesiveKin::setKernelsRHSResidual(pylith::feassemble::IntegratorDomain* integrator,
                                                          const pylith::faults::PointSource& pointSource,
                                                          const pylith::topology::Field& solution) {
-
+                                                             
     PYLITH_METHOD_BEGIN;
     journal::debug_t debug(_PointSource::pyreComponent);
     debug << journal::at(__HERE__)
@@ -196,7 +227,7 @@ pylith::faults::_FaultCohesiveKin::setKernelsRHSResidual(pylith::feassemble::Int
 
     // Assign specific kernel based on source / time function selected
 
-    g0 = pylith::fekernels::PointSource::g0_ricker;
+    g0 = pylith::fekernels::PointSource::g0u_ricker;
 
     std::vector<ResidualKernels> kernels(1);
     kernels[0] = ResidualKernels(pointSource.getSubfieldName(), g0, g1);
