@@ -166,7 +166,8 @@ pylith::materials::AuxiliaryFactoryPoroelasticity::addSolidDensity(void) {
 } // addSolidDensity
 
 // ----------------------------------------------------------------------
-// Add fluid density subfield to auxiliary fields.
+// Add fluid density subfield to auxiliary fields. Used in single phase
+// poroelasticity.
 void
 pylith::materials::AuxiliaryFactoryPoroelasticity::addFluidDensity(void)
 { // fluidDensity
@@ -193,7 +194,43 @@ pylith::materials::AuxiliaryFactoryPoroelasticity::addFluidDensity(void)
 } // addFluidDensity
 
 // ----------------------------------------------------------------------
-// Add fluid viscosity subfield to auxiliary fields.
+// Add fluid density subfield to auxiliary fields. Used in multi phase
+// poroelasticity.
+void
+pylith::materials::AuxiliaryFactoryPoroelasticity::addFluidDensityArray2P(void)
+{ // fluidDensityArray2P
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addFluidDensityArray2P(void)");
+
+    const char* subfieldName = "fluid_density_array";
+    const char* componentNames[2] = {
+        "oil_density",
+        "water_density"
+      };
+    const int tensorSize = 2;
+    const PylithReal densityScale = _normalizer->getDensityScale();
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::OTHER;
+    description.numComponents = tensorSize;
+    description.componentNames.resize(tensorSize);
+    for (int i = 0; i < tensorSize; ++i) {
+        description.componentNames[i] = componentNames[i];
+    }
+    description.scale = densityScale;
+    description.validator = pylith::topology::FieldQuery::validatorPositive;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addFluidDensityArray2P
+
+// ----------------------------------------------------------------------
+// Add fluid viscosity subfield to auxiliary fields. Used for single phase
+// poroelasticity.
 void
 pylith::materials::AuxiliaryFactoryPoroelasticity::addFluidViscosity(void)
 { // fluidViscosity
@@ -219,8 +256,44 @@ pylith::materials::AuxiliaryFactoryPoroelasticity::addFluidViscosity(void)
     this->setSubfieldQuery(subfieldName);
 
     PYLITH_METHOD_END;
-
 } // addFluidViscosity
+
+// ----------------------------------------------------------------------
+// Add fluid viscosity subfield to auxiliary fields. Used in multi phase
+// poroelasticity.
+void
+pylith::materials::AuxiliaryFactoryPoroelasticity::addFluidViscosityArray2P(void)
+{ // fluidViscosityArray2P
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addFluidViscosityArray2P(void)");
+
+    const char* subfieldName = "fluid_viscosity_array";
+    const char* componentNames[2] = {
+        "oil_viscosity",
+        "water_viscosity"
+      };
+    const int tensorSize = 2;
+    const PylithReal pressureScale = _normalizer->getPressureScale();
+    const PylithReal timeScale = _normalizer->getTimeScale();
+    const PylithReal viscosityScale = pressureScale*timeScale;
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::OTHER;
+    description.numComponents = tensorSize;
+    description.componentNames.resize(tensorSize);
+    for (int i = 0; i < tensorSize; ++i) {
+        description.componentNames[i] = componentNames[i];
+    }
+    description.scale = viscosityScale;
+    description.validator = pylith::topology::FieldQuery::validatorPositive;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addFluidViscosityArray2P
 
 // ----------------------------------------------------------------------
 // Add source density subfield to auxiliary fields.
@@ -249,9 +322,39 @@ pylith::materials::AuxiliaryFactoryPoroelasticity::addSourceDensity(void)
     this->setSubfieldQuery(subfieldName);
 
     PYLITH_METHOD_END;
-
 } // addSourceDensity
 
+// ----------------------------------------------------------------------
+// Add two phase saturation subfield to auxiliary fields.
+void
+pylith::materials::AuxiliaryFactoryPoroelasticity::addFluidSaturationArray2P(void)
+{ // porosity
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addTwoPhaseSaturations(void)");
+    const char* subfieldName = "fluid_saturation_array";
+    const char* componentNames[2] = {
+        "oil_saturation",
+        "water_saturation"
+      };
+    const int tensorSize = 2;
+    const char* subfieldName = "two_phase_saturations";
+    const PylithReal noScale = 1;
 
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = tensorSize;
+    description.componentNames.resize(tensorSize);
+    for (int i = 0; i < tensorSize; ++i) {
+        description.componentNames[i] = componentNames[i];
+    }    description.scale = noScale;
+    description.validator = NULL;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addFluidSaturationArray2P
 
 // End of file
