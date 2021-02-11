@@ -61,7 +61,7 @@ pylith::materials::Material::deallocate(void) {
 // Set value of label material-id used to identify material cells.
 void
 pylith::materials::Material::setMaterialId(const int value) {
-    PYLITH_COMPONENT_DEBUG("setMmaterialId(value="<<value<<")");
+    PYLITH_COMPONENT_DEBUG("setMaterialId(value="<<value<<")");
 
     _materialId = value;
 } // setMaterialId

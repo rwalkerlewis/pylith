@@ -138,11 +138,6 @@ protected:
      */
     pylith::feassemble::AuxiliaryFactory* _getAuxiliaryFactory(void);
 
-    // PRIVATE TYPEDEFS ////////////////////////////////////////////////////////////////////////////////////////////////
-private:
-
-    typedef std::map<std::string, PtSrc*> srcs_type;    
-
     // PROTECTED MEMBERS ///////////////////////////////////////////////////////////////////////////////////////////////
 protected:
 
@@ -153,8 +148,7 @@ protected:
 
     // PRIVATE MEMBERS /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-    pylith::faults::AuxiliaryFactoryKinematic* _auxiliaryFactory; ///< Factory for auxiliary subfields.
-    srcs_type _ruptures; ///< Array of kinematic earthquake ruptures.
+
     std::string _sourceLabel; ///< Label identifying point source.
     std::string _momentTensorConvention; ///< Label identifying convention of moment tensor reference frame.
 
