@@ -36,7 +36,8 @@ swig_sources = \
 	KinSrcConstRate.i \
 	KinSrcBrune.i \
 	KinSrcLiuCos.i \
-	KinSrcTimeHistory.i
+	KinSrcTimeHistory.i \
+	PointSource.i
 
 swig_generated = \
 	faults_wrap.cxx \

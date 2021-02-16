@@ -151,6 +151,14 @@ public:
     void setInterfaces(pylith::faults::FaultCohesive* faults[],
                        const int numFaults);
 
+    /** Set source conditions.
+    *
+    * @param[in] interfaces Array of sources.
+    * @param[in] numInterfaces Number of sources.
+    */
+    void setSources(pylith::faults::PointSource* sources[],
+                      const int numSources);
+
     /** Do minimal initialization.
      *
      * @param mesh Finite-element mesh.
@@ -177,6 +185,7 @@ protected:
     std::vector<pylith::materials::Material*> _materials; ///< Array of materials.
     std::vector<pylith::bc::BoundaryCondition*> _bc; ///< Array of boundary conditions.
     std::vector<pylith::faults::FaultCohesive*> _interfaces; ///< Array of interior interfaces.
+    std::vector<pylith::faults::PointSource*> _sources; ///< Array of interior interfaces.
 
     std::vector<pylith::feassemble::Integrator*> _integrators; ///< Array of integrators.
     std::vector<pylith::feassemble::Constraint*> _constraints; ///< Array of constraints.

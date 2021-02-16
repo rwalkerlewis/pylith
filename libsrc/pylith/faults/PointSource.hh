@@ -46,20 +46,41 @@ public:
     /// Deallocate PETSc and local data structures.
     void deallocate(void);
 
-    /** Set point sources.
+    /** Set value of label material-id used to identify material cells.
      *
-     * @param names Array of point source names.
-     * @param numNames Number of point source names.
-     * @param ruptures Array of point sources.
-     * @param numRuptures Number of point sources.
+     * @param value Material identifier
      */
-    void setPointSources(const char* const* names,
-                         const int numNames,
-                         KinSrc** ruptures,
-                         const int numRuptures);
+    void setPointSourceId(const int value);
 
+    /** Get value of label material-id used to identify material cells.
+     *
+     * @returns Material identifier
+     */
+    int getPointSourceId(void) const;
 
+    /** Set descriptive label for material.
+     *
+     * @param value Label of material.
+     */
+    void setPointSourceLabel(const char* value);
 
+    /** Get descruptive label of material.
+     *
+     * @returns Label of material
+     */
+    const char* getPointSourceLabel(void) const;
+
+    /** Set origin time for source.
+     *
+     * @param value origin time.
+     */
+    void setOriginTime(const PylithReal value);
+
+    /** Get origin time for source.
+     *
+     * @returns origin time of source.
+     */
+    PylithReal getOriginTime(void) const;
 
     /** Set user identified full moment tensor.
      *
@@ -67,29 +88,23 @@ public:
      */
     void setMomentTensor(const PylithReal vec[9]);
 
-    /** Set origin for point source.
-     *
-     * @param vec Reference direction unit vector.
-     */
-    void setPointLocation(const PylithReal vec[3]);
-
-    /** Set time delay of point source.
-     *
-     * @param vec Reference direction unit vector.
-     */
-    void setPointShift(const PylithReal vec[1]);
-
     /** Set dominant frequency of Ricker function.
      *
-     * @param vec Reference direction unit vector.
+     * @param value dominant frequency of Ricker function.
      */
-    void setDominantFrequency(const PylithReal vec[1]);
+    void setDominantFrequency(const PylithReal value);
 
-    /** Adjust mesh topology for point source implementation.
+    /** Get dominant frequency of Ricker function.
      *
-     * @param mesh[in] PETSc mesh.
+     * @param value dominant frequency of Ricker function.
      */
-    void adjustTopology(pylith::topology::Mesh* const mesh);
+    PylithReal getDominantFrequency(const PylithReal value);
+
+    /** Verify configuration is acceptable.
+     *
+     * @param[in] solution Solution field.
+     */
+    void verifyConfiguration(const pylith::topology::Field& solution) const;
 
     /** Create integrator and set kernels.
      *
@@ -97,23 +112,6 @@ public:
      * @returns Integrator if applicable, otherwise NULL.
      */
     pylith::feassemble::Integrator* createIntegrator(const pylith::topology::Field& solution);
-
-    /** Create constraint and set kernels.
-     *
-     * @param[in] solution Solution field.
-     * @returns Constraint if applicable, otherwise NULL.
-     */
-    pylith::feassemble::Constraint* createConstraint(const pylith::topology::Field& solution);
-
-    /** Create auxiliary field.
-     *
-     * @param[in] solution Solution field.
-     * @param[in\ domainMesh Finite-element mesh associated with integration domain.
-     *
-     * @returns Auxiliary field if applicable, otherwise NULL.
-     */
-    pylith::topology::Field* createAuxiliaryField(const pylith::topology::Field& solution,
-                                                  const pylith::topology::Mesh& domainMesh);
 
     /** Create derived field.
      *
@@ -125,38 +123,24 @@ public:
     pylith::topology::Field* createDerivedField(const pylith::topology::Field& solution,
                                                 const pylith::topology::Mesh& domainMesh);
 
-    /** Verify configuration is acceptable.
-     *
-     * @param[in] solution Solution field.
-     */
-    void verifyConfiguration(const pylith::topology::Field& solution) const;
     // PROTECTED METHODS ///////////////////////////////////////////////////////////////////////////////////////////////
 protected:
-    /** Get auxiliary factory associated with physics.
+    /** Update kernel constants.
      *
-     * @return Auxiliary factory for physics object.
+     * @param[in] dt Current time step.
      */
-    pylith::feassemble::AuxiliaryFactory* _getAuxiliaryFactory(void);
-
-    // PRIVATE TYPEDEFS ////////////////////////////////////////////////////////////////////////////////////////////////
-private:
-
-    typedef std::map<std::string, PtSrc*> srcs_type;    
+    void _updateKernelConstants(const PylithReal dt);
 
     // PROTECTED MEMBERS ///////////////////////////////////////////////////////////////////////////////////////////////
 protected:
 
     PylithReal _momentTensor[9]; ///< Full representation of the moment tensor.
     PylithReal _pointLocation[3]; ///< Cartesian representation of the origin of the point source.
-    PylithReal _originTime[1]; ///< Elapsed time to pass for implementation of the point source.
     PylithReal _dominantFrequency[1]; ///< Dominant frequency (Hz) for Ricker source function.
-
-    // PRIVATE MEMBERS /////////////////////////////////////////////////////////////////////////////////////////////////
-private:
-    pylith::faults::AuxiliaryFactoryKinematic* _auxiliaryFactory; ///< Factory for auxiliary subfields.
-    srcs_type _ruptures; ///< Array of kinematic earthquake ruptures.
+    int _pointSourceId; ///< Identifier for point source cell.
     std::string _sourceLabel; ///< Label identifying point source.
     std::string _momentTensorConvention; ///< Label identifying convention of moment tensor reference frame.
+    PylithReal _originTime; ///< Elapsed time to pass for implementation of the point source.
 
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:

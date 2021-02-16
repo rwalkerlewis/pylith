@@ -125,6 +125,14 @@ public:
             void setInterfaces(pylith::faults::FaultCohesive* faults[],
                                const int numFaults);
 
+            /** Set source conditions.
+            *
+            * @param[in] interfaces Array of sources.
+            * @param[in] numInterfaces Number of sources.
+            */
+            void setSources(pylith::faults::PointSource* sources[],
+                             const int numSources);
+
             /** Do minimal initialization.
              *
              * @param mesh Finite-element mesh.

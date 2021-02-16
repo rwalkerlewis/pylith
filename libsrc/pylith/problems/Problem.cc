@@ -26,6 +26,7 @@
 
 #include "pylith/materials/Material.hh" // USES Material
 #include "pylith/faults/FaultCohesive.hh" // USES FaultCohesive
+#include "pylith/faults/PointSource.hh" // USES PointSource
 #include "pylith/bc/BoundaryCondition.hh" // USES BoundaryCondition
 #include "pylith/feassemble/Integrator.hh" // USES Integrator
 #include "pylith/feassemble/Constraint.hh" // USES Constraint
@@ -246,13 +247,30 @@ pylith::problems::Problem::setInterfaces(pylith::faults::FaultCohesive* interfac
     PYLITH_METHOD_END;
 } // setInterfaces
 
+// ---------------------------------------------------------------------------------------------------------------------
+// Set sources.
+void
+pylith::problems::Problem::setSources(pylith::faults::PointSource* sources[],
+                                         const int numSources) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_COMPONENT_DEBUG("Problem::setSources("<<sources<<", numSources="<<numSources<<")");
+
+    assert( (!sources && 0 == numSources) || (sources && 0 < numSources) );
+
+    _sources.resize(numSources);
+    for (int i = 0; i < numSources; ++i) {
+        _sources[i] = sources[i];
+    } // for
+
+    PYLITH_METHOD_END;
+} // setSources
 
 // ----------------------------------------------------------------------
 // Do minimal initialization.
 void
 pylith::problems::Problem::preinitialize(const pylith::topology::Mesh& mesh) {
     PYLITH_METHOD_BEGIN;
-    PYLITH_COMPONENT_DEBUG("Problem::preinitialzie(mesh="<<typeid(mesh).name()<<")");
+    PYLITH_COMPONENT_DEBUG("Problem::preinitialize(mesh="<<typeid(mesh).name()<<")");
 
     assert(_normalizer);
 
@@ -276,6 +294,13 @@ pylith::problems::Problem::preinitialize(const pylith::topology::Mesh& mesh) {
         assert(_bc[i]);
         _bc[i]->setNormalizer(*_normalizer);
         _bc[i]->setFormulation(_formulation);
+    } // for
+
+    const size_t numSources = _sources.size();
+    for (size_t i = 0; i < numSources; ++i) {
+        assert(_sources[i]);
+        _sources[i]->setNormalizer(*_normalizer);
+        _sources[i]->setFormulation(_formulation);
     } // for
 
     PYLITH_METHOD_END;
@@ -310,6 +335,13 @@ pylith::problems::Problem::verifyConfiguration(void) const {
     for (size_t i = 0; i < numBC; ++i) {
         assert(_bc[i]);
         _bc[i]->verifyConfiguration(*_solution);
+    } // for
+
+    // Check to make sure sources are compatible with the solution.
+    const size_t numSources = _sources.size();
+    for (size_t i = 0; i < numSources; ++i) {
+        assert(_sources[i]);
+        _sources[i]->verifyConfiguration(*_sources);
     } // for
 
     _checkMaterialIds();
@@ -375,8 +407,9 @@ pylith::problems::Problem::_checkMaterialIds(void) const {
 
     const size_t numMaterials = _materials.size();
     const size_t numInterfaces = _interfaces.size();
+    const size_t numSources = _sources.size();
 
-    pylith::int_array materialIds(numMaterials + numInterfaces);
+    pylith::int_array materialIds(numMaterials + numInterfaces + numSources);
     size_t count = 0;
     for (size_t i = 0; i < numMaterials; ++i) {
         assert(_materials[i]);
@@ -385,6 +418,11 @@ pylith::problems::Problem::_checkMaterialIds(void) const {
     for (size_t i = 0; i < numInterfaces; ++i) {
         assert(_interfaces[i]);
         materialIds[count++] = _interfaces[i]->getInterfaceId();
+    } // for
+
+    for (size_t i = 0; i < numSources; ++i) {
+        assert(_sources[i]);
+        materialIds[count++] = _sources[i]->getPointSourceId();
     } // for
 
     pylith::topology::MeshOps::checkMaterialIds(_solution->mesh(), materialIds);
@@ -403,8 +441,9 @@ pylith::problems::Problem::_createIntegrators(void) {
     const size_t numMaterials = _materials.size();
     const size_t numInterfaces = _interfaces.size();
     const size_t numBC = _bc.size();
+    const size_t numSources = _sources.size();
 
-    const size_t maxSize = numMaterials + numInterfaces + numBC;
+    const size_t maxSize = numMaterials + numInterfaces + numBC + numSources;
     _integrators.resize(maxSize);
     size_t count = 0;
 
@@ -430,6 +469,13 @@ pylith::problems::Problem::_createIntegrators(void) {
         if (integrator) { _integrators[count++] = integrator;}
     } // for
 
+    for (size_t i = 0; i < numSources; ++i) {
+        assert(_sources[i]);
+        pylith::feassemble::Integrator* integrator = _sources[i]->createIntegrator(*_solution);
+        assert(count < maxSize);
+        if (integrator) { _integrators[count++] = integrator;}
+    } // for
+
     _integrators.resize(count);
 
     PYLITH_METHOD_END;
@@ -437,7 +483,7 @@ pylith::problems::Problem::_createIntegrators(void) {
 
 
 // ---------------------------------------------------------------------------------------------------------------------
-// Create array of constraints from materials, interfaces, and boundary conditions.
+// Create array of constraints from materials, interfaces, sources, and boundary conditions.
 void
 pylith::problems::Problem::_createConstraints(void) {
     PYLITH_METHOD_BEGIN;
@@ -446,8 +492,9 @@ pylith::problems::Problem::_createConstraints(void) {
     const size_t numMaterials = _materials.size();
     const size_t numInterfaces = _interfaces.size();
     const size_t numBC = _bc.size();
+    const size_t numSources = _sources.size();
 
-    const size_t maxSize = numMaterials + numInterfaces + numBC;
+    const size_t maxSize = numMaterials + numInterfaces + numBC + numSources;
     _constraints.resize(maxSize);
     size_t count = 0;
 
@@ -468,6 +515,13 @@ pylith::problems::Problem::_createConstraints(void) {
     for (size_t i = 0; i < numBC; ++i) {
         assert(_bc[i]);
         pylith::feassemble::Constraint* constraint = _bc[i]->createConstraint(*_solution);
+        assert(count < maxSize);
+        if (constraint) { _constraints[count++] = constraint;}
+    } // for
+
+    for (size_t i = 0; i < numSources; ++i) {
+        assert(_sources[i]);
+        pylith::feassemble::Constraint* constraint = _sources[i]->createConstraint(*_solution);
         assert(count < maxSize);
         if (constraint) { _constraints[count++] = constraint;}
     } // for

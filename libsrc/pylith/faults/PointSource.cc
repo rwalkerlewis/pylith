@@ -71,9 +71,21 @@ public:
 // ---------------------------------------------------------------------------------------------------------------------
 // Default Constructor
 pylith::faults::PointSource::PointSource(void) :
-    _sourceId(100);
-    _sourceLabel("") {
-pylith::utils::PyreComponent::setName(_PointSource::pyreComponent);
+    _sourceId(100),
+    _sourceLabel(""),
+    _momentTensorConvention("harvard"),
+    _originTime(0.0) { // t
+    _momentTensor[0] = 0.0; // Mrr / Mxx
+    _momentTensor[1] = 0.0; // Mtt / Myy
+    _momentTensor[2] = 0.0; // Mpp / Mzz
+    _momentTensor[3] = 0.0; // Mrt / Mxy
+    _momentTensor[4] = 0.0; // Mrp / Mxz
+    _momentTensor[5] = 0.0; // Mtp / Myz
+    _pointLocation[0] = 0.0; // x
+    _pointLocation[1] = 0.0; // y
+    _pointLocation[2] = 0.0; // z
+    _dominantFrequency = 10; // f_0, Hz
+    pylith::utils::PyreComponent::setName(_PointSource::pyreComponent);
 } // constructor
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -104,7 +116,7 @@ pylith::faults::PointSource::setPointSourceId(const int value) {
 
 
 // ---------------------------------------------------------------------------------------------------------------------
-// Get identifier for fault cohesive cells.
+// Get identifier for source cells.
 int
 pylith::faults::PointSource::getPointSourceId(void) const {
     return _PointSourceId;
@@ -129,10 +141,10 @@ pylith::faults::PointSource::getPointSourceLabel(void) const {
 // ---------------------------------------------------------------------------------------------------------------------
 // Set origin time for point source
 void
-pylith::faults::PointSource::setOriginTime(const PylithReal vec[1]]) {
-    PYLITH_COMPONENT_DEBUG("setPointShift(t="<<vec[0]<<")");
+pylith::faults::PointSource::setOriginTime(const PylithReal value) {
+    PYLITH_COMPONENT_DEBUG("setPointShift(t="<<value<<")");
 
-    _originTime = vec;
+    _originTime = value;
 
 } // setOriginTime
 
@@ -156,42 +168,22 @@ pylith::faults::PointSource::setMomentTensor(const PylithReal vec[6]) {
      } // for
 } // setMomentTensor
 
-
 // ---------------------------------------------------------------------------------------------------------------------
 // Set dominant frequency of Ricker function
 void
-pylith::faults::PointSource::setDominantFrequency(const PylithReal vec[1]]) {
-    PYLITH_COMPONENT_DEBUG("setDominantFrequency(f="<<vec[0]<<")");
+pylith::faults::PointSource::setDominantFrequency(const PylithReal value) {
+    PYLITH_COMPONENT_DEBUG("setDominantFrequency(f="<<value<<")");
 
-    _dominantFrequency = vec;
+    _dominantFrequency = value;
 
 } // setDominantFrequency
 
 // ---------------------------------------------------------------------------------------------------------------------
-// Set point sources.
-void
-pylith::faults::PointSource::setPointSources(const char* const * names,
-                                                const int numNames,
-                                                PtSrc** sources,
-                                                const int numSources) {
-    PYLITH_METHOD_BEGIN;
-    PYLITH_COMPONENT_DEBUG("setPointSources(names="<<names<<", numNames="<<numNames<<", sources="<<sources<<", numSources="<<numSources<<")");
-
-    assert(numNames == numSources);
-
-    // :TODO: Use shared pointers for point sources
-    _sources.clear();
-    for (int i = 0; i < numSources; ++i) {
-        if (!ruptures[i]) {
-            std::ostringstream msg;
-            msg << "Null point source object for point source '" << names[i] << "'.";
-            throw std::runtime_error(msg.str());
-        } // if
-        _sources[std::string(names[i])] = sources[i];
-    } // for
-
-    PYLITH_METHOD_END;
-} // setPointSources
+// Set dominant frequency of Ricker function
+PylithReal
+pylith::faults::PointSource::getDominantFrequency(const PylithReal value) {
+    return _dominantFrequency;
+} // getDominantFrequency
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Verify configuration is acceptable.
@@ -221,8 +213,6 @@ pylith::faults::PointSource::verifyConfiguration(const pylith::topology::Field& 
     PYLITH_METHOD_END;
 } // verifyConfiguration
 
-
-
 // ---------------------------------------------------------------------------------------------------------------------
 // Create integrator and set kernels.
 pylith::feassemble::Integrator*
@@ -240,7 +230,6 @@ pylith::faults::PointSource::createIntegrator(const pylith::topology::Field& sol
     PYLITH_METHOD_RETURN(integrator);
 } // createIntegrator
 
-
 // ---------------------------------------------------------------------------------------------------------------------
 // Create derived field.
 pylith::topology::Field*
@@ -249,22 +238,6 @@ pylith::faults::PointSource::createDerivedField(const pylith::topology::Field& s
     return NULL;
 } // createDerivedField
 
-
-
-
-
-
-
-
-
-
-// ---------------------------------------------------------------------------------------------------------------------
-// Get auxiliary factory associated with physics.
-pylith::feassemble::AuxiliaryFactory*
-pylith::faults::PointSource::_getAuxiliaryFactory(void) {
-    return NULL;
-} // _getAuxiliaryFactory
-
 // ---------------------------------------------------------------------------------------------------------------------
 // Update kernel constants.
 void
@@ -272,7 +245,7 @@ pylith::faults::PointSource::_updateKernelConstants(const PylithReal dt) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_setKernelConstants(dt="<<dt<<")");
 
-    if (10 != _kernelConstants.size()) { _kernelConstants.resize(11);}
+    if (11 != _kernelConstants.size()) { _kernelConstants.resize(11);}
     _kernelConstants[0] = _momentTensor[0]; // Mrr / Mxx
     _kernelConstants[1] = _momentTensor[1]; // Mtt / Myy
     _kernelConstants[2] = _momentTensor[2]; // Mpp / Mzz

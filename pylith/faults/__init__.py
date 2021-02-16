@@ -18,6 +18,7 @@
 # @brief Python PyLith faults module initialization
 
 __all__ = [
+    "PointSource",
     "FaultCohesive",
     "FaultCohesiveKin",
     "KinSrc",
