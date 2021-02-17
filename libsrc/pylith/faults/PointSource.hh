@@ -50,25 +50,25 @@ public:
      *
      * @param value Material identifier
      */
-    void setPointSourceId(const int value);
+    void setSourceId(const int value);
 
     /** Get value of label material-id used to identify material cells.
      *
      * @returns Material identifier
      */
-    int getPointSourceId(void) const;
+    int getSourceId(void) const;
 
     /** Set descriptive label for material.
      *
      * @param value Label of material.
      */
-    void setPointSourceLabel(const char* value);
+    void setSourceLabel(const char* value);
 
     /** Get descruptive label of material.
      *
      * @returns Label of material
      */
-    const char* getPointSourceLabel(void) const;
+    const char* getSourceLabel(void) const;
 
     /** Set origin time for source.
      *
@@ -135,12 +135,16 @@ protected:
 protected:
 
     PylithReal _momentTensor[9]; ///< Full representation of the moment tensor.
-    PylithReal _pointLocation[3]; ///< Cartesian representation of the origin of the point source.
-    PylithReal _dominantFrequency[1]; ///< Dominant frequency (Hz) for Ricker source function.
-    int _pointSourceId; ///< Identifier for point source cell.
+    PylithReal _location[3]; ///< Cartesian representation of the origin of the point source.
+    PylithReal _dominantFrequency; ///< Dominant frequency (Hz) for Ricker source function.
+
+    // PRIVATE MEMBERS /////////////////////////////////////////////////////////////////////////////////////////////////
+private:
+
+    int _sourceId; ///< Identifier for point source cell.
     std::string _sourceLabel; ///< Label identifying point source.
-    std::string _momentTensorConvention; ///< Label identifying convention of moment tensor reference frame.
     PylithReal _originTime; ///< Elapsed time to pass for implementation of the point source.
+    std::string _momentTensorConvention; ///< Label identifying convention of moment tensor reference frame.
 
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:

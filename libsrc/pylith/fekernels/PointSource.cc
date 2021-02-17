@@ -28,7 +28,7 @@
 // ----------------------------------------------------------------------
 // g0 function for displacement point source, ricker source time function
 void
-pylith::fekernels::DispVel::g0u_ricker(const PylithInt dim,
+pylith::fekernels::PointSource::g0u_ricker(const PylithInt dim,
                                 const PylithInt numS,
                                 const PylithInt numA,
                                 const PylithInt sOff[],

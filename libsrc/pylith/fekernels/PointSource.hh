@@ -56,7 +56,7 @@ public:
      * Solution fields: [disp(dim), vel(dim)]
      */
     static
-    void g0_ricker(const PylithInt dim,
+    void g0u_ricker(const PylithInt dim,
              const PylithInt numS,
              const PylithInt numA,
              const PylithInt sOff[],

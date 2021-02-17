@@ -72,6 +72,8 @@ namespace pylith {
 
         class FaultCohesiveKin;
 
+        class PointSource;
+
     } // fekernels
 } // pylith
 

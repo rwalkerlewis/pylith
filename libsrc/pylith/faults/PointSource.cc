@@ -25,6 +25,8 @@
 #include "pylith/topology/Field.hh" // USES Field
 #include "pylith/topology/MeshOps.hh" // USES MeshOps::checkTopology()
 
+#include "pylith/fekernels/PointSource.hh" // USES PointSource
+
 #include "pylith/utils/journals.hh" // USES PYLITH_COMPONENT_*
 
 #include "spatialdata/geocoords/CoordSys.hh" // USES CoordSys
@@ -58,7 +60,7 @@ public:
               */
               static
               void setKernelsRHSResidual(pylith::feassemble::IntegratorDomain* integrator,
-                                         const pylith:faults:PointSource& pointSource,
+                                         const pylith::faults::PointSource& pointSource,
                                          const pylith::topology::Field& solution);
               static const char* pyreComponent;
 
@@ -81,9 +83,9 @@ pylith::faults::PointSource::PointSource(void) :
     _momentTensor[3] = 0.0; // Mrt / Mxy
     _momentTensor[4] = 0.0; // Mrp / Mxz
     _momentTensor[5] = 0.0; // Mtp / Myz
-    _pointLocation[0] = 0.0; // x
-    _pointLocation[1] = 0.0; // y
-    _pointLocation[2] = 0.0; // z
+    _location[0] = 0.0; // x
+    _location[1] = 0.0; // y
+    _location[2] = 0.0; // z
     _dominantFrequency = 10; // f_0, Hz
     pylith::utils::PyreComponent::setName(_PointSource::pyreComponent);
 } // constructor
@@ -108,34 +110,34 @@ pylith::faults::PointSource::deallocate(void) {
 // ---------------------------------------------------------------------------------------------------------------------
 // Set identifier for point source cells.
 void
-pylith::faults::PointSource::setPointSourceId(const int value) {
+pylith::faults::PointSource::setSourceId(const int value) {
     PYLITH_COMPONENT_DEBUG("setPointSourceId(value="<<value<<")");
 
-    _pointSourceId = value;
+    _sourceId = value;
 } // setPointSourceId
 
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Get identifier for source cells.
 int
-pylith::faults::PointSource::getPointSourceId(void) const {
-    return _PointSourceId;
+pylith::faults::PointSource::getSourceId(void) const {
+    return _sourceId;
 } // getPointSourceId
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Set label marking point source
 void
-pylith::faults::PointSource::setPointSourceLabel(const char* value) {
-    PYLITH_COMPONENT_DEBUG("setPointSourceLabel(value="<<value<<")");
+pylith::faults::PointSource::setSourceLabel(const char* value) {
+    PYLITH_COMPONENT_DEBUG("setSourceLabel(value="<<value<<")");
 
-    _pointtSourceLabel = value;
+    _sourceLabel = value;
 } // setSurfaceMarkerLabel
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Get label marking point source.
 const char*
-pylith::faults::PointSource::getPointSourceLabel(void) const {
-    return _pointSourceLabel.c_str();
+pylith::faults::PointSource::getSourceLabel(void) const {
+    return _sourceLabel.c_str();
 } // getPointSourceLabel
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -151,7 +153,7 @@ pylith::faults::PointSource::setOriginTime(const PylithReal value) {
 // ----------------------------------------------------------------------
 // Get origin time for point source.
 PylithReal
-pylith::faults::KinSrc::getOriginTime(void) const {
+pylith::faults::PointSource::getOriginTime(void) const {
     return _originTime;
 } // getOriginTime
 
@@ -221,11 +223,10 @@ pylith::faults::PointSource::createIntegrator(const pylith::topology::Field& sol
     PYLITH_COMPONENT_DEBUG("createIntegrator(solution="<<solution.getLabel()<<")");
 
     pylith::feassemble::IntegratorDomain* integrator = new pylith::feassemble::IntegratorDomain(this);assert(integrator);
-    integrator->setPointSourceId(getPointSourceId());
-    integrator->setPointSourceLabel(getPointSourceLabel());
+    integrator->setSourceId(getSourceId());
+    integrator->setSourceLabel(getSourceLabel());
 
-    _PointSource::setKernelsLHSResidual(integrator, *this, solution, _formulation);
-    _PointSource::setKernelsLHSJacobian(integrator, *this, solution, _formulation);
+    _PointSource::setKernelsRHSResidual(integrator, *this, solution, _formulation);
 
     PYLITH_METHOD_RETURN(integrator);
 } // createIntegrator
@@ -264,7 +265,7 @@ pylith::faults::PointSource::_updateKernelConstants(const PylithReal dt) {
 // ---------------------------------------------------------------------------------------------------------------------
 // Set kernels for RHS residual.
 void
-pylith::faults::_FaultCohesiveKin::setKernelsRHSResidual(pylith::feassemble::IntegratorDomain* integrator,
+pylith::faults::_PointSource::setKernelsRHSResidual(pylith::feassemble::IntegratorDomain* integrator,
                                                          const pylith::faults::PointSource& pointSource,
                                                          const pylith::topology::Field& solution) {
 

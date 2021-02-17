@@ -41,6 +41,7 @@ nobase_pkgpyexec_PYTHON = \
 	faults/KinSrcLiuCos.py \
 	faults/KinSrcTimeHistory.py \
 	faults/SingleRupture.py \
+	faults/PointSource.py \
 	feassemble/__init__.py \
 	friction/__init__.py \
 	materials/__init__.py \
@@ -99,7 +100,8 @@ nobase_pkgpyexec_PYTHON = \
 	problems/SolnDispVel.py \
 	problems/SolnDispVelLagrange.py \
 	problems/SolnDispPres.py \
-	problems/SolnDispPresVel.py \	
+	problems/SolnDispPresVel.py \
+	problems/SolnDispPresTracStrain.py \
 	problems/SolnDispPresLagrange.py \
 	problems/SubfieldDisplacement.py \
 	problems/SubfieldVelocity.py \
