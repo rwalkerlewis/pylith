@@ -99,8 +99,8 @@ class PointSource(Physics, ModulePointSource):
 
     dominant_frequency = pyre.inventory.float("dominant_frequency", default=10.0)
     dominant_frequency.meta['tip'] = "Dominant frequency of Ricker function."
-    
-    
+
+
     def __init__(self, name="point_source"):
         """
         Constructor.
@@ -114,8 +114,8 @@ class PointSource(Physics, ModulePointSource):
         """
         Physics.preinitialize(self, problem)
 
-        ModulePointSource.setPointSourceId(self, self.matId)
-        ModulePointSource.setPointSourceLabel(self, self.label)
+        ModulePointSource.setSourceId(self, self.matId)
+        ModulePointSource.setSourceLabel(self, self.label)
         ModulePointSource.setMomentTensor(self, self.moment_tensor)
         ModulePointSource.setDominantFrequency(self, self.dominant_frequency)
         ModulePointSource.originTime(self, self.originTime.value)

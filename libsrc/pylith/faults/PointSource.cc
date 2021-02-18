@@ -18,12 +18,16 @@
 
 #include <portinfo>
 
-#include "PointSource.hh" // implementation of object methods
+#include "pylith/faults/PointSource.hh" // implementation of object methods
 
 #include "pylith/faults/TopologyOps.hh" // USES TopologyOps
+#include "pylith/materials/DerivedFactoryElasticity.hh" // USES DerivedFactoryElasticity
+#include "pylith/feassemble/IntegratorDomain.hh" // USES IntegratorDomain
 
-#include "pylith/topology/Field.hh" // USES Field
+#include "pylith/topology/Mesh.hh" // USES Mesh
 #include "pylith/topology/MeshOps.hh" // USES MeshOps::checkTopology()
+#include "pylith/topology/Field.hh" // USES Field
+#include "pylith/topology/FieldOps.hh" // USES FieldOps
 
 #include "pylith/fekernels/PointSource.hh" // USES PointSource
 
@@ -57,11 +61,14 @@ public:
               * @param[out] integrator Integrator for point
               * @param[in] pointSource PointSource for point source condition.
               * @param[in] solution Solution field.
+              * @param[in] formulation Formulation for equations.              
               */
               static
               void setKernelsRHSResidual(pylith::feassemble::IntegratorDomain* integrator,
                                          const pylith::faults::PointSource& pointSource,
-                                         const pylith::topology::Field& solution);
+                                         const pylith::topology::Field& solution,
+                                         const pylith::problems::Physics::FormulationEnum formulation);
+
               static const char* pyreComponent;
 
            }; // _PointSource
@@ -111,7 +118,7 @@ pylith::faults::PointSource::deallocate(void) {
 // Set identifier for point source cells.
 void
 pylith::faults::PointSource::setSourceId(const int value) {
-    PYLITH_COMPONENT_DEBUG("setPointSourceId(value="<<value<<")");
+    PYLITH_COMPONENT_DEBUG("setSourceId(value="<<value<<")");
 
     _sourceId = value;
 } // setPointSourceId
@@ -223,8 +230,8 @@ pylith::faults::PointSource::createIntegrator(const pylith::topology::Field& sol
     PYLITH_COMPONENT_DEBUG("createIntegrator(solution="<<solution.getLabel()<<")");
 
     pylith::feassemble::IntegratorDomain* integrator = new pylith::feassemble::IntegratorDomain(this);assert(integrator);
-    integrator->setSourceId(getSourceId());
-    integrator->setSourceLabel(getSourceLabel());
+    integrator->setMaterialId(getSourceId());
+    //integrator->setSourceLabel(getSourceLabel());
 
     _PointSource::setKernelsRHSResidual(integrator, *this, solution, _formulation);
 
@@ -253,9 +260,9 @@ pylith::faults::PointSource::_updateKernelConstants(const PylithReal dt) {
     _kernelConstants[3] = _momentTensor[3]; // Mrt / Mxy
     _kernelConstants[4] = _momentTensor[4]; // Mrp / Mxz
     _kernelConstants[5] = _momentTensor[5]; // Mtp / Myz
-    _kernelConstants[6] = _pointLocation[0];
-    _kernelConstants[7] = _pointLocation[1];
-    _kernelConstants[8] = _pointLocation[2];
+    _kernelConstants[6] = _location[0];
+    _kernelConstants[7] = _location[1];
+    _kernelConstants[8] = _location[2];
     _kernelConstants[9] = _originTime;
     _kernelConstants[10] = _dominantFrequency;
 
@@ -267,7 +274,8 @@ pylith::faults::PointSource::_updateKernelConstants(const PylithReal dt) {
 void
 pylith::faults::_PointSource::setKernelsRHSResidual(pylith::feassemble::IntegratorDomain* integrator,
                                                          const pylith::faults::PointSource& pointSource,
-                                                         const pylith::topology::Field& solution) {
+                                                         const pylith::topology::Field& solution,
+                                                         const pylith::problems::Physics::FormulationEnum formulation) {
 
     PYLITH_METHOD_BEGIN;
     journal::debug_t debug(_PointSource::pyreComponent);
@@ -276,20 +284,29 @@ pylith::faults::_PointSource::setKernelsRHSResidual(pylith::feassemble::Integrat
           << solution.getLabel()<<")"
           << journal::endl;
 
-    PetscPointFunc g0 = NULL;
-    PetscPointFunc g1 = NULL;
+    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().getCoordSys();
+
+    std::vector<ResidualKernels> kernels;
+
+
+    PetscPointFunc g0u = NULL;
+    PetscPointFunc g1u = NULL;
+    PetscPointFunc g0v = NULL;
+    PetscPointFunc g1v = NULL;
+
 
     // Assign specific kernel based on source / time function selected
 
-    g0 = pylith::fekernels::PointSource::g0u_ricker;
+    g0u = pylith::fekernels::PointSource::g0u_ricker;
+    kernels.resize(2);
+    kernels[0] = ResidualKernels("displacement", g0u, g1u);
+    kernels[1] = ResidualKernels("velocity", g0v, g1v);
 
-    std::vector<ResidualKernels> kernels(1);
-    kernels[0] = ResidualKernels(pointSource.getSubfieldName(), g0, g1);
 
     assert(integrator);
     integrator->setKernelsRHSResidual(kernels);
 
-    PYLITH_METHOD_END
+    PYLITH_METHOD_END;
 } // setKernelsRHSResidual
 
 
