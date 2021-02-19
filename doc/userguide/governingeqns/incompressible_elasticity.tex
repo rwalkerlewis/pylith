@@ -56,11 +56,11 @@ incorporating the Neumann boundary conditions, we write the weak form
 as
 \begin{gather}
   % Displacement
-  0 = 
+  0 =
   \int_\Omega \trialvec[u] \cdot \vec{f}(t) + \nabla \trialvec[u] : \left(-\tensor{\sigma}^\mathit{dev}(\vec{u}) + p\tensor{I}
   \right)\, d\Omega + \int_{\Gamma_\tau} \trialvec[u] \cdot \vec{\tau}(t) \, d\Gamma, \\
   % Pressure
-  0 = \int_\Omega \trialscalar[p] \cdot \left(\vec{\nabla} \cdot \vec{u} + \frac{p}{K} \right) 
+  0 = \int_\Omega \trialscalar[p] \cdot \left(\vec{\nabla} \cdot \vec{u} + \frac{p}{K} \right)
 \, d\Omega.
 \end{gather}
 
@@ -74,26 +74,26 @@ Identifying $G(t,s)$, we have
   + \int_{\Gamma_\tau} \trialvec[u] \cdot \eqnannotate{\vec{\tau}(t)}{g_0^u} \, d\Gamma, \\
 %
   \label{eqn:incompressible:elasticity:pressure}
-  0 = \int_\Omega \trialscalar[p] \cdot \eqnannotate{\left(\vec{\nabla} \cdot \vec{u} + 
+  0 = \int_\Omega \trialscalar[p] \cdot \eqnannotate{\left(\vec{\nabla} \cdot \vec{u} +
 \frac{p}{K} \right)}{g_0^p} \, d\Omega.
 \end{gather}
 
-\subsection{Jacobians Pointwisde Kernels}
+\subsection{Jacobians Pointwise Kernels}
 
 With two fields we have four Jacobian pointwise kernels for the RHS:
 \begin{align}
-  J_G^{uu} &= \frac{\partial G^u}{\partial u} = \int_\Omega \nabla \trialvec[u] : 
+  J_G^{uu} &= \frac{\partial G^u}{\partial u} = \int_\Omega \nabla \trialvec[u] :
 \frac{\partial}{\partial u}(-
-\tensor{\sigma}^\mathit{dev}) \, d\Omega 
+\tensor{\sigma}^\mathit{dev}) \, d\Omega
   = \int_\Omega \trialscalar[u]_{i,k} \, \eqnannotate{\left(-C^\mathit{dev}_{ikjl}\right)}
-{J_{g3}^{uu}}  \, 
+{J_{g3}^{uu}}  \,
 \basisscalar[u]_{j,l}\, d\Omega \\
-  J_G^{up} &= \frac{\partial G^u}{\partial p} = \int_\Omega \nabla\trialvec[u] : \tensor{I} 
-\basisscalar[p] \,  d\Omega = \int_\Omega \trialscalar[u]_{i,k} \eqnannotate{\delta_{ik}}{J_{g2}^{up}} \, 
+  J_G^{up} &= \frac{\partial G^u}{\partial p} = \int_\Omega \nabla\trialvec[u] : \tensor{I}
+\basisscalar[p] \,  d\Omega = \int_\Omega \trialscalar[u]_{i,k} \eqnannotate{\delta_{ik}}{J_{g2}^{up}} \,
 \basisscalar[p] \, d\Omega \\
 %
-  J_G^{pu} &= \frac{\partial G^p}{\partial u} = \int_\Omega \trialscalar[p] \left(\vec{\nabla} 
-\cdot \basisvec[u]\right) \, d\Omega = \int_\Omega \trialscalar[p] \eqnannotate{\delta_{jl}}{J_{g1}^{pu}} 
+  J_G^{pu} &= \frac{\partial G^p}{\partial u} = \int_\Omega \trialscalar[p] \left(\vec{\nabla}
+\cdot \basisvec[u]\right) \, d\Omega = \int_\Omega \trialscalar[p] \eqnannotate{\delta_{jl}}{J_{g1}^{pu}}
 \basisscalar[u]_{j,l} \, d\Omega\\
   J_G^{pp} &= \frac{\partial G^p}{\partial p} = \int_\Omega \trialscalar[p] \eqnannotate{\frac{1}
 {K}}{J_{g0}^{pp}} \basisscalar[p] \, d\Omega

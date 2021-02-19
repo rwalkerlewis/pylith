@@ -1,27 +1,15 @@
-\chapter{Multiphysics Finite-Element Formulation}
-\label{cha:multiphysics:formulation}
-
-This chapter will become part of the governing equations chapter in
-the PyLith Manual.
-
-\section{General Finite-Element Formulation}
-
 % ----------------------------------------------------------------------
-% ----------------------------------------------------------------------
-\section{Poroelasticity with Infinitesimal Strain and No Faults or Inertia}
-
-\todo{poroelasticity group}{Update this with revised formulation from
-  the poroelasticity group.}
+\section{Poroelasticity with Infinitesimal Strain, without Inertia}
 
 Formulation based on Zheng et al. and Detournay and Cheng (1993).
 
-In this poroelasticity formulation we assume a compressible fluid
-completely saturates a porous solid undergoing infinitesimal
-strain. We neglect the inertial effects and do not consider faults.
+In this poroelasticity formulation we assume a slightly compressible fluid that
+completely saturates a porous solid, undergoing infinitesimal
+strain.\\
 
-We begin with the elasticity equilibrium equation neglecting the inertial term,
+We begin with the elasticity equilibrium equation including the inertial term,
 \begin{gather}
-  - \vec{f}(\vec{x},t) - \tensor{\nabla} \cdot \tensor{\sigma}(\vec{u},p_f) = \vec{0} 
+  - \vec{f}(\vec{x},t) - \tensor{\nabla} \cdot \tensor{\sigma}(\vec{u},p_f) = \vec{0}
 \text{ in }\Omega, \\
 %
   \tensor{\sigma} \cdot \vec{n} = \vec{\tau}(\vec{x},t) \text{ on }\Gamma_\tau, \\
@@ -39,7 +27,7 @@ $\rho_f$ is the density of the fluid.
 
 Enforcing mass balance of the fluid gives
 \begin{gather}
-  \frac{\partial \zeta(\vec{u},p_f)}{\partial t} + \nabla \cdot \vec{q}(p_f) = 
+  \frac{\partial \zeta(\vec{u},p_f)}{\partial t} + \nabla \cdot \vec{q}(p_f) =
 \gamma(\vec{x},t) \text{ in }
 \Omega, \\
 %
@@ -53,7 +41,7 @@ the rate of injected fluid per unit volume of the porous solid, $q_0$
 is the outward fluid velocity normal to the boundary $\Gamma_q$, and
 $p_0$ is the fluid pressure on boundary $\Gamma_p$.
 
-We require the fluid flow to follow Darcy's law (Navier-Stokes equation neglecting inertial 
+We require the fluid flow to follow Darcy's law (Navier-Stokes equation neglecting inertial
 effects),
 \begin{gather}
   \vec{q}(p_f) = -\kappa (\nabla p_f - \vec{f}_f), \\
@@ -67,7 +55,7 @@ in the fluid. If gravity is included in a problem, then usually
 $\vec{f}_f = \rho_f \vec{g}$, where $\rho_f$ is the density of the
 fluid and $\vec{g}$ is the gravitational acceleration vector.
 
-We assume linear elasticity for the solid phase, so the constitutive behavior can be expressed 
+We assume linear elasticity for the solid phase, so the constitutive behavior can be expressed
 as
 \begin{gather}
   \tensor{\sigma}(\vec{u},p_f) = \tensor{C} : \tensor{\epsilon} - \alpha p_f \tensor{I},
@@ -86,12 +74,49 @@ solid behavior,
 \end{gather}
 where $1/M$ is the specific storage coefficient at constant strain,
 $K_s$ is the bulk modulus of the solid, and $K_f$ is the bulk modulus
-of the fluid. We can write the trace of the strain tensor as the dot product of the gradient 
-and displacement 
+of the fluid. We can write the trace of the strain tensor as the dot product of the gradient
+and displacement
 field, so we have
 \begin{gather}
   \zeta(\vec{u},p_f) = \alpha (\nabla \cdot \vec{u}) + \frac{p_f}{M}.
 \end{gather}
+
+\begin{table}[htbp]
+  \caption{Mathematical notation for poroelasticity with
+    infinitesimal strain.}
+  \label{tab:notation:poroelasticity}
+  \begin{tabular}{lcp{3.5in}}
+    \toprule
+    {\bf Category} & {\bf Symbol} & {\bf Description} \\
+    \midrule
+    Unknowns           & $\vec{u}$ & Displacement field \\
+                       & $p$       & Pressure field (corresponds to pore fluid pressure) \\
+                       & $\epsilon_{v}$ & Volumetric (trace) strain \\
+    Derived quantities & $\tensor{\sigma}$ & Cauchy stress tensor \\
+                       & $\tensor{\epsilon}$ & Cauchy strain tensor \\
+                       & $\zeta$ & Variation of fluid content (variation of fluid vol. per unit vol. of PM) \\
+                       & $\rho_{b}$ & Bulk density, $\left(1 - \phi\right) \rho_{s} + \phi \rho_{f}$ \\
+    Common constitutive parameters & $\rho_{f}$ & Fluid density \\
+                       & $\rho_{s}$ & Solid (matrix) density \\
+                       & $\phi$ & Porosity \\
+                       & $\tensor{k}$ & Permeability \\
+                       & $\mu_{f}$ & Fluid viscosity \\
+                       & $K_{s}$ & Solid grain bulk modulus \\
+                       & $K_{f}$ & Fluid bulk modulus \\
+                       & $K_{d}$ & Drained bulk modulus \\
+                       & $\alpha$ & Biot coefficient \\
+                       & $M$ & Biot Modulus \\
+    Source terms       & $\vec{f}$ & Body force per unit volume, for example $\rho_{b} \vec{g}$ \\
+                       & $\vec{f}_{f}$ & Fluid body force, for example:= $\rho_{f} \vec{g}$
+                       & $\gamma$ & Source density; rate of injected fluid per unit volume of the porous solid \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+
+
+
+
 
 \subsection{Notation}
 \begin{itemize}
@@ -104,7 +129,7 @@ field, so we have
   \begin{description}
     \item[$\tensor{\sigma}$] Stress tensor
     \item[$\tensor{\epsilon}$] Strain tensor
-    \item[$\zeta$] Variation of fluid content; variation of fluid volumer per unit volume of 
+    \item[$\zeta$] Variation of fluid content; variation of fluid volumer per unit volume of
 porous material
     \item[$q$] rate of fluid volume crossing a unit area of the porous
       solid; fluid flux
@@ -137,7 +162,7 @@ We consider the displacement $\vec{u}$ and fluid pressure $p_f$ as unknowns,
   \vec{s}^T &= (\vec{u} \quad p_f)^T, \\
 %
 % elasticity equilibrium equation
-  \vec{0} &= \vec{f}(\vec{x},t) + \tensor{\nabla} \cdot \tensor{\sigma}(\vec{u},p_f) 
+  \vec{0} &= \vec{f}(\vec{x},t) + \tensor{\nabla} \cdot \tensor{\sigma}(\vec{u},p_f)
 \text{ in }\Omega, \\
 %
 % fluid mass balance
@@ -161,24 +186,24 @@ We consider the displacement $\vec{u}$ and fluid pressure $p_f$ as unknowns,
 For trial functions $\trialvec[u]$ and $\trialscalar[p]$ we write the weak form
 using the elasticity equilibrium and the fluid mass balance equations,
 \begin{align}
-  0 &= \int_\Omega \trialvec[u] \cdot \left( \vec{f}(\vec{x},t) + \tensor{\nabla} \cdot 
+  0 &= \int_\Omega \trialvec[u] \cdot \left( \vec{f}(\vec{x},t) + \tensor{\nabla} \cdot
 \tensor{\sigma}
 (\vec{u},p_f) \right) \, d\Omega, \\
 %
- \int_\Omega  \trialscalar[p] \frac{\partial \zeta(\vec{u},p_f)}{\partial t} \, d\Omega &= 
-\int_\Omega 
+ \int_\Omega  \trialscalar[p] \frac{\partial \zeta(\vec{u},p_f)}{\partial t} \, d\Omega &=
+\int_\Omega
 \trialscalar[p] \left(\gamma(\vec{x},t) - \nabla \cdot \vec{q}(p_f)\right) \, d\Omega.
 \end{align}
-Applying the divergence theorem to each of these two equations and incorporating the Neumann 
-boundary conditions 
+Applying the divergence theorem to each of these two equations and incorporating the Neumann
+boundary conditions
 yields
 \begin{align}
   0 &= \int_\Omega \trialvec[u] \cdot \vec{f}(\vec{x},t) + \nabla \trialvec[u] : -
-\tensor{\sigma}(\vec{u},p_f) \, 
+\tensor{\sigma}(\vec{u},p_f) \,
 d\Omega + \int_{\Gamma_\tau} \trialvec[u] \cdot \vec{\tau}(\vec{x},t) \, d\Gamma, \\
 %
- \int_\Omega  \trialscalar[p] \frac{\partial \zeta(\vec{u},p_f)}{\partial t} \, d\Omega &= 
- \int_\Omega \trialscalar[p] \gamma(\vec{x},t) + \nabla \trialscalar[p] \cdot \vec{q}(p_f) \, 
+ \int_\Omega  \trialscalar[p] \frac{\partial \zeta(\vec{u},p_f)}{\partial t} \, d\Omega &=
+ \int_\Omega \trialscalar[p] \gamma(\vec{x},t) + \nabla \trialscalar[p] \cdot \vec{q}(p_f) \,
 d\Omega
  + \int_{\Gamma_q} \trialscalar[p] (-q_0(\vec{x},t)) \, d\Gamma.
 \end{align}
@@ -186,17 +211,17 @@ Identifying $F(t,s,\dot{s})$ and $G(t,s)$ we have
 \begin{alignat}{2}
   F^u(t,s,\dot{s}) &= \vec{0},
   & \quad
-  G^u(t,s) &= \int_\Omega \trialvec[u] \cdot \eqnannotate{\vec{f}(\vec{x},t)}{g^u_0} + \nabla 
-\trialvec[u] : 
-\eqnannotate{-\tensor{\sigma}(\vec{u},p_f)}{g^u_1} \, d\Omega + \int_{\Gamma_\tau} 
-\trialvec[u] \cdot 
+  G^u(t,s) &= \int_\Omega \trialvec[u] \cdot \eqnannotate{\vec{f}(\vec{x},t)}{g^u_0} + \nabla
+\trialvec[u] :
+\eqnannotate{-\tensor{\sigma}(\vec{u},p_f)}{g^u_1} \, d\Omega + \int_{\Gamma_\tau}
+\trialvec[u] \cdot
 \eqnannotate{\vec{\tau}(\vec{x},t)}{g^u_0} \, d\Gamma, \\
-  F^p(t,s,\dot{s}) &= \int_\Omega  \trialscalar[p] \eqnannotate{\frac{\partial 
+  F^p(t,s,\dot{s}) &= \int_\Omega  \trialscalar[p] \eqnannotate{\frac{\partial
 \zeta(\vec{u},p_f)}{\partial t}}
 {f^p_0} \, d\Omega
   & \quad
-  G^p(t,s) &= \int_\Omega \trialscalar[p] \eqnannotate{\gamma(\vec{x},t)}{g^p_0} + \nabla 
-\trialscalar[p] \cdot 
+  G^p(t,s) &= \int_\Omega \trialscalar[p] \eqnannotate{\gamma(\vec{x},t)}{g^p_0} + \nabla
+\trialscalar[p] \cdot
 \eqnannotate{\vec{q}(p_f)}{g^p_1} \, d\Omega
  + \int_{\Gamma_q} \trialscalar[p] (\eqnannotate{-q_0(\vec{x},t)}{g^p_0}) \, d\Gamma
 \end{alignat}
