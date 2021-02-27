@@ -5,21 +5,25 @@ Formulation based on Zheng et al. and Detournay and Cheng (1993).
 
 In this poroelasticity formulation we assume a slightly compressible fluid that
 completely saturates a porous solid, undergoing infinitesimal
-strain. We assume linear elasticity for the solid phase, so the constitutive behavior can be expressed
-as
+strain.
+
+\subsection{Balance Equations}
+
+\subsubsection{Conservation of Momentum}
+
+We write the full term for conservation of linear momentum, including the intertia,
+borrowed from linear elasticity:
+
 \begin{gather}
-  \tensor{\sigma}(\vec{u},p) = \tensor{C} : \tensor{\epsilon} - \alpha p \tensor{I},
+    \nabla \cdot \tensor{\sigma}\left(\vec{u},p\right) + \vec{f}\left(t\right) = \rho_{b}\ddot{\vec{u}},
 \end{gather}
-where $\tensor{\sigma}$ is the stress tensor, $\tensor{C}$ is the
-tensor of elasticity constants, $\alpha$ is the Biot coefficient
-(effective stress coefficient), $\tensor{\epsilon}$ is the strain
-tensor, and $\tensor{I}$ is the identity tensor.\\
+
+\subsubsection{Conservation of Mass}
 
 Enforcing mass balance of the fluid gives
 \begin{gather}
   \frac{\partial \zeta(\vec{u},p)}{\partial t} + \nabla \cdot \vec{q}(p) =
-\gamma(\vec{x},t) \text{ in }
-\Omega, \\
+  \gamma(\vec{x},t) \text{ in } \Omega, \\
 %
   \vec{q} \cdot \vec{n} = q_0(\vec{x},t) \text{ on }\Gamma_q, \\
 %
@@ -42,6 +46,30 @@ in the fluid. If gravity is included in a problem, then usually
 $\vec{f}_f = \rho_f \vec{g}$, where $\rho_f$ is the density of the
 fluid and $\vec{g}$ is the gravitational acceleration vector.\\
 
+\subsection{Constitutive Behavior}
+
+\subsubsection{Solid Phase}
+
+We assume linear elasticity for the solid phase, so the constitutive behavior can be expressed
+as
+\begin{gather}
+  \tensor{\sigma}(\vec{u},p) = \tensor{C} : \tensor{\epsilon} - \alpha p \tensor{I},
+\end{gather}
+where $\tensor{\sigma}$ is the stress tensor, $\tensor{C}$ is the
+tensor of elasticity constants, $\alpha$ is the Biot coefficient
+(effective stress coefficient), $\tensor{\epsilon}$ is the strain
+tensor, and $\tensor{I}$ is the identity tensor.\\
+For this case, we will assume that the material properties are isotropic, resulting
+in the following formulation for the stress tensor:
+\begin{align}
+    \tensor{\sigma}\left(\vec{u},p \right) = \tensor{C}:\tensor{\epsilon} - \alpha p \tensor{I}
+                                           = \lambda \tensor{I} \epsilon_{v} + 2 \mu - \alpha \tensor{I} p
+\end{align}
+where $\lambda$ and $\mu$ are Lam\'e's parameters, $\lambda = K_{d} - \frac{2 \mu}{3}$, $\mu$ is the shear modulus,
+and the volumetric strain is defined as  $\epsilon_{v} = \navla \cdot \vec{u}$.
+
+\subsubsection{Fluid Phase}
+
 For the constitutive behavior of the fluid, we use the volumetric strain to couple the fluid-
 solid behavior,
 \begin{gather}
@@ -57,6 +85,10 @@ field, so we have
 \begin{gather}
   \zeta(\vec{u},p) = \alpha (\nabla \cdot \vec{u}) + \frac{p}{M}.
 \end{gather}
+
+
+
+
 
 \subsection{Quasi-Static Case}
 
