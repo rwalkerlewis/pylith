@@ -486,7 +486,7 @@ pylith::materials::Poroelasticity::_setKernelsRHSJacobian(pylith::feassemble::In
         } // QUASISTATIC
         case DYNAMIC_IMEX:
         case DYNAMIC: {
-            const PetscPointJac Jg0uu = pylith::fekernels::DispVel::Jf0uu_stshift;
+            const PetscPointJac Jg0uu = NULL;
             const PetscPointJac Jg1uu = NULL;
             const PetscPointJac Jg2uu = NULL;
             const PetscPointJac Jg3uu = NULL;
@@ -723,8 +723,7 @@ pylith::materials::Poroelasticity::_setKernelsLHSJacobian(pylith::feassemble::In
             const PetscPointJac Jf2vp = NULL;
             const PetscPointJac Jf3vp = NULL;
 
-            //const PetscPointJac Jf0vv = (_useInertia) ? pylith::fekernels::DispVel::Jf0uu_utshift : NULL;
-            const PetscPointJac Jf0vv = (_useInertia) ? pylith::fekernels::DispVel::Jf0uu_stshift : NULL;      // JS: THIS HAS TO BE REVIWED
+            const PetscPointJac Jf0vv = pylith::fekernels::DispVel::Jf0uu_stshift;
             const PetscPointJac Jf1vv = NULL;
             const PetscPointJac Jf2vv = NULL;
             const PetscPointJac Jf3vv = NULL;
