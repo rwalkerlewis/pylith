@@ -1,4 +1,9 @@
 # ----------------------------------------------------------------------
+# Reset geometry.
+# ----------------------------------------------------------------------
+reset
+
+# ----------------------------------------------------------------------
 # Generate geometry
 # ----------------------------------------------------------------------
 playback 'geometry.jou'
@@ -6,20 +11,20 @@ playback 'geometry.jou'
 # ----------------------------------------------------------------------
 # Set discretization size
 # ----------------------------------------------------------------------
-surface all size 0.25
+volume all size 0.1
 
 # ----------------------------------------------------------------------
 # Generate the mesh
 # ----------------------------------------------------------------------
-surface all scheme submap
-mesh surface all
+volume all scheme tetmesh 
+mesh volume all
 
 # ----------------------------------------------------------------------
 # Create blocks for materials
 # ----------------------------------------------------------------------
-block 1 surface 1
+block 1 volume 3
 block 1 name "poroelastic"
-block 1 element type quad
+block 1 element type tetra4
 
 # ----------------------------------------------------------------------
 # Mark entities for boundary conditions, etc.
@@ -29,4 +34,7 @@ playback 'bc.jou'
 # ----------------------------------------------------------------------
 # Export exodus file
 # ----------------------------------------------------------------------
-export mesh "mesh_quad.exo" dimension 2 overwrite
+export mesh "mesh_tet.exo" dimension 3 overwrite
+
+
+

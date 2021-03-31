@@ -15,6 +15,13 @@ surface all scheme trimesh
 mesh surface all
 
 # ----------------------------------------------------------------------
+# Create blocks for materials
+# ----------------------------------------------------------------------
+block 1 surface 1
+block 1 name "poroelastic"
+block 1 element type tri
+
+# ----------------------------------------------------------------------
 # Mark entities for boundary conditions, etc.
 # ----------------------------------------------------------------------
 playback 'bc.jou'
