@@ -1,0 +1,183 @@
+% ----------------------------------------------------------------------
+\section{Multiphase Poromechanics with Infinitesimal Strain and No Faults}
+
+In order to expand our poroelastic model to account for cases such as oil reservoirs
+ or coastal aquifers, where multiple fluids typically exist simultaneously, representation
+ of multiple fluid phases are required. For an initial example of such behavior,
+ the black oil model, traditionally used to model low volatility oil system, is
+ applied.
+
+
+\subsection{Solubility}
+A reservoir fluid may contain multiple components. Say a sample of fluid contains 
+both oil and gas components at reservoir conditions, of masses $m_{o}$, and $m_{g}$,
+respectively. The volume of these components when measured at standard(surface) 
+conditions may be defined as:
+\begin{equation}
+V_{oS} = \frac{m_{o}}{\rho_{oS}}, \quad V_{gS} = \frac{m_{g}}{\rho_{gS}},
+\end{equation}
+ 
+with $\rho_{oS}$ and $\rho_{gS}$ representing the oil and gas densities when measured
+at surface conditions. To account for pressure dependent solubility of gas in oil, the
+gas-oil solubility ratio, $R_{s}$, may be defined as the volume of gas dissolved at reservoir
+pressure per unit volume of oil, when measured at standard conditions:
+
+\begin{equation}
+  R_{s} = \frac{\left(V_{gS}\right)_{dissolved}}{V_{oS}} = \frac{\left(m_{g}\right)_{dissolved} \rho_{oS}}{m_{o}\rho_{gS}}.
+\end{equation}
+
+Pressure dependent changes in fluid densities are accounted for through fluid formation volume factors.
+In this example, the volume of the oil phase is larger at reservoir conditions than at standard conditions
+due to the dissolved gas at reservoir pressure. For our two phase example, the oil formation volume
+factor, $B_{o}$, is defined as the ratio of the volume of oil and dissolved gas at reservoir conditions
+to the volume of oil measured at standard conditions,
+\begin{equation}
+  B_{o} = \frac{V_{o}}{V_{oS}},
+\end{equation}
+
+and
+
+\begin{equation}
+  V_{o} = \frac{\left(m_{o} + \left(m_{g}\right)_{dissolved}\right)}{\rho_{o}},
+\end{equation}
+
+where $\rho_{o}$ represents the density of oil at reservoir conditions. This results in:
+
+\begin{equation}
+  B_{o} = \frac{\left(m_{o} + \left(m_{g}\right)_{dissolved} \right) \rho_{oS}}{m_{o}\rho_{o}}.
+\end{equation}
+
+The formation volume factor for gas, $B_{g}$, is defined here as the ratio of the volume of free (not dissolved)
+gas at reservoir conditions to the volume of the same gas at standard conditions, or
+
+\begin{equation}
+  B_{g} = \frac{V_{g}}{V_{gS}}
+\end{equation}
+
+
+
+\subsection{Interfacial Tension and Capillary Pressure}
+
+
+\subsection{Relative Permeability}
+
+
+
+
+
+
+
+
+
+
+
+
+We base this formulation for poroelsticity on Zheng et al. and
+Detournay and Cheng (1993). We assume a slightly compressible fluid
+that completely saturates a porous solid, undergoing infinitesimal
+strain.
+
+We begin with the conservation of linear momentum, including inertia,
+borrowed from linear elasticity:
+\begin{equation}
+    \rho_s\frac{\partial^2 \vec{u}}{\partial t^2} = \vec{f}(t) + \nabla \cdot \tensor{\sigma}(\vec{u},p).
+\end{equation}
+Enforcing mass balance of the fluid gives
+\begin{gather}
+  \frac{\partial \zeta(\vec{u},p)}{\partial t} + \nabla \cdot \vec{q}(p) =
+  \gamma(\vec{x},t) \text{ in } \Omega, \\
+%
+  \vec{q} \cdot \vec{n} = q_0(\vec{x},t) \text{ on }\Gamma_q, \\
+%
+  p = p_0(\vec{x},t) \text{ on }\Gamma_p,
+\end{gather}
+where $\zeta$ is the variation in fluid content, $\vec{q}$ is the rate
+of fluid volume crossing a unit area of the porous solid, $\gamma$ is
+the rate of injected fluid per unit volume of the porous solid, $q_0$
+is the outward fluid velocity normal to the boundary $\Gamma_q$, and
+$p_0$ is the fluid pressure on boundary $\Gamma_p$.
+
+We require the fluid flow to follow Darcy's law (Navier-Stokes
+equation neglecting inertial effects),
+\begin{equation}
+  \vec{q}(p) = -\frac{\tensor{k}}{\mu_{f}}(\nabla p - \vec{f}_f),
+\end{equation}
+where $\tensor{k}$ is the intrinsic permeability, $\mu_f$ is the viscosity of the
+fluid, $p$ is the fluid pressure, and $\vec{f}_f$ is the body force
+in the fluid. If gravity is included in a problem, then usually
+$\vec{f}_f = \rho_f \vec{g}$, where $\rho_f$ is the density of the
+fluid and $\vec{g}$ is the gravitational acceleration vector.
+
+\subsection{Constitutive Behavior}
+
+We assume linear elasticity for the solid phase, so the constitutive behavior can be expressed
+as
+\begin{equation}
+  \tensor{\sigma}(\vec{u},p) = \tensor{C} : \tensor{\epsilon} - \alpha p \tensor{I},
+\end{equation}
+where $\tensor{\sigma}$ is the stress tensor, $\tensor{C}$ is the
+tensor of elasticity constants, $\alpha$ is the Biot coefficient
+(effective stress coefficient), $\tensor{\epsilon}$ is the strain
+tensor, and $\tensor{I}$ is the identity tensor.  For this case, we
+will assume that the material properties are isotropic, resulting in
+the following formulation for the stress tensor:
+\begin{equation}
+    \tensor{\sigma}(\vec{u},p) = \tensor{C}:\tensor{\epsilon} - \alpha p \tensor{I}
+                                           = \lambda \tensor{I} \epsilon_{v} + 2 \mu - \alpha \tensor{I} p
+\end{equation}
+where $\lambda$ and $\mu$ are Lam\'e's parameters,
+$\lambda = K_{d} - \frac{2 \mu}{3}$, $\mu$ is the shear modulus, and
+the volumetric strain is defined as
+$\epsilon_{v} = \nabla \cdot \vec{u}$.
+
+For the constitutive behavior of the fluid, we use the volumetric
+strain to couple the fluid-solid behavior,
+\begin{gather}
+  \zeta(\vec{u},p) = \alpha \Tr({\tensor{\epsilon}}) + \frac{p}{M}, \\
+%
+  \frac{1}{M} = \frac{\alpha-\phi}{K_s} + \frac{\phi}{K_f},
+\end{gather}
+where $1/M$ is the specific storage coefficient at constant strain,
+$K_s$ is the bulk modulus of the solid, and $K_f$ is the bulk modulus
+of the fluid. We can write the trace of the strain tensor as the dot
+product of the gradient and displacement field, so we have
+\begin{equation}
+  \zeta(\vec{u},p) = \alpha (\nabla \cdot \vec{u}) + \frac{p}{M}.
+\end{equation}
+
+\begin{table}[htbp]
+  \caption{Mathematical notation for poroelasticity with
+    infinitesimal strain.}
+  \label{tab:notation:poroelasticity}
+  \begin{tabular}{lcp{3.5in}}
+    \toprule
+    {\bf Category} & {\bf Symbol} & {\bf Description} \\
+    \midrule
+    Unknowns           & $\vec{u}$ & Displacement field \\
+                       & $\vec{v}$ & Velocity field \\
+                       & $p$       & Pressure field (corresponds to pore fluid pressure) \\
+                       & $\epsilon_{v}$ & Volumetric (trace) strain \\
+    \hline
+    Derived quantities & $\tensor{\sigma}$ & Cauchy stress tensor \\
+                       & $\tensor{\epsilon}$ & Cauchy strain tensor \\
+                       & $\zeta$ & Variation of fluid content (variation of fluid vol. per unit vol. of PM), $\alpha \epsilon_{v} + \frac{p}{M}$ \\
+                       & $\rho_{b}$ & Bulk density, $\left(1 - \phi\right) \rho_{s} + \phi \rho_{f}$ \\
+                       & $\vec{q}$ & Darcy flux, $-\frac{\tensor{k}}{\mu_{f}} \cdot \left(\nabla p - \vec{f}_{f}\right)$ \\
+                       & $M$ & Biot Modulus, $\frac{K_{f}}{\phi} + \frac{K_{s}}{\alpha - \phi}$ \\
+    \hline
+    Common constitutive parameters & $\rho_{f}$ & Fluid density \\
+                       & $\rho_{s}$ & Solid (matrix) density \\
+                       & $\phi$ & Porosity \\
+                       & $\tensor{k}$ & Permeability \\
+                       & $\mu_{f}$ & Fluid viscosity \\
+                       & $K_{s}$ & Solid grain bulk modulus \\
+                       & $K_{f}$ & Fluid bulk modulus \\
+                       & $K_{d}$ & Drained bulk modulus \\
+                       & $\alpha$ & Biot coefficient, $1 - \frac{K_{d}}{K_{s}}$ \\
+    \hline
+    Source terms       & $\vec{f}$ & Body force per unit volume, for example: $\rho_{b} \vec{g}$ \\
+                       & $\vec{f}_{f}$ & Fluid body force, for example: $\rho_{f} \vec{g}$ \\
+                       & $\gamma$ & Source density; rate of injected fluid per unit volume of the porous solid \\
+    \bottomrule
+  \end{tabular}
+\end{table}
