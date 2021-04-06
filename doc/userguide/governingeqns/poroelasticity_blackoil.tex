@@ -145,6 +145,16 @@ product of the gradient and displacement field, so we have
   \zeta(\vec{u},p) = \alpha (\nabla \cdot \vec{u}) + \frac{p}{M}.
 \end{equation}
 
+\subsection{Coupling Coefficients for Multiphase Flow}
+
+For single phase flow:
+
+\begin{equation}
+  m = \rho_{f} \phi + \rho_{f}\phi \epsilon_{v}
+\end{equation}
+
+
+
 \begin{table}[htbp]
   \caption{Mathematical notation for poroelasticity with
     infinitesimal strain.}
@@ -163,6 +173,7 @@ product of the gradient and displacement field, so we have
                        & $\zeta$ & Variation of fluid content (variation of fluid vol. per unit vol. of PM), $\alpha \epsilon_{v} + \frac{p}{M}$ \\
                        & $\rho_{b}$ & Bulk density, $\left(1 - \phi\right) \rho_{s} + \phi \rho_{f}$ \\
                        & $\vec{q}$ & Darcy flux, $-\frac{\tensor{k}}{\mu_{f}} \cdot \left(\nabla p - \vec{f}_{f}\right)$ \\
+                       & $\vec{w}_{j}$ & Mass Flux of fluid phase $j$ relative to the matrix, 
                        & $M$ & Biot Modulus, $\frac{K_{f}}{\phi} + \frac{K_{s}}{\alpha - \phi}$ \\
     \hline
     Common constitutive parameters & $\rho_{f}$ & Fluid density \\
@@ -177,7 +188,155 @@ product of the gradient and displacement field, so we have
     \hline
     Source terms       & $\vec{f}$ & Body force per unit volume, for example: $\rho_{b} \vec{g}$ \\
                        & $\vec{f}_{f}$ & Fluid body force, for example: $\rho_{f} \vec{g}$ \\
-                       & $\gamma$ & Source density; rate of injected fluid per unit volume of the porous solid \\
+                       & $\gamma$ & Volumetric source term; rate of injected fluid per unit volume of the porous solid \\
     \bottomrule
   \end{tabular}
 \end{table}
+
+
+
+\subsection{Quasistatic}
+
+
+\subsubsection{Balance Laws}
+
+Linear Momentum
+
+\begin{equation}
+  \nabla \cdot \tensor{\sigma} + \rho_{b} \vec{g} = \vec{0}
+\end{equation}
+
+Immiscible Fluid Mass Conservation
+
+\begin{equation}
+  \frac{d m_{J}}{dt} + \nabla \cdot \vec{w}_{J} = \rho_{J} \gamma_{J}
+\end{equation}
+
+\subsubsection{Coupling Coefficients}
+
+Given a single phase mass accumulation term, 
+
+\begin{equation}
+  \frac{\partial m}{\partial t} = \frac{\partial \left(\rho_{f} \phi\right)}{\partial t} + \rho_{f} \phi \frac{\partial \epsilon_v}{\partial t}
+\end{equation}
+
+The Biot moduli for multiphase flow is obtained through the expansion of the accumulation term in the flow equation:
+
+\begin{align}
+  \frac{\partial m_{J}}{\partial t} &= \frac{\partial \left( \rho_{J}s_{J} \phi \right)}{\partial t} + \rho_{J} s_{J} \phi \frac{\partial \epsilon_{v}}{\partial t} \\
+                                         &= \rho_{J}s_{J}\frac{\partial \phi}{\partial t} + 
+                                         \phi \rho_{J} \frac{\partial s_{J}}{\partial t} + 
+                                         \phi s_{J} \frac{\partial \rho_{J}}{\partial t} + \rho_{J} s_{J} \phi \frac{\partial \epsilon_{v}}{\partial t}
+\end{align}
+
+
+For the case of multiphase flow, total fluid pressure, $p_{t} = \sum_{J} s_{J}p_{J}$ is used generate the variation in porosity:
+
+\begin{align}
+  \frac{\partial \phi}{\partial t} &= \frac{\partial \phi}{\partial p_{t}} \frac{\partial p_{t}}{\partial t} + \left( \alpha - \phi \right) \frac{\partial \epsilon_{v}}{\partial t} \\
+                                   &= \frac{\alpha - \phi}{K_{s}} \frac{\partial p_{t}}{\partial t} + \left( \alpha - \phi \right) \frac{\partial \epsilon_{v}}{\partial t}
+\end{align}
+
+
+Fluid compressibility of a phase $J$ in multiphase flow may be defined as:
+
+\begin{equation}
+  \frac{1}{K_{J}} = c_{J} = \frac{1}{\rho_{J}} \frac{d \rho_{J}}{d \P_{J}}
+\end{equation}
+
+
+
+
+Mass variation by phase for three phase (gas / oil / water):
+
+\begin{align}
+  \frac{\dot{m}_{w}}{\rho_{w}} &= \left(\phi \frac{dS_{w}}{dP_{co}} + S_{w} \frac{\alpha - \phi}{K_{s}} S_{o} \right) \dot{p}_{o} + 
+                                  \left(\phi S_{w} c_{w} - \phi \frac{dS_{w}}{dp_{co}} + S_{w} \frac{\alpha - \phi}{K_{s}} S_{w} \right) \dot{p}_{w} + 
+                                  S_{w} \frac{\alpha - \phi}{K_{s}} \dot{p}_{g} + 
+                                  S_{w} \alpha \dot{\epsilon_{v}} \\
+  \frac{\dot{m}_{o}}{\rho_{o}} &= \left(\phi S_{o} c_{o} + \phi \left( -\frac{dS_{w}}{dp_{co}} + \frac{dS_{g}}{dp_{cg}} \right) + S_{o} \frac{\alpha - \phi}{K_{s}} S_{o} \right) \dot{p}_{o} +
+                                  \left( \phi \frac{dS_{w}}{dp_{co}} + S_{o} \frac{\alpha - \phi}{K_{s}} S_{w}\right)\dot{p}_{w} + 
+                                  \left( \phi \left( -\frac{dS_{g}}{dp_{cg}}\right) + S_{o}\frac{\alpha - \phi}{K_{s}} S_{g} \right) \dot{p}_{g} +  
+                                  S_{o} \alpha \dot{\epsilon_{v}} \\
+  \frac{\dot{m}_{g}}{\rho_{g}} &= \left(-\phi \frac{dS_{g}}{dP_{cg}} + S_{g} \frac{\alpha - \phi}{K_{s}} S_{o} \right) \dot{p}_{o} + 
+                                  \left(S_{g}\frac{\alpha - \phi}{K_{s}}S_{w}\right) \dot{p}_{w} + 
+                                  \left(\phi S_{g} c_{g} + S_{g} \frac{\alpha - \phi}{K_{s}}S_{g} + \phi \frac{dS_{g}}{dp_{cg}} \right) \dot{p}_{g} + 
+                                  S_{g} \alpha \dot{\epsilon_{v}} \\                                  
+\end{align}
+
+
+
+
+
+
+For ease of solution in the quasistatic case, we introduce a third
+variable in the form of volumetric strain ($\epsilon_v$).  The
+strong form of the problem may be expressed as
+\begin{gather}
+% Solution
+\vec{s}^{T} = \left(\vec{u} \quad p \quad \epsilon_v\right), \\
+% Elasticity
+\vec{f}(t) + \nabla \cdot \tensor{\sigma}(\vec{u},p_{E}) = \vec{0} \text{ in } \Omega, \\
+% Pressure
+\tensor{N} \dot{\vec{p}_{j}} + \vec{\alpha} \dot{\epsilon_{v}} +  \nabla \cdot \tensor{q}_{j} - \vec{\rho_{j}}\vec{\gamma}_{j} = 0 \text{ in } \Omega, \\
+% Vol. Strain
+\nabla \cdot \vec{u} - \epsilon_{v} = 0 \text{ in } \Omega, \\
+% Neumann traction
+\tensor{\sigma} \cdot \vec{n} = \vec{\tau}(\vec{x},t) \text{ on } \Gamma_{\tau}, \\
+% Dirichlet displacement
+\vec{u} = \vec{u}_0(\vec{x}, t) \text{ on } \Gamma_{u}, \\
+% Neumann flow
+\vec{q} \cdot \vec{n} = q_0(\vec{x}, t) \text{ on } \Gamma_{q}, \text{ and } \\
+% Dirichlet pressure
+p = p_0(\vec{x},t) \text{ on } \Gamma_{p}.
+\end{gather}
+We place all terms for the elasticity, pressure, an volumetric strain
+equations on the left-hand-side, consistent with PETSc TS implicit
+time stepping.
+
+%
+We create the weak form by taking the dot product with the trial
+functions $\trialvec[u]$, $\trialscalar[p]$, and
+$\trialscalar[\epsilon_{v}]$ and
+integrating over the domain:
+\begin{gather}
+% Weak conservation of momentum
+\int_\Omega \trialvec[u] \cdot \left( \vec{f}(\vec{x},t) + \tensor{\nabla} \cdot \tensor{\sigma} (\vec{u},p) \right) \, d\Omega = 0, \\
+% Weak conservation of mass
+\int_\Omega  \trialscalar[p] \left( \frac{\partial \zeta(\vec{u},p)}{\partial t} - \gamma(\vec{x},t) + \nabla \cdot \vec{q}(p)\right) \, d\Omega = 0,\\
+% Weak vol. strain
+\int_{\Omega} \trialscalar[\epsilon_{v}]\cdot \left( \nabla \cdot \vec{u} - \epsilon_v \right) \, d\Omega.
+\end{gather}
+%
+Applying the divergence theorem to the first two equations and
+incorporating the Neumann boundary conditions yields
+\begin{gather}
+% Weak conservation of momentum
+\int_\Omega \trialvec[u] \cdot \vec{f}(\vec{x},t) + \nabla \trialvec[u] : -\tensor{\sigma}(\vec{u},p_f) \,
+d\Omega + \int_{\Gamma_\tau} \trialvec[u] \cdot \vec{\tau}(\vec{x},t) \, d\Gamma = 0, \\
+% Weak conservation of mass
+\int_\Omega  \trialscalar[p] \left( \frac{\partial \zeta(\vec{u},p_f)}{\partial t} - \gamma(\vec{x},t)\right)
++ \nabla \trialscalar[p] \cdot \left(-\vec{q}(p_f)\right) \, d\Omega + \int_{\Gamma_q} \trialscalar[p] q_0(\vec{x},t))\, d\Gamma = 0, \text{ and } \\
+% Weak vol. strain
+\int_{\Omega} \trialscalar[\epsilon_{v}] \cdot \left(\nabla \cdot \vec{u} - \epsilon_{v} \right) d\Omega = 0
+\end{gather}
+
+\subsubsection{Residual Pointwise Functions}
+
+Identifying $F(t,s,\dot{s})$ and $G(t,s)$we have
+\begin{align}
+    % Displacement
+  F^u(t,s,\dot{s}) &= \int_\Omega \trialvec[u] \cdot \eqnannotate{\vec{f}(\vec{x},t)}{\vec{f}^u_0}
+                     + \nabla \trialvec[u] : \eqnannotate{-\tensor{\sigma}(\vec{u},p_f)}{\tensor{f}^u_1} \, d\Omega
+                     + \int_{\Gamma_\tau} \trialvec[u] \cdot \eqnannotate{\vec{\tau}(\vec{x},t)}{\vec{f}^u_0} \, d\Gamma, \\
+% Pressure
+  F^p(t,s,\dot{s}) &= \int_\Omega  \trialscalar[p] \left[\eqnannotate{\frac{\partial \zeta(\vec{u},p_f)}{\partial t} - \gamma(\vec{x},t)} {f^p_0}\right]
+                     + \nabla \trialscalar[p] \cdot \eqnannotate{-\vec{q}(p_f)}{\vec{f}^p_1} \, d\Omega
+                     + \int_{\Gamma_q} \trialscalar[p] (\eqnannotate{q_0(\vec{x},t)}{f^p_0}) \, d\Gamma, \\
+ % Volumetric Strain
+  F^{\epsilon_{v}}(t,s,\dot{s}) &= \int_{\Omega} \trialscalar[\epsilon_{v}] \cdot \eqnannotate{\left(\nabla \cdot \vec{u} - \epsilon_{v} \right)}{f^{\epsilon_{v}}_{0}} \, d\Omega. \\
+  G^u(t,s) &= 0, \\
+             G^p(t,s) &= 0, \\
+ G^{\epsilon_v} &= 0.
+\end{align}
+
