@@ -130,6 +130,8 @@ pylith::materials::AuxiliaryFactoryPoroelasticity::addPorosity(void)
     description.numComponents = 1;
     description.componentNames.resize(1);
     description.componentNames[0] = subfieldName;
+    description.hasHistory = true;
+    description.historySize = 1;    
     description.scale = noScale;
     description.validator = pylith::topology::FieldQuery::validatorNonnegative;
 

@@ -94,6 +94,30 @@ public:
      */
     pylith::materials::RheologyPoroelasticity* getBulkRheology(void) const;
 
+    /** Update porosity?
+     *
+     * @param[in] value Flag indicating to update the porosity value over time.
+     */
+    void updatePorosity(const bool value);
+
+    /** Update porosity?
+     *
+     * @param[in] value Flag indicating to update the porosity value over time.
+     */
+     bool updatePorosity(void) const;
+
+     /** Update permeability?
+      *
+      * @param[in] value Flag indicating to update the permeability value over time.
+      */
+     void updatePermeability(const bool value);
+
+     /** Update permeability?
+      *
+      * @param[in] value Flag indicating to update the permeability value over time.
+      */
+      bool updatePermeability(void) const;
+
     /** Verify configuration is acceptable.
      *
      * @param[in] solution Solution field.
@@ -199,6 +223,8 @@ private:
     bool _useBodyForce; ///< Flag to include body force term.
     bool _useReferenceState;   ///< Flag to use reference stress and strain.
     bool _useSourceDensity;   ///< Flag to use source density.
+    bool _updatePorosity;   ///< Flag to update porosity value.
+    bool _updatePermeability;   ///< Flag to update permeability value.    
     pylith::materials::RheologyPoroelasticity* _rheology; ///< Bulk rheology for elasticity.
     pylith::materials::DerivedFactoryElasticity* _derivedFactory; ///< Factory for creating derived fields.
 

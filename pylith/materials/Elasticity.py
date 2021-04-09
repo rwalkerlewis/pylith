@@ -24,7 +24,6 @@ from .materials import Elasticity as ModuleElasticity
 
 from .IsotropicLinearElasticity import IsotropicLinearElasticity
 
-
 class Elasticity(Material, ModuleElasticity):
     """
     Python material property manager.

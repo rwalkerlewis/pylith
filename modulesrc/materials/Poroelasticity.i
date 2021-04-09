@@ -72,6 +72,30 @@ public:
              */
             pylith::materials::RheologyPoroelasticity* getBulkRheology(void) const;
 
+            /** Update porosity?
+             *
+             * @param[in] value Flag indicating to update the porosity value over time.
+             */
+            void updatePorosity(const bool value);
+
+            /** Update porosity?
+             *
+             * @param[in] value Flag indicating to update the porosity value over time.
+             */
+             bool updatePorosity(void) const;
+
+             /** Update permeability?
+              *
+              * @param[in] value Flag indicating to update the permeability value over time.
+              */
+             void updatePermeability(const bool value);
+
+             /** Update permeability?
+              *
+              * @param[in] value Flag indicating to update the permeability value over time.
+              */
+              bool updatePermeability(void) const;
+
             /** Verify configuration is acceptable.
              *
              * @param[in] solution Solution field.
@@ -125,7 +149,7 @@ protected:
              *
              * @return Derived factory for physics object.
              */
-            pylith::topology::FieldFactory* _getDerivedFactory(void);            
+            pylith::topology::FieldFactory* _getDerivedFactory(void);
 
         }; // class Poroelasticity
 

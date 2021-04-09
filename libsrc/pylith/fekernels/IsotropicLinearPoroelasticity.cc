@@ -2113,6 +2113,113 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::cauchyStress_refsta
     stressVector[3] = stressTensor[0*_dim+1]; // stress_xy
 } // cauchyStress_refstate
 
+// ========================== Update Kernels ===================================
+
+// ---------------------------------------------------------------------------------------------------------------------
+/* Update porosity for a linear poroelastic material.
+ */
+void
+pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::updatePorosity(const PylithInt dim,
+                                                                     const PylithInt numS,
+                                                                     const PylithInt numA,
+                                                                     const PylithInt sOff[],
+                                                                     const PylithInt sOff_x[],
+                                                                     const PylithScalar s[],
+                                                                     const PylithScalar s_t[],
+                                                                     const PylithScalar s_x[],
+                                                                     const PylithInt aOff[],
+                                                                     const PylithInt aOff_x[],
+                                                                     const PylithScalar a[],
+                                                                     const PylithScalar a_t[],
+                                                                     const PylithScalar a_x[],
+                                                                     const PylithReal t,
+                                                                     const PylithScalar x[],
+                                                                     const PylithInt numConstants,
+                                                                     const PylithScalar constants[],
+                                                                     PylithScalar porosity[]) {
+   const PylithInt _dim = 2;
+
+   // Incoming solution fields.
+   const PylithInt i_pressure = 1;
+   const PylithInt i_trace_strain = 2;
+
+   // Incoming re-packed auxiliary field.
+
+   // Poroelasticity
+   const PylithInt i_porosity = 3;
+
+   // IsotropicLinearPoroelasticity
+   const PylithInt i_drainedBulkModulus = numA - 4;
+   const PylithInt i_biotCoefficient = numA - 3;
+
+   // Constants
+   const PylithScalar dt = constants[0];
+
+   // Do stuff
+   const PylithScalar pressure_t =s_t ? s_t[sOff[i_pressure]]: 0.0 ;
+   const PylithScalar trace_strain_t = s_t ? s_t[sOff[i_trace_strain]] : 0.0;
+   const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
+   const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
+
+   porosity[0] = a[aOff[i_porosity]];
+
+   // Update porosity
+   porosity[0] += dt * (biotCoefficient - porosity[0]) * trace_strain_t +
+                    ( (1.0 - biotCoefficient) * (biotCoefficient - porosity[0])) /
+                    drainedBulkModulus * pressure_t;
+} // updatePorosity
+
+// ---------------------------------------------------------------------------------------------------------------------
+/* Update permeability for a linear poroelastic material.
+ */
+void
+pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::updatePermeability(const PylithInt dim,
+                                                                     const PylithInt numS,
+                                                                     const PylithInt numA,
+                                                                     const PylithInt sOff[],
+                                                                     const PylithInt sOff_x[],
+                                                                     const PylithScalar s[],
+                                                                     const PylithScalar s_t[],
+                                                                     const PylithScalar s_x[],
+                                                                     const PylithInt aOff[],
+                                                                     const PylithInt aOff_x[],
+                                                                     const PylithScalar a[],
+                                                                     const PylithScalar a_t[],
+                                                                     const PylithScalar a_x[],
+                                                                     const PylithReal t,
+                                                                     const PylithScalar x[],
+                                                                     const PylithInt numConstants,
+                                                                     const PylithScalar constants[],
+                                                                     PylithScalar permeability[]) {
+   const PylithInt _dim = 2;
+
+   // Incoming solution fields.
+   const PylithInt i_pressure = 1;
+   const PylithInt i_trace_strain = 2;
+
+   // Incoming re-packed auxiliary field.
+
+   // Poroelasticity
+
+   // IsotropicLinearPoroelasticity
+   const PylithInt i_drainedBulkModulus = numA - 4;
+   const PylithInt i_biotCoefficient = numA - 3;
+   const PylithInt i_isotropicPerm = numA - 1;
+
+   // Constants
+   const PylithScalar dt = constants[0];
+
+   // Do stuff
+   const PylithScalar pressure_t = s_t[sOff[i_pressure]];
+   const PylithScalar trace_strain_t = s_t[sOff[i_trace_strain]];
+
+   const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
+   const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
+
+   // Update permeability
+   permeability[0] = a[aOff[i_isotropicPerm]];
+} // updatePermeability
+
 // =====================================================================================================================
 // Kernels for isotropic, linear poroelasticity in 3D.
 // =====================================================================================================================
@@ -4289,5 +4396,117 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::cauchyStress_refstate(const 
     stressVector[2] = stress_zz;
     stressVector[3] = stressTensor[0*_dim+1]; // stress_xy
 } // cauchyStress_refstate
+
+// ========================== Update Kernels ===================================
+
+// ---------------------------------------------------------------------------------------------------------------------
+/* Update porosity for a linear poroelastic material.
+ */
+void
+pylith::fekernels::IsotropicLinearPoroelasticity3D::updatePorosity(const PylithInt dim,
+                                                                     const PylithInt numS,
+                                                                     const PylithInt numA,
+                                                                     const PylithInt sOff[],
+                                                                     const PylithInt sOff_x[],
+                                                                     const PylithScalar s[],
+                                                                     const PylithScalar s_t[],
+                                                                     const PylithScalar s_x[],
+                                                                     const PylithInt aOff[],
+                                                                     const PylithInt aOff_x[],
+                                                                     const PylithScalar a[],
+                                                                     const PylithScalar a_t[],
+                                                                     const PylithScalar a_x[],
+                                                                     const PylithReal t,
+                                                                     const PylithScalar x[],
+                                                                     const PylithInt numConstants,
+                                                                     const PylithScalar constants[],
+                                                                     PylithScalar porosity[]) {
+   const PylithInt _dim = 3;
+
+   // Incoming solution fields.
+   const PylithInt i_disp = 0;
+   const PylithInt i_pressure = 1;
+   const PylithInt i_trace_strain = 2;
+
+   // Incoming re-packed auxiliary field.
+
+   // Poroelasticity
+   const PylithInt i_porosity = 3;
+
+   // IsotropicLinearPoroelasticity
+   const PylithInt i_drainedBulkModulus = numA - 4;
+   const PylithInt i_biotCoefficient = numA - 3;
+
+   // Constants
+   const PylithScalar dt = constants[0];
+
+   // Do stuff
+   const PylithScalar pressure_t = s_t[sOff[i_pressure]];
+   const PylithScalar trace_strain_t = s_t[sOff[i_trace_strain]];
+   const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
+   const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
+
+   porosity[0] = a[aOff[i_porosity]];
+
+   // Update porosity
+   porosity[0] += dt * (biotCoefficient - porosity[0]) * trace_strain_t +
+                    ( (1 - biotCoefficient) * (biotCoefficient - porosity[0])) /
+                    drainedBulkModulus * pressure_t;
+} // updatePorosity
+
+// ---------------------------------------------------------------------------------------------------------------------
+/* Update permeability for a linear poroelastic material.
+ */
+void
+pylith::fekernels::IsotropicLinearPoroelasticity3D::updatePermeability(const PylithInt dim,
+                                                                     const PylithInt numS,
+                                                                     const PylithInt numA,
+                                                                     const PylithInt sOff[],
+                                                                     const PylithInt sOff_x[],
+                                                                     const PylithScalar s[],
+                                                                     const PylithScalar s_t[],
+                                                                     const PylithScalar s_x[],
+                                                                     const PylithInt aOff[],
+                                                                     const PylithInt aOff_x[],
+                                                                     const PylithScalar a[],
+                                                                     const PylithScalar a_t[],
+                                                                     const PylithScalar a_x[],
+                                                                     const PylithReal t,
+                                                                     const PylithScalar x[],
+                                                                     const PylithInt numConstants,
+                                                                     const PylithScalar constants[],
+                                                                     PylithScalar permeability[]) {
+   const PylithInt _dim = 3;
+
+   // Incoming solution fields.
+   const PylithInt i_disp = 0;
+   const PylithInt i_pressure = 1;
+   const PylithInt i_trace_strain = 2;
+
+   // Incoming re-packed auxiliary field.
+
+   // Poroelasticity
+   const PylithInt i_porosity = 3;
+
+   // IsotropicLinearPoroelasticity
+   const PylithInt i_drainedBulkModulus = numA - 4;
+   const PylithInt i_biotCoefficient = numA - 3;
+   const PylithInt i_isotropicPerm = numA - 1;
+
+   // Constants
+   const PylithScalar dt = constants[0];
+
+   // Do stuff
+   const PylithScalar pressure_t = s_t[sOff[i_pressure]];
+   const PylithScalar trace_strain_t = s_t[sOff[i_trace_strain]];
+
+   const PylithScalar porosity_old = a[aOff[i_porosity]];
+   const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
+   const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
+
+   // Update permeability
+   permeability[0] = a[aOff[i_isotropicPerm]];
+} // updatePermeability
+
 
 // End of file

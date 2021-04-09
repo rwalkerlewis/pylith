@@ -163,8 +163,25 @@ public:
      */
     PetscPointFunc getKernelDerivedCauchyStress(const spatialdata::geocoords::CoordSys* coordsys) const;
 
-    };      // class IsotropicLinearPoroelasticity
+    /** Add kernels for updating state variables.
+     *
+     * @param[inout] kernels Array of kernels for updating state variables.
+     * @param[in] coordsys Coordinate system.
+     */
+    void addKernelsUpdateStateVars(std::vector<pylith::feassemble::IntegratorDomain::ProjectKernels>* kernels,
+                                   const spatialdata::geocoords::CoordSys* coordsys,
+                                   const bool _updatePorosity,
+                                   const bool _updatePermeability) const;
 
+    /** Update kernel constants.
+     *
+     * @param[inout] kernelConstants Array of constants used in integration kernels.
+     * @param[in] dt Current time step.
+     */
+    void updateKernelConstants(pylith::real_array* kernelConstants,
+                               const PylithReal dt) const;
+
+        };      // class IsotropicLinearPoroelasticity
     } // materials
 } // pylith
 

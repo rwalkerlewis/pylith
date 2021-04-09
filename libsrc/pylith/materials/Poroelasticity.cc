@@ -53,6 +53,8 @@ pylith::materials::Poroelasticity::Poroelasticity(void) :
     _useReferenceState(false),
     _useSourceDensity(false),
     _rheology(NULL),
+    _updatePorosity(false),
+    _updatePermeability(false),
     _derivedFactory(new pylith::materials::DerivedFactoryElasticity) {
     pylith::utils::PyreComponent::setName("poroelasticity");
 } // constructor
@@ -120,6 +122,40 @@ pylith::materials::Poroelasticity::setBulkRheology(pylith::materials::RheologyPo
 
     _rheology = rheology;
 } // setBulkRheology
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Update porosity?
+void
+pylith::materials::Poroelasticity::updatePorosity(const bool value) {
+    PYLITH_COMPONENT_DEBUG("updatePorosity(value="<<value<<")");
+
+    _updatePorosity = value;
+} // updatePorosity
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Update porosity?
+bool
+pylith::materials::Poroelasticity::updatePorosity(void) const {
+    return _updatePorosity;
+} // updatePorosity
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Update permeability?
+void
+pylith::materials::Poroelasticity::updatePermeability(const bool value) {
+    PYLITH_COMPONENT_DEBUG("updatePermeability(value="<<value<<")");
+
+    _updatePermeability = value;
+} // updatePermeability
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Update permeability?
+bool
+pylith::materials::Poroelasticity::updatePermeability(void) const {
+    return _updatePermeability;
+} // updatePermeability
 
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -654,7 +690,7 @@ pylith::materials::Poroelasticity::_setKernelsUpdateStateVars(pylith::feassemble
     assert(coordsys);
 
     std::vector<ProjectKernels> kernels;
-    _rheology->addKernelsUpdateStateVars(&kernels, coordsys);
+    _rheology->addKernelsUpdateStateVars(&kernels, coordsys, _updatePorosity, _updatePermeability);
 
     integrator->setKernelsUpdateStateVars(kernels);
 

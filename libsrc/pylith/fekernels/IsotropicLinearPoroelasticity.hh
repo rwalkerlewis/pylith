@@ -1039,6 +1039,54 @@ void cauchyStress_refstate(const PylithInt dim,
                            const PylithScalar constants[],
                            PylithScalar stress[]);
 
+// ========================== Update Kernels ===================================
+
+// ---------------------------------------------------------------------------------------------------------------------
+/* Update porosity for a linear poroelastic material.
+ */
+static
+void updatePorosity(const PylithInt dim,
+                     const PylithInt numS,
+                     const PylithInt numA,
+                     const PylithInt sOff[],
+                     const PylithInt sOff_x[],
+                     const PylithScalar s[],
+                     const PylithScalar s_t[],
+                     const PylithScalar s_x[],
+                     const PylithInt aOff[],
+                     const PylithInt aOff_x[],
+                     const PylithScalar a[],
+                     const PylithScalar a_t[],
+                     const PylithScalar a_x[],
+                     const PylithReal t,
+                     const PylithScalar x[],
+                     const PylithInt numConstants,
+                     const PylithScalar constants[],
+                     PylithScalar porosity[]);
+
+// ---------------------------------------------------------------------------------------------------------------------
+/* Update permeability for a linear poroelastic material.
+*/
+static
+void updatePermeability(const PylithInt dim,
+                          const PylithInt numS,
+                          const PylithInt numA,
+                          const PylithInt sOff[],
+                          const PylithInt sOff_x[],
+                          const PylithScalar s[],
+                          const PylithScalar s_t[],
+                          const PylithScalar s_x[],
+                          const PylithInt aOff[],
+                          const PylithInt aOff_x[],
+                          const PylithScalar a[],
+                          const PylithScalar a_t[],
+                          const PylithScalar a_x[],
+                          const PylithReal t,
+                          const PylithScalar x[],
+                          const PylithInt numConstants,
+                          const PylithScalar constants[],
+                          PylithScalar permeability[]);
+
 }; // IsotropicLinearPoroelasticityPlaneStrain
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -1365,7 +1413,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
               const PylithInt numConstants,
               const PylithScalar constants[],
               PylithScalar f1[]);
-              
+
       // -----------------------------------------------------------------------------
       /** f1p / darcy flow / including gravity
       *
@@ -2016,6 +2064,55 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
                                const PylithInt numConstants,
                                const PylithScalar constants[],
                                PylithScalar stress[]);
+
+// ========================== Update Kernels ===================================
+
+// ---------------------------------------------------------------------------------------------------------------------
+/* Update porosity for a linear poroelastic material.
+*/
+static
+void updatePorosity(const PylithInt dim,
+                    const PylithInt numS,
+                    const PylithInt numA,
+                    const PylithInt sOff[],
+                    const PylithInt sOff_x[],
+                    const PylithScalar s[],
+                    const PylithScalar s_t[],
+                    const PylithScalar s_x[],
+                    const PylithInt aOff[],
+                    const PylithInt aOff_x[],
+                    const PylithScalar a[],
+                    const PylithScalar a_t[],
+                    const PylithScalar a_x[],
+                    const PylithReal t,
+                    const PylithScalar x[],
+                    const PylithInt numConstants,
+                    const PylithScalar constants[],
+                    PylithScalar porosity[]);
+
+// ---------------------------------------------------------------------------------------------------------------------
+/* Update permeability for a linear poroelastic material.
+*/
+static
+void updatePermeability(const PylithInt dim,
+                         const PylithInt numS,
+                         const PylithInt numA,
+                         const PylithInt sOff[],
+                         const PylithInt sOff_x[],
+                         const PylithScalar s[],
+                         const PylithScalar s_t[],
+                         const PylithScalar s_x[],
+                         const PylithInt aOff[],
+                         const PylithInt aOff_x[],
+                         const PylithScalar a[],
+                         const PylithScalar a_t[],
+                         const PylithScalar a_x[],
+                         const PylithReal t,
+                         const PylithScalar x[],
+                         const PylithInt numConstants,
+                         const PylithScalar constants[],
+                         PylithScalar permeability[]);
+
 }; // IsotropicLinearPoroelasticity3D
 
 #endif // pylith_fekernels_isotropiclinearporoelasticity_hh

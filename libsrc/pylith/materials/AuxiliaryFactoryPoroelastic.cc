@@ -61,6 +61,8 @@ pylith::materials::AuxiliaryFactoryPoroelastic::addIsotropicPermeability(void)
     description.vectorFieldType = pylith::topology::Field::SCALAR;
     description.numComponents = 1;
     description.componentNames.resize(1);
+    description.hasHistory = true;
+    description.historySize = 1;
     description.componentNames[0] = subfieldName;
     description.scale = permeabilityScale;
     description.validator = NULL;
@@ -98,6 +100,8 @@ pylith::materials::AuxiliaryFactoryPoroelastic::addTensorPermeability(void)
     description.vectorFieldType = pylith::topology::Field::OTHER;
     description.numComponents = tensorSize;
     description.componentNames.resize(tensorSize);
+    description.hasHistory = true;
+    description.historySize = 1;
     for (int i = 0; i < tensorSize; ++i) {
         description.componentNames[i] = componentNames[i];
     } // for

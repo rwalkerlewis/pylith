@@ -46,9 +46,18 @@ class Poroelasticity(Material, ModulePoroelasticity):
     useBodyForce = pythia.pyre.inventory.bool("use_body_force", default=False)
     useBodyForce.meta['tip'] = "Include body force term in Poroelasticity equation."
 
+    useSourceDensity = pythia.pyre.inventory.bool("use_source_density", default=False)
+    useSourceDensity.meta['tip'] = "Include source density term in Poroelasticity equation."
+
     rheology = pythia.pyre.inventory.facility(
         "bulk_rheology", family="poroelasticity_rheology", factory=IsotropicLinearPoroelasticity)
     rheology.meta['tip'] = "Bulk rheology for poroelastic material."
+
+    updatePorosity = pythia.pyre.inventory.bool("update_porosity", default=False)
+    updatePorosity.meta['tip'] = "Update porosity term with run."
+
+    updatePermeability = pythia.pyre.inventory.bool("update_permeability", default=False)
+    updatePermeability.meta['tip'] = "Update permeability term with run."
 
     # PUBLIC METHODS /////////////////////////////////////////////////////
 
@@ -76,6 +85,10 @@ class Poroelasticity(Material, ModulePoroelasticity):
         self.rheology.addAuxiliarySubfields(self, problem)
 
         ModulePoroelasticity.useBodyForce(self, self.useBodyForce)
+        ModulePoroelasticity.useSourceDensity(self, self.useSourceDensity)
+        ModulePoroelasticity.updatePorosity(self, self.updatePorosity)
+        ModulePoroelasticity.updatePermeability(self, self.updatePermeability)
+        
         return
 
     def _createModuleObj(self):

@@ -157,7 +157,9 @@ public:
        */
       virtual
       void addKernelsUpdateStateVars(std::vector<pylith::feassemble::IntegratorDomain::ProjectKernels>* kernels,
-                                     const spatialdata::geocoords::CoordSys* coordsys) const;
+                                     const spatialdata::geocoords::CoordSys* coordsys,
+                                     const bool _updatePorosity,
+                                     const bool _updatePermeability) const;
 
       /** Update kernel constants.
        *
