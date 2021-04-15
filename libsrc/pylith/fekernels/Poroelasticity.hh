@@ -56,8 +56,11 @@ public:
      * @param[in] constants Array of registered constants.
      * @param[out] Storage coefficient at constant strain.
      */
+     // =============================================================================
+     // Velocity
+     // =============================================================================
     static
-    void f0v(const PylithInt dim,
+    void f0v_implicit(const PylithInt dim,
                   const PylithInt numS,
                   const PylithInt numA,
                   const PylithInt sOff[],
@@ -75,6 +78,27 @@ public:
                   const PylithInt numConstants,
                   const PylithScalar constants[],
                   PylithScalar g0[]);
+
+  // ----------------------------------------------------------------------
+  static
+  void f0v_explicit(const PylithInt dim,
+                const PylithInt numS,
+                const PylithInt numA,
+                const PylithInt sOff[],
+                const PylithInt sOff_x[],
+                const PylithScalar s[],
+                const PylithScalar s_t[],
+                const PylithScalar s_x[],
+                const PylithInt aOff[],
+                const PylithInt aOff_x[],
+                const PylithScalar a[],
+                const PylithScalar a_t[],
+                const PylithScalar a_x[],
+                const PylithReal t,
+                const PylithScalar x[],
+                const PylithInt numConstants,
+                const PylithScalar constants[],
+                PylithScalar g0[]);
 
   // =============================================================================
   // Volumetric Strain
@@ -99,7 +123,52 @@ public:
                 const PylithScalar x[],
                 const PylithInt numConstants,
                 const PylithScalar constants[],
-                PylithScalar f0e[]);
+                PylithScalar f0[]);
+
+    // =============================================================================
+    // Time Derivative of Pressure
+    // =============================================================================
+    // ----------------------------------------------------------------------
+    static
+    void f0pdot(const PylithInt dim,
+             const PylithInt numS,
+             const PylithInt numA,
+             const PylithInt sOff[],
+             const PylithInt sOff_x[],
+             const PylithScalar s[],
+             const PylithScalar s_t[],
+             const PylithScalar s_x[],
+             const PylithInt aOff[],
+             const PylithInt aOff_x[],
+             const PylithScalar a[],
+             const PylithScalar a_t[],
+             const PylithScalar a_x[],
+             const PylithReal t,
+             const PylithScalar x[],
+             const PylithInt numConstants,
+             const PylithScalar constants[],
+             PylithScalar f0[]);
+
+     // ----------------------------------------------------------------------
+     static
+     void f0edot(const PylithInt dim,
+              const PylithInt numS,
+              const PylithInt numA,
+              const PylithInt sOff[],
+              const PylithInt sOff_x[],
+              const PylithScalar s[],
+              const PylithScalar s_t[],
+              const PylithScalar s_x[],
+              const PylithInt aOff[],
+              const PylithInt aOff_x[],
+              const PylithScalar a[],
+              const PylithScalar a_t[],
+              const PylithScalar a_x[],
+              const PylithReal t,
+              const PylithScalar x[],
+              const PylithInt numConstants,
+              const PylithScalar constants[],
+              PylithScalar f0[]);
 
 /* -------------------------------------------------------------------------- */
 /*                           RHS Residuals                                    */
@@ -130,7 +199,7 @@ public:
                        const PylithScalar x[],
                        const PylithInt numConstants,
                        const PylithScalar constants[],
-                       PylithScalar g0u[]);
+                       PylithScalar g0[]);
 
 // ---------------------------------------------------------------------------------------------------------------------
 // g0v_grav - g0 function for generic poroelasticity terms ( + grav body forces).
@@ -333,7 +402,7 @@ public:
                   const PylithScalar a_t[],
                   const PylithScalar a_x[],
                   const PylithReal t,
-                  const PylithReal utshift,
+                  const PylithReal s_tshift,
                   const PylithScalar x[],
                   const PylithInt numConstants,
                   const PylithScalar constants[],
@@ -356,16 +425,63 @@ public:
                   const PylithScalar a_t[],
                   const PylithScalar a_x[],
                   const PylithReal t,
-                  const PylithReal utshift,
+                  const PylithReal s_tshift,
                   const PylithScalar x[],
                   const PylithInt numConstants,
                   const PylithScalar constants[],
                   PylithScalar Jf1[]);
 
+  // ---------------------------------------------------------------------------------------------------------------------
+  // Jf0vu function for poroelasticity equation, quasistatic.
+      static
+      void Jf0vu_implicit(const PylithInt dim,
+                 const PylithInt numS,
+                 const PylithInt numA,
+                 const PylithInt sOff[],
+                 const PylithInt sOff_x[],
+                 const PylithScalar s[],
+                 const PylithScalar s_t[],
+                 const PylithScalar s_x[],
+                 const PylithInt aOff[],
+                 const PylithInt aOff_x[],
+                 const PylithScalar a[],
+                 const PylithScalar a_t[],
+                 const PylithScalar a_x[],
+                 const PylithReal t,
+                 const PylithReal s_tshift,
+                 const PylithScalar x[],
+                 const PylithInt numConstants,
+                 const PylithScalar constants[],
+                 PylithScalar Jf0[]);
+
+ // ---------------------------------------------------------------------------------------------------------------------
+ // Jf0vv function for poroelasticity equation, dynamic
+     static
+     void Jf0vv_explicit(const PylithInt dim,
+                const PylithInt numS,
+                const PylithInt numA,
+                const PylithInt sOff[],
+                const PylithInt sOff_x[],
+                const PylithScalar s[],
+                const PylithScalar s_t[],
+                const PylithScalar s_x[],
+                const PylithInt aOff[],
+                const PylithInt aOff_x[],
+                const PylithScalar a[],
+                const PylithScalar a_t[],
+                const PylithScalar a_x[],
+                const PylithReal t,
+                const PylithReal s_tshift,
+                const PylithScalar x[],
+                const PylithInt numConstants,
+                const PylithScalar constants[],
+                PylithScalar Jf0[]);
+
+
 // ---------------------------------------------------------------------------------------------------------------------
-// Jf0 function for poroelasticity equation.
+// Jf0vv function for poroelasticity equation, quasistatic.
     static
-    void Jf0vv(const PylithInt dim,
+    void Jf0vv_implicit(const PylithInt dim,
                const PylithInt numS,
                const PylithInt numA,
                const PylithInt sOff[],
@@ -384,6 +500,99 @@ public:
                const PylithInt numConstants,
                const PylithScalar constants[],
                PylithScalar Jf0[]);
+
+   // ---------------------------------------------------------------------------------------------------------------------
+   // Jf0pdotp function for poroelasticity equation, quasistatic.
+   static
+   void Jf0pdotp(const PylithInt dim,
+       const PylithInt numS,
+       const PylithInt numA,
+       const PylithInt sOff[],
+       const PylithInt sOff_x[],
+       const PylithScalar s[],
+       const PylithScalar s_t[],
+       const PylithScalar s_x[],
+       const PylithInt aOff[],
+       const PylithInt aOff_x[],
+       const PylithScalar a[],
+       const PylithScalar a_t[],
+       const PylithScalar a_x[],
+       const PylithReal t,
+       const PylithReal s_tshift,
+       const PylithScalar x[],
+       const PylithInt numConstants,
+       const PylithScalar constants[],
+       PylithScalar Jf0[]);
+
+    // ---------------------------------------------------------------------------------------------------------------------
+    // Jf0pdotpdot function for poroelasticity equation, quasistatic.
+      static
+      void Jf0pdotpdot(const PylithInt dim,
+                 const PylithInt numS,
+                 const PylithInt numA,
+                 const PylithInt sOff[],
+                 const PylithInt sOff_x[],
+                 const PylithScalar s[],
+                 const PylithScalar s_t[],
+                 const PylithScalar s_x[],
+                 const PylithInt aOff[],
+                 const PylithInt aOff_x[],
+                 const PylithScalar a[],
+                 const PylithScalar a_t[],
+                 const PylithScalar a_x[],
+                 const PylithReal t,
+                 const PylithReal s_tshift,
+                 const PylithScalar x[],
+                 const PylithInt numConstants,
+                 const PylithScalar constants[],
+                 PylithScalar Jf0[]);
+
+ // ---------------------------------------------------------------------------------------------------------------------
+ // Jf0edote function for poroelasticity equation, quasistatic.
+ static
+ void Jf0edote(const PylithInt dim,
+     const PylithInt numS,
+     const PylithInt numA,
+     const PylithInt sOff[],
+     const PylithInt sOff_x[],
+     const PylithScalar s[],
+     const PylithScalar s_t[],
+     const PylithScalar s_x[],
+     const PylithInt aOff[],
+     const PylithInt aOff_x[],
+     const PylithScalar a[],
+     const PylithScalar a_t[],
+     const PylithScalar a_x[],
+     const PylithReal t,
+     const PylithReal s_tshift,
+     const PylithScalar x[],
+     const PylithInt numConstants,
+     const PylithScalar constants[],
+     PylithScalar Jf0[]);
+
+  // ---------------------------------------------------------------------------------------------------------------------
+  // Jf0edotedot function for poroelasticity equation, quasistatic.
+    static
+    void Jf0edotedot(const PylithInt dim,
+               const PylithInt numS,
+               const PylithInt numA,
+               const PylithInt sOff[],
+               const PylithInt sOff_x[],
+               const PylithScalar s[],
+               const PylithScalar s_t[],
+               const PylithScalar s_x[],
+               const PylithInt aOff[],
+               const PylithInt aOff_x[],
+               const PylithScalar a[],
+               const PylithScalar a_t[],
+               const PylithScalar a_x[],
+               const PylithReal t,
+               const PylithReal s_tshift,
+               const PylithScalar x[],
+               const PylithInt numConstants,
+               const PylithScalar constants[],
+               PylithScalar Jf0[]);
+
 }; // Poroelasticity
 
 // ---------------------------------------------------------------------------------------------------------------------

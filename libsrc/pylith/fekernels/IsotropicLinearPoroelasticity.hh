@@ -20,7 +20,7 @@
  *
  * Kernels for linear poroelasticity plane strain.
  *
- * Solution fields: [disp(dim), pressure(1),trace_strain(1) ] (QS)
+ * Solution fields: [disp(dim), pressure(1),trace_strain(1), velocity(dim), pressure_t(1), trace_strain_t(1)] (QS)
  * OR
  * Solution fields: [disp(dim), pressure(1),velocity(dim) ] (QS)
  *
@@ -700,6 +700,60 @@ void Jf0pe(const PylithInt dim,
            const PylithInt numConstants,
            const PylithScalar constants[],
            PylithScalar Jf0[]);
+
+// ----------------------------------------------------------------------
+/** Jf0_ppdot entry function for isotropic linear poroelasticity.
+*
+* Solution fields: [...]
+* Auxiliary fields: [density(1), shear_modulus(1), bulk_modulus(1), other poroelastic related param ...]
+*/
+static
+void Jf0ppdot(const PylithInt dim,
+          const PylithInt numS,
+          const PylithInt numA,
+          const PylithInt sOff[],
+          const PylithInt sOff_x[],
+          const PylithScalar s[],
+          const PylithScalar s_t[],
+          const PylithScalar s_x[],
+          const PylithInt aOff[],
+          const PylithInt aOff_x[],
+          const PylithScalar a[],
+          const PylithScalar a_t[],
+          const PylithScalar a_x[],
+          const PylithReal t,
+          const PylithReal utshift,
+          const PylithScalar x[],
+          const PylithInt numConstants,
+          const PylithScalar constants[],
+          PylithScalar Jf0[]);
+
+  // ----------------------------------------------------------------------
+  /** Jf0_pedot entry function for isotropic linear poroelasticity.
+  *
+  * Solution fields: [...]
+  * Auxiliary fields: [density(1), shear_modulus(1), bulk_modulus(1), other poroelastic related param ...]
+  */
+  static
+  void Jf0pedot(const PylithInt dim,
+            const PylithInt numS,
+            const PylithInt numA,
+            const PylithInt sOff[],
+            const PylithInt sOff_x[],
+            const PylithScalar s[],
+            const PylithScalar s_t[],
+            const PylithScalar s_x[],
+            const PylithInt aOff[],
+            const PylithInt aOff_x[],
+            const PylithScalar a[],
+            const PylithScalar a_t[],
+            const PylithScalar a_x[],
+            const PylithReal t,
+            const PylithReal utshift,
+            const PylithScalar x[],
+            const PylithInt numConstants,
+            const PylithScalar constants[],
+            PylithScalar Jf0[]);
 
 
 // ============================== RHS Residual =================================
@@ -1727,6 +1781,59 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
                const PylithScalar constants[],
                PylithScalar Jf0[]);
 
+   // ----------------------------------------------------------------------
+   /** Jf0_ppdot entry function for isotropic linear poroelasticity.
+   *
+   * Solution fields: [...]
+   * Auxiliary fields: [density(1), shear_modulus(1), bulk_modulus(1), other poroelastic related param ...]
+   */
+   static
+   void Jf0ppdot(const PylithInt dim,
+             const PylithInt numS,
+             const PylithInt numA,
+             const PylithInt sOff[],
+             const PylithInt sOff_x[],
+             const PylithScalar s[],
+             const PylithScalar s_t[],
+             const PylithScalar s_x[],
+             const PylithInt aOff[],
+             const PylithInt aOff_x[],
+             const PylithScalar a[],
+             const PylithScalar a_t[],
+             const PylithScalar a_x[],
+             const PylithReal t,
+             const PylithReal utshift,
+             const PylithScalar x[],
+             const PylithInt numConstants,
+             const PylithScalar constants[],
+             PylithScalar Jf0[]);
+
+     // ----------------------------------------------------------------------
+     /** Jf0_pedot entry function for isotropic linear poroelasticity.
+     *
+     * Solution fields: [...]
+     * Auxiliary fields: [density(1), shear_modulus(1), bulk_modulus(1), other poroelastic related param ...]
+     */
+     static
+     void Jf0pedot(const PylithInt dim,
+               const PylithInt numS,
+               const PylithInt numA,
+               const PylithInt sOff[],
+               const PylithInt sOff_x[],
+               const PylithScalar s[],
+               const PylithScalar s_t[],
+               const PylithScalar s_x[],
+               const PylithInt aOff[],
+               const PylithInt aOff_x[],
+               const PylithScalar a[],
+               const PylithScalar a_t[],
+               const PylithScalar a_x[],
+               const PylithReal t,
+               const PylithReal utshift,
+               const PylithScalar x[],
+               const PylithInt numConstants,
+               const PylithScalar constants[],
+               PylithScalar Jf0[]);
 
     // ============================== RHS Residual =================================
 

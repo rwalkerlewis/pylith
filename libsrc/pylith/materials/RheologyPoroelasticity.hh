@@ -155,6 +155,14 @@ public:
     virtual
     PetscPointJac getKernelJf0pe(const spatialdata::geocoords::CoordSys* coordsys) const = 0;
 
+    // ---------------------------------------------------------------------------------------------------------------------
+    virtual
+    PetscPointJac getKernelJf0ppdot(const spatialdata::geocoords::CoordSys* coordsys) const = 0;
+
+    // ---------------------------------------------------------------------------------------------------------------------
+    virtual
+    PetscPointJac getKernelJf0pedot(const spatialdata::geocoords::CoordSys* coordsys) const = 0;
+
     // ============================ DERIVED FIELDS ========================== //
 
     /** Get stress kernel for derived field.

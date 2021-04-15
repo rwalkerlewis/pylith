@@ -38,6 +38,9 @@ class SolnDispPresTracStrain(PetscComponent):
       - *displacement* Displacement subfield.
       - *pressure* Pressure subfield.
       - *trace_strain* TraceStrain subfield.
+      - *velocity* Velocity subfield.
+      - *pressure_t* Pressure_t subfield.
+      - *trace_strain_t* TraceStrain_t subfield.
     """
 
     import pythia.pyre.inventory
@@ -53,9 +56,24 @@ class SolnDispPresTracStrain(PetscComponent):
     pressure.meta['tip'] = "Pressure subfield."
 
     from .SubfieldTraceStrain import SubfieldTraceStrain
-    traceStrain = pythia.pyre.inventory.facility(
+    trace_strain = pythia.pyre.inventory.facility(
         "trace_strain", family="soln_subfield", factory=SubfieldTraceStrain)
-    traceStrain.meta['tip'] = "Trace strain subfield."
+    trace_strain.meta['tip'] = "Trace strain subfield."
+
+    from .SubfieldVelocity import SubfieldVelocity
+    velocity = pythia.pyre.inventory.facility(
+        "velocity", family="soln_subfield", factory=SubfieldVelocity)
+    velocity.meta['tip'] = "Velocity subfield."
+
+    from .SubfieldPressure_t import SubfieldPressure_t
+    pressure_t = pythia.pyre.inventory.facility(
+        "pressure_t", family="soln_subfield", factory=SubfieldPressure_t)
+    pressure_t.meta['tip'] = "Pressure_t subfield."
+
+    from .SubfieldTraceStrain_t import SubfieldTraceStrain_t
+    trace_strain_t = pythia.pyre.inventory.facility(
+        "trace_strain_t", family="soln_subfield", factory=SubfieldTraceStrain_t)
+    trace_strain_t.meta['tip'] = "Trace strain_t subfield."
 
     # PUBLIC METHODS /////////////////////////////////////////////////////
 
@@ -73,10 +91,10 @@ class SolnDispPresTracStrain(PetscComponent):
     def components(self):
         """
         Order of facilities in Inventory is ambiguous, so overwrite
-        components() to insure order is [displacement, pressure, trace_strain].
+        components() to insure order is [displacement, pressure, trace_strain, velocity, pressure_t, trace_strain_t].
 
         """
-        return [self.displacement, self.pressure, self.traceStrain]
+        return [self.displacement, self.pressure, self.trace_strain, self.velocity, self.pressure_t, self.trace_strain_t]
 
 
 class Solution(SolutionBase):
