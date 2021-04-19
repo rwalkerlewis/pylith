@@ -276,7 +276,7 @@ pylith::fekernels::Poroelasticity::g0v_grav(const PylithInt dim,
                                    const PylithScalar x[],
                                    const PylithInt numConstants,
                                    const PylithScalar constants[],
-                                   PylithScalar g0v[]) {
+                                   PylithScalar g0[]) {
 
     // Incoming auxililary fields.
 
@@ -292,7 +292,7 @@ pylith::fekernels::Poroelasticity::g0v_grav(const PylithInt dim,
     const PylithScalar* gravityField = &a[aOff[i_gravityField]];
 
     for (PylithInt i = 0; i < dim; ++i) {
-        g0v[i] += bulkDensity * gravityField[i];
+        g0[i] += bulkDensity * gravityField[i];
     } // for
 
 } // g0v_grav
@@ -317,7 +317,7 @@ pylith::fekernels::Poroelasticity::g0v_bodyforce(const PylithInt dim,
                                    const PylithScalar x[],
                                    const PylithInt numConstants,
                                    const PylithScalar constants[],
-                                   PylithScalar g0v[]) {
+                                   PylithScalar g0[]) {
 
   // Incoming auxiliary fields
 
@@ -329,7 +329,7 @@ pylith::fekernels::Poroelasticity::g0v_bodyforce(const PylithInt dim,
   const PylithScalar* bodyForce = &a[aOff[i_bodyForce]];
 
   for (PylithInt i = 0; i < dim; ++i) {
-    g0v[i] += bodyForce[i];
+    g0[i] += bodyForce[i];
   } // for
 } // g0v_bodyforce
 
@@ -354,7 +354,7 @@ pylith::fekernels::Poroelasticity::g0v_grav_bodyforce(const PylithInt dim,
                                                      const PylithScalar x[],
                                                      const PylithInt numConstants,
                                                      const PylithScalar constants[],
-                                                     PylithScalar g0v[]) {
+                                                     PylithScalar g0[]) {
 
     // Incoming auxiliary fields.
 
@@ -373,12 +373,12 @@ pylith::fekernels::Poroelasticity::g0v_grav_bodyforce(const PylithInt dim,
 
     // gravity field
     for (PylithInt i = 0; i < dim; ++i) {
-        g0v[i] += bulkDensity * gravityField[i];
+        g0[i] += bulkDensity * gravityField[i];
     } // for
 
     // body force
     for (PylithInt i = 0; i < dim; ++i) {
-      g0v[i] += bodyForce[i];
+      g0[i] += bodyForce[i];
     } // for
 } // g0v_gravbodyforce
 
@@ -406,7 +406,7 @@ pylith::fekernels::Poroelasticity::g0p_source(const PylithInt dim,
                                              const PylithScalar x[],
                                              const PylithInt numConstants,
                                              const PylithScalar constants[],
-                                             PylithScalar g0p[]) {
+                                             PylithScalar g0[]) {
     // Incoming auxiliary fields.
 
     // Poroelasticity
@@ -415,7 +415,7 @@ pylith::fekernels::Poroelasticity::g0p_source(const PylithInt dim,
     const PylithScalar* sourceDensity = &a[aOff[i_sourceDensity]];
 
     for (PylithInt i = 0; i < dim; ++i) {
-        g0p[i] += sourceDensity[i];
+        g0[i] += sourceDensity[i];
     } // for
 } // g0p_source
 
@@ -439,7 +439,7 @@ pylith::fekernels::Poroelasticity::g0p_sourceDensity(const PylithInt dim,
                                                                        const PylithScalar x[],
                                                                        const PylithInt numConstants,
                                                                        const PylithScalar constants[],
-                                                                       PylithScalar g0p[]) {
+                                                                       PylithScalar g0[]) {
 
     // Incoming auxiliary fields.
 
@@ -457,7 +457,7 @@ pylith::fekernels::Poroelasticity::g0p_sourceDensity(const PylithInt dim,
     pylith::fekernels::Poroelasticity::g0p_source(dim, _numS, numASource,
                                                  NULL, NULL, NULL, NULL, NULL,
                                                  aOffSource, aOffSource_x, a, a_t, a_x,
-                                                 t, x, numConstants, constants, g0p);
+                                                 t, x, numConstants, constants, g0);
 } // g0p_sourceDensity
 
 
@@ -482,7 +482,7 @@ pylith::fekernels::Poroelasticity::g0p_sourceDensity_grav(const PylithInt dim,
                                                                        const PylithScalar x[],
                                                                        const PylithInt numConstants,
                                                                        const PylithScalar constants[],
-                                                                       PylithScalar g0p[]) {
+                                                                       PylithScalar g0[]) {
 
     // Incoming auxiliary fields.
 
@@ -500,7 +500,7 @@ pylith::fekernels::Poroelasticity::g0p_sourceDensity_grav(const PylithInt dim,
     pylith::fekernels::Poroelasticity::g0p_source(dim, _numS, numASource,
                                                  NULL, NULL, NULL, NULL, NULL,
                                                  aOffSource, aOffSource_x, a, a_t, a_x,
-                                                 t, x, numConstants, constants, g0p);
+                                                 t, x, numConstants, constants, g0);
 } // g0p_sourceDensity_grav
 
 // ------------------------------------------------------------------------------
@@ -523,7 +523,7 @@ pylith::fekernels::Poroelasticity::g0p_sourceDensity_body(const PylithInt dim,
                                                                        const PylithScalar x[],
                                                                        const PylithInt numConstants,
                                                                        const PylithScalar constants[],
-                                                                       PylithScalar g0p[]) {
+                                                                       PylithScalar g0[]) {
 
     // Incoming auxiliary fields.
 
@@ -541,7 +541,7 @@ pylith::fekernels::Poroelasticity::g0p_sourceDensity_body(const PylithInt dim,
     pylith::fekernels::Poroelasticity::g0p_source(dim, _numS, numASource,
                                                  NULL, NULL, NULL, NULL, NULL,
                                                  aOffSource, aOffSource_x, a, a_t, a_x,
-                                                 t, x, numConstants, constants, g0p);
+                                                 t, x, numConstants, constants, g0);
 } // g0p_sourceDensity_body
 
 
@@ -565,7 +565,7 @@ pylith::fekernels::Poroelasticity::g0p_sourceDensity_grav_body(const PylithInt d
                                                                        const PylithScalar x[],
                                                                        const PylithInt numConstants,
                                                                        const PylithScalar constants[],
-                                                                       PylithScalar g0p[]) {
+                                                                       PylithScalar g0[]) {
 
 
 
@@ -587,7 +587,7 @@ pylith::fekernels::Poroelasticity::g0p_sourceDensity_grav_body(const PylithInt d
     pylith::fekernels::Poroelasticity::g0p_source(dim, _numS, numASource,
                                                  NULL, NULL, NULL, NULL, NULL,
                                                  aOffSource, aOffSource_x, a, a_t, a_x,
-                                                 t, x, numConstants, constants, g0p);
+                                                 t, x, numConstants, constants, g0);
 } // g0p_sourceDensity_grav_body
 
 /* -------------------------------------------------------------------------- */
@@ -620,7 +620,7 @@ pylith::fekernels::Poroelasticity::Jf0ee(const PylithInt dim,
     assert(aOff);
     assert(a);
 
-    Jf0[0] = -1.0;
+    Jf0[0] -= 1.0;
 } // Jg0ee
 
 // -----------------------------------------------------------------------------
@@ -647,7 +647,7 @@ pylith::fekernels::Poroelasticity::Jf1eu(const PylithInt dim,
                                                 PylithScalar Jf1[]) {
 
     for (PylithInt d = 0; d < dim; ++d) {
-        Jf1[d*dim+d] = 1.0;
+        Jf1[d*dim+d] += 1.0;
     } // for
 } // Jf1eu
 

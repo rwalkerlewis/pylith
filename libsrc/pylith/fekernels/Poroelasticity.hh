@@ -221,7 +221,7 @@ public:
                             const PylithScalar x[],
                             const PylithInt numConstants,
                             const PylithScalar constants[],
-                            PylithScalar g0v[]);
+                            PylithScalar g0[]);
 
 // ---------------------------------------------------------------------------------------------------------------------
 // g0v_bodyforce - g0 function for generic poroelasticity terms ( + body forces).
@@ -243,7 +243,7 @@ public:
                    const PylithScalar x[],
                    const PylithInt numConstants,
                    const PylithScalar constants[],
-                   PylithScalar g0v[]);
+                   PylithScalar g0[]);
 
 // ----------------------------------------------------------------------
 //g0v_gravbodyforce - g0 function for isotropic linear Poroelasticity with both gravity and body forces.
@@ -265,7 +265,7 @@ public:
                             const PylithScalar x[],
                             const PylithInt numConstants,
                             const PylithScalar constants[],
-                            PylithScalar g0v[]);
+                            PylithScalar g0[]);
 
 // =============================================================================
 // Pressure
@@ -291,7 +291,7 @@ public:
                      const PylithScalar x[],
                      const PylithInt numConstants,
                      const PylithScalar constants[],
-                     PylithScalar g0p[]);
+                     PylithScalar g0[]);
 
 // ----------------------------------------------------------------------
 //g0p_sourceDensity - g0p function for generic poroelasticity terms (source density).
@@ -313,7 +313,7 @@ public:
                                       const PylithScalar x[],
                                       const PylithInt numConstants,
                                       const PylithScalar constants[],
-                                      PylithScalar g0p[]);
+                                      PylithScalar g0[]);
 
      // ------------------------------------------------------------------------------
      // g0p function for isotropic linear Poroelasticity plane strain with source density, gravity
@@ -335,7 +335,7 @@ public:
                                       const PylithScalar x[],
                                       const PylithInt numConstants,
                                       const PylithScalar constants[],
-                                      PylithScalar g0p[]);
+                                      PylithScalar g0[]);
 
      // ------------------------------------------------------------------------------
      // g0p function for isotropic linear Poroelasticity plane strain with source density, and body force.
@@ -357,7 +357,7 @@ public:
                                       const PylithScalar x[],
                                       const PylithInt numConstants,
                                       const PylithScalar constants[],
-                                      PylithScalar g0p[]);
+                                      PylithScalar g0[]);
 
       // ------------------------------------------------------------------------------
       // g0p function for isotropic linear Poroelasticity plane strain with source density, gravity, and body force.
@@ -379,7 +379,7 @@ public:
                                        const PylithScalar x[],
                                        const PylithInt numConstants,
                                        const PylithScalar constants[],
-                                       PylithScalar g0p[]);
+                                       PylithScalar g0[]);
 
 /* -------------------------------------------------------------------------- */
 /*                           LHS Jacobian                                     */
