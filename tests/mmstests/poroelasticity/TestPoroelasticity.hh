@@ -67,7 +67,8 @@ protected:
 protected:
 
     pylith::materials::Poroelasticity* _material; ///< Material for testing.
-    pylith::bc::DirichletUserFn* _bc; ///< Dirichlet boundary condition.
+    pylith::bc::DirichletUserFn* _bcDisp; ///< Dirichlet boundary condition, Displacement.
+    pylith::bc::DirichletUserFn* _bcPres; ///< Dirichlet boundary condition, Pressure.    
     TestPoroelasticity_Data* _data; ///< Test parameters.
 
 }; // class TestPoroelasticity

@@ -18,11 +18,7 @@ include $(top_srcdir)/subpackage.am
 include $(top_srcdir)/check.am
 
 TESTS = \
-	test_isotropiclinearporoelasticity2d \
-	test_isotropiclinearporoelasticity3d_uniformstrain \
-	test_isotropiclinearporoelasticity3d_gravity \
-	test_isotropiclinearporoelasticity3d_gravityrefstate \
-	test_isotropiclinearporoelasticity3d_bodyforce
+	test_isotropiclinearporoelasticity2d 
 
 check_PROGRAMS = $(TESTS)
 
@@ -30,36 +26,8 @@ check_PROGRAMS = $(TESTS)
 test_isotropiclinearporoelasticity2d_SOURCES = \
 		TestPoroelasticity.cc \
 		TestIsotropicLinearPoroelasticity.cc \
-		TestIsotropicLinearPoroelasticity2D_UniformStrain.cc \
-		TestIsotropicLinearPoroelasticity2D_Gravity.cc \
-		TestIsotropicLinearPoroelasticity2D_GravityRefState.cc \
-		TestIsotropicLinearPoroelasticity2D_BodyForce.cc \
+		TestIsotropicLinearPoroelasticity2D_QS_LT.cc \
 		test_driver.cc
-
-test_isotropiclinearporoelasticity3d_uniformstrain_SOURCES = \
-		TestPoroelasticity.cc \
-		TestIsotropicLinearPoroelasticity.cc \
-		TestIsotropicLinearPoroelasticity3D_UniformStrain.cc \
-		test_driver.cc
-
-test_isotropiclinearporoelasticity3d_gravity_SOURCES = \
-		TestPoroelasticity.cc \
-		TestIsotropicLinearPoroelasticity.cc \
-		TestIsotropicLinearPoroelasticity3D_Gravity.cc \
-		test_driver.cc
-
-test_isotropiclinearporoelasticity3d_gravityrefstate_SOURCES = \
-		TestPoroelasticity.cc \
-		TestIsotropicLinearPoroelasticity.cc \
-		TestIsotropicLinearPoroelasticity3D_GravityRefState.cc \
-		test_driver.cc
-
-test_isotropiclinearporoelasticity3d_bodyforce_SOURCES = \
-		TestPoroelasticity.cc \
-		TestIsotropicLinearPoroelasticity.cc \
-		TestIsotropicLinearPoroelasticity3D_BodyForce.cc \
-		test_driver.cc
-
 
 noinst_HEADERS =
 

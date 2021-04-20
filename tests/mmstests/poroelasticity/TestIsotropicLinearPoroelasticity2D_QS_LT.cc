@@ -23,6 +23,7 @@
 #include "pylith/problems/TimeDependent.hh" // USES TimeDependent
 #include "pylith/materials/Poroelasticity.hh" // USES Poroelasticity
 #include "pylith/materials/IsotropicLinearPoroelasticity.hh" // USES IsotropicLinearPoroelasticity
+#include "pylith/fekernels/IsotropicLinearPoroelasticity.hh" // USES IsotropicLinearIncompElasticity kernels
 #include "pylith/bc/DirichletUserFn.hh" // USES DirichletUserFn
 
 #include "pylith/topology/Field.hh" // USES pylith::topology::Field::Discretization
@@ -144,7 +145,7 @@ class pylith::mmstests::TestIsotropicLinearPoroelasticity2D_QS_LT :
         return 10.0;
     } // solid_bulk_modulus
 
-    static const char* sold_bulk_modulus_units(void) {
+    static const char* solid_bulk_modulus_units(void) {
         return "Pa";
     } // solid_bulk_modulus_units
 
@@ -161,7 +162,7 @@ class pylith::mmstests::TestIsotropicLinearPoroelasticity2D_QS_LT :
     // Derived Fields
 
     static double biot_modulus(const double x,
-                               const doubly y){
+                               const double y){
        return 1.0 / ( porosity(x,y) / fluid_bulk_modulus(x,y) +
         (biot_coefficient(x,y) - porosity(x,y)) / solid_bulk_modulus(x,y) );
     }
@@ -221,7 +222,7 @@ class pylith::mmstests::TestIsotropicLinearPoroelasticity2D_QS_LT :
         return 0.0;
     } // trace_strain_t
 
-    static PetscErrorCode solnkernel_disp(PetscInt spaceDim,
+    static PetscErrorCode solnkernel_displacement(PetscInt spaceDim,
                                           PetscReal t,
                                           const PetscReal x[],
                                           PetscInt numComponents,
@@ -238,11 +239,11 @@ class pylith::mmstests::TestIsotropicLinearPoroelasticity2D_QS_LT :
     } // solnkernel_disp
 
     static PetscErrorCode solnkernel_pressure(PetscInt spaceDim,
-                                              PetscReal t,
-                                              const PetscReal x[],
-                                              PetscInt numComponents,
-                                              PetscScalar* s,
-                                              void* context) {
+                                          PetscReal t,
+                                          const PetscReal x[],
+                                          PetscInt numComponents,
+                                          PetscScalar* s,
+                                          void* context) {
         CPPUNIT_ASSERT(2 == spaceDim);
         CPPUNIT_ASSERT(1 == numComponents);
         CPPUNIT_ASSERT(s);
@@ -252,7 +253,7 @@ class pylith::mmstests::TestIsotropicLinearPoroelasticity2D_QS_LT :
         return 0;
     } // solnkernel_pressure
 
-    static PetscErrorCode solnkernel_vel(PetscInt spaceDim,
+    static PetscErrorCode solnkernel_velocity(PetscInt spaceDim,
                                          PetscReal t,
                                          const PetscReal x[],
                                          PetscInt numComponents,
@@ -376,7 +377,7 @@ protected:
         CPPUNIT_ASSERT(_data->auxDB);
         _data->auxDB->addValue("solid_density", solid_density, solid_density_units());
         _data->auxDB->addValue("fluid_density", fluid_density, fluid_density_units());
-        _data->auxDB->addValue("fluid_viscosity", fluid_viscosity, fluid_viscosity());
+        _data->auxDB->addValue("fluid_viscosity", fluid_viscosity, fluid_viscosity_units());
         _data->auxDB->addValue("porosity", porosity, porosity_units());
         _data->auxDB->addValue("shear_modulus", shear_modulus, shear_modulus_units());
         _data->auxDB->addValue("drained_bulk_modulus", drained_bulk_modulus, drained_bulk_modulus_units());
@@ -388,18 +389,32 @@ protected:
 
         CPPUNIT_ASSERT(_material);
         _material->setFormulation(pylith::problems::Physics::QUASISTATIC);
-        _material->useBodyForce(true);
+        _material->useBodyForce(false);
+        _material->useSourceDensity(false);
+        _material->updatePorosity(false);
+        _material->updatePermeability(false);
+
         _rheology->useReferenceState(false);
+        _rheology->useTensorPermeability(false);
 
         _material->setDescriptiveLabel("Isotropic Linear Poroelasticity Plane Strain");
         _material->setMaterialId(24);
 
-        static const PylithInt constrainedDOF[2] = {0, 1};
-        static const PylithInt numConstrained = 2;
-        _bc->setConstrainedDOF(constrainedDOF, numConstrained);
-        _bc->setMarkerLabel("boundary");
-        _bc->setSubfieldName("displacement");
-        _bc->setUserFn(solnkernel_disp);
+        // Displacement BC
+        static const PylithInt constrainedDispDOF[2] = {0, 1};
+        static const PylithInt numConstrainedDisp = 2;
+        _bcDisp->setConstrainedDOF(constrainedDispDOF, numConstrainedDisp);
+        _bcDisp->setMarkerLabel("boundary");
+        _bcDisp->setSubfieldName("displacement");
+        _bcDisp->setUserFn(solnkernel_displacement);
+
+        // Pressure BC
+        static const PylithInt constrainedPresDOF[1] = {0};
+        static const PylithInt numConstrainedPres = 1;
+        _bcPres->setConstrainedDOF(constrainedPresDOF, numConstrainedPres);
+        _bcPres->setMarkerLabel("boundary");
+        _bcPres->setSubfieldName("pressure");
+        _bcPres->setUserFn(solnkernel_pressure);
 
     } // setUp
 
@@ -409,13 +424,18 @@ protected:
 
         PetscErrorCode err = 0;
         PetscDS prob = NULL;
+        PetscWeakForm wf = NULL;
         err = DMGetDS(_solution->dmMesh(), &prob);CPPUNIT_ASSERT(!err);
-        err = PetscDSSetExactSolution(prob, 0, solnkernel_disp, NULL);CPPUNIT_ASSERT(!err);
+        err = PetscDSSetExactSolution(prob, 0, solnkernel_displacement, NULL);CPPUNIT_ASSERT(!err);
         err = PetscDSSetExactSolution(prob, 1, solnkernel_pressure, NULL);CPPUNIT_ASSERT(!err);
         err = PetscDSSetExactSolution(prob, 2, solnkernel_trace_strain, NULL);CPPUNIT_ASSERT(!err);
-        err = PetscDSSetExactSolution(prob, 3, solnkernel_vel, NULL);CPPUNIT_ASSERT(!err);
+        err = PetscDSSetExactSolution(prob, 3, solnkernel_velocity, NULL);CPPUNIT_ASSERT(!err);
         err = PetscDSSetExactSolution(prob, 4, solnkernel_pressure_t, NULL);CPPUNIT_ASSERT(!err);
         err = PetscDSSetExactSolution(prob, 5, solnkernel_trace_strain_t, NULL);CPPUNIT_ASSERT(!err);
+
+        err = PetscDSGetWeakForm(prob, &wf);CPPUNIT_ASSERT(!err);
+        err = PetscWeakFormSetIndexResidual(wf, NULL, 0, 0, 1, pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f0_mms_ql_u, 0, NULL);CPPUNIT_ASSERT(!err);
+        err = PetscWeakFormSetIndexResidual(wf, NULL, 0, 1, 1, pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f0_mms_ql_p, 0, NULL);CPPUNIT_ASSERT(!err);
     } // _setExactSolution
 
 }; // TestIsotropicLinearPoroelasticity2D_QS_LT
@@ -589,6 +609,6 @@ class pylith::mmstests::TestIsotropicLinearPoroelasticity2D_QS_LT_QuadQ3 :
     } // setUp
 
 }; // TestIsotropicLinearPoroelasticity2D_QS_LT_QuadQ3
-CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearPoroelasticity2D_Quadratic_QuadQ3);
+CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestIsotropicLinearPoroelasticity2D_QS_LT_QuadQ3);
 
 // End of file

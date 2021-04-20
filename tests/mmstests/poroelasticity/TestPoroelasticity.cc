@@ -50,7 +50,8 @@ pylith::mmstests::TestPoroelasticity::setUp(void) {
     MMSTest::setUp();
 
     _material = new pylith::materials::Poroelasticity;CPPUNIT_ASSERT(_material);
-    _bc = new pylith::bc::DirichletUserFn;CPPUNIT_ASSERT(_bc);
+    _bcDisp = new pylith::bc::DirichletUserFn;CPPUNIT_ASSERT(_bcDisp);
+    _bcPres = new pylith::bc::DirichletUserFn;CPPUNIT_ASSERT(_bcPres);
     _data = NULL;
 } // setUp
 
@@ -60,7 +61,8 @@ pylith::mmstests::TestPoroelasticity::setUp(void) {
 void
 pylith::mmstests::TestPoroelasticity::tearDown(void) {
     delete _material;_material = NULL;
-    delete _bc;_bc = NULL;
+    delete _bcDisp;_bcDisp = NULL;
+    delete _bcPres;_bcPres = NULL;
     delete _data;_data = NULL;
 
     MMSTest::tearDown();
@@ -105,8 +107,8 @@ pylith::mmstests::TestPoroelasticity::_initialize(void) {
     _problem->setGravityField(_data->gravityField);
     pylith::materials::Material* materials[1] = { _material };
     _problem->setMaterials(materials, 1);
-    pylith::bc::BoundaryCondition* bcs[1] = { _bc };
-    _problem->setBoundaryConditions(bcs, 1);
+    pylith::bc::BoundaryCondition* bcs[2] = { _bcDisp, _bcPres };
+    _problem->setBoundaryConditions(bcs, 2);
     _problem->setStartTime(_data->startTime);
     _problem->setEndTime(_data->endTime);
     _problem->setInitialTimeStep(_data->timeStep);
@@ -123,15 +125,15 @@ pylith::mmstests::TestPoroelasticity::_initialize(void) {
 
     if (_data->isExplicit) {
         factory.addDisplacement(_data->solnDiscretizations[0]);
-        factory.addPressure(_data->solnDiscretizations[1])        
+        factory.addPressure(_data->solnDiscretizations[1]);
         factory.addVelocity(_data->solnDiscretizations[2]);
     } else {
         factory.addDisplacement(_data->solnDiscretizations[0]);
-        factory.addPressure(_data->solnDiscretizations[1])
+        factory.addPressure(_data->solnDiscretizations[1]);
         factory.addTraceStrain(_data->solnDiscretizations[2]);
         factory.addVelocity(_data->solnDiscretizations[3]);
         factory.addPressure_t(_data->solnDiscretizations[4]);
-        factory.addTraceStrain_t(_data->solnDiscretizations[5])
+        factory.addTraceStrain_t(_data->solnDiscretizations[5]);
     } // if else
     _problem->setSolution(_solution);
 

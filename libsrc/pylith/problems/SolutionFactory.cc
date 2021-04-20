@@ -79,7 +79,7 @@ pylith::problems::SolutionFactory::addDisplacement(const pylith::topology::Field
 
 
 // ---------------------------------------------------------------------------------------------------------------------
-// Add time derivative of velocity subfield to solution field.
+// Add velocity subfield to solution field.
 void
 pylith::problems::SolutionFactory::addVelocity(const pylith::topology::Field::Discretization& discretization) {
     PYLITH_METHOD_BEGIN;
@@ -107,7 +107,7 @@ pylith::problems::SolutionFactory::addVelocity(const pylith::topology::Field::Di
 
 
 // ---------------------------------------------------------------------------------------------------------------------
-// Add time derivative of pressure subfield to solution field.
+// Add pressure subfield to solution field.
 void
 pylith::problems::SolutionFactory::addPressure(const pylith::topology::Field::Discretization& discretization) {
     PYLITH_METHOD_BEGIN;
@@ -158,6 +158,55 @@ pylith::problems::SolutionFactory::addTraceStrain(const pylith::topology::Field:
     PYLITH_METHOD_END;
 } // addTraceStrain
 
+// ---------------------------------------------------------------------------------------------------------------------
+// Add time derivative of pressure subfield to solution field.
+void
+pylith::problems::SolutionFactory::addPressure_t(const pylith::topology::Field::Discretization& discretization) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("pressure_t(discretization=typeid(discretization).name())");
+
+    const char* fieldName = "pressure_t";
+    const char* componentNames[1] = { "pressure_t" };
+
+    pylith::topology::Field::Description description;
+    description.label = fieldName;
+    description.alias = fieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = componentNames[0];
+    description.scale = _normalizer.getPressureScale() / _normalizer.getTimeScale();
+    description.validator = NULL;
+
+    _solution.subfieldAdd(description, discretization);
+
+    PYLITH_METHOD_END;
+} // addPressure_t
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Add time derivative of trace strain subfield to solution field.
+void
+pylith::problems::SolutionFactory::addTraceStrain_t(const pylith::topology::Field::Discretization& discretization) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("traceStrain_t(discretization=typeid(discretization).name())");
+
+    const char* fieldName = "trace_strain_t";
+    const char* componentNames[1] = { "trace_strain_t" };
+
+    pylith::topology::Field::Description description;
+    description.label = fieldName;
+    description.alias = fieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = componentNames[0];
+    description.scale = 1.0 / _normalizer.getTimeScale();;
+    description.validator = NULL;
+
+    _solution.subfieldAdd(description, discretization);
+
+    PYLITH_METHOD_END;
+} // addTraceStrain_t
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Add fault Lagrange multiplier subfield to solution field.

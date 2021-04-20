@@ -77,6 +77,18 @@ public:
      */
     void addTraceStrain(const pylith::topology::FieldBase::Discretization& discretization);
 
+    /** Add time derivative of pressure subfield to solution field.
+     *
+     * @param[in] discretization Discretization for pressure subfield.
+     */
+    void addPressure_t(const pylith::topology::FieldBase::Discretization& discretization);
+
+    /** Add time derivative of trace strain subfield to solution field.
+     *
+     * @param[in] discretization Discretization for trace strain subfield.
+     */
+    void addTraceStrain_t(const pylith::topology::FieldBase::Discretization& discretization);
+
     /** Add fault Lagrange multiplier subfield to solution field.
      *
      * @param[in] discretization Discretization for fault Lagrange multiplier subfield.
