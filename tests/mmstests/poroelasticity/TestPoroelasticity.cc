@@ -114,8 +114,8 @@ pylith::mmstests::TestPoroelasticity::_initialize(void) {
     _problem->setInitialTimeStep(_data->timeStep);
 
     // Set up solution field.
-    CPPUNIT_ASSERT( (!_data->isExplicit && 1 == _data->numSolnSubfields) ||
-                    (_data->isExplicit && 2 == _data->numSolnSubfields) );
+    CPPUNIT_ASSERT( (!_data->isExplicit && 6 == _data->numSolnSubfields) ||
+                    (_data->isExplicit && 3 == _data->numSolnSubfields) );
     CPPUNIT_ASSERT(_data->solnDiscretizations);
 
     CPPUNIT_ASSERT(!_solution);

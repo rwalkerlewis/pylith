@@ -32,6 +32,7 @@ class IsotropicLinearPoroelasticity(RheologyPoroelasticity, ModuleLinearPoroelas
 
     Properties
       - *use_reference_state* Use reference stress/strain state.
+      - *use_tensor_permeability* Use full tensor permeability.
 
     Facilities
       - None
@@ -64,8 +65,9 @@ class IsotropicLinearPoroelasticity(RheologyPoroelasticity, ModuleLinearPoroelas
         RheologyPoroelasticity.preinitialize(self, mesh)
 
         ModuleLinearPoroelasticity.useReferenceState(self, self.useReferenceState)
-        return
+        ModuleLinearPoroelasticity.useTensorPermeability(self, self.useTensorPermeability)
 
+        return
     # PRIVATE METHODS ////////////////////////////////////////////////////
 
     def _createModuleObj(self):

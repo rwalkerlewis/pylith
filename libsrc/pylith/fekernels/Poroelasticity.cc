@@ -53,17 +53,17 @@ pylith::fekernels::Poroelasticity::f0v_implicit(const PylithInt dim,
                                    PylithScalar f0[]) {
 
     // Incoming solution fields.
-    const PylithInt i_disp = 0;
-    const PylithInt i_vel = 3;
+    const PylithInt i_displacement = 0;
+    const PylithInt i_velocity = 3;
 
     // Incoming auxiliary fields.
 
-    const PylithScalar* disp_t = &s_t[sOff[i_disp]]; // disp_t
-    const PylithScalar* vel = &s[sOff[i_vel]]; // vel
+    const PylithScalar* displacement_t = &s_t[sOff[i_displacement]]; // disp_t
+    const PylithScalar* velocity = &s[sOff[i_velocity]]; // vel
 
     for (PylithInt i = 0; i < dim; ++i) {
-        f0[i] += disp_t[i];
-        f0[i] -= vel[i];
+        f0[i] += displacement_t[i];
+        f0[i] -= velocity[i];
     } // for
 } // f0v_implicit
 
@@ -90,7 +90,7 @@ pylith::fekernels::Poroelasticity::f0v_explicit(const PylithInt dim,
                                    PylithScalar f0[]) {
 
     // Incoming solution fields.
-    const PylithInt i_vel = 2;
+    const PylithInt i_velocity = 2;
 
     // Incoming auxiliary fields.
     const PylithInt i_solid_density     = 0;
@@ -98,10 +98,10 @@ pylith::fekernels::Poroelasticity::f0v_explicit(const PylithInt dim,
     const PylithInt i_porosity          = 3;
 
     const PylithScalar bulkDensity = (1 - a[aOff[i_porosity]]) * a[aOff[i_solid_density]] + a[aOff[i_porosity]] * a[aOff[i_fluid_density]];
-    const PylithScalar* vel_t = &s_t[sOff[i_vel]]; // acceleration
+    const PylithScalar* velocity_t = &s_t[sOff[i_velocity]]; // acceleration
 
     for (PylithInt i = 0; i < dim; ++i) {
-        f0[i] += vel_t[i] * bulkDensity;
+        f0[i] += velocity_t[i] * bulkDensity;
     } // for
 } // f0v_explicit
 
@@ -131,18 +131,15 @@ pylith::fekernels::Poroelasticity::f0e(const PylithInt dim,
                                        PylithScalar f0[]) {
 
     // Incoming solution fields.
-    const PylithInt i_disp = 0;
+    const PylithInt i_displacement = 0;
     const PylithInt i_trace_strain = 2;
 
     // Incoming auxiliary fields.
-
-
-    const PylithScalar* disp = &s[sOff[i_disp]];
-    const PylithScalar* disp_x = &s_x[sOff_x[i_disp]];
+    const PylithScalar* displacement_x = &s_x[sOff_x[i_displacement]];
     const PylithScalar trace_strain = s[sOff[i_trace_strain]];
 
     for (PylithInt d = 0; d < dim; ++d) {
-      f0[0] += disp_x[d*dim+d];
+      f0[0] += displacement_x[d*dim+d];
     }
     f0[0] -= trace_strain;
 } // f0e
@@ -170,15 +167,13 @@ pylith::fekernels::Poroelasticity::f0pdot(const PylithInt dim,
                                    PylithScalar f0[]) {
 
     // Incoming solution fields.
-    const PylithInt i_pres = 1;
+    const PylithInt i_pressure = 1;
     const PylithInt i_pdot = 4;
 
-    // Incoming auxiliary fields.
-
-    const PylithScalar pres_t = s_t[sOff[i_pres]]; // disp_t
+    const PylithScalar pressure_t = s_t[sOff[i_pressure]]; // disp_t
     const PylithScalar pdot = s[sOff[i_pdot]]; // vel
 
-    f0[0] += pres_t;
+    f0[0] += pressure_t;
     f0[0] -= pdot;
 } // f0pdot
 
@@ -207,8 +202,6 @@ pylith::fekernels::Poroelasticity::f0edot(const PylithInt dim,
     // Incoming solution fields.
     const PylithInt i_trace_strain = 2;
     const PylithInt i_edot = 5;
-
-    // Incoming auxiliary fields.
 
     const PylithScalar trace_strain_t = s_t[sOff[i_trace_strain]]; // disp_t
     const PylithScalar edot = s[sOff[i_edot]]; // vel
@@ -248,11 +241,11 @@ pylith::fekernels::Poroelasticity::g0u(const PylithInt dim,
                                 const PylithScalar constants[],
                                 PylithScalar g0[]) {
 
-    const PylithInt i_vel = 2;
-    const PylithScalar* vel = &s[sOff[i_vel]];
+    const PylithInt i_velocity = 2;
+    const PylithScalar* velocity = &s[sOff[i_velocity]];
 
     for (PylithInt i = 0; i < dim; ++i) {
-        g0[i] += vel[i];
+        g0[i] += velocity[i];
     } // for
 } // g0u
 

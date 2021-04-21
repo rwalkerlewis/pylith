@@ -67,7 +67,7 @@ class pylith::mmstests::TestIsotropicLinearPoroelasticity2D_QS_LT :
     } // porosity
 
     static const char* porosity_units(void) {
-        return "dimensionless";
+        return "none";
     } // porosity_units
 
     // Solid Density
@@ -127,7 +127,7 @@ class pylith::mmstests::TestIsotropicLinearPoroelasticity2D_QS_LT :
     } // biot_coefficient
 
     static const char* biot_coefficient_units(void) {
-        return "dimensionless";
+        return "none";
     } // biot_coefficient_units
 
     // Fluid Bulk Modulus
@@ -322,7 +322,7 @@ protected:
         // Overwrite component names for control of debugging info at test level.
         GenericComponent::setName("TestIsotropicLinearPoroelasticity2D_QS_LT");
         pythia::journal::debug_t debug(GenericComponent::getName());
-        // ebug.activate(); // DEBUGGING
+         debug.activate(); // DEBUGGING
 
         CPPUNIT_ASSERT(!_data);
         _data = new TestPoroelasticity_Data();CPPUNIT_ASSERT(_data);
@@ -353,7 +353,7 @@ protected:
             "solid_density",
             "fluid_density",
             "fluid_viscosity",
-            "porosity"
+            "porosity",
             "shear_modulus",
             "drained_bulk_modulus",
             "biot_coefficient",
@@ -434,7 +434,7 @@ protected:
         err = PetscDSSetExactSolution(prob, 5, solnkernel_trace_strain_t, NULL);CPPUNIT_ASSERT(!err);
 
         err = PetscDSGetWeakForm(prob, &wf);CPPUNIT_ASSERT(!err);
-        err = PetscWeakFormSetIndexResidual(wf, NULL, 0, 0, 1, pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f0_mms_ql_u, 0, NULL);CPPUNIT_ASSERT(!err);
+        err = PetscWeakFormSetIndexResidual(wf, NULL, 0, 0, 0, pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f0_mms_ql_u, 0, NULL);CPPUNIT_ASSERT(!err);
         err = PetscWeakFormSetIndexResidual(wf, NULL, 0, 1, 1, pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f0_mms_ql_p, 0, NULL);CPPUNIT_ASSERT(!err);
     } // _setExactSolution
 
@@ -470,15 +470,15 @@ class pylith::mmstests::TestIsotropicLinearPoroelasticity2D_QS_LT_TriP2 :
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
 
         static const pylith::topology::Field::Discretization _auxDiscretizations[9] = {
-            pylith::topology::Field::Discretization(0, 1), // solid_density
-            pylith::topology::Field::Discretization(0, 1), // fluid_density
-            pylith::topology::Field::Discretization(0, 1), // fluid_viscosity
-            pylith::topology::Field::Discretization(0, 1), // porosity
-            pylith::topology::Field::Discretization(0, 1), // shear_modulus
-            pylith::topology::Field::Discretization(0, 1), // drained_bulk_modulus
-            pylith::topology::Field::Discretization(0, 1), // biot_coefficient
-            pylith::topology::Field::Discretization(0, 1), // biot_modulus
-            pylith::topology::Field::Discretization(0, 1), // isotropic_permeability
+            pylith::topology::Field::Discretization(0, 2), // solid_density
+            pylith::topology::Field::Discretization(0, 2), // fluid_density
+            pylith::topology::Field::Discretization(0, 2), // fluid_viscosity
+            pylith::topology::Field::Discretization(0, 2), // porosity
+            pylith::topology::Field::Discretization(0, 2), // shear_modulus
+            pylith::topology::Field::Discretization(0, 2), // drained_bulk_modulus
+            pylith::topology::Field::Discretization(0, 2), // biot_coefficient
+            pylith::topology::Field::Discretization(0, 2), // biot_modulus
+            pylith::topology::Field::Discretization(0, 2), // isotropic_permeability
         };
         _data->auxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_auxDiscretizations);
 

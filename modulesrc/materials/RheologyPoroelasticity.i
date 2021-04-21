@@ -80,8 +80,13 @@ public:
      * @return RHS residual kernel for Darcy velocity.
      */
      virtual
-     PetscPointFunc getKernelg1p_explicit(const spatialdata::geocoords::CoordSys* coordsys,
+     PetscPointFunc getKernelg1p(const spatialdata::geocoords::CoordSys* coordsys,
                                             const bool _gravityField) const = 0;
+
+     // ---------------------------------------------------------------------------------------------------------------------
+     // Get stress kernel for RHS residual, G(t,s).
+     virtual
+     PetscPointFunc getKernelg1v(const spatialdata::geocoords::CoordSys* coordsys) const = 0;
 
      // ============================= LHS ==================================== //
 
@@ -108,6 +113,11 @@ public:
     virtual
     PetscPointFunc getKernelf1p_implicit(const spatialdata::geocoords::CoordSys* coordsys,
                                            const bool _gravityField) const = 0;
+
+    // ---------------------------------------------------------------------------------------------------------------------
+    // Get stress kernel for LHS residual, F(t,s).
+    virtual
+    PetscPointFunc getKernelf1u_implicit(const spatialdata::geocoords::CoordSys* coordsys) const = 0;
 
     // ---------------------------------------------------------------------------------------------------------------------
     // Get poroelastic constants kernel for LHS Jacobian

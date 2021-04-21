@@ -56,6 +56,7 @@ class AuxSubfieldsIsotropicLinearPoroelasticity(PetscComponent):
     # @li \b references_strain Reference strain.
     # @li \b gravitational_acceleration Gravitational acceleration subfield.
     # @li \b isotropic_permeability isotropic permeability subfield.
+    # @li \b tensor_permeability tensor permeability subfield.
     # @li \b porosity porosity subfield.
     # @li \b fluid_density fluid density subfield.
     # @li \b fluid_viscosity fluid viscosity subfield.
@@ -85,6 +86,10 @@ class AuxSubfieldsIsotropicLinearPoroelasticity(PetscComponent):
     isotropicPermeability = pythia.pyre.inventory.facility(
         "isotropic_permeability", family="auxiliary_subfield", factory=Subfield)
     isotropicPermeability.meta['tip'] = "Isotropic permeability subfield."
+
+    tensorPermeability = pythia.pyre.inventory.facility(
+        "tensor_permeability", family="auxiliary_subfield", factory=Subfield)
+    tensorPermeability.meta['tip'] = "Tensor permeability subfield."
 
     solidBulkModulus = pythia.pyre.inventory.facility(
         "solid_bulk_modulus", family="auxiliary_subfield", factory=Subfield)

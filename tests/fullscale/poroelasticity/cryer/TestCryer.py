@@ -25,15 +25,15 @@ from pylith.tests.FullTestApp import check_data
 from pylith.tests.FullTestApp import TestCase as FullTestCase
 
 import meshes
-from mandel_soln import AnalyticalSoln
-from mandel_gendb import GenerateDB
+from cryer_soln import AnalyticalSoln
+from cryer_gendb import GenerateDB
 
 # We do not include trace_strain in the solution fields, because of the
 # poor convergence of the series solution.
 SOLUTION_FIELDS = ["displacement", "pressure"]
 
 ratio_tolerance = {'displacement': 1.0, 'pressure': 1.0}
-diff_tolerance = {'displacement': 0.1, 'pressure': 0.1}
+diff_tolerance = {'displacement': 0.5, 'pressure': 0.5}
 # ----------------------------------------------------------------------------------------------------------------------
 
 
@@ -42,8 +42,8 @@ class TestCase(FullTestCase):
     Test suite for testing PyLith with three dimensional poroelasticity
     by means of Cryer's problem.
     """
-    DIRICHLET_BOUNDARIES = ["x_neg", "y_neg", "z_neg"]
-
+    DIRICHLET_BOUNDARIES = ["x_neg", "y_neg", "z_neg", "surface_pressure"]
+    NEUMANN_BOUNDARIES = ["surface_traction"]
     def setUp(self):
         """
         Setup for test.
@@ -64,8 +64,9 @@ class TestCase(FullTestCase):
         return
 
     def test_material_info(self):
-        vertexFields = ["solid_density", "fluid_density", "fluid_viscosity", "biot_modulus",
-                        "shear_modulus", "drained_bulk_modulus", "biot_coefficient", "isotropic_permeability"]
+        vertexFields = ['biot_coefficient', 'biot_modulus', 'drained_bulk_modulus',
+                        'fluid_density', 'fluid_viscosity', 'isotropic_permeability',
+                        'porosity', 'shear_modulus', 'solid_density']
         for material in self.MATERIALS.keys():
             filename = "output/{}-{}_info.h5".format(self.NAME, material)
             check_data(filename, self, self.MATERIALS[material], vertexFields=vertexFields,
@@ -125,7 +126,6 @@ def test_cases():
         TestHex,
         TestTet,
     ]
-
 
 # ----------------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':

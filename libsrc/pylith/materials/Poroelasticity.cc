@@ -372,11 +372,11 @@ pylith::materials::Poroelasticity::_setKernelsRHSResidual(pylith::feassemble::In
 
         // Pressure
         const PetscPointFunc g0p = _rheology->getKernelg0p(coordsys, _useBodyForce, _gravityField, _useSourceDensity);
-        const PetscPointFunc g1p = _rheology->getKernelg1p_explicit(coordsys, _gravityField);    // darcy velocity
+        const PetscPointFunc g1p = _rheology->getKernelg1p(coordsys, _gravityField);    // darcy velocity
 
         // Velocity
         PetscPointFunc g0v = NULL;
-        const PetscPointFunc g1v = _rheology->getKernelResidualStress(coordsys, _useInertia);
+        const PetscPointFunc g1v = _rheology->getKernelg1v(coordsys);
 
         const int bitBodyForce = _useBodyForce ? 0x1 : 0x0;
         const int bitGravity = _gravityField ? 0x2 : 0x0;
@@ -472,7 +472,7 @@ pylith::materials::Poroelasticity::_setKernelsLHSResidual(pylith::feassemble::In
         default:
             PYLITH_COMPONENT_FIREWALL("Unknown case (bitUse=" << bitUse << ") for Poroelasticity RHS residual kernels.");
         } // switch
-        const PetscPointFunc f1u = _rheology->getKernelResidualStress(coordsys, _useInertia);
+        const PetscPointFunc f1u = _rheology->getKernelf1u_implicit(coordsys);
 
         // Pressure
         PetscPointFunc f0p = _rheology->getKernelf0p_implicit(coordsys, _useBodyForce, _gravityField, _useSourceDensity);
@@ -500,9 +500,13 @@ pylith::materials::Poroelasticity::_setKernelsLHSResidual(pylith::feassemble::In
         kernels[0] = ResidualKernels("displacement",   f0u,    f1u);
         kernels[1] = ResidualKernels("pressure",       f0p,    f1p);
         kernels[2] = ResidualKernels("trace_strain",   f0e,    f1e);
-        kernels[3] = ResidualKernels("velocity",       f0v,    f1v);
-        kernels[4] = ResidualKernels("pressure_t",     f0pdot, f1pdot);
-        kernels[5] = ResidualKernels("trace_strain_t", f0edot, f1edot);
+        kernels[3] = ResidualKernels("velocity",       NULL,  NULL);
+        kernels[4] = ResidualKernels("pressure_t",     NULL,  NULL);
+        kernels[5] = ResidualKernels("trace_strain_t", NULL,  NULL);
+        //kernels[3] = ResidualKernels("velocity",       f0v,    f1v);
+        //kernels[4] = ResidualKernels("pressure_t",     f0pdot, f1pdot);
+        //kernels[5] = ResidualKernels("trace_strain_t", f0edot, f1edot);
+
         break;
     } // QUASISTATIC
 
@@ -619,12 +623,14 @@ pylith::materials::Poroelasticity::_setKernelsLHSJacobian(pylith::feassemble::In
         const PetscPointJac Jf2pv = NULL;
         const PetscPointJac Jf3pv = NULL;
 
-        const PetscPointJac Jf0ppdot = _rheology->getKernelJf0ppdot(coordsys);
+        const PetscPointJac Jf0ppdot = NULL;
+        //const PetscPointJac Jf0ppdot = _rheology->getKernelJf0ppdot(coordsys);
         const PetscPointJac Jf1ppdot = NULL;
         const PetscPointJac Jf2ppdot = NULL;
         const PetscPointJac Jf3ppdot = NULL;
 
-        const PetscPointJac Jf0pedot = _rheology->getKernelJf0pedot(coordsys);
+        const PetscPointJac Jf0pedot = NULL;
+        //const PetscPointJac Jf0pedot = _rheology->getKernelJf0pedot(coordsys);
         const PetscPointJac Jf1pedot = NULL;
         const PetscPointJac Jf2pedot = NULL;
         const PetscPointJac Jf3pedot = NULL;
@@ -659,7 +665,8 @@ pylith::materials::Poroelasticity::_setKernelsLHSJacobian(pylith::feassemble::In
         const PetscPointJac Jf2eedot = NULL;
         const PetscPointJac Jf3eedot = NULL;
 
-        const PetscPointJac Jf0vu = pylith::fekernels::Poroelasticity::Jf0vu_implicit;
+        const PetscPointJac Jf0vu = NULL;
+        //const PetscPointJac Jf0vu = pylith::fekernels::Poroelasticity::Jf0vu_implicit;
         const PetscPointJac Jf1vu = NULL;
         const PetscPointJac Jf2vu = NULL;
         const PetscPointJac Jf3vu = NULL;
@@ -674,7 +681,8 @@ pylith::materials::Poroelasticity::_setKernelsLHSJacobian(pylith::feassemble::In
         const PetscPointJac Jf2ve = NULL;
         const PetscPointJac Jf3ve = NULL;
 
-        const PetscPointJac Jf0vv = pylith::fekernels::Poroelasticity::Jf0vv_implicit;
+        const PetscPointJac Jf0vv = NULL;
+        //const PetscPointJac Jf0vv = pylith::fekernels::Poroelasticity::Jf0vv_implicit;
         const PetscPointJac Jf1vv = NULL;
         const PetscPointJac Jf2vv = NULL;
         const PetscPointJac Jf3vv = NULL;
@@ -694,7 +702,8 @@ pylith::materials::Poroelasticity::_setKernelsLHSJacobian(pylith::feassemble::In
         const PetscPointJac Jf2pdotu = NULL;
         const PetscPointJac Jf3pdotu = NULL;
 
-        const PetscPointJac Jf0pdotp = pylith::fekernels::Poroelasticity::Jf0pdotp;
+        const PetscPointJac Jf0pdotp = NULL;
+        //const PetscPointJac Jf0pdotp = pylith::fekernels::Poroelasticity::Jf0pdotp;
         const PetscPointJac Jf1pdotp = NULL;
         const PetscPointJac Jf2pdotp = NULL;
         const PetscPointJac Jf3pdotp = NULL;
@@ -709,7 +718,8 @@ pylith::materials::Poroelasticity::_setKernelsLHSJacobian(pylith::feassemble::In
         const PetscPointJac Jf2pdotv = NULL;
         const PetscPointJac Jf3pdotv = NULL;
 
-        const PetscPointJac Jf0pdotpdot = pylith::fekernels::Poroelasticity::Jf0pdotpdot;
+        const PetscPointJac Jf0pdotpdot = NULL;
+        //const PetscPointJac Jf0pdotpdot = pylith::fekernels::Poroelasticity::Jf0pdotpdot;
         const PetscPointJac Jf1pdotpdot = NULL;
         const PetscPointJac Jf2pdotpdot = NULL;
         const PetscPointJac Jf3pdotpdot = NULL;
@@ -729,7 +739,8 @@ pylith::materials::Poroelasticity::_setKernelsLHSJacobian(pylith::feassemble::In
         const PetscPointJac Jf2edotp = NULL;
         const PetscPointJac Jf3edotp = NULL;
 
-        const PetscPointJac Jf0edote = pylith::fekernels::Poroelasticity::Jf0edote;
+        const PetscPointJac Jf0edote = NULL;
+        //const PetscPointJac Jf0edote = pylith::fekernels::Poroelasticity::Jf0edote;
         const PetscPointJac Jf1edote = NULL;
         const PetscPointJac Jf2edote = NULL;
         const PetscPointJac Jf3edote = NULL;
@@ -744,7 +755,8 @@ pylith::materials::Poroelasticity::_setKernelsLHSJacobian(pylith::feassemble::In
         const PetscPointJac Jf2edotpdot = NULL;
         const PetscPointJac Jf3edotpdot = NULL;
 
-        const PetscPointJac Jf0edotedot = pylith::fekernels::Poroelasticity::Jf0edotedot;
+        const PetscPointJac Jf0edotedot = NULL;
+        //const PetscPointJac Jf0edotedot = pylith::fekernels::Poroelasticity::Jf0edotedot;
         const PetscPointJac Jf1edotedot = NULL;
         const PetscPointJac Jf2edotedot = NULL;
         const PetscPointJac Jf3edotedot = NULL;
