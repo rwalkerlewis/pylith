@@ -109,6 +109,9 @@ pylith::fekernels::Poroelasticity::f0e(const PylithInt dim,
       f0e[0] += disp_x[d*dim+d];
     }
     f0e[0] -= trace_strain;
+    if (f0e[0] > PETSC_MIN_REAL){
+        assert(0);
+    }
 } // f0e
 
 

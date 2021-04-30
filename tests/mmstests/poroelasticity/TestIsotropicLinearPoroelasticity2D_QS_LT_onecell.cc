@@ -433,7 +433,7 @@ protected:
         err = PetscDSGetWeakForm(prob, &wf);CPPUNIT_ASSERT(!err);
         err = PetscWeakFormSetIndexResidual(wf, NULL, 0, 0, 0, pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f0_mms_ql_u, 0, NULL);CPPUNIT_ASSERT(!err);
         err = PetscWeakFormSetIndexResidual(wf, NULL, 0, 1, 1, pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f0_mms_ql_p, 1, NULL);CPPUNIT_ASSERT(!err);
-        err = PetscDSView(prob, NULL);
+        //err = PetscDSView(prob, NULL);
 
     } // _setExactSolution
 
