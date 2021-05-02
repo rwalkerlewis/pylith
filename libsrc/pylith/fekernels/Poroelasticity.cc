@@ -95,20 +95,21 @@ pylith::fekernels::Poroelasticity::f0e(const PylithInt dim,
                                        PylithScalar f0e[]) {
 
     // Incoming solution fields.
-    const PylithInt i_disp = 0;
+    const PylithInt i_displacement = 0;
     const PylithInt i_trace_strain = 2;
 
     // Incoming auxiliary fields.
 
-
-    const PylithScalar* disp = &s[sOff[i_disp]];
-    const PylithScalar* disp_x = &s_x[sOff_x[i_disp]];
+    const PylithScalar* displacement_x = &s_x[sOff_x[i_displacement]];
     const PylithScalar trace_strain = s[sOff[i_trace_strain]];
 
     for (PylithInt d = 0; d < dim; ++d) {
-      f0e[0] += disp_x[d*dim+d];
+      f0e[0] += displacement_x[d*dim+d]*0;
     }
-    f0e[0] -= trace_strain;
+    f0e[0] -= trace_strain*0;
+    // if (f0e[0] > PETSC_MIN_REAL) {
+    //     assert(0);
+    // }
 } // f0e
 
 
