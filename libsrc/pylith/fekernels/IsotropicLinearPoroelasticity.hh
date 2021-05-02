@@ -114,7 +114,7 @@ void f0_mms_ql_u(const PylithInt dim,
                  const PylithScalar x[],
                  const PylithInt numConstants,
                  const PylithScalar constants[],
-                 PylithScalar f0u[]);
+                 PylithScalar f0[]);
 
 // ----------------------------------------------------------------------
 // f0p function for quadratic space and linear time MMS.
@@ -136,7 +136,7 @@ void f0_mms_ql_p(const PylithInt dim,
                  const PylithScalar x[],
                  const PylithInt numConstants,
                  const PylithScalar constants[],
-                 PylithScalar f0p[]);
+                 PylithScalar f0[]);
 
 // ----------------------------------------------------------------------
 // f0u function for quadratic space and trigonometric time MMS.
@@ -158,7 +158,7 @@ void f0_mms_qt_u(const PylithInt dim,
                  const PylithScalar x[],
                  const PylithInt numConstants,
                  const PylithScalar constants[],
-                 PylithScalar f0u[]);
+                 PylithScalar f0[]);
 
 // ----------------------------------------------------------------------
 // f0p function for quadratic space and trigonometric time MMS.
@@ -180,7 +180,7 @@ void f0_mms_qt_p(const PylithInt dim,
                  const PylithScalar x[],
                  const PylithInt numConstants,
                  const PylithScalar constants[],
-                 PylithScalar f0p[]);
+                 PylithScalar f0[]);
 
 // ----------------------------------------------------------------------
 // f0u function for trigonometric space and linear time MMS.
@@ -202,7 +202,7 @@ void f0_mms_tl_u(const PylithInt dim,
                  const PylithScalar x[],
                  const PylithInt numConstants,
                  const PylithScalar constants[],
-                 PylithScalar f0u[]);
+                 PylithScalar f0[]);
 
 // ----------------------------------------------------------------------
 // f0p function for trigonometric space and linear time MMS.
@@ -224,7 +224,7 @@ void f0_mms_tl_p(const PylithInt dim,
                  const PylithScalar x[],
                  const PylithInt numConstants,
                  const PylithScalar constants[],
-                 PylithScalar f0p[]);
+                 PylithScalar f0[]);
 
 // ================================= STD =======================================
 
@@ -250,7 +250,7 @@ void f0p_explicit(const PylithInt dim,
                      const PylithScalar x[],
                      const PylithInt numConstants,
                      const PylithScalar constants[],
-                     PylithScalar f0p[]);
+                     PylithScalar f0[]);
 
 // ----------------------------------------------------------------------
 // f0p function for generic poroelasticity terms (source density).
@@ -272,7 +272,7 @@ void f0p_implicit(const PylithInt dim,
                  const PylithScalar x[],
                  const PylithInt numConstants,
                  const PylithScalar constants[],
-                 PylithScalar f0p[]);
+                 PylithScalar f0[]);
 
  // ----------------------------------------------------------------------
  // f0p function for generic poroelasticity terms (source density).
@@ -294,7 +294,7 @@ void f0p_implicit(const PylithInt dim,
                   const PylithScalar x[],
                   const PylithInt numConstants,
                   const PylithScalar constants[],
-                  PylithScalar f0p[]);
+                  PylithScalar f0[]);
 
 // ----------------------------------------------------------------------
 // f0p function for generic poroelasticity terms (source density).
@@ -316,7 +316,7 @@ void f0p_implicit_source_body(const PylithInt dim,
                const PylithScalar x[],
                const PylithInt numConstants,
                const PylithScalar constants[],
-               PylithScalar f0p[]);
+               PylithScalar f0[]);
 
 // ----------------------------------------------------------------------
 // f0p function for generic poroelasticity terms (source density).
@@ -338,7 +338,7 @@ void f0p_implicit_source_grav(const PylithInt dim,
                 const PylithScalar x[],
                 const PylithInt numConstants,
                 const PylithScalar constants[],
-                PylithScalar f0p[]);
+                PylithScalar f0[]);
 
 // ----------------------------------------------------------------------
 // f0p function for generic poroelasticity terms (source density).
@@ -360,7 +360,7 @@ void f0p_implicit_source_grav_body(const PylithInt dim,
                  const PylithScalar x[],
                  const PylithInt numConstants,
                  const PylithScalar constants[],
-                 PylithScalar f0p[]);
+                 PylithScalar f0[]);
 
  // -----------------------------------------------------------------------------
  /** f1u function for isotropic linear poroelasticity plane strain WITHOUT reference stress and reference strain.
@@ -438,7 +438,7 @@ void f0p_implicit_source_grav_body(const PylithInt dim,
                     const PylithScalar x[],
                     const PylithInt numConstants,
                     const PylithScalar constants[],
-                    PylithScalar f1p[]);
+                    PylithScalar f1[]);
 
     // -----------------------------------------------------------------------------
     /** f1p / darcy flow / including gravity, tensor permeability
@@ -464,7 +464,7 @@ void f0p_implicit_source_grav_body(const PylithInt dim,
                                          const PylithScalar x[],
                                          const PylithInt numConstants,
                                          const PylithScalar constants[],
-                                         PylithScalar f1p[]);
+                                         PylithScalar f1[]);
 
     // -----------------------------------------------------------------------------
     /** f1p / darcy flow / without gravity
@@ -490,7 +490,7 @@ void f0p_implicit_source_grav_body(const PylithInt dim,
              const PylithScalar x[],
              const PylithInt numConstants,
              const PylithScalar constants[],
-             PylithScalar f1p[]);
+             PylithScalar f1[]);
 
     // -----------------------------------------------------------------------------
     /** f1p / darcy flow / without gravity, tensor permeability
@@ -516,7 +516,7 @@ void f0p_implicit_source_grav_body(const PylithInt dim,
                                 const PylithScalar x[],
                                 const PylithInt numConstants,
                                 const PylithScalar constants[],
-                                PylithScalar f1p[]);
+                                PylithScalar f1[]);
 
 // =========================== LHS Jacobian ============================
 
@@ -726,7 +726,7 @@ void g0p(const PylithInt dim,
           const PylithScalar x[],
           const PylithInt numConstants,
           const PylithScalar constants[],
-          PylithScalar g0p[]);
+          PylithScalar g0[]);
 
 // ----------------------------------------------------------------------
 // g0p function for generic poroelasticity terms.
@@ -750,7 +750,7 @@ void g0p_source(const PylithInt dim,
                 const PylithScalar x[],
                 const PylithInt numConstants,
                 const PylithScalar constants[],
-                PylithScalar g0p[]);
+                PylithScalar g0[]);
 
 // ----------------------------------------------------------------------
 // g0p function for generic poroelasticity terms.
@@ -774,7 +774,7 @@ void g0p_source_body(const PylithInt dim,
                       const PylithScalar x[],
                       const PylithInt numConstants,
                       const PylithScalar constants[],
-                      PylithScalar g0p[]);
+                      PylithScalar g0[]);
 
 // ----------------------------------------------------------------------
 // g0p function for generic poroelasticity terms.
@@ -798,7 +798,7 @@ void g0p_source_grav(const PylithInt dim,
                     const PylithScalar x[],
                     const PylithInt numConstants,
                     const PylithScalar constants[],
-                    PylithScalar g0p[]);
+                    PylithScalar g0[]);
 
 // ----------------------------------------------------------------------
 // g0p function for generic poroelasticity terms.
@@ -822,7 +822,7 @@ void g0p_source_grav_body(const PylithInt dim,
                           const PylithScalar x[],
                           const PylithInt numConstants,
                           const PylithScalar constants[],
-                          PylithScalar g0p[]);
+                          PylithScalar g0[]);
 
 // -----------------------------------------------------------------------------
 /** g1p / darcy flow / including gravity
@@ -848,7 +848,7 @@ void g1p_gravity(const PylithInt dim,
                  const PylithScalar x[],
                  const PylithInt numConstants,
                  const PylithScalar constants[],
-                 PylithScalar g1p[]);
+                 PylithScalar g1[]);
 
  // -----------------------------------------------------------------------------
  /** g1p / darcy flow / including gravity, tensor permeability
@@ -874,7 +874,7 @@ void g1p_gravity(const PylithInt dim,
                                       const PylithScalar x[],
                                       const PylithInt numConstants,
                                       const PylithScalar constants[],
-                                      PylithScalar g1p[]);
+                                      PylithScalar g1[]);
 
  // -----------------------------------------------------------------------------
  /** g1p / darcy flow / without gravity
@@ -900,7 +900,7 @@ void g1p_gravity(const PylithInt dim,
           const PylithScalar x[],
           const PylithInt numConstants,
           const PylithScalar constants[],
-          PylithScalar g1p[]);
+          PylithScalar g1[]);
 
 // -----------------------------------------------------------------------------
 /** g1p / darcy flow / without gravity, tensor permeability
@@ -926,7 +926,7 @@ void g1p_tensor_permeability(const PylithInt dim,
                              const PylithScalar x[],
                              const PylithInt numConstants,
                              const PylithScalar constants[],
-                             PylithScalar g1p[]);
+                             PylithScalar g1[]);
 
 
 
@@ -1092,7 +1092,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
                      const PylithScalar x[],
                      const PylithInt numConstants,
                      const PylithScalar constants[],
-                     PylithScalar f0u[]);
+                     PylithScalar f0[]);
 
     // ----------------------------------------------------------------------
     // f0p function for quadratic space and linear time MMS.
@@ -1114,7 +1114,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
                      const PylithScalar x[],
                      const PylithInt numConstants,
                      const PylithScalar constants[],
-                     PylithScalar f0p[]);
+                     PylithScalar f0[]);
 
     // ----------------------------------------------------------------------
     // f0u function for quadratic space and trigonometric time MMS.
@@ -1136,7 +1136,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
                      const PylithScalar x[],
                      const PylithInt numConstants,
                      const PylithScalar constants[],
-                     PylithScalar f0u[]);
+                     PylithScalar f0[]);
 
     // ----------------------------------------------------------------------
     // f0p function for quadratic space and trigonometric time MMS.
@@ -1158,7 +1158,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
                      const PylithScalar x[],
                      const PylithInt numConstants,
                      const PylithScalar constants[],
-                     PylithScalar f0p[]);
+                     PylithScalar f0[]);
 
     // ----------------------------------------------------------------------
     // f0u function for trigonometric space and linear time MMS.
@@ -1180,7 +1180,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
                      const PylithScalar x[],
                      const PylithInt numConstants,
                      const PylithScalar constants[],
-                     PylithScalar f0u[]);
+                     PylithScalar f0[]);
 
     // ----------------------------------------------------------------------
     // f0p function for trigonometric space and linear time MMS.
@@ -1202,7 +1202,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
                      const PylithScalar x[],
                      const PylithInt numConstants,
                      const PylithScalar constants[],
-                     PylithScalar f0p[]);
+                     PylithScalar f0[]);
 
     // ================================= STD =======================================
 
@@ -1228,7 +1228,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
                          const PylithScalar x[],
                          const PylithInt numConstants,
                          const PylithScalar constants[],
-                         PylithScalar f0p[]);
+                         PylithScalar f0[]);
 
     // ----------------------------------------------------------------------
     // f0p function for generic poroelasticity terms (source density).
@@ -1250,7 +1250,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
                      const PylithScalar x[],
                      const PylithInt numConstants,
                      const PylithScalar constants[],
-                     PylithScalar f0p[]);
+                     PylithScalar f0[]);
 
      // ----------------------------------------------------------------------
      // f0p function for generic poroelasticity terms (source density).
@@ -1272,7 +1272,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
                       const PylithScalar x[],
                       const PylithInt numConstants,
                       const PylithScalar constants[],
-                      PylithScalar f0p[]);
+                      PylithScalar f0[]);
 
     // ----------------------------------------------------------------------
     // f0p function for generic poroelasticity terms (source density).
@@ -1294,7 +1294,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
                    const PylithScalar x[],
                    const PylithInt numConstants,
                    const PylithScalar constants[],
-                   PylithScalar f0p[]);
+                   PylithScalar f0[]]);
 
     // ----------------------------------------------------------------------
     // f0p function for generic poroelasticity terms (source density).
@@ -1316,7 +1316,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
                     const PylithScalar x[],
                     const PylithInt numConstants,
                     const PylithScalar constants[],
-                    PylithScalar f0p[]);
+                    PylithScalar f0[]);
 
     // ----------------------------------------------------------------------
     // f0p function for generic poroelasticity terms (source density).
@@ -1338,7 +1338,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
                      const PylithScalar x[],
                      const PylithInt numConstants,
                      const PylithScalar constants[],
-                     PylithScalar f0p[]);
+                     PylithScalar f0[]);
 
      // -----------------------------------------------------------------------------
      /** f1u function for isotropic linear poroelasticity plane strain WITHOUT reference stress and reference strain.
@@ -1365,7 +1365,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
               const PylithInt numConstants,
               const PylithScalar constants[],
               PylithScalar f1[]);
-              
+
       // -----------------------------------------------------------------------------
       /** f1p / darcy flow / including gravity
       *
@@ -1390,7 +1390,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
                       const PylithScalar x[],
                       const PylithInt numConstants,
                       const PylithScalar constants[],
-                      PylithScalar f1p[]);
+                      PylithScalar f1[]);
 
       // -----------------------------------------------------------------------------
       /** f1p / darcy flow / including gravity, tensor permeability
@@ -1416,7 +1416,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
                                            const PylithScalar x[],
                                            const PylithInt numConstants,
                                            const PylithScalar constants[],
-                                           PylithScalar f1p[]);
+                                           PylithScalar f1[]);
 
       // -----------------------------------------------------------------------------
       /** f1p / darcy flow / without gravity
@@ -1442,7 +1442,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
                const PylithScalar x[],
                const PylithInt numConstants,
                const PylithScalar constants[],
-               PylithScalar f1p[]);
+               PylithScalar f1[]);
 
       // -----------------------------------------------------------------------------
       /** f1p / darcy flow / without gravity, tensor permeability
@@ -1468,7 +1468,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
                                   const PylithScalar x[],
                                   const PylithInt numConstants,
                                   const PylithScalar constants[],
-                                  PylithScalar f1p[]);
+                                  PylithScalar f1[]);
 
      // -----------------------------------------------------------------------------
      /** f1u function for isotropic linear poroelasticity plane strain WITH reference stress and reference strain.
@@ -1704,7 +1704,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
               const PylithScalar x[],
               const PylithInt numConstants,
               const PylithScalar constants[],
-              PylithScalar g0p[]);
+              PylithScalar g0[]);
 
     // ----------------------------------------------------------------------
     // g0p function for generic poroelasticity terms.
@@ -1728,7 +1728,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
                     const PylithScalar x[],
                     const PylithInt numConstants,
                     const PylithScalar constants[],
-                    PylithScalar g0p[]);
+                    PylithScalar g0[]);
 
     // ----------------------------------------------------------------------
     // g0p function for generic poroelasticity terms.
@@ -1752,7 +1752,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
                           const PylithScalar x[],
                           const PylithInt numConstants,
                           const PylithScalar constants[],
-                          PylithScalar g0p[]);
+                          PylithScalar g0[]);
 
     // ----------------------------------------------------------------------
     // g0p function for generic poroelasticity terms.
@@ -1776,7 +1776,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
                         const PylithScalar x[],
                         const PylithInt numConstants,
                         const PylithScalar constants[],
-                        PylithScalar g0p[]);
+                        PylithScalar g0[]);
 
     // ----------------------------------------------------------------------
     // g0p function for generic poroelasticity terms.
@@ -1800,7 +1800,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
                               const PylithScalar x[],
                               const PylithInt numConstants,
                               const PylithScalar constants[],
-                              PylithScalar g0p[]);
+                              PylithScalar g0[]);
 
     // -----------------------------------------------------------------------------
     /** g1p / darcy flow / including gravity
@@ -1826,7 +1826,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
                      const PylithScalar x[],
                      const PylithInt numConstants,
                      const PylithScalar constants[],
-                     PylithScalar g1p[]);
+                     PylithScalar g1[]);
 
      // -----------------------------------------------------------------------------
      /** g1p / darcy flow / including gravity, tensor permeability
@@ -1852,7 +1852,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
                                           const PylithScalar x[],
                                           const PylithInt numConstants,
                                           const PylithScalar constants[],
-                                          PylithScalar g1p[]);
+                                          PylithScalar g1[]);
 
      // -----------------------------------------------------------------------------
      /** g1p / darcy flow / without gravity
@@ -1878,7 +1878,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
               const PylithScalar x[],
               const PylithInt numConstants,
               const PylithScalar constants[],
-              PylithScalar g1p[]);
+              PylithScalar g1[]);
 
     // -----------------------------------------------------------------------------
     /** g1p / darcy flow / without gravity, tensor permeability
@@ -1904,7 +1904,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
                                  const PylithScalar x[],
                                  const PylithInt numConstants,
                                  const PylithScalar constants[],
-                                 PylithScalar g1p[]);
+                                 PylithScalar g1[]);
 
 
 
