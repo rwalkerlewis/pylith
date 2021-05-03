@@ -1294,7 +1294,7 @@ class pylith::fekernels::IsotropicLinearPoroelasticity3D {
                    const PylithScalar x[],
                    const PylithInt numConstants,
                    const PylithScalar constants[],
-                   PylithScalar f0[]]);
+                   PylithScalar f0[]);
 
     // ----------------------------------------------------------------------
     // f0p function for generic poroelasticity terms (source density).

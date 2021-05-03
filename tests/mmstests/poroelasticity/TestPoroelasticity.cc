@@ -50,8 +50,8 @@ pylith::mmstests::TestPoroelasticity::setUp(void) {
     MMSTest::setUp();
 
     _material = new pylith::materials::Poroelasticity;CPPUNIT_ASSERT(_material);
-    _bcDisp = new pylith::bc::DirichletUserFn;CPPUNIT_ASSERT(_bcDisp);
-    _bcPres = new pylith::bc::DirichletUserFn;CPPUNIT_ASSERT(_bcPres);
+    _bcDisplacement = new pylith::bc::DirichletUserFn;CPPUNIT_ASSERT(_bcDisplacement);
+    _bcPressure = new pylith::bc::DirichletUserFn;CPPUNIT_ASSERT(_bcPressure);
     _data = NULL;
 } // setUp
 
@@ -61,8 +61,8 @@ pylith::mmstests::TestPoroelasticity::setUp(void) {
 void
 pylith::mmstests::TestPoroelasticity::tearDown(void) {
     delete _material;_material = NULL;
-    delete _bcDisp;_bcDisp = NULL;
-    delete _bcPres;_bcPres = NULL;
+    delete _bcDisplacement;_bcDisplacement = NULL;
+    delete _bcPressure;_bcPressure = NULL;
     delete _data;_data = NULL;
 
     MMSTest::tearDown();
@@ -107,7 +107,7 @@ pylith::mmstests::TestPoroelasticity::_initialize(void) {
     _problem->setGravityField(_data->gravityField);
     pylith::materials::Material* materials[1] = { _material };
     _problem->setMaterials(materials, 1);
-    pylith::bc::BoundaryCondition* bcs[2] = { _bcDisp, _bcPres };
+    pylith::bc::BoundaryCondition* bcs[2] = { _bcDisplacement, _bcPressure };
     _problem->setBoundaryConditions(bcs, 2);
     _problem->setStartTime(_data->startTime);
     _problem->setEndTime(_data->endTime);

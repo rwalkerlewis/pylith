@@ -32,6 +32,7 @@ test_isotropiclinearporoelasticity2d_SOURCES = \
 		TestIsotropicLinearPoroelasticity2D_QS_LT_onecell.cc \
 		TestIsotropicLinearPoroelasticity2D_QS_LT_fourcells.cc \
 		TestIsotropicLinearPoroelasticity2D_QS_LT.cc \
+		TestIsotropicLinearPoroelasticity2D_TS_LT.cc \
 		test_driver.cc
 
 test_isotropiclinearporoelasticity2d_onecell_SOURCES = \
@@ -50,6 +51,7 @@ test_isotropiclinearporoelasticity2d_full_SOURCES = \
 		TestPoroelasticity.cc \
 		TestIsotropicLinearPoroelasticity.cc \
 		TestIsotropicLinearPoroelasticity2D_QS_LT.cc \
+		TestIsotropicLinearPoroelasticity2D_TS_LT.cc \
 		test_driver.cc
 
 noinst_HEADERS =

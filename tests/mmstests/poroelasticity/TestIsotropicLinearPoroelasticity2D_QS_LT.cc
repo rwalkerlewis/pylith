@@ -403,18 +403,18 @@ protected:
         // Displacement BC
         static const PylithInt constrainedDisplacementDOF[2] = {0, 1};
         static const PylithInt numConstrainedDisplacement = 2;
-        _bcDisp->setConstrainedDOF(constrainedDisplacementDOF, numConstrainedDisplacement);
-        _bcDisp->setMarkerLabel("boundary");
-        _bcDisp->setSubfieldName("displacement");
-        _bcDisp->setUserFn(solnkernel_displacement);
+        _bcDisplacement->setConstrainedDOF(constrainedDisplacementDOF, numConstrainedDisplacement);
+        _bcDisplacement->setMarkerLabel("boundary");
+        _bcDisplacement->setSubfieldName("displacement");
+        _bcDisplacement->setUserFn(solnkernel_displacement);
 
         // Pressure BC
         static const PylithInt constrainedPressureDOF[1] = {0};
         static const PylithInt numConstrainedPressure = 1;
-        _bcPres->setConstrainedDOF(constrainedPressureDOF, numConstrainedPressure);
-        _bcPres->setMarkerLabel("boundary");
-        _bcPres->setSubfieldName("pressure");
-        _bcPres->setUserFn(solnkernel_pressure);
+        _bcPressure->setConstrainedDOF(constrainedPressureDOF, numConstrainedPressure);
+        _bcPressure->setMarkerLabel("boundary");
+        _bcPressure->setSubfieldName("pressure");
+        _bcPressure->setUserFn(solnkernel_pressure);
 
     } // setUp
 
