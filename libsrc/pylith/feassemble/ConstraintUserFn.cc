@@ -20,48 +20,46 @@
 
 #include "pylith/feassemble/ConstraintUserFn.hh" // implementation of object methods
 
-#include "pylith/topology/Mesh.hh" // USES Mesh
-#include "pylith/topology/Field.hh" // USES Field
+#include "pylith/topology/Mesh.hh"             // USES Mesh
+#include "pylith/topology/Field.hh"            // USES Field
 #include "pylith/problems/ObserversPhysics.hh" // USES ObserversPhysics
-#include "pylith/problems/Physics.hh" // USES Physics
+#include "pylith/problems/Physics.hh"          // USES Physics
 
 #include "pylith/utils/EventLogger.hh" // USES EventLogger
-#include "pylith/utils/journals.hh" // USES PYLITH_JOURNAL_*
+#include "pylith/utils/journals.hh"    // USES PYLITH_JOURNAL_*
 
-#include <cassert> // USES assert()
-#include <typeinfo> // USES typeid()
+#include <cassert>   // USES assert()
+#include <typeinfo>  // USES typeid()
 #include <stdexcept> // USES std::runtime_error
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Default constructor.
-pylith::feassemble::ConstraintUserFn::ConstraintUserFn(pylith::problems::Physics* const physics) :
-    Constraint(physics),
-    _fn(NULL) {
+pylith::feassemble::ConstraintUserFn::ConstraintUserFn(pylith::problems::Physics *const physics) : Constraint(physics),
+                                                                                                   _fn(NULL)
+{
     GenericComponent::setName("constraintuserfn");
 } // constructor
 
-
 // ---------------------------------------------------------------------------------------------------------------------
 // Destructor.
-pylith::feassemble::ConstraintUserFn::~ConstraintUserFn(void) {
+pylith::feassemble::ConstraintUserFn::~ConstraintUserFn(void)
+{
     deallocate();
 } // destructor
 
-
 // ---------------------------------------------------------------------------------------------------------------------
 // Set constraint kernel.
-void
-pylith::feassemble::ConstraintUserFn::setUserFn(const PetscUserFieldFunc fn) {
+void pylith::feassemble::ConstraintUserFn::setUserFn(const PetscUserFieldFunc fn)
+{
     _fn = fn;
 } // setUserFn
 
-
 // ---------------------------------------------------------------------------------------------------------------------
 // Initialize constraint domain, auxiliary field, and derived field. Update observers.
-void
-pylith::feassemble::ConstraintUserFn::initialize(const pylith::topology::Field& solution) {
+void pylith::feassemble::ConstraintUserFn::initialize(const pylith::topology::Field &solution)
+{
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("intialize(solution="<<solution.getLabel()<<")");
+    PYLITH_JOURNAL_DEBUG("intialize(solution=" << solution.getLabel() << ")");
 
     Constraint::initialize(solution);
 
@@ -73,11 +71,13 @@ pylith::feassemble::ConstraintUserFn::initialize(const pylith::topology::Field& 
     PetscErrorCode err = 0;
     PetscDS prob = NULL;
     DMLabel label = NULL;
-    void* context = NULL;
+    void *context = NULL;
     const PylithInt labelId = 1;
-    err = DMGetDS(solution.dmMesh(), &prob);PYLITH_CHECK_ERROR(err);
+    err = DMGetDS(solution.dmMesh(), &prob);
+    PYLITH_CHECK_ERROR(err);
     const PetscInt i_field = solution.subfieldInfo(_subfieldName.c_str()).index;
-    err = DMGetLabel(solution.dmMesh(), _constraintLabel.c_str(), &label);PYLITH_CHECK_ERROR(err);
+    err = DMGetLabel(solution.dmMesh(), _constraintLabel.c_str(), &label);
+    PYLITH_CHECK_ERROR(err);
     err = PetscDSAddBoundary(prob, DM_BC_ESSENTIAL, _constraintLabel.c_str(), label, 1, &labelId, i_field,
                              _constrainedDOF.size(), &_constrainedDOF[0], (void (*)(void))_fn, NULL, context, NULL);
     PYLITH_CHECK_ERROR(err);
@@ -85,14 +85,13 @@ pylith::feassemble::ConstraintUserFn::initialize(const pylith::topology::Field& 
     PYLITH_METHOD_END;
 } // initialize
 
-
 // ---------------------------------------------------------------------------------------------------------------------
 // Set constrained values in solution field.
-void
-pylith::feassemble::ConstraintUserFn::setSolution(pylith::topology::Field* solution,
-                                                  const double t) {
+void pylith::feassemble::ConstraintUserFn::setSolution(pylith::topology::Field *solution,
+                                                       const double t)
+{
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("setSolution(solution="<<solution->getLabel()<<", t="<<t<<")");
+    PYLITH_JOURNAL_DEBUG("setSolution(solution=" << solution->getLabel() << ", t=" << t << ")");
 
     assert(solution);
 
@@ -101,26 +100,30 @@ pylith::feassemble::ConstraintUserFn::setSolution(pylith::topology::Field* solut
 
     // Get label for constraint.
     PetscDMLabel dmLabel = NULL;
-    err = DMGetLabel(dmSoln, _constraintLabel.c_str(), &dmLabel);PYLITH_CHECK_ERROR(err);
+    err = DMGetLabel(dmSoln, _constraintLabel.c_str(), &dmLabel);
+    PYLITH_CHECK_ERROR(err);
 
-    void* context = NULL;
+    void *context = NULL;
     const int labelId = 1;
     const int fieldIndex = solution->subfieldInfo(_subfieldName.c_str()).index;
     const PylithInt numConstrained = _constrainedDOF.size();
     assert(solution->localVector());
-    err = DMPlexLabelAddCells(dmSoln, dmLabel);PYLITH_CHECK_ERROR(err);
+    err = DMPlexLabelAddCells(dmSoln, dmLabel);
+    PYLITH_CHECK_ERROR(err);
     err = DMPlexInsertBoundaryValuesEssential(dmSoln, t, fieldIndex, numConstrained, &_constrainedDOF[0], dmLabel, 1,
-                                              &labelId, _fn, context, solution->localVector());PYLITH_CHECK_ERROR(err);
-    err = DMPlexLabelClearCells(dmSoln, dmLabel);PYLITH_CHECK_ERROR(err);
+                                              &labelId, _fn, context, solution->localVector());
+    PYLITH_CHECK_ERROR(err);
+    err = DMPlexLabelClearCells(dmSoln, dmLabel);
+    PYLITH_CHECK_ERROR(err);
 
     pythia::journal::debug_t debug(GenericComponent::getName());
-    if (debug.state()) {
+    if (debug.state())
+    {
         PYLITH_JOURNAL_DEBUG("Displaying solution field");
         solution->view("solution field");
     } // if
 
     PYLITH_METHOD_END;
 } // setSolution
-
 
 // End of file

@@ -450,12 +450,10 @@ void pylith::materials::Poroelasticity::_setKernelsLHSResidual(pylith::feassembl
         default:
             PYLITH_COMPONENT_FIREWALL("Unknown case (bitUse=" << bitUse << ") for Poroelasticity RHS residual kernels.");
         } // switch
-        f0u = pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f0_mms_ql_u;
         const PetscPointFunc f1u = _rheology->getKernelResidualStress(coordsys, _useInertia);
 
         // Pressure
-        // PetscPointFunc f0p = _rheology->getKernelf0p_implicit(coordsys, _useBodyForce, _gravityField, _useSourceDensity);
-        PetscPointFunc f0p = pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f0_mms_ql_p;
+        PetscPointFunc f0p = _rheology->getKernelf0p_implicit(coordsys, _useBodyForce, _gravityField, _useSourceDensity);
         PetscPointFunc f1p = _rheology->getKernelf1p_implicit(coordsys, _gravityField); // darcy velocity
 
         // Volumetric Strain

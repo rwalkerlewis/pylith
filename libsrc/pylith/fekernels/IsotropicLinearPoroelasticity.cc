@@ -1076,8 +1076,8 @@ void pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f1p(const Pyli
   f1[0] += ((isotropicPermeablity / fluidViscosity) * pressure_x[0]);
   f1[1] += ((isotropicPermeablity / fluidViscosity) * pressure_x[1]);
 
-  // PetscPrintf(PETSC_COMM_WORLD, "f1p[0]: %f\n", (double)f1[0]);
-  // PetscPrintf(PETSC_COMM_WORLD, "f1p[1]: %f\n", (double)f1[1]);
+  PetscPrintf(PETSC_COMM_WORLD, "f1p[0]: %f\n", (double)f1[0]);
+  PetscPrintf(PETSC_COMM_WORLD, "f1p[1]: %f\n", (double)f1[1]);
 } // f1p
 
 // ----------------------------------------------------------------------

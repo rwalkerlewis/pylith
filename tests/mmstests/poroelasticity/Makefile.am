@@ -19,9 +19,7 @@ include $(top_srcdir)/check.am
 
 TESTS = \
 	test_isotropiclinearporoelasticity2d \
-	test_isotropiclinearporoelasticity2d_onecell \
-	test_isotropiclinearporoelasticity2d_fourcells \
-	test_isotropiclinearporoelasticity2d_full \
+	test_isotropiclinearporoelasticity2d_QS_LT \
 	test_isotropiclinearporoelasticity2d_TS_LT
 
 check_PROGRAMS = $(TESTS)
@@ -30,29 +28,14 @@ check_PROGRAMS = $(TESTS)
 test_isotropiclinearporoelasticity2d_SOURCES = \
 		TestPoroelasticity.cc \
 		TestIsotropicLinearPoroelasticity.cc \
-		TestIsotropicLinearPoroelasticity2D_QS_LT_onecell.cc \
-		TestIsotropicLinearPoroelasticity2D_QS_LT_fourcells.cc \
 		TestIsotropicLinearPoroelasticity2D_QS_LT.cc \
 		TestIsotropicLinearPoroelasticity2D_TS_LT.cc \
 		test_driver.cc
 
-test_isotropiclinearporoelasticity2d_onecell_SOURCES = \
-		TestPoroelasticity.cc \
-		TestIsotropicLinearPoroelasticity.cc \
-		TestIsotropicLinearPoroelasticity2D_QS_LT_onecell.cc \
-		test_driver.cc
-
-test_isotropiclinearporoelasticity2d_fourcells_SOURCES = \
-		TestPoroelasticity.cc \
-		TestIsotropicLinearPoroelasticity.cc \
-		TestIsotropicLinearPoroelasticity2D_QS_LT_fourcells.cc \
-		test_driver.cc
-
-test_isotropiclinearporoelasticity2d_full_SOURCES = \
+test_isotropiclinearporoelasticity2d_QS_LT_SOURCES = \
 		TestPoroelasticity.cc \
 		TestIsotropicLinearPoroelasticity.cc \
 		TestIsotropicLinearPoroelasticity2D_QS_LT.cc \
-		TestIsotropicLinearPoroelasticity2D_TS_LT.cc \
 		test_driver.cc
 
 test_isotropiclinearporoelasticity2d_TS_LT_SOURCES = \
