@@ -22,21 +22,21 @@
 
 #include "pylith/problems/TimeDependent.hh" // USES TimeDependent
 
-#include "pylith/topology/Mesh.hh"  // USES Mesh
+#include "pylith/topology/Mesh.hh" // USES Mesh
 #include "pylith/topology/Field.hh" // USES Field
 
 #include "petscts.h" // USES PetscTS
 
-#include "pylith/utils/error.hh"    // USES PYLITH_CHECK_ERROR
-#include "pylith/utils/array.hh"    // USES real_array, string_vector
+#include "pylith/utils/error.hh" // USES PYLITH_CHECK_ERROR
+#include "pylith/utils/array.hh" // USES real_array, string_vector
 #include "pylith/utils/journals.hh" // USES PYLITH_COMPONENT_*
-#include <cassert>                  // USES assert()
-#include <iostream>                 // USES std::out
+#include <cassert> // USES assert()
+#include <iostream> // USES std::out
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Setup testing data.
-void pylith::testing::MMSTest::setUp(void)
-{
+void
+pylith::testing::MMSTest::setUp(void) {
     GenericComponent::setName("mmstest"); // Override in child class for finer control of journal output.
     _problem = new pylith::problems::TimeDependent;
     CPPUNIT_ASSERT(_problem);
@@ -50,10 +50,11 @@ void pylith::testing::MMSTest::setUp(void)
     _allowZeroResidual = false;
 } // setUp
 
+
 // ---------------------------------------------------------------------------------------------------------------------
 // Tear down testing data.
-void pylith::testing::MMSTest::tearDown(void)
-{
+void
+pylith::testing::MMSTest::tearDown(void) {
     PYLITH_METHOD_BEGIN;
 
     pythia::journal::debug_t debug(GenericComponent::getName());
@@ -71,10 +72,11 @@ void pylith::testing::MMSTest::tearDown(void)
     PYLITH_METHOD_END;
 } // tearDown
 
+
 // ---------------------------------------------------------------------------------------------------------------------
 // Verify discretization can represent solution field.
-void pylith::testing::MMSTest::testDiscretization(void)
-{
+void
+pylith::testing::MMSTest::testDiscretization(void) {
     PYLITH_METHOD_BEGIN;
 
     _initialize();
@@ -92,34 +94,31 @@ void pylith::testing::MMSTest::testDiscretization(void)
 
     bool fail = false;
     std::ostringstream msg;
-    for (size_t i_field = 0; i_field < numSubfields; ++i_field)
-    {
+    for (size_t i_field = 0; i_field < numSubfields; ++i_field) {
         msg << "Discretization test failed for subfield(s): ";
-        if (error[i_field] > 1.0e-10)
-        {
+        if (error[i_field] > 1.0e-10) {
             fail = true;
             msg << " " << subfieldNames[i_field] << " (" << error[i_field] << ")";
         } // if
-    }     // for
-    if (fail)
-    {
+    } // for
+    if (fail) {
         CPPUNIT_ASSERT_MESSAGE(msg.str(), fail);
     } // if
 
     PYLITH_METHOD_END;
 } // testDiscretization
 
+
 // ---------------------------------------------------------------------------------------------------------------------
 // Verify residual evaluated for solution is below specified tolerance.
-void pylith::testing::MMSTest::testResidual(void)
-{
+void
+pylith::testing::MMSTest::testResidual(void) {
     PYLITH_METHOD_BEGIN;
 
     PetscErrorCode err = 0;
 
     pythia::journal::debug_t debug(GenericComponent::getName());
-    if (debug.state())
-    {
+    if (debug.state()) {
         err = PetscOptionsSetValue(NULL, "-dm_plex_print_fem", "2");
         CPPUNIT_ASSERT(!err);
         err = PetscOptionsSetValue(NULL, "-dm_plex_print_l2", "2");
@@ -131,8 +130,7 @@ void pylith::testing::MMSTest::testResidual(void)
     CPPUNIT_ASSERT(_problem);
     CPPUNIT_ASSERT(_solution);
     CPPUNIT_ASSERT(_solutionDot);
-    if (debug.state())
-    {
+    if (debug.state()) {
         _solution->view("Solution field layout", pylith::topology::Field::VIEW_LAYOUT);
     } // if
 
@@ -140,23 +138,21 @@ void pylith::testing::MMSTest::testResidual(void)
     PylithReal norm = 0.0;
 
     // Print out DS
-    PetscDM dmSoln = _solution->dmMesh();
-    PetscDS ds;
-    err = DMGetDS(dmSoln, &ds);
-    CPPUNIT_ASSERT(!err);
-    err = PetscDSView(ds, NULL);
-    CPPUNIT_ASSERT(!err);
+    // PetscDM dmSoln = _solution->dmMesh();
+    // PetscDS ds;
+    // err = DMGetDS(dmSoln, &ds);
+    // CPPUNIT_ASSERT(!err);
+    // err = PetscDSView(ds, NULL);
+    // CPPUNIT_ASSERT(!err);
 
     err = DMTSCheckResidual(_problem->getPetscTS(), _problem->getPetscDM(), _problem->getStartTime(), _solution->scatterVector("mmstest"),
                             _solutionDot->scatterVector("mmstest"), tolerance, &norm);
     CPPUNIT_ASSERT(!err);
 
-    if (debug.state())
-    {
+    if (debug.state()) {
         _solution->view("Solution field");
     } // if
-    if (!_allowZeroResidual)
-    {
+    if (!_allowZeroResidual) {
         CPPUNIT_ASSERT_MESSAGE("L2 normal of residual is exactly zero, which suggests suspicious case with all residuals "
                                "entries exactly zero.",
                                norm > 0.0);
@@ -166,12 +162,13 @@ void pylith::testing::MMSTest::testResidual(void)
     PYLITH_METHOD_END;
 } // testResidual
 
+
 // ---------------------------------------------------------------------------------------------------------------------
 // Verify Jacobian via Taylor series.
 //
 // || F(\vec{s} + \epsilon \vec{v}) - F(\vec{s} - \epsilon J \vec{v} || < \epsilon**2
-void pylith::testing::MMSTest::testJacobianTaylorSeries(void)
-{
+void
+pylith::testing::MMSTest::testJacobianTaylorSeries(void) {
     PYLITH_METHOD_BEGIN;
 
     _initialize();
@@ -186,12 +183,9 @@ void pylith::testing::MMSTest::testJacobianTaylorSeries(void)
                             _solutionDot->scatterVector("mmstest"), tolerance, &isLinear, &convergenceRate);
     CPPUNIT_ASSERT(!err);
 
-    if (_isJacobianLinear)
-    {
+    if (_isJacobianLinear) {
         CPPUNIT_ASSERT_EQUAL_MESSAGE("Expected linear Jacobian.", PETSC_TRUE, isLinear);
-    }
-    else
-    {
+    } else   {
         const PylithReal tolerance = 1.0e-3;
         CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE("Error in convergence rate for Jacobian.",
                                              _jacobianConvergenceRate, convergenceRate, tolerance);
@@ -200,14 +194,14 @@ void pylith::testing::MMSTest::testJacobianTaylorSeries(void)
     PYLITH_METHOD_END;
 } // testJacobianTaylorSeries
 
+
 // ---------------------------------------------------------------------------------------------------------------------
 // Test Jacobian using finite differences.
-void pylith::testing::MMSTest::testJacobianFiniteDiff(void)
-{
+void
+pylith::testing::MMSTest::testJacobianFiniteDiff(void) {
     PYLITH_METHOD_BEGIN;
 
-    if (_disableFiniteDifferenceCheck)
-    {
+    if (_disableFiniteDifferenceCheck) {
         PYLITH_JOURNAL_ERROR("Skipping Jacobian finite-difference check. Test disabled.");
         PYLITH_METHOD_END;
     } // if
@@ -220,8 +214,7 @@ void pylith::testing::MMSTest::testJacobianFiniteDiff(void)
     _initialize();
 
     pythia::journal::debug_t debug(GenericComponent::getName());
-    if (debug.state())
-    {
+    if (debug.state()) {
         err = PetscOptionsSetValue(NULL, "-snes_test_jacobian_view", "");
         CPPUNIT_ASSERT(!err);
     } // if
@@ -246,10 +239,11 @@ void pylith::testing::MMSTest::testJacobianFiniteDiff(void)
     PYLITH_METHOD_END;
 } // testJacobianFiniteDiff
 
+
 // ---------------------------------------------------------------------------------------------------------------------
 // Initialize objects for test.
-void pylith::testing::MMSTest::_initialize(void)
-{
+void
+pylith::testing::MMSTest::_initialize(void) {
     PYLITH_METHOD_BEGIN;
 
     CPPUNIT_ASSERT(_problem);
@@ -267,7 +261,8 @@ void pylith::testing::MMSTest::_initialize(void)
     // Global vector to use for analytical solution in MMS tests.
     _solution->createScatter(_solution->mesh(), "mmstest");
 
-    // Create solution time derivative
+    // Global vector to use for analytical solution in MMS tests.
+
     CPPUNIT_ASSERT(!_solutionDot);
 
     _solutionDot = new pylith::topology::Field(*_mesh);
@@ -276,5 +271,6 @@ void pylith::testing::MMSTest::_initialize(void)
 
     PYLITH_METHOD_END;
 } // _initialize
+
 
 // End of file
