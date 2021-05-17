@@ -87,8 +87,8 @@ format extensively in the examples. Appendix \vref{sec:format:MeshIOAscii}
 describes the format of the files. The properties and facilities of
 the \object{MeshIOAscii} object include:
 \begin{inventory}
-\propertyitem{filename}{Name of the mesh file.}
-\facilityitem{coordsys}{Coordinate system associated with the mesh.}
+  \propertyitem{filename}{Name of the mesh file.}
+  \facilityitem{coordsys}{Coordinate system associated with the mesh.}
 \end{inventory}
 
 \subsubsection{\object{MeshIOCubit}}
@@ -100,10 +100,10 @@ in the Exodus II files and PyLith can use these nodeset names or revert
 to using the nodeset ids. The properties and facilities associated
 with the \object{MeshIOCubit} object are:
 \begin{inventory}
-\propertyitem{filename}{Name of the Exodus II file.}
-\propertyitem{use\_nodeset\_names}{Identify nodesets by name rather than id
-(default is True).}
-\facilityitem{coordsys}{Coordinate system associated with the mesh.}
+  \propertyitem{filename}{Name of the Exodus II file.}
+  \propertyitem{use\_nodeset\_names}{Identify nodesets by name rather than id
+    (default is True).}
+  \facilityitem{coordsys}{Coordinate system associated with the mesh.}
 \end{inventory}
 
 \subsubsection{\object{MeshIOLagrit}}
@@ -124,7 +124,7 @@ and facilities are:
     indicating that PSET files use 32-bit integers (default is True).}
   \propertyitem{record\_header\_32bt}{Flag indicating FORTRAN record header is
     32-bit (default is True).}
-\facilityitem{coordsys}{Coordinate system associated with mesh.}
+  \facilityitem{coordsys}{Coordinate system associated with mesh.}
 \end{inventory}
 
 \userwarning{The PyLith developers have not used LaGriT since around 2008
@@ -138,18 +138,18 @@ and then distributes the mesh among the processors. The type of
 partitioner is set via PETSc settings. The properties and facilities
 of the \object{Distributor} include:
 \begin{inventory}
-\propertyitem{partitioner}{Name of mesh partitioner ['chaco','parmetis'].}
-\propertyitem{write\_partition}{Flag indicating that the partition information
-should be written to a file (default is False).}
-\facilityitem{data\_writer}{Writer for partition information (default
-  is \object{DataWriterVTK} for VTK output).}
+  \propertyitem{partitioner}{Name of mesh partitioner ['chaco','parmetis'].}
+  \propertyitem{write\_partition}{Flag indicating that the partition information
+    should be written to a file (default is False).}
+  \facilityitem{data\_writer}{Writer for partition information (default
+    is \object{DataWriterVTK} for VTK output).}
 \end{inventory}
 \begin{cfg}[\object{Distributor} parameters in a \filename{cfg} file]
-<h>[pylithapp.mesh_generator.distributor]</h>
-<p>partitioner</p> = chaco ; Options are 'chaco' (default) and 'parmetis'.
+  <h>[pylithapp.mesh_generator.distributor]</h>
+  <p>partitioner</p> = chaco ; Options are 'chaco' (default) and 'parmetis'.
 \end{cfg}
 METIS/ParMETIS are not included in the PyLith binaries due to licensing
-issues. 
+issues.
 
 
 \subsubsection{\object{Refiner}}
@@ -173,7 +173,7 @@ into eight cells.
     vertices in the original cells. The purple lines and green circles
     identify the new edges and vertices added to the original cells to
     refine the mesh by a factor of two.}
-\label{fig:uniform:refinement:2x}
+  \label{fig:uniform:refinement:2x}
 \end{figure}
 
 Refinement occurs after distribution of the mesh among processors.
@@ -213,14 +213,14 @@ Green's functions. The general properties facilities include:
 \end{inventory}
 
 \begin{cfg}[Problem parameters in a \filename{cfg} file]
-<h>[pylithapp.timedependent]</h>
-<p>solver</p> = linear
-<f>solution</f> = pylith.problems.SolnDisp
-<f>normalizer</f> = spatialdata.units.NondimElasticQuasistatic
-<f>materials</f> = [elastic, viscoelastic]
-<f>bc</f> = [boundary_east, boundary_bottom, boundary_west]
-<f>interfaces</f> = [SanAndreas, SanJacinto]
-<f>gravity_field</f> = spatialdata.spatialdb.GravityField
+  <h>[pylithapp.timedependent]</h>
+  <p>solver</p> = linear
+  <f>solution</f> = pylith.problems.SolnDisp
+  <f>normalizer</f> = spatialdata.units.NondimElasticQuasistatic
+  <f>materials</f> = [elastic, viscoelastic]
+  <f>bc</f> = [boundary_east, boundary_bottom, boundary_west]
+  <f>interfaces</f> = [SanAndreas, SanJacinto]
+  <f>gravity_field</f> = spatialdata.spatialdb.GravityField
 \end{cfg}
 
 The following sections discuss the \facility{solution} and
@@ -252,14 +252,16 @@ add different material formulations.
   \label{tab:solution:containers}
   \begin{tabular}{lll}
     \toprule
-    \thead{Object} & \thead{Subfields} & \thead{Use Cases} \\
+    \thead{Object}                  & \thead{Subfields}                       & \thead{Use Cases}                       \\
     \midrule
-    \object{SolnDisp} & displacement & Elasticity w/o inertia and faults \\
-    \object{SolnDispVel} & displacement, velocity & Elasticity w/inertia and w/o faults \\
-    \object{SolnDispLagrange} & displacement, lagrange\_fault & Elasticity w/faults \\
-    \object{SolnDispVelLagrange} & displacement, lagrange\_fault & Elasticity w/faults \\
-    \object{SolnDispPres} & displacement, pressure & Incompressible elasticity w/o faults \\
-    \object{SolnDispPresLagrange} & displacement, pressure, lagrange\_fault & Incompressible elasticity w/o faults \\
+    \object{SolnDisp}               & displacement                            & Elasticity w/o inertia and faults       \\
+    \object{SolnDispVel}            & displacement, velocity                  & Elasticity w/inertia and w/o faults     \\
+    \object{SolnDispLagrange}       & displacement, lagrange\_fault           & Elasticity w/faults                     \\
+    \object{SolnDispVelLagrange}    & displacement, lagrange\_fault           & Elasticity w/faults                     \\
+    \object{SolnDispPres}           & displacement, pressure                  & Incompressible elasticity w/o faults    \\
+    \object{SolnDispPresLagrange}   & displacement, pressure, lagrange\_fault & Incompressible elasticity w/o faults    \\
+    \object{SolnDispPresTracStrain} & displacement, pressure, trace\_strain   & Poroelasticity w/o inertia and faults   \\
+    \object{SolnDispPresVel}        & displacement, pressure, velocity        & Poroelasticity w/inertia and w/o faults \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -275,20 +277,20 @@ Each subfield is a \object{SolutionSubfield} object with the following propertie
     associated with subfield (default=-1 and should not be
     changed); and}
   \propertyitem{finite\_element\_space}{Finite-element space ({\tt
-      polynomial} or {\tt point; defaults=polynomial}). Point space corresponds to delta
+        polynomial} or {\tt point; defaults=polynomial}). Point space corresponds to delta
     functions at the quadrature points;}
 \end{inventory}
 
 \begin{cfg}[Setting discretization information for a \object{SolnDispLagrange} component in a \filename{cfg} file]
-<h>[pylithapp.problem]</h>
-<f>solution</f> = pylith.problems.SolnDispLagrange
+  <h>[pylithapp.problem]</h>
+  <f>solution</f> = pylith.problems.SolnDispLagrange
 
-<h>[pylithapp.problem.solution.subfields]</h>
-<p>displacement.basis_order</p> = 1
-<p>displacement.quadrature_order</p> = 1
+    <h>[pylithapp.problem.solution.subfields]</h>
+  <p>displacement.basis_order</p> = 1
+  <p>displacement.quadrature_order</p> = 1
 
-<p>lagrange_fault.basis_order</p> = 1
-<p>lagrange_fault.quadrature_order</p> = 1
+  <p>lagrange_fault.basis_order</p> = 1
+  <p>lagrange_fault.quadrature_order</p> = 1
 \end{cfg}
 
 
@@ -311,10 +313,10 @@ normalizer (which is the default) has the following properties:
     nondimensionalize time (default is 1.0 year).}
 \end{inventory}
 \begin{cfg}[\object{NondimElasticQuasistatic} parameters in a \filename{cfg} file]
-<h>[pylithapp.timedependent.normalizer]</h>
-<p>length_scale</p> = 1.0*km
-<p>shear_modulus</p> = 3.0e+10*Pa
-<p>relaxation_time</p> = 1.0*yr
+  <h>[pylithapp.timedependent.normalizer]</h>
+  <p>length_scale</p> = 1.0*km
+  <p>shear_modulus</p> = 3.0e+10*Pa
+  <p>relaxation_time</p> = 1.0*yr
 \end{cfg}
 The \object{NondimElasticDynamic} normalizer has the following
 properties:
@@ -327,10 +329,10 @@ properties:
     nondimensionalize time (default is 1.0 s).}
 \end{inventory}
 \begin{cfg}[\object{NondimElasticDynamic} parameters in a \filename{cfg} file]
-<h>[pylithapp.timedependent.normalizer]</h>
-<p>shear_wave_speed</p> = 3.0*km/s
-<p>mass_density</p> = 3.0e+3*kg/m**3
-<p>wave_period</p> = 1.0*s
+  <h>[pylithapp.timedependent.normalizer]</h>
+  <p>shear_wave_speed</p> = 3.0*km/s
+  <p>mass_density</p> = 3.0e+3*kg/m**3
+  <p>wave_period</p> = 1.0*s
 \end{cfg}
 
 \important{The default nondimensionalization is reasonable for many
@@ -356,11 +358,11 @@ solution observers, which are used for output.
   \label{tab:solution:observers}
   \begin{tabular}{lll}
     \toprule
-    \thead{Object} & \thead{Use Cases} \\
+    \thead{Object}              & \thead{Use Cases}                                \\
     \midrule
-    \object{OutputSoln} & Output of the solution over the domain; \\
+    \object{OutputSoln}         & Output of the solution over the domain;          \\
     \object{OutputSolnBoundary} & Output of the solution over an external boundary \\
-    \object{OutputSolnPoints} & Output of the solution at discrete points \\
+    \object{OutputSolnPoints}   & Output of the solution at discrete points        \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -381,9 +383,9 @@ available components for the \facility{writer}, \facility{trigger},
 and \facility{field\_filter} facilities.
 
 \begin{cfg}[Setting \object{OutputSolnBoundary} parameters in a \filename{cfg} file]
-<h>[pylithapp.problem.solution_observers.boundary]</h>
-<p>label</p> = boundary_groundsurf
-<p>writer.filename</p> = output/step01-grounssurf.h5
+  <h>[pylithapp.problem.solution_observers.boundary]</h>
+  <p>label</p> = boundary_groundsurf
+  <p>writer.filename</p> = output/step01-grounssurf.h5
 \end{cfg}
 
 \paragraph{Output at Arbitrary Points (\protect\object{OutputSolnPoints})}
@@ -415,11 +417,11 @@ into the coordinate system of the mesh prior to interpolation. The
 properties available to customize the behavior of \object{PointsList}
 are:
 \begin{inventory}
-\propertyitem{filename}{Names of file containing list of points.}
-\propertyitem{comment\_delimiter}{Delimiter at beginning of line to identify
-comments (default is \#).}
-\propertyitem{value\_delimiter}{Delimiter used to separate values (default is
-whitespace).}
+  \propertyitem{filename}{Names of file containing list of points.}
+  \propertyitem{comment\_delimiter}{Delimiter at beginning of line to identify
+    comments (default is \#).}
+  \propertyitem{value\_delimiter}{Delimiter used to separate values (default is
+    whitespace).}
 \end{inventory}
 
 
@@ -443,19 +445,19 @@ Table \vref{tab:pesc:options:monitor} shows the main monitoring
 options offered by PETSc. Our recommended settings for all simulations
 include:
 \begin{cfg}[Recommended PETSc monitoring settings as set in a \filename{cfg} file.]
-<h>[pylithapp.petsc]</h>
-# Trigger errors if linear or nonlinear solver fails to converge.
-<p>ksp_error_if_not_converged</p> = true
-<p>snes_error_if_not_converged</p> = true
+  <h>[pylithapp.petsc]</h>
+  # Trigger errors if linear or nonlinear solver fails to converge.
+  <p>ksp_error_if_not_converged</p> = true
+  <p>snes_error_if_not_converged</p> = true
 
-# Monitor converged reasons
-<p>ksp_converged_reason</p> = true
-<p>snes_converged_reason</p> = true
+  # Monitor converged reasons
+  <p>ksp_converged_reason</p> = true
+  <p>snes_converged_reason</p> = true
 
-# Monitor time-stepping and nonlinear solver
-<p>ts_monitor</p> = true
-<p>snes_monitor</p> = true
-<p>snes_linesearch_monitor</p> = true
+  # Monitor time-stepping and nonlinear solver
+  <p>ts_monitor</p> = true
+  <p>snes_monitor</p> = true
+  <p>snes_linesearch_monitor</p> = true
 \end{cfg}
 When optimizing and troubleshooting solver settings, we usually turn on all the monitoring.
 
@@ -464,25 +466,25 @@ When optimizing and troubleshooting solver settings, we usually turn on all the 
   \label{tab:petsc:options:monitor}
   \begin{tabular}{lp{4.0in}}
     \toprule
-    \thead{Option} & \thead{Description} \\
+    \thead{Option}                             & \thead{Description}                                      \\
     \midrule
-% log
-    \property{log\_view} & Show logging objects and events. \\
+    % log
+    \property{log\_view}                       & Show logging objects and events.                         \\
 
-% TS
-    \property{ts\_monitor} & Show time-stepping progress. \\
-% KSP
-    \property{ksp\_monitor} & Show preconditioned residual norm. \\
-    \property{ksp\_view} & Show linear solver parameters. \\
-    \property{ksp\_error\_if\_not\_converged} & Generate an error if linear solver does not converge. \\
-    \property{ksp\_converged\_reason} & Indicate why iterating stopped in linear solve. \\
-% SNES
-    \property{snes\_monitor} & Show residual norm for each nonlinear solve iteration. \\
-    \property{snes\_view} & Show nonlinear solver parameters. \\
+    % TS
+    \property{ts\_monitor}                     & Show time-stepping progress.                             \\
+    % KSP
+    \property{ksp\_monitor}                    & Show preconditioned residual norm.                       \\
+    \property{ksp\_view}                       & Show linear solver parameters.                           \\
+    \property{ksp\_error\_if\_not\_converged}  & Generate an error if linear solver does not converge.    \\
+    \property{ksp\_converged\_reason}          & Indicate why iterating stopped in linear solve.          \\
+    % SNES
+    \property{snes\_monitor}                   & Show residual norm for each nonlinear solve iteration.   \\
+    \property{snes\_view}                      & Show nonlinear solver parameters.                        \\
     \property{snes\_error\_if\_not\_converged} & Generate an error if nonlinear solver does not converge. \\
-    \property{snes\_converged\_reason} & Indicate why iterating stopped in nonlinear solve. \\
-    \property{snes\_linesearch\_monitor} & Show line search information in nonlinear solve. \\
-    \bottomrule 
+    \property{snes\_converged\_reason}         & Indicate why iterating stopped in nonlinear solve.       \\
+    \property{snes\_linesearch\_monitor}       & Show line search information in nonlinear solve.         \\
+    \bottomrule
   \end{tabular}
 \end{table}
 
@@ -512,15 +514,15 @@ and preconditioners.
   \label{tab:petsc:options:solver}
   \begin{tabular}{lcp{4.5in}}
     \toprule
-    \thead{Property} & \thead{Value} & \thead{Description} \\
+    \thead{Property}      & \thead{Value} & \thead{Description}                                                                                      \\
     \midrule
-% KSP
-    \property{ksp\_rtol} & 1.0e-10 & Stop iterating when the preconditioned KSP residual norm has this amount relative to its starting value.\\
-    \property{ksp\_atol} & 1.0e-12 & Stop iterating when the preconditioned KSP residual normal is smaller than this value.\\
-% SNES
-    \property{snes\_rtol} & 1.0e-10 & Stop iterating when the SNES residual norm has this amount relative to its starting value.\\
-    \property{snes\_atol} & 1.0e-10 & Stop iterating when the SNES residual normal is smaller than this value.\\
-    \bottomrule 
+    % KSP
+    \property{ksp\_rtol}  & 1.0e-10       & Stop iterating when the preconditioned KSP residual norm has this amount relative to its starting value. \\
+    \property{ksp\_atol}  & 1.0e-12       & Stop iterating when the preconditioned KSP residual normal is smaller than this value.                   \\
+    % SNES
+    \property{snes\_rtol} & 1.0e-10       & Stop iterating when the SNES residual norm has this amount relative to its starting value.               \\
+    \property{snes\_atol} & 1.0e-10       & Stop iterating when the SNES residual normal is smaller than this value.                                 \\
+    \bottomrule
   \end{tabular}
 \end{table}
 
@@ -532,9 +534,9 @@ conditions, material parameters, etc. are more obvious. We recommend
 using Incomplete (ILU) factorization.
 
 \begin{cfg}[Recommended PETSc solver settings for small problems]
-<h>[pylithapp.petsc]</h>
-<p>pc_type</p> = ilu
-<p>ksp_type</p> = gmres
+  <h>[pylithapp.petsc]</h>
+  <p>pc_type</p> = ilu
+  <p>ksp_type</p> = gmres
 \end{cfg}
 
 \paragraph{Settings for medium problems}
@@ -544,9 +546,9 @@ the Additive Schwarz Method (ASM) using Incomplete LU (ILU)
 factorization preconditioner is usually more efficient.
 
 \begin{cfg}[Recommended PETSc solver settings for medium problems]
-<h>[pylithapp.petsc]</h>
-<p>pc_type</p> = asm
-<p>ksp_type</p> = gmres
+  <h>[pylithapp.petsc]</h>
+  <p>pc_type</p> = asm
+  <p>ksp_type</p> = gmres
 \end{cfg}
 
 \paragraph{Efficient settings for elasticity without a fault}
@@ -555,9 +557,9 @@ Algebraic multigrid preconditioner usually works very well on
 elasticity problems.
 
 \begin{cfg}[Recommended PETSc solver settings for solving elasticity problems without a fault]
-<h>[pylithapp.petsc]</h>
-<p>pc_type</p> = ml
-<p>ksp_type</p> = gmres
+  <h>[pylithapp.petsc]</h>
+  <p>pc_type</p> = ml
+  <p>ksp_type</p> = gmres
 \end{cfg}
 
 \important{The ML algebraic multigrid preconditioner is only available
@@ -572,18 +574,18 @@ settings are available in
 \filename{\$PYLITH\_DIR/share/settings/solver\_fault\_exact.cfg}.
 
 \begin{cfg}[Recommended PETSc solver settings for solving elasticity problems with a fault]
-<h>[pylithapp.petsc]</h>
-<p>pc_type</p> = fieldsplit
-<p>pc_use_amat</p> = true
-<p>pc_fieldsplit_type</p> = schur
-<p>pc_fieldsplit_schur_factorization_type</p> = full
-<p>pc_fieldsplit_dm_splits</p> = true
-<p>fieldsplit_displacement_ksp_type</p> = preonly
-<p>fieldsplit_displacement_pc_type</p> = lu
-<p>fieldsplit_lagrange_multiplier_fault_pc_type</p> = jacobi
-<p>fieldsplit_lagrange_multiplier_fault_ksp_type</p> = gmres
-<p>fieldsplit_lagrange_multiplier_fault_ksp_rtol</p> = 1.0e-11
-<p>fieldsplit_lagrange_multiplier_fault_ksp_converged_reason</p> = true
+  <h>[pylithapp.petsc]</h>
+  <p>pc_type</p> = fieldsplit
+  <p>pc_use_amat</p> = true
+  <p>pc_fieldsplit_type</p> = schur
+  <p>pc_fieldsplit_schur_factorization_type</p> = full
+  <p>pc_fieldsplit_dm_splits</p> = true
+  <p>fieldsplit_displacement_ksp_type</p> = preonly
+  <p>fieldsplit_displacement_pc_type</p> = lu
+  <p>fieldsplit_lagrange_multiplier_fault_pc_type</p> = jacobi
+  <p>fieldsplit_lagrange_multiplier_fault_ksp_type</p> = gmres
+  <p>fieldsplit_lagrange_multiplier_fault_ksp_rtol</p> = 1.0e-11
+  <p>fieldsplit_lagrange_multiplier_fault_ksp_converged_reason</p> = true
 \end{cfg}
 
 
@@ -605,13 +607,13 @@ settings are available in
 \filename{\$PYLITH\_DIR/share/settings/solver\_incompressible\_elasticity.cfg}.
 
 \begin{cfg}[Recommended PETSc solver settings for solving incompressible elasticity problems without a fault]
-<h>[pylithapp.petsc]</h>
-<p>pc_type</p> = fieldsplit
-<p>pc_fieldsplit_type</p> = schur
-<p>pc_fieldsplit_schur_fact_type</p> = full
-<p>pc_fieldsplit_schur_precondition</p> = full
-<p>fieldsplit_displacement_pc_type</p> = lu
-<p>fieldsplit_pressure_pc_type</p> = lu
+  <h>[pylithapp.petsc]</h>
+  <p>pc_type</p> = fieldsplit
+  <p>pc_fieldsplit_type</p> = schur
+  <p>pc_fieldsplit_schur_fact_type</p> = full
+  <p>pc_fieldsplit_schur_precondition</p> = full
+  <p>fieldsplit_displacement_pc_type</p> = lu
+  <p>fieldsplit_pressure_pc_type</p> = lu
 \end{cfg}
 
 
