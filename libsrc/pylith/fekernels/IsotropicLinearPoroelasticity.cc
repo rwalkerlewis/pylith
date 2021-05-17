@@ -74,8 +74,8 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f0_mms_ql_u(const P
     f0[0] -= (2.0 * shearModulus - biotCoefficient * t);
     f0[1] -= (2.0 * lambda + 4.0 * shearModulus - biotCoefficient * t);
 
-    PetscPrintf(PETSC_COMM_WORLD, "f0_mms_ql_u[0]: %f\n", (double)f0[0]);
-    PetscPrintf(PETSC_COMM_WORLD, "f0_mms_ql_u[1]: %f\n", (double)f0[1]);
+    // PetscPrintf(PETSC_COMM_WORLD, "f0_mms_ql_u[0]: %f\n", (double)f0[0]);
+    // PetscPrintf(PETSC_COMM_WORLD, "f0_mms_ql_u[1]: %f\n", (double)f0[1]);
 } // f0_quadratic_linear_u
 
 
@@ -139,7 +139,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f0_mms_ql_p(const P
     sum += x[1];
 
     f0[0] -= (sum / biotModulus);
-    PetscPrintf(PETSC_COMM_WORLD, "f0_mms_ql_p[0]: %f\n", (double)f0[0]);
+    // PetscPrintf(PETSC_COMM_WORLD, "f0_mms_ql_p[0]: %f\n", (double)f0[0]);
 } // f0_quadratic_linear_p
 
 
@@ -444,7 +444,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f0p_implicit(const 
 
     f0[0] += s_t ? (biotCoefficient * trace_strain_t) : 0.0;
     f0[0] += s_t ? (pressure_t / biotModulus) : 0.0;
-    PetscPrintf(PETSC_COMM_WORLD, "f0p_implicit[0]: %f\n", (double)f0[0]);
+    // PetscPrintf(PETSC_COMM_WORLD, "f0p_implicit[0]: %f\n", (double)f0[0]);
 } // f0p_implicit
 
 
@@ -784,7 +784,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f1u(const PylithInt
         for (PylithInt d = 0; d < _dim; ++d) {
             f1[c * _dim + d] -= (shearModulus * (displacement_x[c * _dim + d] + displacement_x[d * _dim + c]));
             counter = c * _dim + d;
-            PetscPrintf(PETSC_COMM_WORLD, "f1u[%i]: %f\n", counter, f1[counter]);
+            // PetscPrintf(PETSC_COMM_WORLD, "f1u[%i]: %f\n", counter, f1[counter]);
         } // for
     } // for
 } // f1u
@@ -1067,8 +1067,8 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f1p(const PylithInt
     f1[0] += ((isotropicPermeablity / fluidViscosity) * pressure_x[0]);
     f1[1] += ((isotropicPermeablity / fluidViscosity) * pressure_x[1]);
 
-    PetscPrintf(PETSC_COMM_WORLD, "f1p[0]: %f\n", (double)f1[0]);
-    PetscPrintf(PETSC_COMM_WORLD, "f1p[1]: %f\n", (double)f1[1]);
+    // PetscPrintf(PETSC_COMM_WORLD, "f1p[0]: %f\n", (double)f1[0]);
+    // PetscPrintf(PETSC_COMM_WORLD, "f1p[1]: %f\n", (double)f1[1]);
 } // f1p
 
 
