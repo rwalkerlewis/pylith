@@ -1,0 +1,396 @@
+// -*- C++ -*-
+//
+// ----------------------------------------------------------------------
+//
+// Brad T. Aagaard, U.S. Geological Survey
+// Charles A. Williams, GNS Science
+// Matthew G. Knepley, University of Chicago
+//
+// This code was developed as part of the Computational Infrastructure
+// for Geodynamics (http://geodynamics.org).
+//
+// Copyright (c) 2010-2015 University of California, Davis
+//
+// See COPYING for license information.
+//
+// ----------------------------------------------------------------------
+//
+
+#include <portinfo>
+
+#include "pylith/materials/Thermoelasticity.hh" // implementation of object methods
+
+#include "pylith/materials/RheologyThermoelasticity.hh" // HASA RheologyIncompressibleElasticity
+#include "pylith/materials/AuxiliaryFactoryElasticity.hh" // USES AuxiliaryFactoryElasticity
+#include "pylith/materials/DerivedFactoryElasticity.hh" // USES DerivedFactoryElasticity
+#include "pylith/feassemble/IntegratorDomain.hh" // USES IntegratorDomain
+#include "pylith/topology/Mesh.hh" // USES Mesh
+#include "pylith/topology/Field.hh" // USES Field::SubfieldInfo
+#include "pylith/topology/FieldOps.hh" // USES FieldOps
+
+#include "pylith/fekernels/Thermoelasticity.hh" // USES Thermoelasticity kernels
+#include "pylith/fekernels/Elasticity.hh" // USES Elasticity kernels
+#include "pylith/fekernels/DispVel.hh" // USES DispVel kernels
+
+#include "pylith/utils/journals.hh" // USES PYLITH_COMPONENT_*
+
+#include "spatialdata/spatialdb/GravityField.hh" // USES GravityField
+#include "spatialdata/geocoords/CoordSys.hh" // USES CoordSys
+#include "spatialdata/units/Nondimensional.hh" // USES Nondimensional
+
+#include <typeinfo> // USES typeid()
+
+// ---------------------------------------------------------------------------------------------------------------------
+typedef pylith::feassemble::IntegratorDomain::ResidualKernels ResidualKernels;
+typedef pylith::feassemble::IntegratorDomain::JacobianKernels JacobianKernels;
+typedef pylith::feassemble::IntegratorDomain::ProjectKernels ProjectKernels;
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Default constructor.
+pylith::materials::Thermoelasticity::Thermoelasticity(void) :
+    _useBodyForce(false),
+    _rheology(NULL),
+    _derivedFactory(new pylith::materials::DerivedFactoryElasticity) {
+    pylith::utils::PyreComponent::setName("Thermoelasticity");
+} // constructor
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Destructor.
+pylith::materials::Thermoelasticity::~Thermoelasticity(void) {
+    deallocate();
+} // destructor
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Deallocate PETSc and local data structures.
+void
+pylith::materials::Thermoelasticity::deallocate(void) {
+    Material::deallocate();
+
+    delete _derivedFactory;_derivedFactory = NULL;
+    _rheology = NULL; // :TODO: Use shared pointer.
+} // deallocate
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Include body force?
+void
+pylith::materials::Thermoelasticity::useBodyForce(const bool value) {
+    PYLITH_COMPONENT_DEBUG("useBodyForce(value="<<value<<")");
+
+    _useBodyForce = value;
+} // useBodyForce
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Include body force?
+bool
+pylith::materials::Thermoelasticity::useBodyForce(void) const {
+    return _useBodyForce;
+} // useBodyForce
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Set bulk rheology.
+void
+pylith::materials::Thermoelasticity::setBulkRheology(pylith::materials::RheologyIncompressibleElasticity* const rheology) {
+    PYLITH_COMPONENT_DEBUG("setBulkRheology(rheology="<<rheology<<")");
+
+    _rheology = rheology;
+} // setBulkRheology
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Get bulk rheology.
+pylith::materials::RheologyIncompressibleElasticity*
+pylith::materials::Thermoelasticity::getBulkRheology(void) const {
+    return _rheology;
+} // getBulkRheology
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Verify configuration is acceptable.
+void
+pylith::materials::Thermoelasticity::verifyConfiguration(const pylith::topology::Field& solution) const {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_COMPONENT_DEBUG("verifyConfiguration(solution="<<solution.getLabel()<<")");
+
+    // Verify solution contains expected fields.
+    if (!solution.hasSubfield("displacement")) {
+        throw std::runtime_error("Cannot find 'displacement' field in solution; required for material 'Thermoelasticity'.");
+    } // if
+    if (!solution.hasSubfield("temperature")) {
+        throw std::runtime_error("Cannot find 'pressure' field in solution; required for material 'Thermoelasticity'.");
+    } // if
+
+    PYLITH_METHOD_END;
+} // verifyConfiguration
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Create integrator and set kernels.
+pylith::feassemble::Integrator*
+pylith::materials::Thermoelasticity::createIntegrator(const pylith::topology::Field& solution) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_COMPONENT_DEBUG("createIntegrator(solution="<<solution.getLabel()<<")");
+
+    pylith::feassemble::IntegratorDomain* integrator = new pylith::feassemble::IntegratorDomain(this);assert(integrator);
+    integrator->setLabelName(pylith::topology::Mesh::getCellsLabelName());
+    integrator->setLabelValue(getMaterialId());
+
+    _setKernelsLHSResidual(integrator, solution);
+    _setKernelsLHSJacobian(integrator, solution);
+    // No state variables.
+    _setKernelsDerivedField(integrator, solution);
+
+    PYLITH_METHOD_RETURN(integrator);
+} // createIntegrator
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Create auxiliary field.
+pylith::topology::Field*
+pylith::materials::Thermoelasticity::createAuxiliaryField(const pylith::topology::Field& solution,
+                                                          const pylith::topology::Mesh& domainMesh) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_COMPONENT_DEBUG("createAuxiliaryField(solution="<<solution.getLabel()<<", domainMesh=)"<<typeid(domainMesh).name()<<")");
+
+    pylith::topology::Field* auxiliaryField = new pylith::topology::Field(domainMesh);assert(auxiliaryField);
+    auxiliaryField->setLabel("Thermoelasticity auxiliary field");
+
+    assert(_rheology);
+    pylith::materials::AuxiliaryFactoryElasticity* auxiliaryFactory = _rheology->getAuxiliaryFactory();assert(auxiliaryFactory);
+
+    assert(_normalizer);
+    auxiliaryFactory->initialize(auxiliaryField, *_normalizer, domainMesh.dimension());
+
+    // :ATTENTION: The order for adding subfields must match the order of the auxiliary fields in the FE kernels.
+
+    // :ATTENTION: In quasi-static problems, the time scale is usually quite large
+    // (order of tens to hundreds of years), which means that the density scale is very large,
+    // and the acceleration scale is very small. Nevertheless, density times gravitational
+    // acceleration will have a scale of pressure divided by length and should be within a few orders
+    // of magnitude of 1.
+
+    auxiliaryFactory->addDensity(); // 0
+    if (_useBodyForce) {
+        auxiliaryFactory->addBodyForce();
+    } // if
+    if (_gravityField) {
+        auxiliaryFactory->addGravityField(_gravityField);
+    } // if
+    _rheology->addAuxiliarySubfields();
+
+    auxiliaryField->subfieldsSetup();
+    auxiliaryField->createDiscretization();
+    pylith::topology::FieldOps::checkDiscretization(solution, *auxiliaryField);
+    auxiliaryField->allocate();
+    auxiliaryField->zeroLocal();
+
+    assert(auxiliaryFactory);
+    auxiliaryFactory->setValuesFromDB();
+
+    PYLITH_METHOD_RETURN(auxiliaryField);
+} // createAuxiliaryField
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Create derived field.
+pylith::topology::Field*
+pylith::materials::Thermoelasticity::createDerivedField(const pylith::topology::Field& solution,
+                                                        const pylith::topology::Mesh& domainMesh) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_COMPONENT_DEBUG("createIntegrator(solution="<<solution.getLabel()<<", domainMesh=)"<<typeid(domainMesh).name()<<")");
+
+    assert(_derivedFactory);
+    if (_derivedFactory->getNumSubfields() == 1) {
+        PYLITH_METHOD_RETURN(NULL);
+    } // if
+
+    pylith::topology::Field* derivedField = new pylith::topology::Field(domainMesh);assert(derivedField);
+    derivedField->setLabel("Elasticity derived field");
+
+    assert(_normalizer);
+    _derivedFactory->initialize(derivedField, *_normalizer, domainMesh.dimension());
+    _derivedFactory->addSubfields();
+
+    derivedField->subfieldsSetup();
+    derivedField->createDiscretization();
+    pylith::topology::FieldOps::checkDiscretization(solution, *derivedField);
+    derivedField->allocate();
+    derivedField->zeroLocal();
+
+    PYLITH_METHOD_RETURN(derivedField);
+} // createDerivedField
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Get auxiliary factory associated with physics.
+pylith::feassemble::AuxiliaryFactory*
+pylith::materials::Thermoelasticity::_getAuxiliaryFactory(void) {
+    assert(_rheology);
+    return _rheology->getAuxiliaryFactory();
+} // _getAuxiliaryFactory
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Update kernel constants.
+void
+pylith::materials::Thermoelasticity::_updateKernelConstants(const PylithReal dt) {
+    assert(_rheology);
+    _rheology->updateKernelConstants(&_kernelConstants, dt);
+} // _updateKernelConstants
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Get derived factory associated with physics.
+pylith::topology::FieldFactory*
+pylith::materials::Thermoelasticity::_getDerivedFactory(void) {
+    return _derivedFactory;
+} // _getDerivedFactory
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Set kernels for RHS residual G(t,s).
+void
+pylith::materials::Thermoelasticity::_setKernelsLHSResidual(pylith::feassemble::IntegratorDomain* integrator,
+                                                            const topology::Field& solution) const {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_COMPONENT_DEBUG("_setFEKernelsLHSResidual(integrator="<<integrator<<", solution="<<solution.getLabel()<<")");
+
+    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().getCoordSys();
+
+    std::vector<ResidualKernels> kernels(2);
+    PetscPointFunc f0u = NULL;
+
+    const int bitBodyForce = _useBodyForce ? 0x1 : 0x0;
+    const int bitGravity = _gravityField ? 0x2 : 0x0;
+    const int bitUse = bitBodyForce | bitGravity;
+
+    switch (bitUse) {
+    case 0x1:
+        f0u = pylith::fekernels::Elasticity::g0v_bodyforce;
+        break;
+    case 0x2:
+        f0u = pylith::fekernels::Elasticity::g0v_grav;
+        break;
+    case 0x3:
+        f0u = pylith::fekernels::Elasticity::g0v_gravbodyforce;
+        break;
+    case 0x0:
+        break;
+    default:
+        PYLITH_COMPONENT_LOGICERROR("Unknown case (bitUse=" << bitUse << ") for Thermoelasticity RHS residual kernels.");
+    } // switch
+
+    // Displacement
+    const PetscPointFunc f1u = _rheology->getKernelResidualStress(coordsys);
+
+    // Pressure
+    const PetscPointFunc f0t = _rheology->getKernelResidualPressure(coordsys);
+    const PetscPointFunc f1t = NULL;
+
+    kernels[0] = ResidualKernels("displacement", f0u, f1u);
+    kernels[1] = ResidualKernels("temperature", f0t, f1t);
+
+    assert(integrator);
+    integrator->setKernelsLHSResidual(kernels);
+
+    PYLITH_METHOD_END;
+} // _setKernelsLHSResidual
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Set kernels for LHS Jacobian F(t,s,\dot{s}).
+void
+pylith::materials::Thermoelasticity::_setKernelsLHSJacobian(pylith::feassemble::IntegratorDomain* integrator,
+                                                            const topology::Field& solution) const {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_COMPONENT_DEBUG("_setFEKernelsLHSJacobian(integrator="<<integrator<<", solution="<<solution.getLabel()<<")");
+
+    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().getCoordSys();
+
+    std::vector<JacobianKernels> kernels(4);
+
+    const PetscPointJac Jf0uu = NULL;
+    const PetscPointJac Jf1uu = NULL;
+    const PetscPointJac Jf2uu = NULL;
+    const PetscPointJac Jf3uu = _rheology->getKernelJacobianElasticConstants(coordsys);
+
+    const PetscPointJac Jf0ut = NULL;
+    const PetscPointJac Jf1ut = NULL;
+    const PetscPointJac Jf2ut = pylith::fekernels::Thermoelasticity::Jf2up;
+    const PetscPointJac Jf3ut = NULL;
+
+    const PetscPointJac Jf0tu = NULL;
+    const PetscPointJac Jf1tu = pylith::fekernels::Thermoelasticity::Jf1pu;
+    const PetscPointJac Jf2tu = NULL;
+    const PetscPointJac Jf3tu = NULL;
+
+    const PetscPointJac Jf0tt = _rheology->getKernelJacobianInverseBulkModulus(coordsys);
+    const PetscPointJac Jf1tt = NULL;
+    const PetscPointJac Jf2tt = NULL;
+    const PetscPointJac Jf3tt = NULL;
+
+    kernels[0] = JacobianKernels("displacement", "displacement", Jf0uu, Jf1uu, Jf2uu, Jf3uu);
+    kernels[1] = JacobianKernels("displacement", "temperature", Jf0ut, Jf1ut, Jf2ut, Jf3ut);
+    kernels[2] = JacobianKernels("temperature", "displacement", Jf0tu, Jf1tu, Jf2tu, Jf3tu);
+    kernels[3] = JacobianKernels("temperature", "temperature", Jf0tt, Jf1tt, Jf2tt, Jf3tt);
+
+    assert(integrator);
+    integrator->setKernelsLHSJacobian(kernels);
+
+    PYLITH_METHOD_END;
+} // setKernelsLHSJacobian
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Set kernels for computing updated state variables in auxiliary field.
+void
+pylith::materials::Thermoelasticity::_setKernelsUpdateStateVars(pylith::feassemble::IntegratorDomain* integrator,
+                                                                const topology::Field& solution) const {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_COMPONENT_DEBUG("_setKernelsUpdateStateVars(integrator="<<integrator<<", solution="<<solution.getLabel()<<")");
+
+    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().getCoordSys();
+    assert(coordsys);
+
+    std::vector<ProjectKernels> kernels;
+    _rheology->addKernelsUpdateStateVars(&kernels, coordsys);
+
+    integrator->setKernelsUpdateStateVars(kernels);
+
+    PYLITH_METHOD_END;
+} // _setKernelsUpdateStateVars
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Set kernels for computing derived field.
+void
+pylith::materials::Thermoelasticity::_setKernelsDerivedField(pylith::feassemble::IntegratorDomain* integrator,
+                                                             const topology::Field& solution) const {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_COMPONENT_DEBUG("_setKernelsDerivedField(integrator="<<integrator<<", solution="<<solution.getLabel()<<")");
+
+    const spatialdata::geocoords::CoordSys* coordsys = solution.mesh().getCoordSys();
+    assert(coordsys);
+
+    std::vector<ProjectKernels> kernels(2);
+    kernels[0] = ProjectKernels("cauchy_stress", _rheology->getKernelDerivedCauchyStress(coordsys));
+
+    const int spaceDim = coordsys->getSpaceDim();
+    const PetscPointFunc strainKernel =
+        (3 == spaceDim) ? pylith::fekernels::Elasticity3D::cauchyStrain :
+        (2 == spaceDim) ? pylith::fekernels::ElasticityPlaneStrain::cauchyStrain :
+        NULL;
+    kernels[1] = ProjectKernels("cauchy_strain", strainKernel);
+
+    assert(integrator);
+    integrator->setKernelsDerivedField(kernels);
+
+    PYLITH_METHOD_END;
+} // _setKernelsDerivedField
+
+
+// End of file
