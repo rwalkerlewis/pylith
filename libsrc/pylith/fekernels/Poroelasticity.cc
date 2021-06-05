@@ -56,6 +56,9 @@ pylith::fekernels::Poroelasticity::f0u(const PylithInt dim,
 
     // Incoming auxiliary fields.
 
+    // Run Checks
+    assert(f0);
+
     for (PylithInt i = 0; i < dim; ++i) {
         f0[i] += 0.0;
         // PetscPrintf(PETSC_COMM_WORLD, "f0u[%i]: %f\n",i, f0[i]);
@@ -91,6 +94,17 @@ pylith::fekernels::Poroelasticity::f0v(const PylithInt dim,
     const PylithInt i_solid_density = 0;
     const PylithInt i_fluid_density = 1;
     const PylithInt i_porosity = 3;
+
+    // Run Checks
+    assert(numS >= 2);
+    assert(numA >= 3);
+    assert(sOff);
+    assert(sOff[i_velocity] >= 0);
+    assert(aOff);
+    assert(aOff[i_solid_density] >= 0);
+    assert(aOff[i_fluid_density] >= 0);
+    assert(aOff[i_porosity] >= 0);
+    assert(f0);
 
     const PylithScalar bulkDensity = (1 - a[aOff[i_porosity]]) * a[aOff[i_solid_density]] + a[aOff[i_porosity]] * a[aOff[i_fluid_density]];
     const PylithScalar* velocity_t = &s_t[sOff[i_velocity]]; // acceleration
@@ -131,7 +145,15 @@ pylith::fekernels::Poroelasticity::f0e(const PylithInt dim,
 
     // Incoming auxiliary fields.
 
-    const PylithScalar* displacement = &s[sOff[i_displacement]];
+    // Run Checks
+    assert(numS >= 2);
+    assert(numA >= 3);
+    assert(sOff);
+    assert(sOff[i_trace_strain] >= 0);
+    assert(sOff_x);
+    assert(sOff_x[i_displacement] >= 0);
+    assert(f0);
+
     const PylithScalar* displacement_x = &s_x[sOff_x[i_displacement]];
     const PylithScalar trace_strain = s[sOff[i_trace_strain]];
 

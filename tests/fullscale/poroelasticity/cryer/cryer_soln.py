@@ -19,20 +19,7 @@
 # Owing to the symmetry of the problem, we only need consider the quarter
 # domain case.
 #
-#           -F
-#        ----------
-#        |        |
-#  Ux=0  |        | P=0
-#        |        |
-#        |        |
-#        ----------
-#          Uy=0
-#
-# Dirichlet boundary conditions
-#   Ux(0,y) = 0
-#   Uy(x,0) = 0
-# Neumann boundary conditions
-#   \tau_normal(x,ymax) = -1*Pa
+
 
 import numpy
 
