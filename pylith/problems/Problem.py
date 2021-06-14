@@ -59,6 +59,12 @@ def observerFactory(name):
     from pylith.meshio.OutputSolnDomain import OutputSolnDomain
     return facility(name, family="observer", factory=OutputSolnDomain)
 
+def sourceFactory(name):
+    """Factory for source items.
+    """
+    from pythia.pyre.inventory import facility
+    from pylith.sources.PointSource import PointSource
+    return facility(name, family="source", factory=PointSource)
 
 class Problem(PetscComponent, ModuleProblem):
     """Python abstract base class for crustal dynamics problems.

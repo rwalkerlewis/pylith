@@ -210,6 +210,25 @@ pylith::problems::Problem::setMaterials(pylith::materials::Material* materials[]
 
 
 // ---------------------------------------------------------------------------------------------------------------------
+// Set sources.
+void
+pylith::problems::Problem::setSources(pylith::sources::Source* sources[],
+                                      const int numSources) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_COMPONENT_DEBUG("Problem::setSources("<<sources<<", numSources="<<numSources<<")");
+
+    assert( (!sources && 0 == numSources) || (sources && 0 < numSources) );
+
+    _sources.resize(numSources);
+    for (int i = 0; i < numSources; ++i) {
+        _sources[i] = sources[i];
+    } // for
+
+    PYLITH_METHOD_END;
+} // setSources
+
+
+// ---------------------------------------------------------------------------------------------------------------------
 // Set boundary conditions.
 void
 pylith::problems::Problem::setBoundaryConditions(pylith::bc::BoundaryCondition* bc[],
@@ -395,7 +414,7 @@ pylith::problems::Problem::_checkMaterialIds(void) const {
 
 
 // ---------------------------------------------------------------------------------------------------------------------
-// Create array of integrators from materials, interfaces, and boundary conditions.
+// Create array of integrators from materials, interfaces, sources, and boundary conditions.
 void
 pylith::problems::Problem::_createIntegrators(void) {
     PYLITH_METHOD_BEGIN;
@@ -403,6 +422,7 @@ pylith::problems::Problem::_createIntegrators(void) {
 
     const size_t numMaterials = _materials.size();
     const size_t numInterfaces = _interfaces.size();
+    const size_t numSources = _sources.size();
     const size_t numBC = _bc.size();
 
     const size_t maxSize = numMaterials + numInterfaces + numBC;
@@ -419,6 +439,13 @@ pylith::problems::Problem::_createIntegrators(void) {
     for (size_t i = 0; i < numInterfaces; ++i) {
         assert(_interfaces[i]);
         pylith::feassemble::Integrator* integrator = _interfaces[i]->createIntegrator(*_solution);
+        assert(count < maxSize);
+        if (integrator) { _integrators[count++] = integrator;}
+    } // for
+
+    for (size_t i = 0; i < numSources; ++i) {
+        assert(_sources[i]);
+        pylith::feassemble::Integrator* integrator = _sources[i]->createIntegrator(*_solution);
         assert(count < maxSize);
         if (integrator) { _integrators[count++] = integrator;}
     } // for
