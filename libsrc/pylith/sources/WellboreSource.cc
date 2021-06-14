@@ -90,14 +90,26 @@ pylith::source::WellboreSource::createIntegrator(const pylith::topology::Field& 
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("createIntegrator(solution="<<solution.getLabel()<<")");
 
-    PetscDM dm = solution.dmMesh();assert(dm);
+    PetscErrorCode err;
+    PetscDM dmSoln= solution.dmMesh();assert(dmMesh);
     // transform points of source to mesh coordinates in python
     // DM from solution
     PetscSF sfPoints;
     Vec vecPoints;
-    err = VecCreateMPIWithArray(PetscObjectComm((PetscObject) dm), ,_numPoints, _numPoints, _pointCoords, vecPoints);PYLITH_CHECK_ERROR(err);
-    err = DMLocatePoints(dm, vecPoints, DM_POINTLOCATION_NONE, sfPoints);PYLITH_CHECK_ERROR(err);
+    DMLabel label;
+    PetscInt numRoots, numLeaves, *localPoints;
+    PetscSFNode *remotePoints;
 
+    err = VecCreateMPIWithArray(PetscObjectComm((PetscObject) dmSoln), ,_numPoints, _numPoints, _pointCoords, vecPoints);PYLITH_CHECK_ERROR(err);
+    err = DMLocatePoints(dmSoln, vecPoints, DM_POINTLOCATION_NONE, sfPoints);PYLITH_CHECK_ERROR(err);
+ 
+    err = DMCreateLabel(dmSoln,PyreComponent::getIdentifier());PYLITH_CHECK_ERROR(err);
+    err = DMGetLabel(dmSoln, PyreComponent::getIdentifier(), &label);PYLITH_CHECK_ERROR(err);
+    err = PetscSFGetGraph(sfPoints, &numRoots, &numLeaves, &localPoints, &remotePoints);
+    if (CELL == type) {
+        for (PetscInt p = 0; p < _numPoints; ++p) {
+            err = DMLabelSetValue(label, localPoints[p], 1);PYLITH_CHECK_ERROR(err);
+        } // for
 
     pylith::feassemble:IntegratorDomain* integrator = new pylith::feassemble::IntegratorDomain(this);assert(integrator);
     integrator->setLabelName(pylith::topology::Mesh::getCellsLabelName());

@@ -75,12 +75,6 @@ public:
      */
     const char* getDescriptiveLabel(void) const;
 
-    /** Set gravity field.
-     *
-     * @param g Gravity field.
-     */
-    void setGravityField(spatialdata::spatialdb::GravityField* const g);
-
     /** Create constraint and set kernels.
      *
      * @param[in] solution Solution field.
@@ -88,6 +82,30 @@ public:
      */
     virtual
     pylith::feassemble::Constraint* createConstraint(const pylith::topology::Field& solution);
+
+    /** Create derived field.
+     *
+     * @param[in] solution Solution field.
+     * @param[in\ domainMesh Finite-element mesh associated with integration domain.
+     *
+     * @returns Derived field if applicable, otherwise NULL.
+     */
+    pylith::topology::Field* createDerivedField(const pylith::topology::Field& solution,
+                                                const pylith::topology::Mesh& domainMesh);
+
+    /** Set coordinates and names of points.
+     *
+     * @param[in] points Array of coordinates [numPoints * spaceDim].
+     * @param[in] numPoints Number of points.
+     * @param[in] spaceDim Spatial dimension for coordinates.
+     * @param[in] pointNames Array with point names.
+     * @param[in] numPointNames Number of point banes.
+     */
+    void setPoints(const PylithReal* pointCoords,
+                   const int numPoints,
+                   const int spaceDim,
+                   const char* const* pointNames,
+                   const int numPointNames);
 
     // PROTECTED MEMBERS ///////////////////////////////////////////////////////////////////////////////////////////////
 protected:

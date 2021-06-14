@@ -142,31 +142,4 @@ pylith::meshio::OutputSolnPoints::setPoints(const PylithReal* pointCoords,
 } // setPoints
 
 
-// ------------------------------------------------------------------------------------------------
-// Write solution at time step.
-void
-pylith::sources::Source::_setup(const pylith::topology::Field& solution) {
-    PYLITH_METHOD_BEGIN;
-    // PYLITH_COMPONENT_DEBUG("_writeSolnStep(t="<<t<<", tindex="<<tindex<<", solution="<<solution.getLabel()<<")");
-    assert(_pointMesh);
-    assert(_pointSoln);
-
-    // Copy point coordinates.
-    const PylithInt size = numPoints * spaceDim;
-    _pointCoords.resize(size);
-    for (PylithInt i = 0; i < size; ++i) {
-        _pointCoords[i] = pointCoords[i];
-    } // for
-
-    PetscDM dmSoln = solution.dmMesh();assert(dmSoln);
-    // transform points of source to mesh coordinates in python
-    // DM from solution
-    PetscSF SF = NULL;
-
-    err = DMLocatePoints()
-
-          PYLITH_METHOD_END;
-} // _writeSolnStep
-
-
 // End of file
