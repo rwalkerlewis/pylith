@@ -102,19 +102,19 @@ public:
     // PROTECTED MEMBERS ///////////////////////////////////////////////////////////////////////////////////////////////
 protected:
 
+    pylith::scalar_array _pointCoords; ///< Array of point coordinates.
+    pylith::string_vector _pointNames; ///< Array of point names.
+
     // PRIVATE MEMBERS /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
 
     int _sourceId; ///< Value of source-id label in mesh.
     std::string _descriptiveLabel; ///< Descriptive label for source.
+    pylith::topology::Mesh* _pointMesh; ///< Mesh for points (no cells).
+    pylith::topology::Field* _pointSoln; ///< Solution field at points.
 
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
-    pylith::scalar_array _pointCoords; ///< Array of point coordinates.
-    pylith::string_vector _pointNames; ///< Array of point names.
-    pylith::topology::Mesh* _pointMesh; ///< Mesh for points (no cells).
-    pylith::topology::Field* _pointSoln; ///< Solution field at points.
 
     Source(const Source&); ///< Not implemented.
     const Source& operator=(const Source&); ///< Not implemented

@@ -91,7 +91,7 @@ pylith::sources::WellboreSource::createIntegrator(const pylith::topology::Field&
     // transform points of source to mesh coordinates in python
     // DM from solution
     PetscSF sfPoints;
-    Vec vecPoints;
+    Vec *vecPoints;
     DMLabel label;
     PetscInt numRoots, numLeaves, *localPoints, dim, vecSize;
     PetscSFNode *remotePoints;
@@ -100,7 +100,7 @@ pylith::sources::WellboreSource::createIntegrator(const pylith::topology::Field&
     err = DMGetCoordinateDim(dmSoln, &dim);PYLITH_CHECK_ERROR(err);
     vecSize = _pointNames.size()*dim;
 
-    err = VecCreateMPIWithArray(PetscObjectComm((PetscObject) dmSoln),1, vecSize, PETSC_DECIDE, _pointCoords, vecPoints);PYLITH_CHECK_ERROR(err);
+    err = VecCreateMPIWithArray(PetscObjectComm((PetscObject) dmSoln),1, vecSize, PETSC_DECIDE, &_pointCoords[0], vecPoints);PYLITH_CHECK_ERROR(err);
     err = DMLocatePoints(dmSoln, vecPoints, DM_POINTLOCATION_NONE, sfPoints);PYLITH_CHECK_ERROR(err);
     err = VecDestroy(&vecPoints);PYLITH_CHECK_ERROR(err);
     err = DMCreateLabel(dmSoln,PyreComponent::getIdentifier());PYLITH_CHECK_ERROR(err);
