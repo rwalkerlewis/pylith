@@ -35,8 +35,6 @@ namespace pylith {
         class WellboreSource;
         class AuxiliaryFactoryWellboreSource;
 
-        class Query;
-
     } // sources
 } // pylith
 

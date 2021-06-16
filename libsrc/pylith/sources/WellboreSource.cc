@@ -18,9 +18,9 @@
 
 #include <portinfo>
 
-#include "pylith/source/WellboreSource.hh" // implementation of object methods
+#include "pylith/sources/WellboreSource.hh" // implementation of object methods
 
-#include "pylith/source/AuxiliaryFactoryWellboreSource.hh" // USES AuxiliaryFactoryWellboreSource
+#include "pylith/sources/AuxiliaryFactoryWellboreSource.hh" // USES AuxiliaryFactoryWellboreSource
 #include "pylith/feassemble/IntegratorDomain.hh" // USES IntegratorDomain
 #include "pylith/topology/Mesh.hh" // USES Mesh
 #include "pylith/topology/Field.hh" // USES Field::SubfieldInfo
@@ -42,7 +42,7 @@ typedef pylith::feassemble::IntegratorDomain::ProjectKernels ProjectKernels;
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Default constructor.
-pylith::source::WellboreSource::WellboreSource(void) :
+pylith::sources::WellboreSource::WellboreSource(void) :
     _useInertia(false) {
     pylith::utils::PyreComponent::setName("wellboresource");
 } // constructor
@@ -50,7 +50,7 @@ pylith::source::WellboreSource::WellboreSource(void) :
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Destructor.
-pylith::source::WellboreSource::~WellboreSource(void) {
+pylith::sources::WellboreSource::~WellboreSource(void) {
     deallocate();
 } // destructor
 
@@ -58,16 +58,15 @@ pylith::source::WellboreSource::~WellboreSource(void) {
 // ---------------------------------------------------------------------------------------------------------------------
 // Deallocate PETSc and local data structures.
 void
-pylith::source::WellboreSource::deallocate(void) {
-    Material::deallocate();
+pylith::sources::WellboreSource::deallocate(void) {
+    Source::deallocate();
 } // deallocate
-
 
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Verify configuration is acceptable.
 void
-pylith::source::WellboreSource::verifyConfiguration(const pylith::topology::Field& solution) const {
+pylith::sources::WellboreSource::verifyConfiguration(const pylith::topology::Field& solution) const {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("verifyConfiguration(solution="<<solution.getLabel()<<")");
 
@@ -75,9 +74,6 @@ pylith::source::WellboreSource::verifyConfiguration(const pylith::topology::Fiel
     if (!solution.hasSubfield("pressure")) {
         throw std::runtime_error("Cannot find 'pressure' field in solution; required for 'WellboreSource'.");
     } // if
-    default:
-        PYLITH_COMPONENT_LOGICERROR("Unknown formulation for equations (" << _formulation << ").");
-    } // switch
 
     PYLITH_METHOD_END;
 } // verifyConfiguration
@@ -86,36 +82,38 @@ pylith::source::WellboreSource::verifyConfiguration(const pylith::topology::Fiel
 // ---------------------------------------------------------------------------------------------------------------------
 // Create integrator and set kernels.
 pylith::feassemble::Integrator*
-pylith::source::WellboreSource::createIntegrator(const pylith::topology::Field& solution) {
+pylith::sources::WellboreSource::createIntegrator(const pylith::topology::Field& solution) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("createIntegrator(solution="<<solution.getLabel()<<")");
 
     PetscErrorCode err;
-    PetscDM dmSoln= solution.dmMesh();assert(dmMesh);
+    PetscDM dmSoln = solution.dmMesh();assert(dmSoln);
     // transform points of source to mesh coordinates in python
     // DM from solution
     PetscSF sfPoints;
     Vec vecPoints;
     DMLabel label;
-    PetscInt numRoots, numLeaves, *localPoints, dim;
+    PetscInt numRoots, numLeaves, *localPoints, dim, vecSize;
     PetscSFNode *remotePoints;
     PetscMPIInt rank;
 
     err = DMGetCoordinateDim(dmSoln, &dim);PYLITH_CHECK_ERROR(err);
-    err = VecCreateMPIWithArray(PetscObjectComm((PetscObject) dmSoln), _numPoints*dim, PETSC_DECIDE, _pointCoords, vecPoints);PYLITH_CHECK_ERROR(err);
+    vecSize = _pointNames.size()*dim;
+
+    err = VecCreateMPIWithArray(PetscObjectComm((PetscObject) dmSoln),1, vecSize, PETSC_DECIDE, _pointCoords, vecPoints);PYLITH_CHECK_ERROR(err);
     err = DMLocatePoints(dmSoln, vecPoints, DM_POINTLOCATION_NONE, sfPoints);PYLITH_CHECK_ERROR(err);
     err = VecDestroy(&vecPoints);PYLITH_CHECK_ERROR(err);
     err = DMCreateLabel(dmSoln,PyreComponent::getIdentifier());PYLITH_CHECK_ERROR(err);
     err = DMGetLabel(dmSoln, PyreComponent::getIdentifier(), &label);PYLITH_CHECK_ERROR(err);
     err = PetscSFGetGraph(sfPoints, &numRoots, &numLeaves, &localPoints, &remotePoints);
-    err = MPI_Comm_rank(PetscObjectComm((PetscObject) dmSoln), &rank); PYLITH_CHECK_ERROR(err);
+    err = MPI_Comm_rank(PetscObjectComm((PetscObject) dmSoln), &rank);PYLITH_CHECK_ERROR(err);
     for (PetscInt p = 0; p < _numLeaves; ++p) {
         if (remotePoints[p].rank == rank) {
             err = DMLabelSetValue(label, localPoints[p], 1);PYLITH_CHECK_ERROR(err);
         }
     } // for
 
-    pylith::feassemble:IntegratorDomain* integrator = new pylith::feassemble::IntegratorDomain(this);assert(integrator);
+    pylith::feassemble: IntegratorDomain* integrator = new pylith::feassemble::IntegratorDomain(this);assert(integrator);
     integrator->setLabelName(PyreComponent::getIdentifier());
     integrator->setLabelValue(1);
 
@@ -129,8 +127,8 @@ pylith::source::WellboreSource::createIntegrator(const pylith::topology::Field& 
 // ---------------------------------------------------------------------------------------------------------------------
 // Create auxiliary field.
 pylith::topology::Field*
-pylith::source::WellboreSource::createAuxiliaryField(const pylith::topology::Field& solution,
-                                                    const pylith::topology::Mesh& domainMesh) {
+pylith::sources::WellboreSource::createAuxiliaryField(const pylith::topology::Field& solution,
+                                                      const pylith::topology::Mesh& domainMesh) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("createAuxiliaryField(solution="<<solution.getLabel()<<", domainMesh="<<typeid(domainMesh).name()<<")");
 
@@ -138,7 +136,7 @@ pylith::source::WellboreSource::createAuxiliaryField(const pylith::topology::Fie
     auxiliaryField->setLabel("WellboreSource auxiliary field");
 
     assert(_rheology);
-    pylith::source::AuxiliaryFactoryWellboreSource* auxiliaryFactory = _rheology->getAuxiliaryFactory();assert(auxiliaryFactory);
+    pylith::sources::AuxiliaryFactoryWellboreSource* auxiliaryFactory = _rheology->getAuxiliaryFactory();assert(auxiliaryFactory);
 
     assert(_normalizer);
     auxiliaryFactory->initialize(auxiliaryField, *_normalizer, domainMesh.dimension());
@@ -173,29 +171,32 @@ pylith::source::WellboreSource::createAuxiliaryField(const pylith::topology::Fie
     PYLITH_METHOD_RETURN(auxiliaryField);
 } // createAuxiliaryField
 
+
 // ---------------------------------------------------------------------------------------------------------------------
 // Create derived field.
 pylith::topology::Field*
-pylith::source::WellboreSource::createDerivedField(const pylith::topology::Field& solution,
-                                                       const pylith::topology::Mesh& domainMesh) {
+pylith::sources::WellboreSource::createDerivedField(const pylith::topology::Field& solution,
+                                                    const pylith::topology::Mesh& domainMesh) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("createDerivedField(solution="<<solution.getLabel()<<", domainMesh=)"<<typeid(domainMesh).name()<<") empty method");
 
     PYLITH_METHOD_RETURN(NULL);
 } // createDerivedField
 
+
 // ---------------------------------------------------------------------------------------------------------------------
 // Get auxiliary factory associated with physics.
 pylith::feassemble::AuxiliaryFactory*
-pylith::source::WellboreSource::_getAuxiliaryFactory(void) {
+pylith::sources::WellboreSource::_getAuxiliaryFactory(void) {
     return _auxiliaryFactory();
 } // _getAuxiliaryFactory
+
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Set kernels for LHS residual F(t,s,\dot{s}).
 void
-pylith::source::WellboreSource::_setKernelsLHSResidual(pylith::feassemble::IntegratorDomain* integrator,
-                                                      const topology::Field& solution) const {
+pylith::sources::WellboreSource::_setKernelsLHSResidual(pylith::feassemble::IntegratorDomain* integrator,
+                                                        const topology::Field& solution) const {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_setKernelsLHSResidual(integrator="<<integrator<<", solution="<<solution.getLabel()<<")");
 
@@ -205,10 +206,9 @@ pylith::source::WellboreSource::_setKernelsLHSResidual(pylith::feassemble::Integ
 
     switch (_formulation) {
     case QUASISTATIC: {
-
         // Pressure
         const PetscPointFunc f0p = pylith::fekernels::WellboreSource::f0p;
-        const PetscPointFunc f1p = NULL;        
+        const PetscPointFunc f1p = NULL;
 
         kernels.resize(1);
         kernels[0] = ResidualKernels("pressure", f0p, f1p);
@@ -234,8 +234,8 @@ pylith::source::WellboreSource::_setKernelsLHSResidual(pylith::feassemble::Integ
 // ---------------------------------------------------------------------------------------------------------------------
 // Set kernels for LHS Jacobian F(t,s,\dot{s}).
 void
-pylith::source::WellboreSource::_setKernelsLHSJacobian(pylith::feassemble::IntegratorDomain* integrator,
-                                                      const topology::Field& solution) const {
+pylith::sources::WellboreSource::_setKernelsLHSJacobian(pylith::feassemble::IntegratorDomain* integrator,
+                                                        const topology::Field& solution) const {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_setKernelsLHSJacobian(integrator="<<integrator<<", solution="<<solution.getLabel()<<")");
 

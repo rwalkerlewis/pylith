@@ -36,6 +36,7 @@
 #include "pylith/feassemble/feassemblefwd.hh" // HOLDSA Integrator, Constraint, Observers
 #include "pylith/materials/materialsfwd.hh" // HOLDSA Material
 #include "pylith/bc/bcfwd.hh" // HOLDSA BoundaryCondition
+#include "pylith/sources/sourcesfwd.hh" // HOLDSA Source
 #include "pylith/faults/faultsfwd.hh" // HOLDSA FaultCohesive
 #include "spatialdata/spatialdb/spatialdbfwd.hh" // HASA GravityField
 

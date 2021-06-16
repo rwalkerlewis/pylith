@@ -25,7 +25,9 @@
 #define pylith_sources_source_hh
 
 #include "sourcesfwd.hh" // forward declarations
-
+#include "pylith/topology/topologyfwd.hh"
+#include "pylith/utils/petscfwd.h"
+#include "spatialdata/geocoords/geocoordsfwd.hh" // USES CoordSys
 #include "pylith/problems/Physics.hh" // ISA Physics
 
 #include <string> // HASA std::string
@@ -110,9 +112,9 @@ private:
 private:
 
     pylith::scalar_array _pointCoords; ///< Array of point coordinates.
-    PylithInt _numPoints; ///< Number of point coordinates
     pylith::string_vector _pointNames; ///< Array of point names.
-    PylithInt _numPointsNames; ///< Number of point names
+    pylith::topology::Mesh* _pointMesh; ///< Mesh for points (no cells).
+    pylith::topology::Field* _pointSoln; ///< Solution field at points.
 
     Source(const Source&); ///< Not implemented.
     const Source& operator=(const Source&); ///< Not implemented

@@ -28,8 +28,8 @@
 // ---------------------------------------------------------------------------------------------------------------------
 // Default constructor.
 pylith::sources::Source::Source(void) :
-    _pointMesh(NULL),
-    _pointSoln(NULL) {
+    _sourceId(0),
+    _descriptiveLabel("") {
     //
 } // constructor
 
@@ -48,8 +48,6 @@ pylith::sources::Source::deallocate(void) {
     PYLITH_METHOD_BEGIN;
 
     pylith::problems::Physics::deallocate();
-
-    _gravityField = NULL; // :TODO: Use shared pointer.
 
     PYLITH_METHOD_END;
 } // deallocate
@@ -119,15 +117,11 @@ pylith::sources::Source::setPoints(const PylithReal* pointCoords,
         _pointCoords[i] = pointCoords[i];
     } // for
 
-    _numPoints = numPoints;
-
     // Copy point names.
     _pointNames.resize(numPointNames);
     for (PylithInt i = 0; i < numPointNames; ++i) {
         _pointNames[i] = pointNames[i];
     } // for
-
-    _numPointNames = numPointNames;
 
     PYLITH_METHOD_END;
 } // setPoints

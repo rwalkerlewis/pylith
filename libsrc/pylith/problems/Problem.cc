@@ -27,6 +27,7 @@
 #include "pylith/materials/Material.hh" // USES Material
 #include "pylith/faults/FaultCohesive.hh" // USES FaultCohesive
 #include "pylith/bc/BoundaryCondition.hh" // USES BoundaryCondition
+#include "pylith/sources/Source.hh" // USES Source
 #include "pylith/feassemble/Integrator.hh" // USES Integrator
 #include "pylith/feassemble/Constraint.hh" // USES Constraint
 #include "pylith/problems/ObserversSoln.hh" // USES ObserversSoln
