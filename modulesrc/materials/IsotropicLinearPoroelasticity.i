@@ -119,7 +119,7 @@ public:
   *
   * @param[in] coordsys Coordinate system.
   *
-  * @return RHS residual kernel for Darcy velocity.
+  * @return LHS residual kernel for Darcy velocity.
   */
   PetscPointFunc getKernelf1p_implicit(const spatialdata::geocoords::CoordSys* coordsys,
                                                                 const bool _useBodyForce,
