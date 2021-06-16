@@ -36,30 +36,6 @@ public:
             /// Deallocate PETSc and local data structures.
             void deallocate(void);
 
-            /** Include body force?
-             *
-             * @param[in] value Flag indicating to include body force term.
-             */
-            void useBodyForce(const bool value);
-
-            /** Include body force?
-             *
-             * @returns True if including body force term, false otherwise.
-             */
-            bool useBodyForce(void) const;
-
-            /** Set bulk rheology.
-             *
-             * @param[in] rheology Bulk rheology for wellboresource.
-             */
-            void setBulkRheology(pylith::sources::RheologyWellboreSource* const rheology);
-
-            /** Get bulk rheology.
-             *
-             * @returns Bulk rheology for wellboresource.
-             */
-            pylith::sources::RheologyWellboreSource* getBulkRheology(void) const;
-
             /** Verify configuration is acceptable.
              *
              * @param[in] solution Solution field.
