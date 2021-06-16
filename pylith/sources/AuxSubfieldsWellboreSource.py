@@ -48,9 +48,9 @@ class AuxSubfieldsWellboreSource(PetscComponent):
         "wellbore_length", family="auxiliary_subfield", factory=Subfield)
     wellboreLength.meta['tip'] = "Wellbore length subfield."    
 
-    elementLength = pythia.pyre.inventory.facility(
-        "element_length", family="auxiliary_subfield", factory=Subfield)
-    elementLength.meta['tip'] = "Element length subfield."    
+    elementDimensions = pythia.pyre.inventory.facility(
+        "element_dimensions", family="auxiliary_subfield", factory=Subfield)
+    elementDimensions.meta['tip'] = "Element dimension subfield."    
 
     # PUBLIC METHODS /////////////////////////////////////////////////////
 

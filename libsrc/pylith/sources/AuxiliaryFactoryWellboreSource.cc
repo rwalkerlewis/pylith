@@ -20,8 +20,6 @@
 
 #include "AuxiliaryFactoryWellboreSource.hh" // implementation of object methods
 
-#include "Query.hh" // USES Query
-
 #include "pylith/topology/Field.hh" // USES Field
 #include "pylith/topology/FieldQuery.hh" // HOLDSA FieldQuery
 
@@ -33,20 +31,20 @@
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Default constructor.
-pylith::materials::AuxiliaryFactoryWellboreSource::AuxiliaryFactoryWellboreSource(void) {
+pylith::sources::AuxiliaryFactoryWellboreSource::AuxiliaryFactoryWellboreSource(void) {
     GenericComponent::setName("auxiliaryfactorywellboresource");
 } // constructor
 
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Destructor.
-pylith::materials::AuxiliaryFactoryWellboreSource::~AuxiliaryFactoryWellboreSource(void) {}
+pylith::sources::AuxiliaryFactoryWellboreSource::~AuxiliaryFactoryWellboreSource(void) {}
 
 
 // ----------------------------------------------------------------------
 // Add fluid density subfield to auxiliary fields.
 void
-pylith::materials::AuxiliaryFactoryWellboreSource::addFluidDensity(void) { // fluidDensity
+pylith::sources::AuxiliaryFactoryWellboreSource::addFluidDensity(void) { // fluidDensity
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addFluidDensity(void)");
 
@@ -73,7 +71,7 @@ pylith::materials::AuxiliaryFactoryWellboreSource::addFluidDensity(void) { // fl
 // ----------------------------------------------------------------------
 // Add fluid viscosity subfield to auxiliary fields.
 void
-pylith::materials::AuxiliaryFactoryWellboreSource::addFluidViscosity(void) { // fluidViscosity
+pylith::sources::AuxiliaryFactoryWellboreSource::addFluidViscosity(void) { // fluidViscosity
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addFluidViscosity(void)");
 
@@ -103,7 +101,7 @@ pylith::materials::AuxiliaryFactoryWellboreSource::addFluidViscosity(void) { // 
 // ----------------------------------------------------------------------------
 // Add isotropic permeability subfield to auxiliary fields.
 void
-pylith::materials::AuxiliaryFactoryWellboreSource::addIsotropicPermeability(void) { // isotropicPermeablity
+pylith::sources::AuxiliaryFactoryWellboreSource::addIsotropicPermeability(void) { // isotropicPermeablity
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addIsotropicPermeability(void)");
 
@@ -132,7 +130,7 @@ pylith::materials::AuxiliaryFactoryWellboreSource::addIsotropicPermeability(void
 // ----------------------------------------------------------------------------
 // Add wellbore radius subfield to auxiliary fields.
 void
-pylith::materials::AuxiliaryFactoryWellboreSource::addWellboreRadius(void) { // wellboreRadius
+pylith::sources::AuxiliaryFactoryWellboreSource::addWellboreRadius(void) { // wellboreRadius
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addWellboreRadius(void)");
 
@@ -160,7 +158,7 @@ pylith::materials::AuxiliaryFactoryWellboreSource::addWellboreRadius(void) { // 
 // ----------------------------------------------------------------------------
 // Add wellbore length subfield to auxiliary fields.
 void
-pylith::materials::AuxiliaryFactoryWellboreSource::addWellboreLength(void) { // wellboreLength
+pylith::sources::AuxiliaryFactoryWellboreSource::addWellboreLength(void) { // wellboreLength
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addWellboreLength(void)");
 
@@ -188,7 +186,7 @@ pylith::materials::AuxiliaryFactoryWellboreSource::addWellboreLength(void) { // 
 // --------------------------------------------------------------------
 // Add wellbore pressure subfield to auxiliary fields.
 void
-pylith::materials::AuxiliaryFactoryWellboreSource::addWellborePressure(void) { // wellborePressure
+pylith::sources::AuxiliaryFactoryWellboreSource::addWellborePressure(void) { // wellborePressure
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addWellborePressure(void)");
 
@@ -215,7 +213,7 @@ pylith::materials::AuxiliaryFactoryWellboreSource::addWellborePressure(void) { /
 // ----------------------------------------------------------------------
 // Add wellbore character subfield to auxiliary fields.
 void
-pylith::materials::AuxiliaryFactoryWellboreSource::addWellboreCharacter(void) { // wellboreCharacter
+pylith::sources::AuxiliaryFactoryWellboreSource::addWellboreCharacter(void) { // wellboreCharacter
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addWellboreCharacter(void)");
 
@@ -242,17 +240,17 @@ pylith::materials::AuxiliaryFactoryWellboreSource::addWellboreCharacter(void) { 
 // ----------------------------------------------------------------------------
 // Add isotropic permeability subfield to auxiliary fields.
 void
-pylith::materials::AuxiliaryFactoryWellboreSource::addElementLength(void) { // elementLength
+pylith::sources::AuxiliaryFactoryWellboreSource::addElementDimensions(void) { // elementLength
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("addElementLength(void)");
+    PYLITH_JOURNAL_DEBUG("addElementDimensions(void)");
 
-    const char* subfieldName = "element_length";
+    const char* subfieldName = "element_dimensions";
     const char* componentNames[3] = {
         "element_x",
         "element_y",
         "element_z"
     };
-
+    const int tensorSize = (3 == _spaceDim) ? 3 : (2 == _spaceDim) ? 2 : 1;
     const PylithReal lengthScale = _normalizer->getLengthScale();
 
     pylith::topology::Field::Description description;
@@ -264,7 +262,7 @@ pylith::materials::AuxiliaryFactoryWellboreSource::addElementLength(void) { // e
     for (int i = 0; i < _spaceDim; ++i) {
         description.componentNames[i] = componentNames[i];
     } // for
-    description.scale = normalizer->getLengthScale();
+    description.scale = _normalizer->getLengthScale();
     description.validator = NULL;
 
     _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));

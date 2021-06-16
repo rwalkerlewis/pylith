@@ -31,8 +31,6 @@ class WellboreSource(Source, ModuleWellboreSource):
 
     import pythia.pyre.inventory
 
-    useBodyForce = pythia.pyre.inventory.bool("use_body_force", default=False)
-    useBodyForce.meta['tip'] = "Include body force term in wellboresource equation."
 
     # PUBLIC METHODS /////////////////////////////////////////////////////
 
@@ -50,17 +48,15 @@ class WellboreSource(Source, ModuleWellboreSource):
     def preinitialize(self, problem):
         """Setup source.
         """
-        self.rheology.preinitialize(problem)
         Source.preinitialize(self, problem)
 
-        self.rheology.addAuxiliarySubfields(self, problem)
+
         return
 
     def _createModuleObj(self):
         """Create handle to C++ WellboreSource.
         """
         ModuleWellboreSource.__init__(self)
-        ModuleWellboreSource.setBulkRheology(self, self.rheology)  # Source sets auxiliary db in rheology.
         return
 
 

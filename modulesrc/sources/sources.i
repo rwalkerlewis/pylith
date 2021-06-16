@@ -52,6 +52,5 @@ import_array();
 
 %include "Source.i"
 %include "WellboreSource.i"
-%include "RheologyElasticity.i"
 
 // End of file

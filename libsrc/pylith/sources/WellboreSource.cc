@@ -43,7 +43,8 @@ typedef pylith::feassemble::IntegratorDomain::ProjectKernels ProjectKernels;
 // ---------------------------------------------------------------------------------------------------------------------
 // Default constructor.
 pylith::sources::WellboreSource::WellboreSource(void) :
-    _useInertia(false) {
+    _useInertia(false),
+    _auxiliaryFactory(new pylith::sources::AuxiliaryFactoryWellboreSource) {
     pylith::utils::PyreComponent::setName("wellboresource");
 } // constructor
 
@@ -60,6 +61,8 @@ pylith::sources::WellboreSource::~WellboreSource(void) {
 void
 pylith::sources::WellboreSource::deallocate(void) {
     Source::deallocate();
+
+    delete _auxiliaryFactory;_auxiliaryFactory = NULL;
 } // deallocate
 
 
@@ -90,28 +93,28 @@ pylith::sources::WellboreSource::createIntegrator(const pylith::topology::Field&
     PetscDM dmSoln = solution.dmMesh();assert(dmSoln);
     // transform points of source to mesh coordinates in python
     // DM from solution
-    PetscSF sfPoints;
-    Vec *vecPoints;
+    Vec vecPoints;
     DMLabel label;
-    PetscInt numRoots, numLeaves, *localPoints, dim, vecSize;
-    PetscSFNode *remotePoints;
+    PetscSF sfPoints;
+    const PetscInt *localPoints;
+    const PetscSFNode *remotePoints;
+    PetscInt numRoots, numLeaves, dim;
     PetscMPIInt rank;
 
     err = DMGetCoordinateDim(dmSoln, &dim);PYLITH_CHECK_ERROR(err);
-    vecSize = _pointNames.size()*dim;
-
-    err = VecCreateMPIWithArray(PetscObjectComm((PetscObject) dmSoln),1, vecSize, PETSC_DECIDE, &_pointCoords[0], vecPoints);PYLITH_CHECK_ERROR(err);
-    err = DMLocatePoints(dmSoln, vecPoints, DM_POINTLOCATION_NONE, sfPoints);PYLITH_CHECK_ERROR(err);
+    err = VecCreateMPIWithArray(PetscObjectComm((PetscObject) dmSoln), dim, _pointCoords.size(), PETSC_DECIDE, &_pointCoords[0], &vecPoints);PYLITH_CHECK_ERROR(err);
+    err = DMLocatePoints(dmSoln, vecPoints, DM_POINTLOCATION_NONE, &sfPoints);PYLITH_CHECK_ERROR(err);
     err = VecDestroy(&vecPoints);PYLITH_CHECK_ERROR(err);
     err = DMCreateLabel(dmSoln,PyreComponent::getIdentifier());PYLITH_CHECK_ERROR(err);
     err = DMGetLabel(dmSoln, PyreComponent::getIdentifier(), &label);PYLITH_CHECK_ERROR(err);
-    err = PetscSFGetGraph(sfPoints, &numRoots, &numLeaves, &localPoints, &remotePoints);
+    err = PetscSFGetGraph(sfPoints, &numRoots, &numLeaves, &localPoints, &remotePoints);PYLITH_CHECK_ERROR(err);
     err = MPI_Comm_rank(PetscObjectComm((PetscObject) dmSoln), &rank);PYLITH_CHECK_ERROR(err);
-    for (PetscInt p = 0; p < _numLeaves; ++p) {
+    for (PetscInt p = 0; p < numLeaves; ++p) {
         if (remotePoints[p].rank == rank) {
             err = DMLabelSetValue(label, localPoints[p], 1);PYLITH_CHECK_ERROR(err);
         }
     } // for
+    err = PetscSFDestroy(&sfPoints);PYLITH_CHECK_ERROR(err);
 
     pylith::feassemble::IntegratorDomain* integrator = new pylith::feassemble::IntegratorDomain(this);assert(integrator);
     integrator->setLabelName(PyreComponent::getIdentifier());
@@ -185,7 +188,7 @@ pylith::sources::WellboreSource::createDerivedField(const pylith::topology::Fiel
 // Get auxiliary factory associated with physics.
 pylith::feassemble::AuxiliaryFactory*
 pylith::sources::WellboreSource::_getAuxiliaryFactory(void) {
-    return _getAuxiliaryFactory();
+    return _auxiliaryFactory;
 } // _getAuxiliaryFactory
 
 
