@@ -109,6 +109,7 @@ private:
 private:
 
     bool _useInertia; ///< Flag to include inertial term.
+    pylith::sources::AuxiliaryFactoryWellboreSource* _auxiliaryFactory; ///< Factory for auxiliary subfields.
 
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:

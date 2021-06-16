@@ -113,7 +113,7 @@ pylith::sources::WellboreSource::createIntegrator(const pylith::topology::Field&
         }
     } // for
 
-    pylith::feassemble: IntegratorDomain* integrator = new pylith::feassemble::IntegratorDomain(this);assert(integrator);
+    pylith::feassemble::IntegratorDomain* integrator = new pylith::feassemble::IntegratorDomain(this);assert(integrator);
     integrator->setLabelName(PyreComponent::getIdentifier());
     integrator->setLabelValue(1);
 
@@ -135,11 +135,8 @@ pylith::sources::WellboreSource::createAuxiliaryField(const pylith::topology::Fi
     pylith::topology::Field* auxiliaryField = new pylith::topology::Field(domainMesh);assert(auxiliaryField);
     auxiliaryField->setLabel("WellboreSource auxiliary field");
 
-    assert(_rheology);
-    pylith::sources::AuxiliaryFactoryWellboreSource* auxiliaryFactory = _rheology->getAuxiliaryFactory();assert(auxiliaryFactory);
-
     assert(_normalizer);
-    auxiliaryFactory->initialize(auxiliaryField, *_normalizer, domainMesh.dimension());
+    _auxiliaryFactory->initialize(auxiliaryField, *_normalizer, domainMesh.dimension());
 
     // :ATTENTION: The order for adding subfields must match the order of the auxiliary fields in the FE kernels.
 
@@ -150,14 +147,14 @@ pylith::sources::WellboreSource::createAuxiliaryField(const pylith::topology::Fi
     // of magnitude of 1.
 
     // add in aux specific to peaceman
-    auxiliaryFactory->addFluidDensity(); // 0
-    auxiliaryFactory->addFluidViscosity(); // 1
-    auxiliaryFactory->addIsotropicPermeability(); // 2
-    auxiliaryFactory->addWellboreRadius(); // 3
-    auxiliaryFactory->addWellboreLength(); // 4
-    auxiliaryFactory->addWellborePressure(); // 5
-    auxiliaryFactory->addWellboreCharacter(); // 6
-    auxiliaryFactory->addElementDimensions(); // 7
+    _auxiliaryFactory->addFluidDensity(); // 0
+    _auxiliaryFactory->addFluidViscosity(); // 1
+    _auxiliaryFactory->addIsotropicPermeability(); // 2
+    _auxiliaryFactory->addWellboreRadius(); // 3
+    _auxiliaryFactory->addWellboreLength(); // 4
+    _auxiliaryFactory->addWellborePressure(); // 5
+    _auxiliaryFactory->addWellboreCharacter(); // 6
+    _auxiliaryFactory->addElementDimensions(); // 7
 
     auxiliaryField->subfieldsSetup();
     auxiliaryField->createDiscretization();
@@ -165,8 +162,8 @@ pylith::sources::WellboreSource::createAuxiliaryField(const pylith::topology::Fi
     auxiliaryField->allocate();
     auxiliaryField->createOutputVector();
 
-    assert(auxiliaryFactory);
-    auxiliaryFactory->setValuesFromDB();
+    assert(_auxiliaryFactory);
+    _auxiliaryFactory->setValuesFromDB();
 
     PYLITH_METHOD_RETURN(auxiliaryField);
 } // createAuxiliaryField
@@ -188,7 +185,7 @@ pylith::sources::WellboreSource::createDerivedField(const pylith::topology::Fiel
 // Get auxiliary factory associated with physics.
 pylith::feassemble::AuxiliaryFactory*
 pylith::sources::WellboreSource::_getAuxiliaryFactory(void) {
-    return _auxiliaryFactory();
+    return _getAuxiliaryFactory();
 } // _getAuxiliaryFactory
 
 
@@ -251,7 +248,7 @@ pylith::sources::WellboreSource::_setKernelsLHSJacobian(pylith::feassemble::Inte
         const PetscPointJac Jf3pp = NULL;
 
         kernels.resize(1);
-        kernels[0] = JacobianKernels("displacement", "displacement", Jf0uu, Jf1uu, Jf2uu, Jf3uu);
+        kernels[0] = JacobianKernels("pressure", "pressure", Jf0pp, Jf1pp, Jf2pp, Jf3pp);
         break;
     } // QUASISTATIC
     case DYNAMIC:
