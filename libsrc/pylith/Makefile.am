@@ -27,6 +27,7 @@ SUBDIRS = \
 	faults \
 	friction \
 	fekernels \
+	sources \
 	testing
 
 
@@ -139,6 +140,9 @@ libpylith_la_SOURCES = \
 	problems/InitialConditionPatch.cc \
 	problems/ProgressMonitor.cc \
 	problems/ProgressMonitorTime.cc \
+	sources/Source.cc \
+	sources/WellboreSource.cc \
+	sources/AuxiliaryFactoryWellboreSource.cc \
 	topology/Mesh.cc \
 	topology/MeshOps.cc \
 	topology/FieldBase.cc \

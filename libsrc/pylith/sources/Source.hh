@@ -83,16 +83,6 @@ public:
     virtual
     pylith::feassemble::Constraint* createConstraint(const pylith::topology::Field& solution);
 
-    /** Create derived field.
-     *
-     * @param[in] solution Solution field.
-     * @param[in\ domainMesh Finite-element mesh associated with integration domain.
-     *
-     * @returns Derived field if applicable, otherwise NULL.
-     */
-    pylith::topology::Field* createDerivedField(const pylith::topology::Field& solution,
-                                                const pylith::topology::Mesh& domainMesh);
-
     /** Set coordinates and names of points.
      *
      * @param[in] points Array of coordinates [numPoints * spaceDim].

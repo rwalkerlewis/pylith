@@ -97,37 +97,27 @@ pylith::source::WellboreSource::createIntegrator(const pylith::topology::Field& 
     PetscSF sfPoints;
     Vec vecPoints;
     DMLabel label;
-    PetscInt numRoots, numLeaves, *localPoints;
+    PetscInt numRoots, numLeaves, *localPoints, dim;
     PetscSFNode *remotePoints;
+    PetscMPIInt rank;
 
-    err = VecCreateMPIWithArray(PetscObjectComm((PetscObject) dmSoln), ,_numPoints, _numPoints, _pointCoords, vecPoints);PYLITH_CHECK_ERROR(err);
+    err = DMGetCoordinateDim(dmSoln, &dim);PYLITH_CHECK_ERROR(err);
+    err = VecCreateMPIWithArray(PetscObjectComm((PetscObject) dmSoln), _numPoints*dim, PETSC_DECIDE, _pointCoords, vecPoints);PYLITH_CHECK_ERROR(err);
     err = DMLocatePoints(dmSoln, vecPoints, DM_POINTLOCATION_NONE, sfPoints);PYLITH_CHECK_ERROR(err);
- 
+    err = VecDestroy(&vecPoints);PYLITH_CHECK_ERROR(err);
     err = DMCreateLabel(dmSoln,PyreComponent::getIdentifier());PYLITH_CHECK_ERROR(err);
     err = DMGetLabel(dmSoln, PyreComponent::getIdentifier(), &label);PYLITH_CHECK_ERROR(err);
     err = PetscSFGetGraph(sfPoints, &numRoots, &numLeaves, &localPoints, &remotePoints);
-    if (CELL == type) {
-        for (PetscInt p = 0; p < _numPoints; ++p) {
+    err = MPI_Comm_rank(PetscObjectComm((PetscObject) dmSoln), &rank); PYLITH_CHECK_ERROR(err);
+    for (PetscInt p = 0; p < _numLeaves; ++p) {
+        if (remotePoints[p].rank == rank) {
             err = DMLabelSetValue(label, localPoints[p], 1);PYLITH_CHECK_ERROR(err);
-        } // for
+        }
+    } // for
 
     pylith::feassemble:IntegratorDomain* integrator = new pylith::feassemble::IntegratorDomain(this);assert(integrator);
-    integrator->setLabelName(pylith::topology::Mesh::getCellsLabelName());
-    integrator->setLabelValue(getMaterialId());
-
-    switch (_formulation) {
-    case QUASISTATIC:
-        _useInertia = false;
-        break;
-    case DYNAMIC:
-        _useInertia = true;
-        break;
-    case DYNAMIC_IMEX:
-        _useInertia = true;
-        break;
-    default:
-        PYLITH_COMPONENT_LOGICERROR("Unknown formulation for equations (" << _formulation << ").");
-    } // switch
+    integrator->setLabelName(PyreComponent::getIdentifier());
+    integrator->setLabelValue(1);
 
     _setKernelsLHSResidual(integrator, solution);
     _setKernelsLHSJacobian(integrator, solution);
@@ -183,6 +173,16 @@ pylith::source::WellboreSource::createAuxiliaryField(const pylith::topology::Fie
     PYLITH_METHOD_RETURN(auxiliaryField);
 } // createAuxiliaryField
 
+// ---------------------------------------------------------------------------------------------------------------------
+// Create derived field.
+pylith::topology::Field*
+pylith::source::WellboreSource::createDerivedField(const pylith::topology::Field& solution,
+                                                       const pylith::topology::Mesh& domainMesh) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_COMPONENT_DEBUG("createDerivedField(solution="<<solution.getLabel()<<", domainMesh=)"<<typeid(domainMesh).name()<<") empty method");
+
+    PYLITH_METHOD_RETURN(NULL);
+} // createDerivedField
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Get auxiliary factory associated with physics.

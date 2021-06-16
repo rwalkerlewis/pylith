@@ -46,7 +46,7 @@ pylith::materials::AuxiliaryFactoryWellboreSource::~AuxiliaryFactoryWellboreSour
 // ----------------------------------------------------------------------
 // Add fluid density subfield to auxiliary fields.
 void
-pylith::materials::AuxiliaryFactoryPoroelasticity::addFluidDensity(void) { // fluidDensity
+pylith::materials::AuxiliaryFactoryWellboreSource::addFluidDensity(void) { // fluidDensity
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addFluidDensity(void)");
 
@@ -73,7 +73,7 @@ pylith::materials::AuxiliaryFactoryPoroelasticity::addFluidDensity(void) { // fl
 // ----------------------------------------------------------------------
 // Add fluid viscosity subfield to auxiliary fields.
 void
-pylith::materials::AuxiliaryFactoryPoroelasticity::addFluidViscosity(void) { // fluidViscosity
+pylith::materials::AuxiliaryFactoryWellboreSource::addFluidViscosity(void) { // fluidViscosity
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addFluidViscosity(void)");
 
@@ -103,7 +103,7 @@ pylith::materials::AuxiliaryFactoryPoroelasticity::addFluidViscosity(void) { // 
 // ----------------------------------------------------------------------------
 // Add isotropic permeability subfield to auxiliary fields.
 void
-pylith::materials::AuxiliaryFactoryPoroelastic::addIsotropicPermeability(void) { // isotropicPermeablity
+pylith::materials::AuxiliaryFactoryWellboreSource::addIsotropicPermeability(void) { // isotropicPermeablity
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addIsotropicPermeability(void)");
 
@@ -132,7 +132,7 @@ pylith::materials::AuxiliaryFactoryPoroelastic::addIsotropicPermeability(void) {
 // ----------------------------------------------------------------------------
 // Add wellbore radius subfield to auxiliary fields.
 void
-pylith::materials::AuxiliaryFactoryPoroelastic::addWellboreRadius(void) { // wellboreRadius
+pylith::materials::AuxiliaryFactoryWellboreSource::addWellboreRadius(void) { // wellboreRadius
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addWellboreRadius(void)");
 
@@ -160,7 +160,7 @@ pylith::materials::AuxiliaryFactoryPoroelastic::addWellboreRadius(void) { // wel
 // ----------------------------------------------------------------------------
 // Add wellbore length subfield to auxiliary fields.
 void
-pylith::materials::AuxiliaryFactoryPoroelastic::addWellboreLength(void) { // wellboreLength
+pylith::materials::AuxiliaryFactoryWellboreSource::addWellboreLength(void) { // wellboreLength
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addWellboreLength(void)");
 
@@ -183,6 +183,95 @@ pylith::materials::AuxiliaryFactoryPoroelastic::addWellboreLength(void) { // wel
 
     PYLITH_METHOD_END;
 } // addWellboreLength
+
+
+// --------------------------------------------------------------------
+// Add wellbore pressure subfield to auxiliary fields.
+void
+pylith::materials::AuxiliaryFactoryWellboreSource::addWellborePressure(void) { // wellborePressure
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addWellborePressure(void)");
+
+    const char* subfieldName = "wellbore_pressure";
+    const PylithReal pressureScale = _normalizer->getPressureScale();
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = subfieldName;
+    description.scale = pressureScale;
+    description.validator = NULL;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addWellborePressure
+
+
+// ----------------------------------------------------------------------
+// Add wellbore character subfield to auxiliary fields.
+void
+pylith::materials::AuxiliaryFactoryWellboreSource::addWellboreCharacter(void) { // wellboreCharacter
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addWellboreCharacter(void)");
+
+    const char* subfieldName = "wellbore_character";
+    const PylithReal noScale = 1;
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = subfieldName;
+    description.scale = noScale;
+    description.validator = NULL;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addWellboreCharacter
+
+
+// ----------------------------------------------------------------------------
+// Add isotropic permeability subfield to auxiliary fields.
+void
+pylith::materials::AuxiliaryFactoryWellboreSource::addElementLength(void) { // elementLength
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addElementLength(void)");
+
+    const char* subfieldName = "element_length";
+    const char* componentNames[3] = {
+        "element_x",
+        "element_y",
+        "element_z"
+    };
+
+    const PylithReal lengthScale = _normalizer->getLengthScale();
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::OTHER;
+    description.numComponents = tensorSize;
+    description.componentNames.resize(tensorSize);
+    for (int i = 0; i < _spaceDim; ++i) {
+        description.componentNames[i] = componentNames[i];
+    } // for
+    description.scale = normalizer->getLengthScale();
+    description.validator = NULL;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addElementLength
 
 
 // End of file

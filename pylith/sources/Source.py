@@ -46,6 +46,10 @@ class Source(Physics, ModuleSource):
     label = pythia.pyre.inventory.str("label", default="", validator=validateLabel)
     label.meta['tip'] = "Descriptive label for source."
 
+    from .PointsList import PointsList
+    reader = pythia.pyre.inventory.facility("reader", factory=PointsList, family="points_list")
+    reader.meta['tip'] = "Reader for points list."
+
     def __init__(self, name="source"):
         """Constructor.
         """
@@ -59,6 +63,17 @@ class Source(Physics, ModuleSource):
 
         ModuleSource.setSourceId(self, self.sourceId)
         ModuleSource.setDescriptiveLabel(self, self.label)
+
+        sourceNames, sourceCoords = self.reader.read()
+
+        # Convert to mesh coordinate system
+        from spatialdata.geocoords.Converter import convert
+        convert(sourceCoords, problem.mesh().getCoordSys(), self.reader.coordsys)
+
+        # Nondimensionalize
+        sourceCoords /= problem.normalizer.lengthScale.value
+
+        ModuleSource.setPoints(self, sourceCoords, sourceNames)
         return
 
 

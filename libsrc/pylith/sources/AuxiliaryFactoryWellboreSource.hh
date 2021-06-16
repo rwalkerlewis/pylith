@@ -56,6 +56,15 @@ public:
     /// Add wellbore length subfield to auxiliary subfields.
     void addWellboreLength(void);
 
+    /// Add wellbore pressure subfield to auxiliary subfields.
+    void addWellborePressure(void);
+
+    /// Add wellbore character subfield to auxiliary subfields.
+    void addWellboreCharacter(void);
+
+    /// Add element dimensions subfield to auxiliary subfields.
+    void addElementDimensions(void);
+
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
 

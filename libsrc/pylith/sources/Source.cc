@@ -99,23 +99,14 @@ pylith::sources::Source::createConstraint(const pylith::topology::Field& solutio
 } // createConstraint
 
 
-// ---------------------------------------------------------------------------------------------------------------------
-// Create derived field.
-pylith::topology::Field*
-pylith::sources::Source::createDerivedField(const pylith::topology::Field& solution,
-                                            const pylith::topology::Mesh& domainMesh) {
-    return NULL;
-} // createDerivedField
-
-
 // ------------------------------------------------------------------------------------------------
 // Set point names and coordinates of points .
 void
-pylith::meshio::OutputSolnPoints::setPoints(const PylithReal* pointCoords,
-                                            const int numPoints,
-                                            const int spaceDim,
-                                            const char* const* pointNames,
-                                            const int numPointNames) {
+pylith::sources::Source::setPoints(const PylithReal* pointCoords,
+                                   const int numPoints,
+                                   const int spaceDim,
+                                   const char* const* pointNames,
+                                   const int numPointNames) {
     PYLITH_METHOD_BEGIN;
 
     assert(pointCoords && pointNames);
