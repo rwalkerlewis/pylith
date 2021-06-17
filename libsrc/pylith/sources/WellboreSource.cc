@@ -168,6 +168,9 @@ pylith::sources::WellboreSource::createAuxiliaryField(const pylith::topology::Fi
     assert(_auxiliaryFactory);
     _auxiliaryFactory->setValuesFromDB();
 
+    // Debug option
+    auxiliaryField->view("Wellbore auxiliary field.");
+
     PYLITH_METHOD_RETURN(auxiliaryField);
 } // createAuxiliaryField
 

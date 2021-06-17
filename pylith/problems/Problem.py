@@ -63,8 +63,8 @@ def sourceFactory(name):
     """Factory for source items.
     """
     from pythia.pyre.inventory import facility
-    from pylith.sources.PointSource import PointSource
-    return facility(name, family="source", factory=PointSource)
+    from pylith.sources.WellboreSource import WellboreSource
+    return facility(name, family="source", factory=WellboreSource)
 
 class Problem(PetscComponent, ModuleProblem):
     """Python abstract base class for crustal dynamics problems.
@@ -97,6 +97,9 @@ class Problem(PetscComponent, ModuleProblem):
     from pylith.materials.Homogeneous import Homogeneous
     materials = pythia.pyre.inventory.facilityArray("materials", itemFactory=materialFactory, factory=Homogeneous)
     materials.meta['tip'] = "Materials in problem."
+
+    sources = pythia.pyre.inventory.facilityArray("sources", itemFactory=sourceFactory, factory=EmptyBin)
+    sources.meta['tip'] = "Sources in problem."
 
     bc = pythia.pyre.inventory.facilityArray("bc", itemFactory=bcFactory, factory=EmptyBin)
     bc.meta['tip'] = "Boundary conditions."
@@ -166,6 +169,16 @@ class Problem(PetscComponent, ModuleProblem):
         for bc in self.bc.components():
             bc.preinitialize(self)
         ModuleProblem.setBoundaryConditions(self, self.bc.components())
+
+        # Preinitialize sources.
+        for source in self.sources.components():
+            source.preinitialize(self)
+        ModuleProblem.setSources(self, self.sources.components())
+
+        # Preinitialize interfaces
+        for interface in self.interfaces.components():
+            interface.preinitialize(self)
+        ModuleProblem.setInterfaces(self, self.interfaces.components())
 
         # Preinitialize interfaces
         for interface in self.interfaces.components():
