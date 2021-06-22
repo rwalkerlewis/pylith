@@ -104,12 +104,12 @@ protected:
 
     pylith::scalar_array _pointCoords; ///< Array of point coordinates.
     pylith::string_vector _pointNames; ///< Array of point names.
+    int _sourceId; ///< Value of source-id label in mesh.
+    std::string _descriptiveLabel; ///< Descriptive label for source.
 
     // PRIVATE MEMBERS /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
 
-    int _sourceId; ///< Value of source-id label in mesh.
-    std::string _descriptiveLabel; ///< Descriptive label for source.
     pylith::topology::Mesh* _pointMesh; ///< Mesh for points (no cells).
     pylith::topology::Field* _pointSoln; ///< Solution field at points.
 

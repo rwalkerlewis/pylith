@@ -298,6 +298,13 @@ pylith::problems::Problem::preinitialize(const pylith::topology::Mesh& mesh) {
         _bc[i]->setFormulation(_formulation);
     } // for
 
+    const size_t numSources = _sources.size();
+    for (size_t i = 0; i < numSources; ++i) {
+        assert(_sources[i]);
+        _sources[i]->setNormalizer(*_normalizer);
+        _sources[i]->setFormulation(_formulation);
+    } // for
+
     PYLITH_METHOD_END;
 } // preinitialize
 
@@ -359,6 +366,8 @@ pylith::problems::Problem::initialize(void) {
 
     // Initialize integrators.
     _createIntegrators();
+    printf("In Problem::initialize()\n");
+    DMView(_solution->dmMesh(), NULL);
     const size_t numIntegrators = _integrators.size();
     for (size_t i = 0; i < numIntegrators; ++i) {
         assert(_integrators[i]);
@@ -446,6 +455,8 @@ pylith::problems::Problem::_createIntegrators(void) {
 
     for (size_t i = 0; i < numSources; ++i) {
         assert(_sources[i]);
+        printf("In _createIntegrators\n");
+        DMView(_solution->mesh().dmMesh(), NULL);
         pylith::feassemble::Integrator* integrator = _sources[i]->createIntegrator(*_solution);
         assert(count < maxSize);
         if (integrator) { _integrators[count++] = integrator;}
