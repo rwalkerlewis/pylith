@@ -58,6 +58,7 @@ import_array();
 %include "../utils/PyreComponent.i" 
 %include "../problems/Physics.i"
 
+<<<<<<< HEAD
 %include "FaultCohesive.i" 
 %include "FaultCohesiveKin.i" 
 %include "FaultCohesiveKinTrivial.i" 
@@ -67,6 +68,17 @@ import_array();
 %include "KinSrcConstRate.i" 
 %include "KinSrcBrune.i" 
 %include "KinSrcLiuCos.i" 
+=======
+%include "FaultCohesive.i"
+%include "FaultCohesiveKin.i"
+%include "FaultCohesivePoroKin.i"
+%include "KinSrc.i"
+%include "KinSrcStep.i"
+%include "KinSrcRamp.i"
+%include "KinSrcConstRate.i"
+%include "KinSrcBrune.i"
+%include "KinSrcLiuCos.i"
+>>>>>>> 2b5563f3b... Added initial input structure for poro faults.
 %include "KinSrcTimeHistory.i"
 
 // End of file
