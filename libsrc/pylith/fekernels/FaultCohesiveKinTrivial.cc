@@ -673,6 +673,10 @@ pylith::fekernels::FaultCohesiveKinTrivial::Jf0umu_pos(const PylithInt dim,
 
     const PylithInt gOffP = 0;
     const PylithInt ncols = spaceDim;
+    const PylithScalar temp = - faultSkemptonCoef *
+                              faultUndrainedBulkModulus *
+                              (shearModulus - faultShearModulus) /
+                              M_u_prime
 
     for (PylithInt i = 0; i < spaceDim; ++i) {
         Jf0[(gOffP + i) * ncols + i] += +0.5;
