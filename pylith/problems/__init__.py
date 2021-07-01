@@ -42,6 +42,7 @@ __all__ = [
     "SubfieldMuFault",
     "SubfieldPressure",
     "SubfieldPressureDot",    
+    "SubfieldFaultPressure",
     "SubfieldTemperature",
     "SubfieldVelocity",
     "SubfieldTraceStrain",
