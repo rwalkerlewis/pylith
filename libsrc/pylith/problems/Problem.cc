@@ -544,8 +544,9 @@ pylith::problems::Problem::_setupSolution(void) {
     PYLITH_METHOD_END;
 } // _setupSolution
 
+
 // ** TO DO **
-// Verify the implementation of the following function, especially about the dimensions, 
+// Verify the implementation of the following function, especially about the dimensions,
 // since lagrange_fault_multiplier is of dim spaceDim while fault_pressure is of dimension 1.
 // ---------------------------------------------------------------------------------------------------------------------
 // Setup field so fault pressure subfield is limited to degrees of freedom associated with the cohesive cells.
@@ -586,5 +587,6 @@ pylith::problems::Problem::_setupFaultPressure(void) {
 
     PYLITH_METHOD_END;
 } // _setupFaultPressure
+
 
 // End of file
