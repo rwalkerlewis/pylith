@@ -589,4 +589,9 @@ pylith::problems::Problem::_setupFaultPressure(void) {
 } // _setupFaultPressure
 
 
-// End of file
+    << << <<< HEAD
+
+    == == == =
+        */
+        >> >> >>> Rebased based on new pylith main .
+        // End of file
