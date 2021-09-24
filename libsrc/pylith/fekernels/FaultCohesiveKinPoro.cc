@@ -234,7 +234,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0u_pos(const PylithInt dim,
     for (PylithInt i = 0; i < spaceDim; ++i)
     {
         // f0[fOffN+i] += -lagrange[i];
-        f0[fOffP + i] += +mu[i] * 2.0;
+        f0[fOffP + i] += mu[i] * 2.0;
     } // for
 } // f0u_pos
 

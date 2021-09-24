@@ -222,9 +222,9 @@ pylith::problems::TestPhysics::testCreateIntegrator(void) {
 
 
 // ---------------------------------------------------------------------------------------------------------------------
-// Test createConstraint().
+// Test createConstraints().
 void
-pylith::problems::TestPhysics::testCreateConstraint(void) {
+pylith::problems::TestPhysics::testCreateConstraints(void) {
     PYLITH_METHOD_BEGIN;
 
     CPPUNIT_ASSERT(_physics);
@@ -233,11 +233,11 @@ pylith::problems::TestPhysics::testCreateConstraint(void) {
     pylith::testing::StubMethodTracker tracker;
     tracker.clear();
 
-    _physics->createConstraint(*_solution);
-    CPPUNIT_ASSERT_EQUAL(size_t(1), tracker.getMethodCount("pylith::problems::PhysicsStub::createConstraint"));
+    _physics->createConstraints(*_solution);
+    CPPUNIT_ASSERT_EQUAL(size_t(1), tracker.getMethodCount("pylith::problems::PhysicsStub::createConstraints"));
 
     PYLITH_METHOD_END;
-} // testCreateConstraint
+} // testCreateConstraints
 
 
 // ---------------------------------------------------------------------------------------------------------------------

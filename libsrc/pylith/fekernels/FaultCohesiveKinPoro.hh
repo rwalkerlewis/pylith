@@ -50,10 +50,10 @@
 
 #include "pylith/utils/types.hh"
 
-class pylith::fekernels::FaultCohesiveKinPoro
-{
+class pylith::fekernels::FaultCohesiveKinPoro {
     // PUBLIC MEMBERS ///////////////////////////////////////////////////////
 public:
+
     /** Kernel interface.
      *
      * @param[in] dim Spatial dimension.

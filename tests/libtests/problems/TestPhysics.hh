@@ -50,7 +50,7 @@ class pylith::problems::TestPhysics : public CppUnit::TestFixture {
     CPPUNIT_TEST(testGetKernelConstants);
     CPPUNIT_TEST(testVerifyConfiguration);
     CPPUNIT_TEST(testCreateIntegrator);
-    CPPUNIT_TEST(testCreateConstraint);
+    CPPUNIT_TEST(testCreateConstraints);
     CPPUNIT_TEST(testCreateAuxiliaryField);
     CPPUNIT_TEST(testCreateDerivedField);
 
@@ -86,8 +86,8 @@ public:
     /// Test createIntegrator().
     void testCreateIntegrator(void);
 
-    /// Test createConstraint().
-    void testCreateConstraint(void);
+    /// Test createConstraints().
+    void testCreateConstraints(void);
 
     /// Test createAuxiliaryField().
     void testCreateAuxiliaryField(void);

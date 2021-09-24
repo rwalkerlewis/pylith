@@ -58,13 +58,12 @@ namespace pylith
 {
     namespace faults
     {
-        class _FaultCohesiveKinPoro
-        {
+        class _FaultCohesiveKinPoro {
             // PUBLIC MEMBERS /////////////////////////////////////////////////////////////////////
         public:
             static const char *pyreComponent;
         };
-        const char *_FaultCohesiveKinPoro::pyreComponent = "faultcohesivekinporo";
+        const char* _FaultCohesiveKinPoro::pyreComponent = "faultcohesivekinporo";
 
         // _FaultCohesiveKinPoro
 
@@ -145,6 +144,14 @@ void pylith::faults::FaultCohesiveKinPoro::verifyConfiguration(const pylith::top
         throw std::runtime_error(msg.str());
     } // if
 
+    if (!solution.hasSubfield("mu_fault"))
+    {
+        std::ostringstream msg;
+        msg << "Cannot find 'mu_fault' subfield in solution field for fault implementation in component '"
+            << PyreComponent::getIdentifier() << "'.";
+        throw std::runtime_error(msg.str());
+    } // if    
+
     switch (_formulation)
     {
     case QUASISTATIC:
@@ -200,11 +207,11 @@ pylith::faults::FaultCohesiveKinPoro::createIntegrator(const pylith::topology::F
 
 // ------------------------------------------------------------------------------------------------
 // Create constraint for buried fault edges and faces.
-pylith::feassemble::Constraint *
-pylith::faults::FaultCohesiveKinPoro::createConstraint(const pylith::topology::Field &solution)
+std::vector<pylith::feassemble::Constraint*>
+pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::Field &solution)
 {
     PYLITH_METHOD_BEGIN;
-    PYLITH_COMPONENT_DEBUG("createConstraint(solution=" << solution.getLabel() << ")");
+    PYLITH_COMPONENT_DEBUG("createConstraints(solution=" << solution.getLabel() << ")");
 
     if (0 == strlen(getBuriedEdgesMarkerLabel()))
     {
@@ -281,9 +288,9 @@ pylith::faults::FaultCohesiveKinPoro::createConstraint(const pylith::topology::F
                         break;
                     }
                 } // for
-            }     // if
-        }         // for
-    }             // for
+            } // if
+        } // for
+    } // for
 
     pylith::feassemble::ConstraintSimple *constraint = new pylith::feassemble::ConstraintSimple(this);
     assert(constraint);
@@ -295,7 +302,7 @@ pylith::faults::FaultCohesiveKinPoro::createConstraint(const pylith::topology::F
     constraint->setUserFn(_zero);
 
     PYLITH_METHOD_RETURN(constraint);
-} // createConstraint
+} // createConstraints
 
 // ------------------------------------------------------------------------------------------------
 // Create auxiliary field.
@@ -602,7 +609,7 @@ void pylith::faults::FaultCohesiveKinPoro::_updateSlipAcceleration(pylith::topol
         {
             auxiliaryArray[slipAccOff + iDof] = slipAccArray[iSlipAcc];
         } // for
-    }     // for
+    } // for
     err = VecRestoreArrayRead(_slipVecTotal, &slipAccArray);
     PYLITH_CHECK_ERROR(err);
 
