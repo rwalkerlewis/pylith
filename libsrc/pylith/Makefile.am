@@ -38,7 +38,6 @@ libpylith_la_SOURCES = \
 	bc/DirichletTimeDependent.cc \
 	bc/DirichletUserFn.cc \
 	bc/NeumannTimeDependent.cc \
-	bc/NeumannUserFn.cc \
 	bc/AbsorbingDampers.cc \
 	bc/AbsorbingDampersAuxiliaryFactory.cc \
 	faults/FaultCohesive.cc \
