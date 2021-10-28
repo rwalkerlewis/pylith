@@ -144,7 +144,7 @@ void pylith::faults::FaultCohesiveKinPoro::verifyConfiguration(const pylith::top
         throw std::runtime_error(msg.str());
     } // if
 
-    if (!solution.hasSubfield("mu_fault"))
+    if (!solution.hasSubfield("mu_multiplier_fault"))
     {
         std::ostringstream msg;
         msg << "Cannot find 'mu_fault' subfield in solution field for fault implementation in component '"
@@ -390,7 +390,7 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
     switch (_formulation)
     {
     case QUASISTATIC:
-        _auxiliaryFactory->addSlip(); // 0
+        _auxiliaryFactory->addSlip(); // 0`
         break;
     case DYNAMIC_IMEX:
         _auxiliaryFactory->addSlipAcceleration(); // 0
