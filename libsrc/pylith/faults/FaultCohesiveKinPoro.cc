@@ -147,7 +147,7 @@ void pylith::faults::FaultCohesiveKinPoro::verifyConfiguration(const pylith::top
     if (!solution.hasSubfield("mu_multiplier_fault"))
     {
         std::ostringstream msg;
-        msg << "Cannot find 'mu_fault' subfield in solution field for fault implementation in component '"
+        msg << "Cannot find 'mu_multiplier_fault' subfield in solution field for fault implementation in component '"
             << PyreComponent::getIdentifier() << "'.";
         throw std::runtime_error(msg.str());
     } // if    
