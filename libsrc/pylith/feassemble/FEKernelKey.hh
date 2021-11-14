@@ -68,7 +68,7 @@ public:
      * @param[in] equationPart Equation part for weak form key.
      * @param[in] fieldTrial Name of solution subfield associated with trial function.
      * @param[in] fieldTrial Name of solution subfield associated with basis function.
-     *
+     * 
      * @returns PETSc weak form key.
      */
     PetscFormKey getPetscKey(const pylith::topology::Field& solution,
