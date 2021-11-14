@@ -116,15 +116,12 @@ pylith::feassemble::TestInterfacePatches::testCreateMaterialPairs(void) {
         CPPUNIT_ASSERT_MESSAGE("Could not find patch.", patchIndex >= 0);
 
         CPPUNIT_ASSERT_EQUAL(labelName, weakFormKeys.cohesive._name);
-        CPPUNIT_ASSERT_EQUAL(fieldName, weakFormKeys.cohesive._field);
 
         CPPUNIT_ASSERT_EQUAL(cellsLabelName, weakFormKeys.negative._name);
         CPPUNIT_ASSERT_EQUAL(_data->patchKeys[patchIndex].negative_value, matIdNegative);
-        CPPUNIT_ASSERT_EQUAL(fieldName, weakFormKeys.negative._field);
 
         CPPUNIT_ASSERT_EQUAL(cellsLabelName, weakFormKeys.positive._name);
         CPPUNIT_ASSERT_EQUAL(_data->patchKeys[patchIndex].positive_value, matIdPositive);
-        CPPUNIT_ASSERT_EQUAL(fieldName, weakFormKeys.positive._field);
 
         // Check labels
         PetscErrorCode err = 0;
