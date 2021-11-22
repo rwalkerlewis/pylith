@@ -999,12 +999,12 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1p_body(co
     // Incoming auxiliary field.
 
     // Poroelasticity
-    const PylithInt i_fluidDensity = 1;
 
     const PylithInt i_fluidViscosity = 2;
     const PylithInt i_bodyForce = 4;
 
-    // IsotropicLinearPoroelasticityBlackOilBlackOil
+    // IsotropicLinearPoroelasticityBlackOil
+    const PylithInt i_fluidDensity = numA - 13;
     const PylithInt i_solutionOilGasRatio = numA - 12;
     const PylithInt i_solutionGasOilRatio = numA - 11;
     const PylithInt i_formationVolumeFactor = numA - 10;
@@ -1026,6 +1026,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1p_body(co
 
     const PylithScalar* pressure_x = &s_x[sOff_x[i_pressure]];
 
+    const PylithScalar* fluidDensity = &a[aOff[i_fluidDensity]];
     const PylithScalar solutionOilGasRatio = a[aOff[i_solutionOilGasRatio]];
     const PylithScalar solutionGasOilRatio = a[aOff[i_solutionGasOilRatio]];
     const PylithScalar* formationVolumeFactor = &a[aOff[i_formationVolumeFactor]];
@@ -1037,16 +1038,16 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1p_body(co
     PylithScalar vel_w[_dim], vel_o[_dim], vel_g[_dim];
 
     // Water
-    vel_w[0] = ( (isotropicPermeability * relativePermeability[0]) / fluidViscosity[0]) * (pressure_x[0] - bodyForce[0]);
-    vel_w[1] = ( (isotropicPermeability * relativePermeability[0]) / fluidViscosity[0]) * (pressure_x[1] - bodyForce[1]);
+    vel_w[0] = ( (isotropicPermeability * relativePermeability[0]) / fluidViscosity[0]) * (pressure_x[0] - bodyForce[0]*fluidDensity[0]);
+    vel_w[1] = ( (isotropicPermeability * relativePermeability[0]) / fluidViscosity[0]) * (pressure_x[1] - bodyForce[1]*fluidDensity[0]);
 
     // Oil
-    vel_o[0] = ( (isotropicPermeability * relativePermeability[1]) / fluidViscosity[1]) * (pressure_x[2] - bodyForce[0]);
-    vel_o[1] = ( (isotropicPermeability * relativePermeability[1]) / fluidViscosity[1]) * (pressure_x[3] - bodyForce[1]);
+    vel_o[0] = ( (isotropicPermeability * relativePermeability[1]) / fluidViscosity[1]) * (pressure_x[2] - bodyForce[0]*fluidDensity[1]);
+    vel_o[1] = ( (isotropicPermeability * relativePermeability[1]) / fluidViscosity[1]) * (pressure_x[3] - bodyForce[1]*fluidDensity[1]);
 
     // Gas
-    vel_g[0] = ( (isotropicPermeability * relativePermeability[2]) / fluidViscosity[2]) * pressure_x[4] - bodyForce[0]);
-    vel_g[1] = ( (isotropicPermeability * relativePermeability[2]) / fluidViscosity[2]) * pressure_x[5] - bodyForce[1]);
+    vel_g[0] = ( (isotropicPermeability * relativePermeability[2]) / fluidViscosity[2]) * (pressure_x[4] - bodyForce[0]*fluidDensity[2]);
+    vel_g[1] = ( (isotropicPermeability * relativePermeability[2]) / fluidViscosity[2]) * (pressure_x[5] - bodyForce[1]*fluidDensity[2]);
 
     // Water
     f1[0] += vel_w[0] / formationVolumeFactor[0];
@@ -1098,12 +1099,11 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1p_body_te
     // Incoming auxiliary field.
 
     // Poroelasticity
-    const PylithInt i_fluidDensity = 1;
-    const PylithInt i_fluidViscosity = 2;
 
     const PylithInt i_bodyForce = 4;
 
-    // IsotropicLinearPoroelasticityBlackOilBlackOil
+    // IsotropicLinearPoroelasticityBlackOil
+    const PylithInt i_fluidDensity = numA - 13;
     const PylithInt i_solutionOilGasRatio = numA - 12;
     const PylithInt i_solutionGasOilRatio = numA - 11;
     const PylithInt i_formationVolumeFactor = numA - 10;
@@ -1124,6 +1124,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1p_body_te
 
     const PylithScalar* pressure_x = &s_x[sOff_x[i_pressure]];
 
+    const PylithScalar* fluidDensity = &a[aOff[i_fluidDensity]];
     const PylithScalar solutionOilGasRatio = a[aOff[i_solutionOilGasRatio]];
     const PylithScalar solutionGasOilRatio = a[aOff[i_solutionGasOilRatio]];
     const PylithScalar* formationVolumeFactor = &a[aOff[i_formationVolumeFactor]];
@@ -1143,21 +1144,21 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1p_body_te
     // Water
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; j++) {
-            vel_w[i] += ( (tensorPermeability[i*_dim+j] * relativePermeability[0]) / fluidViscosity[0]) * (pressure_x[j+0*_dim] - bodyForce[j]);
+            vel_w[i] += ( (tensorPermeability[i*_dim+j] * relativePermeability[0]) / fluidViscosity[0]) * (pressure_x[j+0*_dim] - bodyForce[j]*fluidDensity[0]);
         } // for
     } // for
 
     // Oil
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; j++) {
-            vel_o[i] += ( (tensorPermeability[i*_dim+j] * relativePermeability[1]) / fluidViscosity[1]) * (pressure_x[j+1*_dim] - bodyForce[j]);
+            vel_o[i] += ( (tensorPermeability[i*_dim+j] * relativePermeability[1]) / fluidViscosity[1]) * (pressure_x[j+1*_dim] - bodyForce[j]*fluidDensity[1]);
         } // for
     } // for
 
     // Gas
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; j++) {
-            vel_g[i] += ( (tensorPermeability[i*_dim+j] * relativePermeability[2]) / fluidViscosity[2]) * (pressure_x[j+2*_dim] - bodyForce[j]);
+            vel_g[i] += ( (tensorPermeability[i*_dim+j] * relativePermeability[2]) / fluidViscosity[2]) * (pressure_x[j+2*_dim] - bodyForce[j]*fluidDensity[2]);
         } // for
     } // for
 
