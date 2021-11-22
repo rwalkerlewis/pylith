@@ -87,6 +87,18 @@ class SolutionSubfield(Subfield):
             raise NotImplementedError("Not implemented for vector field type %d" % self.vectorFieldType)
         return
 
+    def _setFluidComponents(self, spaceDim):
+        from pylith.topology.Field import Field
+        self.componentNames = []
+        if self.vectorFieldType == Field.SCALAR:
+            self.componentNames = [self.fieldName]
+        elif self.vectorFieldType == Field.VECTOR:
+            labels = ["w", "o", "g"]
+            self.componentNames = ["{}_{}".format(self.userAlias, label) for label in labels[:spaceDim]]
+        else:
+            raise NotImplementedError("Not implemented for vector field type %d" % self.vectorFieldType)
+        return
+
 
 # ITEM FACTORIES ///////////////////////////////////////////////////////
 
