@@ -119,7 +119,7 @@ pylith::materials::IsotropicLinearPoroelasticityBlackOil::addAuxiliarySubfields(
     //     _auxiliaryFactory->addReferenceStress(); // numA - 7
     //     _auxiliaryFactory->addReferenceStrain(); // numA - 6
     // } // if
-
+    _auxiliaryFactory->addFluidDensities(); // Fluid density vector, rho, numA - 13
     _auxiliaryFactory->addSolutionOilGasRatio(); // Solution oil/gas ratio, R_v, numA - 12
     _auxiliaryFactory->addSolutionGasOilRatio(); // Solution gas/oil ratio, R_s, numA - 11
     _auxiliaryFactory->addFormationVolumeFactors(); // Formation volume factor vector, B, numA - 10
