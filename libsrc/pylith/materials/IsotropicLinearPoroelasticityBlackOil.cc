@@ -126,11 +126,11 @@ pylith::materials::IsotropicLinearPoroelasticityBlackOil::addAuxiliarySubfields(
     _auxiliaryFactory->addRelativePermeability(); // Relative permeability vector, k_r, numA - 9
     _auxiliaryFactory->addThreePhaseViscosity(); // Fluid viscosity vector, numA - 8
     _auxiliaryFactory->addThreePhaseSaturation(); // Saturation vector, s, numA - 7
-    _auxiliaryFactory->addGasCompressibility(); // Gas compressibility, c_g, numA - 6
+    _auxiliaryFactory->addThreePhaseFluidModulus(); // Fluid modulus vector, K_f, numA - 6
     _auxiliaryFactory->addShearModulus(); // Shear Modulus, G, numA - 5
     _auxiliaryFactory->addDrainedBulkModulus(); // K_d, numA - 4
     _auxiliaryFactory->addBiotCoefficient(); // alpha, numA - 3
-    _auxiliaryFactory->addBiotModulus(); // M, numA - 2
+    _auxiliaryFactory->addSolidBulkModulus(); // K_s, numA - 2
     if (_useTensorPermeability) {
         _auxiliaryFactory->addTensorPermeability(); // k, numA - 1
     } else {
