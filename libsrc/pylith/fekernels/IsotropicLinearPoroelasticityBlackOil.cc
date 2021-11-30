@@ -704,7 +704,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1p(const P
     // Poroelasticity
     const PylithInt i_fluidViscosity = 2;
 
-    // IsotropicLinearPoroelasticityBlackOilBlackOil
+    // IsotropicLinearPoroelasticityBlackOil
     const PylithInt i_solutionOilGasRatio = numA - 12;
     const PylithInt i_solutionGasOilRatio = numA - 11;
     const PylithInt i_formationVolumeFactor = numA - 10;
@@ -1686,12 +1686,18 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::Jf3pp(const
                                                                            const PylithScalar constants[],
                                                                            PylithScalar Jf3[]) {
     const PylithInt _dim = 2;
+    const PylithInt _phases = 3;
 
     // index of Incoming auxiliary fields.
     // Poroelasticity
     const PylithInt i_fluidViscosity = 2;
 
-    // Isotropic Linear Poroelasticity
+    // IsotropicLinearPoroelasticityBlackOil
+    const PylithInt i_solutionOilGasRatio = numA - 12;
+    const PylithInt i_solutionGasOilRatio = numA - 11;
+    const PylithInt i_formationVolumeFactor = numA - 10;
+    const PylithInt i_relativePermeability = numA - 9;
+    const PylithInt i_threePhaseViscosity = numA - 8;
     const PylithInt i_isotropicPermeability = numA - 1;
 
     // Run Checks
@@ -1703,11 +1709,53 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::Jf3pp(const
     assert(aOff[i_isotropicPermeability] >= 0);
     assert(Jf3);
 
+    const PylithScalar *formationVolumeFactor = &a[aOff[i_formationVolumeFactor]];
+    const PylithScalar *relativePermeability = &a[aOff[i_relativePermeability]];
+    const PylithScalar *fluidViscosity = &a[aOff[i_threePhaseViscosity]];
     const PylithScalar isotropicPermeablity = a[aOff[i_isotropicPermeability]];
-    const PylithScalar fluidViscosity = a[aOff[i_fluidViscosity]];
+
+    PylithScalar solutionRatios[_dim*_dim], coeff[_dim*_dim];
+    PylithScalar tensorPermeability[_dim*_dim];
+
+    tensorPermeability[0] = 0.0;
+    tensorPermeability[1] = 0.0;
+    tensorPermeability[2] = 0.0;
+    tensorPermeability[3] = 0.0;
 
     for (PylithInt d = 0; d < _dim; ++d) {
-        Jf3[d*_dim+d] += isotropicPermeablity / fluidViscosity;
+        tensorPermeability[d*_dim+d] += isotropicPermeablity;
+    }
+
+    solutionRatios[0] = 1.0; // R_ww
+    solutionRatios[1] = 0.0; // R_wo
+    solutionRatios[2] = 0.0; // R_wg
+    solutionRatios[3] = 0.0; // R_ow
+    solutionRatios[4] = 1.0; // R_oo
+    solutionRatios[5] = a[aOff[i_solutionOilGasRatio]]; // R_og
+    solutionRatios[6] = 0.0; // R_gw
+    solutionRatios[7] = a[aOff[i_solutionGasOilRatio]]; // R_go
+    solutionRatios[8] = 1.0; // R_gg
+
+    coeff[0] = (solutionRatios[0] * relativePermeability[0]) / (formationVolumeFactor[0]*fluidViscosity[0]); // ww
+    coeff[1] = (solutionRatios[1] * relativePermeability[1]) / (formationVolumeFactor[1]*fluidViscosity[1]); // wo
+    coeff[2] = (solutionRatios[2] * relativePermeability[2]) / (formationVolumeFactor[2]*fluidViscosity[2]); // wg
+
+    coeff[3] = (solutionRatios[3] * relativePermeability[0]) / (formationVolumeFactor[0]*fluidViscosity[0]); // ow
+    coeff[4] = (solutionRatios[4] * relativePermeability[1]) / (formationVolumeFactor[1]*fluidViscosity[1]); // oo
+    coeff[5] = (solutionRatios[5] * relativePermeability[2]) / (formationVolumeFactor[2]*fluidViscosity[2]); // og
+
+    coeff[6] = (solutionRatios[6] * relativePermeability[0]) / (formationVolumeFactor[0]*fluidViscosity[0]); // gw
+    coeff[7] = (solutionRatios[7] * relativePermeability[1]) / (formationVolumeFactor[1]*fluidViscosity[1]); // go
+    coeff[8] = (solutionRatios[8] * relativePermeability[2]) / (formationVolumeFactor[2]*fluidViscosity[2]); // gg
+
+    for (PylithInt i = 0; i < _phases; ++i) {
+        for (PylithInt j = 0; j < _phases; ++j) {
+            for (PylithInt k = 0; k < _dim; ++k) {
+                for (PylithInt l = 0; l < _dim; ++l) {
+                    Jf3[((i * _phases + j) * _dim + k) * _dim + l] -= coeff[i*_phases+j] * tensorPermeability[k*_dim+l];
+                }
+            }
+        }
     }
 } // Jf3pp
 
@@ -1735,12 +1783,18 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::Jf3pp_tenso
                                                                                                const PylithScalar constants[],
                                                                                                PylithScalar Jf3[]) {
     const PylithInt _dim = 2;
+    const PylithInt _phases = 3;
 
     // index of Incoming auxiliary fields.
     // Poroelasticity
     const PylithInt i_fluidViscosity = 2;
 
-    // Isotropic Linear Poroelasticity
+    // IsotropicLinearPoroelasticityBlackOil
+    const PylithInt i_solutionOilGasRatio = numA - 12;
+    const PylithInt i_solutionGasOilRatio = numA - 11;
+    const PylithInt i_formationVolumeFactor = numA - 10;
+    const PylithInt i_relativePermeability = numA - 9;
+    const PylithInt i_threePhaseViscosity = numA - 8;
     const PylithInt i_tensorPermeability = numA - 1;
 
     // Run Checks
@@ -1752,8 +1806,13 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::Jf3pp_tenso
     assert(aOff[i_tensorPermeability] >= 0);
     assert(Jf3);
 
+    const PylithScalar *formationVolumeFactor = &a[aOff[i_formationVolumeFactor]];
+    const PylithScalar *relativePermeability = &a[aOff[i_relativePermeability]];
+    const PylithScalar *fluidViscosity = &a[aOff[i_threePhaseViscosity]];
     const PylithScalar* vectorPermeability = &a[aOff[i_tensorPermeability]];
-    const PylithScalar fluidViscosity = a[aOff[i_fluidViscosity]];
+
+    PylithScalar solutionRatios[_dim*_dim], coeff[_dim*_dim];
+    PylithScalar tensorPermeability[_dim*_dim];
 
     PylithScalar tensorPermeability[4];
     tensorPermeability[0] = vectorPermeability[0];
@@ -1761,11 +1820,37 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::Jf3pp_tenso
     tensorPermeability[2] = vectorPermeability[1];
     tensorPermeability[3] = vectorPermeability[3];
 
-    for (PylithInt i = 0; i < _dim; ++i) {
-        for (PylithInt j = 0; j < _dim; j++) {
-            Jf3[i*_dim+j] += tensorPermeability[i*_dim+j]/fluidViscosity;
-        } // for
-    } // for
+    solutionRatios[0] = 1.0; // R_ww
+    solutionRatios[1] = 0.0; // R_wo
+    solutionRatios[2] = 0.0; // R_wg
+    solutionRatios[3] = 0.0; // R_ow
+    solutionRatios[4] = 1.0; // R_oo
+    solutionRatios[5] = a[aOff[i_solutionOilGasRatio]]; // R_og
+    solutionRatios[6] = 0.0; // R_gw
+    solutionRatios[7] = a[aOff[i_solutionGasOilRatio]]; // R_go
+    solutionRatios[8] = 1.0; // R_gg
+
+    coeff[0] = (solutionRatios[0] * relativePermeability[0]) / (formationVolumeFactor[0]*fluidViscosity[0]); // ww
+    coeff[1] = (solutionRatios[1] * relativePermeability[1]) / (formationVolumeFactor[1]*fluidViscosity[1]); // wo
+    coeff[2] = (solutionRatios[2] * relativePermeability[2]) / (formationVolumeFactor[2]*fluidViscosity[2]); // wg
+
+    coeff[3] = (solutionRatios[3] * relativePermeability[0]) / (formationVolumeFactor[0]*fluidViscosity[0]); // ow
+    coeff[4] = (solutionRatios[4] * relativePermeability[1]) / (formationVolumeFactor[1]*fluidViscosity[1]); // oo
+    coeff[5] = (solutionRatios[5] * relativePermeability[2]) / (formationVolumeFactor[2]*fluidViscosity[2]); // og
+
+    coeff[6] = (solutionRatios[6] * relativePermeability[0]) / (formationVolumeFactor[0]*fluidViscosity[0]); // gw
+    coeff[7] = (solutionRatios[7] * relativePermeability[1]) / (formationVolumeFactor[1]*fluidViscosity[1]); // go
+    coeff[8] = (solutionRatios[8] * relativePermeability[2]) / (formationVolumeFactor[2]*fluidViscosity[2]); // gg
+
+    for (PylithInt i = 0; i < _phases; ++i) {
+        for (PylithInt j = 0; j < _phases; ++j) {
+            for (PylithInt k = 0; k < _dim; ++k) {
+                for (PylithInt l = 0; l < _dim; ++l) {
+                    Jf3[((i * _phases + j) * _dim + k) * _dim + l] -= coeff[i*_phases+j] * tensorPermeability[k*_dim+l];
+                }
+            }
+        }
+    }
 } // Jf3pp_tensorPermeability
 
 
@@ -1791,23 +1876,66 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::Jf0pp(const
                                                                            const PylithScalar constants[],
                                                                            PylithScalar Jf0[]) {
     const PylithInt _dim = 2;
+    const PylithInt _phases = 3;
 
-    // Incoming auxiliary fields.
+    // Poroelasticity
+    const PylithInt i_porosity = 3;
 
     // IsotropicLinearPoroelasticityBlackOil
-    const PylithInt i_biotModulus = numA - 2;
+    const PylithInt i_saturation = numA - 7;
+    const PylithInt i_fluidModulus = numA - 6;
+    const PylithInt i_biotCoefficient = numA - 3;
+    const PylithInt i_solidBulkModulus = numA - 2;
 
     // Run Checks
     assert(_dim == dim);
     assert(numS >= 2);
     assert(numA >= 3);
     assert(aOff);
-    assert(aOff[i_biotModulus] >= 0);
+    assert(aOff[i_biotCoefficient] >= 0);
     assert(Jf0);
 
-    const PylithScalar biotModulus = a[aOff[i_biotModulus]];
+    // Incoming re-packed auxiliary field.
+    // Poroelasticity
 
-    Jf0[0] += utshift / biotModulus;
+    const PylithScalar porosity = a[aOff[i_porosity]];
+
+    const PylithScalar* saturation = &a[aOff[i_saturation]];
+    const PylithScalar* fluidModulus = &a[aOff[i_fluidModulus]];
+    const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
+    const PylithScalar solidBulkModulus = a[aOff[i_solidBulkModulus]];
+
+    // Account for capiliarity
+    PylithScalar dSw_dpco = 0.0;
+    PylithScalar dSg_dpcg = 0.0;
+
+    // Generate N Tensor
+    PylithScalar N_tensor[_phases*_phases];
+
+    // Nww
+    N_tensor[0] = porosity*saturation[0] * (1.0 / fluidModulus[0]) - porosity*dSw_dpco + saturation[0]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[0];
+    // Nwo
+    N_tensor[1] = porosity*dSw_dpco + saturation[0]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[1];
+    // Nwg
+    N_tensor[2] = saturation[0]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[2];
+    // Now
+    N_tensor[3] = porosity*dSw_dpco + saturation[1] * ( (biotCoefficient - porosity) / solidBulkModulus ) * saturation[1];
+    // Noo
+    N_tensor[4] = porosity*saturation[1] * (1.0 / fluidModulus[1]) + porosity*( -dSw_dpco + dSg_dpcg) + saturation[1]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[0];
+    // Nog
+    N_tensor[5] = porosity*(-dSg_dpcg) + saturation[1]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[2];
+    // Ngw
+    N_tensor[6] = saturation[2]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[0];
+    // Ngo
+    N_tensor[7] = -porosity*dSg_dpcg + saturation[2]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[1];
+    // Ngg
+    N_tensor[8] = porosity*saturation[2]*(1.0 / fluidModulus[2]) + saturation[2]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[2] + porosity*dSg_dpcg;
+
+    for (PylithInt i = 0; i < _phases; ++i) {
+        for (PylithInt j = 0; j < _phases; ++j) {
+            Jf0[i*_phases + j] = utshift * N_tensor[i*_phases + j];
+        }
+    }
 } // Jf0pp
 
 
@@ -1834,9 +1962,11 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::Jf0pe(const
                                                                            const PylithScalar constants[],
                                                                            PylithScalar Jf0[]) {
     const PylithInt _dim = 2;
+    const PylithInt _phases = 3;
 
     // Incoming re-packed auxiliary field.
-    // IsotropicLinearPoroelasticity
+    // IsotropicLinearPoroelasticityBlackOil
+    const PylithInt i_saturation = numA - 7;
     const PylithInt i_biotCoefficient = numA - 3;
 
     // Run Checks
@@ -1847,9 +1977,13 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::Jf0pe(const
     assert(aOff[i_biotCoefficient] >= 0);
     assert(Jf0);
 
+    const PylithScalar* saturation = &a[aOff[i_saturation]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
-    Jf0[0] += utshift * biotCoefficient;
+    // Jf0pe(n_p, n_e)
+    for (PylithInt i = 0; i < _phases; ++i) {
+        Jf0[i] += utshift * saturation[i] * biotCoefficient;
+    }
 } // Jf0pe
 
 
@@ -1875,23 +2009,66 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::Jf0ppdot(co
                                                                               const PylithScalar constants[],
                                                                               PylithScalar Jf0[]) {
     const PylithInt _dim = 2;
+    const PylithInt _phases = 3;
 
-    // Incoming auxiliary fields.
+    // Poroelasticity
+    const PylithInt i_porosity = 3;
 
     // IsotropicLinearPoroelasticityBlackOil
-    const PylithInt i_biotModulus = numA - 2;
+    const PylithInt i_saturation = numA - 7;
+    const PylithInt i_fluidModulus = numA - 6;
+    const PylithInt i_biotCoefficient = numA - 3;
+    const PylithInt i_solidBulkModulus = numA - 2;
 
     // Run Checks
     assert(_dim == dim);
-    assert(numS >= 3);
+    assert(numS >= 2);
     assert(numA >= 3);
     assert(aOff);
-    assert(aOff[i_biotModulus] >= 0);
+    assert(aOff[i_biotCoefficient] >= 0);
     assert(Jf0);
 
-    const PylithScalar biotModulus = a[aOff[i_biotModulus]];
+    // Incoming re-packed auxiliary field.
+    // Poroelasticity
 
-    Jf0[0] += 1.0 / biotModulus;
+    const PylithScalar porosity = a[aOff[i_porosity]];
+
+    const PylithScalar* saturation = &a[aOff[i_saturation]];
+    const PylithScalar* fluidModulus = &a[aOff[i_fluidModulus]];
+    const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
+    const PylithScalar solidBulkModulus = a[aOff[i_solidBulkModulus]];
+
+    // Account for capiliarity
+    PylithScalar dSw_dpco = 0.0;
+    PylithScalar dSg_dpcg = 0.0;
+
+    // Generate N Tensor
+    PylithScalar N_tensor[_phases*_phases];
+
+    // Nww
+    N_tensor[0] = porosity*saturation[0] * (1.0 / fluidModulus[0]) - porosity*dSw_dpco + saturation[0]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[0];
+    // Nwo
+    N_tensor[1] = porosity*dSw_dpco + saturation[0]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[1];
+    // Nwg
+    N_tensor[2] = saturation[0]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[2];
+    // Now
+    N_tensor[3] = porosity*dSw_dpco + saturation[1] * ( (biotCoefficient - porosity) / solidBulkModulus ) * saturation[1];
+    // Noo
+    N_tensor[4] = porosity*saturation[1] * (1.0 / fluidModulus[1]) + porosity*( -dSw_dpco + dSg_dpcg) + saturation[1]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[0];
+    // Nog
+    N_tensor[5] = porosity*(-dSg_dpcg) + saturation[1]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[2];
+    // Ngw
+    N_tensor[6] = saturation[2]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[0];
+    // Ngo
+    N_tensor[7] = -porosity*dSg_dpcg + saturation[2]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[1];
+    // Ngg
+    N_tensor[8] = porosity*saturation[2]*(1.0 / fluidModulus[2]) + saturation[2]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[2] + porosity*dSg_dpcg;
+
+    for (PylithInt i = 0; i < _phases; ++i) {
+        for (PylithInt j = 0; j < _phases; ++j) {
+            Jf0[i*_phases + j] = N_tensor[i*_phases + j];
+        }
+    }
 } // Jf0ppdot
 
 
@@ -1918,22 +2095,28 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::Jf0pedot(co
                                                                               const PylithScalar constants[],
                                                                               PylithScalar Jf0[]) {
     const PylithInt _dim = 2;
+    const PylithInt _phases = 3;
 
     // Incoming re-packed auxiliary field.
     // IsotropicLinearPoroelasticityBlackOil
+    const PylithInt i_saturation = numA - 7;
     const PylithInt i_biotCoefficient = numA - 3;
 
     // Run Checks
     assert(_dim == dim);
-    assert(numS >= 3);
+    assert(numS >= 2);
     assert(numA >= 3);
     assert(aOff);
     assert(aOff[i_biotCoefficient] >= 0);
     assert(Jf0);
 
+    const PylithScalar* saturation = &a[aOff[i_saturation]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
-    Jf0[0] += biotCoefficient;
+    // Jf0pe(n_p, n_e)
+    for (PylithInt i = 0; i < _phases; ++i) {
+        Jf0[i] += saturation[i] * biotCoefficient;
+    }
 } // Jf0pedot
 
 
@@ -4196,12 +4379,18 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::Jf3pp(const PylithIn
                                                                   const PylithScalar constants[],
                                                                   PylithScalar Jf3[]) {
     const PylithInt _dim = 3;
+    const PylithInt _phases = 3;
 
     // index of Incoming auxiliary fields.
     // Poroelasticity
     const PylithInt i_fluidViscosity = 2;
 
-    // Isotropic Linear Poroelasticity
+    // IsotropicLinearPoroelasticityBlackOil
+    const PylithInt i_solutionOilGasRatio = numA - 12;
+    const PylithInt i_solutionGasOilRatio = numA - 11;
+    const PylithInt i_formationVolumeFactor = numA - 10;
+    const PylithInt i_relativePermeability = numA - 9;
+    const PylithInt i_threePhaseViscosity = numA - 8;
     const PylithInt i_isotropicPermeability = numA - 1;
 
     // Run Checks
@@ -4213,12 +4402,145 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::Jf3pp(const PylithIn
     assert(aOff[i_isotropicPermeability] >= 0);
     assert(Jf3);
 
+    const PylithScalar *formationVolumeFactor = &a[aOff[i_formationVolumeFactor]];
+    const PylithScalar *relativePermeability = &a[aOff[i_relativePermeability]];
+    const PylithScalar *fluidViscosity = &a[aOff[i_threePhaseViscosity]];
     const PylithScalar isotropicPermeablity = a[aOff[i_isotropicPermeability]];
-    const PylithScalar fluidViscosity = a[aOff[i_fluidViscosity]];
+
+    PylithScalar solutionRatios[_dim*_dim], coeff[_dim*_dim];
+    PylithScalar tensorPermeability[_dim*_dim];
+
+    tensorPermeability[0] = 0.0;
+    tensorPermeability[1] = 0.0;
+    tensorPermeability[2] = 0.0;
+    tensorPermeability[3] = 0.0;
+    tensorPermeability[4] = 0.0;
+    tensorPermeability[5] = 0.0;
+    tensorPermeability[6] = 0.0;
+    tensorPermeability[7] = 0.0;
+    tensorPermeability[8] = 0.0;
 
     for (PylithInt d = 0; d < _dim; ++d) {
-        Jf3[d*_dim+d] += isotropicPermeablity/fluidViscosity;
+        tensorPermeability[d*_dim+d] += isotropicPermeablity;
     }
+
+    solutionRatios[0] = 1.0; // R_ww
+    solutionRatios[1] = 0.0; // R_wo
+    solutionRatios[2] = 0.0; // R_wg
+    solutionRatios[3] = 0.0; // R_ow
+    solutionRatios[4] = 1.0; // R_oo
+    solutionRatios[5] = a[aOff[i_solutionOilGasRatio]]; // R_og
+    solutionRatios[6] = 0.0; // R_gw
+    solutionRatios[7] = a[aOff[i_solutionGasOilRatio]]; // R_go
+    solutionRatios[8] = 1.0; // R_gg
+
+    coeff[0] = (solutionRatios[0] * relativePermeability[0]) / (formationVolumeFactor[0]*fluidViscosity[0]); // ww
+    coeff[1] = (solutionRatios[1] * relativePermeability[1]) / (formationVolumeFactor[1]*fluidViscosity[1]); // wo
+    coeff[2] = (solutionRatios[2] * relativePermeability[2]) / (formationVolumeFactor[2]*fluidViscosity[2]); // wg
+
+    coeff[3] = (solutionRatios[3] * relativePermeability[0]) / (formationVolumeFactor[0]*fluidViscosity[0]); // ow
+    coeff[4] = (solutionRatios[4] * relativePermeability[1]) / (formationVolumeFactor[1]*fluidViscosity[1]); // oo
+    coeff[5] = (solutionRatios[5] * relativePermeability[2]) / (formationVolumeFactor[2]*fluidViscosity[2]); // og
+
+    coeff[6] = (solutionRatios[6] * relativePermeability[0]) / (formationVolumeFactor[0]*fluidViscosity[0]); // gw
+    coeff[7] = (solutionRatios[7] * relativePermeability[1]) / (formationVolumeFactor[1]*fluidViscosity[1]); // go
+    coeff[8] = (solutionRatios[8] * relativePermeability[2]) / (formationVolumeFactor[2]*fluidViscosity[2]); // gg
+
+    for (PylithInt i = 0; i < _phases; ++i) {
+        for (PylithInt j = 0; j < _phases; ++j) {
+            for (PylithInt k = 0; k < _dim; ++k) {
+                for (PylithInt l = 0; l < _dim; ++l) {
+                    Jf3[((i * _phases + j) * _dim + k) * _dim + l] -= coeff[i*_phases+j] * tensorPermeability[k*_dim+l];
+                }
+            }
+        }
+    }
+
+    /* j(n_i,n_j,dim,dim) = \frac{\partial \vec{q}}{\partial \vec{p}}
+     *
+     *  0:  j0000 = ww_coeff * k00
+     *  1:  j0001 = ww_coeff * k01
+     *  2:  j0002 = ww_coeff * k02
+     *  3:  j0010 = ww_coeff * k10
+     *  4:  j0011 = ww_coeff * k11
+     *  5:  j0012 = ww_coeff * k12
+     *  6:  j0020 = ww_coeff * k20
+     *  7:  j0021 = ww_coeff * k21
+     *  8:  j0022 = ww_coeff * k22
+     *  9:  j0100 = wo_coeff * k00
+     * 10:  j0101 = wo_coeff * k01
+     * 11:  j0102 = wo_coeff * k02
+     * 12:  j0110 = wo_coeff * k10
+     * 13:  j0111 = wo_coeff * k11
+     * 14:  j0112 = wo_coeff * k12
+     * 15:  j0120 = wo_coeff * k20
+     * 16:  j0121 = wo_coeff * k21
+     * 17:  j0122 = wo_coeff * k22
+     * 18:  j0200 = wg_coeff * k00
+     * 19:  j0201 = wg_coeff * k01
+     * 20:  j0202 = wg_coeff * k02
+     * 21:  j0210 = wg_coeff * k10
+     * 22:  j0211 = wg_coeff * k11
+     * 23:  j0212 = wg_coeff * k12
+     * 24:  j0220 = wg_coeff * k20
+     * 25:  j0221 = wg_coeff * k21
+     * 26:  j0222 = wg_coeff * k22
+     * 27:  j1000 = ow_coeff * k00
+     * 28:  j1001 = ow_coeff * k01
+     * 29:  j1002 = ow_coeff * k02
+     * 30:  j1010 = ow_coeff * k10
+     * 31:  j1011 = ow_coeff * k11
+     * 32:  j1012 = ow_coeff * k12
+     * 33:  j1020 = ow_coeff * k20
+     * 34:  j1021 = ow_coeff * k21
+     * 35:  j1022 = ow_coeff * k22
+     * 36:  j1100 = oo_coeff * k00
+     * 37:  j1101 = oo_coeff * k01
+     * 38:  j1102 = oo_coeff * k02
+     * 39:  j1110 = oo_coeff * k10
+     * 40:  j1111 = oo_coeff * k11
+     * 41:  j1112 = oo_coeff * k12
+     * 42:  j1120 = oo_coeff * k20
+     * 43:  j1121 = oo_coeff * k21
+     * 44:  j1122 = oo_coeff * k22
+     * 45:  j1200 = og_coeff * k00
+     * 46:  j1201 = og_coeff * k01
+     * 47:  j1202 = og_coeff * k02
+     * 48:  j1210 = og_coeff * k10
+     * 49:  j1211 = og_coeff * k11
+     * 50:  j1212 = og_coeff * k12
+     * 51:  j1220 = og_coeff * k20
+     * 52:  j1221 = og_coeff * k21
+     * 53:  j1222 = og_coeff * k22
+     * 54:  j2000 = gw_coeff * k00
+     * 55:  j2001 = gw_coeff * k01
+     * 56:  j2002 = gw_coeff * k02
+     * 57:  j2010 = gw_coeff * k10
+     * 58:  j2011 = gw_coeff * k11
+     * 59:  j2012 = gw_coeff * k12
+     * 60:  j2020 = gw_coeff * k20
+     * 61:  j2021 = gw_coeff * k21
+     * 62:  j2022 = gw_coeff * k22
+     * 63:  j2100 = go_coeff * k00
+     * 64:  j2101 = go_coeff * k01
+     * 65:  j2102 = go_coeff * k02
+     * 66:  j2110 = go_coeff * k10
+     * 67:  j2111 = go_coeff * k11
+     * 68:  j2112 = go_coeff * k12
+     * 69:  j2120 = go_coeff * k20
+     * 70:  j2121 = go_coeff * k21
+     * 71:  j2122 = go_coeff * k22
+     * 72:  j2200 = gg_coeff * k00
+     * 73:  j2201 = gg_coeff * k01
+     * 74:  j2202 = gg_coeff * k02
+     * 75:  j2210 = gg_coeff * k10
+     * 76:  j2211 = gg_coeff * k11
+     * 77:  j2212 = gg_coeff * k12
+     * 78:  j2220 = gg_coeff * k20
+     * 79:  j2221 = gg_coeff * k21
+     * 80:  j2222 = gg_coeff * k22
+     */
+
 } // Jf3pp
 
 
@@ -4245,12 +4567,18 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::Jf3pp_tensor_permeab
                                                                                       const PylithScalar constants[],
                                                                                       PylithScalar Jf3[]) {
     const PylithInt _dim = 3;
+    const PylithInt _phases = 3;
 
     // index of Incoming auxiliary fields.
     // Poroelasticity
     const PylithInt i_fluidViscosity = 2;
 
-    // Isotropic Linear Poroelasticity
+    // IsotropicLinearPoroelasticityBlackOil
+    const PylithInt i_solutionOilGasRatio = numA - 12;
+    const PylithInt i_solutionGasOilRatio = numA - 11;
+    const PylithInt i_formationVolumeFactor = numA - 10;
+    const PylithInt i_relativePermeability = numA - 9;
+    const PylithInt i_threePhaseViscosity = numA - 8;
     const PylithInt i_tensorPermeability = numA - 1;
 
     // Run Checks
@@ -4262,10 +4590,14 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::Jf3pp_tensor_permeab
     assert(aOff[i_tensorPermeability] >= 0);
     assert(Jf3);
 
+    const PylithScalar *formationVolumeFactor = &a[aOff[i_formationVolumeFactor]];
+    const PylithScalar *relativePermeability = &a[aOff[i_relativePermeability]];
+    const PylithScalar *fluidViscosity = &a[aOff[i_threePhaseViscosity]];
     const PylithScalar* vectorPermeability = &a[aOff[i_tensorPermeability]];
-    const PylithScalar fluidViscosity = a[aOff[i_fluidViscosity]];
 
-    PylithScalar tensorPermeability[9];
+    PylithScalar solutionRatios[_dim*_dim], coeff[_dim*_dim];
+    PylithScalar tensorPermeability[_dim*_dim];
+
     tensorPermeability[0] = vectorPermeability[0];
     tensorPermeability[1] = vectorPermeability[3];
     tensorPermeability[2] = vectorPermeability[5];
@@ -4276,11 +4608,123 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::Jf3pp_tensor_permeab
     tensorPermeability[7] = vectorPermeability[4];
     tensorPermeability[8] = vectorPermeability[2];
 
-    for (PylithInt i = 0; i < _dim; ++i) {
-        for (PylithInt j = 0; j < _dim; j++) {
-            Jf3[i*_dim+j] += tensorPermeability[i*_dim+j]/fluidViscosity;
-        } // for
-    } // for
+    solutionRatios[0] = 1.0; // R_ww
+    solutionRatios[1] = 0.0; // R_wo
+    solutionRatios[2] = 0.0; // R_wg
+    solutionRatios[3] = 0.0; // R_ow
+    solutionRatios[4] = 1.0; // R_oo
+    solutionRatios[5] = a[aOff[i_solutionOilGasRatio]]; // R_og
+    solutionRatios[6] = 0.0; // R_gw
+    solutionRatios[7] = a[aOff[i_solutionGasOilRatio]]; // R_go
+    solutionRatios[8] = 1.0; // R_gg
+
+    coeff[0] = (solutionRatios[0] * relativePermeability[0]) / (formationVolumeFactor[0]*fluidViscosity[0]); // ww
+    coeff[1] = (solutionRatios[1] * relativePermeability[1]) / (formationVolumeFactor[1]*fluidViscosity[1]); // wo
+    coeff[2] = (solutionRatios[2] * relativePermeability[2]) / (formationVolumeFactor[2]*fluidViscosity[2]); // wg
+
+    coeff[3] = (solutionRatios[3] * relativePermeability[0]) / (formationVolumeFactor[0]*fluidViscosity[0]); // ow
+    coeff[4] = (solutionRatios[4] * relativePermeability[1]) / (formationVolumeFactor[1]*fluidViscosity[1]); // oo
+    coeff[5] = (solutionRatios[5] * relativePermeability[2]) / (formationVolumeFactor[2]*fluidViscosity[2]); // og
+
+    coeff[6] = (solutionRatios[6] * relativePermeability[0]) / (formationVolumeFactor[0]*fluidViscosity[0]); // gw
+    coeff[7] = (solutionRatios[7] * relativePermeability[1]) / (formationVolumeFactor[1]*fluidViscosity[1]); // go
+    coeff[8] = (solutionRatios[8] * relativePermeability[2]) / (formationVolumeFactor[2]*fluidViscosity[2]); // gg
+
+    for (PylithInt i = 0; i < _phases; ++i) {
+        for (PylithInt j = 0; j < _phases; ++j) {
+            for (PylithInt k = 0; k < _dim; ++k) {
+                for (PylithInt l = 0; l < _dim; ++l) {
+                    Jf3[((i * _phases + j) * _dim + k) * _dim + l] -= coeff[i*_phases+j] * tensorPermeability[k*_dim+l];
+                }
+            }
+        }
+    }
+
+    /* j(n_i,n_j,dim,dim) = \frac{\partial \vec{q}}{\partial \vec{p}}
+     *
+     *  0:  j0000 = ww_coeff * k00
+     *  1:  j0001 = ww_coeff * k01
+     *  2:  j0002 = ww_coeff * k02
+     *  3:  j0010 = ww_coeff * k10
+     *  4:  j0011 = ww_coeff * k11
+     *  5:  j0012 = ww_coeff * k12
+     *  6:  j0020 = ww_coeff * k20
+     *  7:  j0021 = ww_coeff * k21
+     *  8:  j0022 = ww_coeff * k22
+     *  9:  j0100 = wo_coeff * k00
+     * 10:  j0101 = wo_coeff * k01
+     * 11:  j0102 = wo_coeff * k02
+     * 12:  j0110 = wo_coeff * k10
+     * 13:  j0111 = wo_coeff * k11
+     * 14:  j0112 = wo_coeff * k12
+     * 15:  j0120 = wo_coeff * k20
+     * 16:  j0121 = wo_coeff * k21
+     * 17:  j0122 = wo_coeff * k22
+     * 18:  j0200 = wg_coeff * k00
+     * 19:  j0201 = wg_coeff * k01
+     * 20:  j0202 = wg_coeff * k02
+     * 21:  j0210 = wg_coeff * k10
+     * 22:  j0211 = wg_coeff * k11
+     * 23:  j0212 = wg_coeff * k12
+     * 24:  j0220 = wg_coeff * k20
+     * 25:  j0221 = wg_coeff * k21
+     * 26:  j0222 = wg_coeff * k22
+     * 27:  j1000 = ow_coeff * k00
+     * 28:  j1001 = ow_coeff * k01
+     * 29:  j1002 = ow_coeff * k02
+     * 30:  j1010 = ow_coeff * k10
+     * 31:  j1011 = ow_coeff * k11
+     * 32:  j1012 = ow_coeff * k12
+     * 33:  j1020 = ow_coeff * k20
+     * 34:  j1021 = ow_coeff * k21
+     * 35:  j1022 = ow_coeff * k22
+     * 36:  j1100 = oo_coeff * k00
+     * 37:  j1101 = oo_coeff * k01
+     * 38:  j1102 = oo_coeff * k02
+     * 39:  j1110 = oo_coeff * k10
+     * 40:  j1111 = oo_coeff * k11
+     * 41:  j1112 = oo_coeff * k12
+     * 42:  j1120 = oo_coeff * k20
+     * 43:  j1121 = oo_coeff * k21
+     * 44:  j1122 = oo_coeff * k22
+     * 45:  j1200 = og_coeff * k00
+     * 46:  j1201 = og_coeff * k01
+     * 47:  j1202 = og_coeff * k02
+     * 48:  j1210 = og_coeff * k10
+     * 49:  j1211 = og_coeff * k11
+     * 50:  j1212 = og_coeff * k12
+     * 51:  j1220 = og_coeff * k20
+     * 52:  j1221 = og_coeff * k21
+     * 53:  j1222 = og_coeff * k22
+     * 54:  j2000 = gw_coeff * k00
+     * 55:  j2001 = gw_coeff * k01
+     * 56:  j2002 = gw_coeff * k02
+     * 57:  j2010 = gw_coeff * k10
+     * 58:  j2011 = gw_coeff * k11
+     * 59:  j2012 = gw_coeff * k12
+     * 60:  j2020 = gw_coeff * k20
+     * 61:  j2021 = gw_coeff * k21
+     * 62:  j2022 = gw_coeff * k22
+     * 63:  j2100 = go_coeff * k00
+     * 64:  j2101 = go_coeff * k01
+     * 65:  j2102 = go_coeff * k02
+     * 66:  j2110 = go_coeff * k10
+     * 67:  j2111 = go_coeff * k11
+     * 68:  j2112 = go_coeff * k12
+     * 69:  j2120 = go_coeff * k20
+     * 70:  j2121 = go_coeff * k21
+     * 71:  j2122 = go_coeff * k22
+     * 72:  j2200 = gg_coeff * k00
+     * 73:  j2201 = gg_coeff * k01
+     * 74:  j2202 = gg_coeff * k02
+     * 75:  j2210 = gg_coeff * k10
+     * 76:  j2211 = gg_coeff * k11
+     * 77:  j2212 = gg_coeff * k12
+     * 78:  j2220 = gg_coeff * k20
+     * 79:  j2221 = gg_coeff * k21
+     * 80:  j2222 = gg_coeff * k22
+     */
+
 } // Jf3pp_tensorPermeability
 
 
@@ -4306,6 +4750,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::Jf0pp(const PylithIn
                                                                   const PylithScalar constants[],
                                                                   PylithScalar Jf0[]) {
     const PylithInt _dim = 3;
+    const PylithInt _phases = 3;
 
     // Incoming auxiliary fields.
 
@@ -4320,9 +4765,39 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::Jf0pp(const PylithIn
     assert(aOff[i_biotModulus] >= 0);
     assert(Jf0);
 
+    // Account for capiliarity
+    PylithScalar dSw_dpco = 0.0;
+    PylithScalar dSg_dpcg = 0.0;
+
+    // Generate N Tensor
+    PylithScalar N_tensor[_phases*_phases];
+
+    // Nww
+    N_tensor[0] = porosity*saturation[0] * (1.0 / fluidModulus[0]) - porosity*dSw_dpco + saturation[0]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[0];
+    // Nwo
+    N_tensor[1] = porosity*dSw_dpco + saturation[0]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[1];
+    // Nwg
+    N_tensor[2] = saturation[0]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[2];
+    // Now
+    N_tensor[3] = porosity*dSw_dpco + saturation[1] * ( (biotCoefficient - porosity) / solidBulkModulus ) * saturation[1];
+    // Noo
+    N_tensor[4] = porosity*saturation[1] * (1.0 / fluidModulus[1]) + porosity*( -dSw_dpco + dSg_dpcg) + saturation[1]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[0];
+    // Nog
+    N_tensor[5] = porosity*(-dSg_dpcg) + saturation[1]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[2];
+    // Ngw
+    N_tensor[6] = saturation[2]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[0];
+    // Ngo
+    N_tensor[7] = -porosity*dSg_dpcg + saturation[2]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[1];
+    // Ngg
+    N_tensor[8] = porosity*saturation[2]*(1.0 / fluidModulus[2]) + saturation[2]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[2] + porosity*dSg_dpcg;
+
     const PylithScalar biotModulus = a[aOff[i_biotModulus]];
 
-    Jf0[0] = utshift / biotModulus;
+    for (PylithInt i = 0; i < _phases; ++i) {
+        for (PylithInt j = 0; j < _phases; ++j) {
+            Jf0[i*_phases + j] = utshift * N_tensor[i*_phases + j];
+        }
+    }
 } // Jf0pp
 
 
