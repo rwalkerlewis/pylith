@@ -38,12 +38,12 @@ libpylith_la_SOURCES = \
 	bc/DirichletTimeDependent.cc \
 	bc/DirichletUserFn.cc \
 	bc/NeumannTimeDependent.cc \
+	bc/NeumannUserFn.cc \
 	bc/AbsorbingDampers.cc \
 	bc/AbsorbingDampersAuxiliaryFactory.cc \
 	faults/FaultCohesive.cc \
 	faults/FaultCohesiveKin.cc \
 	faults/FaultCohesiveKinTrivial.cc \
-	# faults/FaultPoroCohesiveKin.cc \
 	faults/FaultPoroDiffusionCohesiveKin.cc \
 	faults/AuxiliaryFactoryKinematic.cc \
 	faults/KinSrc.cc \
@@ -85,7 +85,6 @@ libpylith_la_SOURCES = \
 	fekernels/BoundaryDirections.cc \
 	fekernels/FaultCohesiveKin.cc \
 	fekernels/FaultCohesiveKinTrivial.cc \
-	# fekernels/FaultPoroCohesiveKin.cc \
 	fekernels/FaultPoroDiffusionCohesiveKin.cc \
 	materials/Material.cc \
 	materials/Elasticity.cc \
