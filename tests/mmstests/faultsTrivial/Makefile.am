@@ -16,7 +16,7 @@
 # ----------------------------------------------------------------------
 #
 
-subpackage = faults
+subpackage = faultsTrivial
 include $(top_srcdir)/subpackage.am
 include $(top_srcdir)/check.am
 
