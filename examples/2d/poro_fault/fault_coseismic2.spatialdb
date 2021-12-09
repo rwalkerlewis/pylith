@@ -1,0 +1,27 @@
+// -*- C++ -*- (syntax highlighting)
+//
+// This spatial database specifies the distribution of slip on the
+// fault surface. This is a cross-section extracted from Gavin Hayes's
+// rupture model
+// (http://earthquake.usgs.gov/earthquakes/eqinthenews/2011/usc0001xgp/finite_fault.php).
+//
+#SPATIAL.ascii 1
+SimpleDB {
+  num-values = 3
+  value-names =  final_slip_left_lateral  final_slip_opening   initiation_time
+  value-units =  cm  cm  s
+  num-locs = 1
+  data-dim = 0 // Data is specified uniform constant along the space.
+  space-dim = 2
+  cs-data = cartesian {
+    to-meters = 1.0e+3 // Specify coordinates in km for convenience.
+    space-dim = 2
+  } // cs-data
+} // SimpleDB
+// Columns are
+// (1) x coordinate (km)
+// (2) y coordinate (km)
+// (3) reverse-slip (cm)
+// (4) fault-opening (cm)
+// (5) slip time relative to origin time (s)
+0.0   0.0            0.0       0.0   0.0
