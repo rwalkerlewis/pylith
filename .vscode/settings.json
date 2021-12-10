@@ -13,7 +13,8 @@
         "*.icc": "cpp",
         "vector": "cpp",
         "stdexcept": "cpp",
-        "kinsrcstep.hh": "c"
+        "kinsrcstep.hh": "c",
+        "iosfwd": "cpp"
     },
     "python.formatting.autopep8Args": [
         "-max-line-length",
