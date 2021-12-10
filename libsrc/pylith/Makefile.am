@@ -44,7 +44,7 @@ libpylith_la_SOURCES = \
 	faults/FaultCohesive.cc \
 	faults/FaultCohesiveKin.cc \
 	faults/FaultCohesiveKinTrivial.cc \
-	faults/FaultPoroDiffusionCohesiveKin.cc \
+	faults/FaultCohesiveKinPoro.cc \
 	faults/AuxiliaryFactoryKinematic.cc \
 	faults/KinSrc.cc \
 	faults/KinSrcStep.cc \
@@ -85,7 +85,7 @@ libpylith_la_SOURCES = \
 	fekernels/BoundaryDirections.cc \
 	fekernels/FaultCohesiveKin.cc \
 	fekernels/FaultCohesiveKinTrivial.cc \
-	fekernels/FaultPoroDiffusionCohesiveKin.cc \
+	fekernels/FaultCohesiveKinPoro.cc \
 	materials/Material.cc \
 	materials/Elasticity.cc \
 	materials/RheologyElasticity.cc \

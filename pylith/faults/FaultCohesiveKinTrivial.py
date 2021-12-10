@@ -54,7 +54,7 @@ class FaultCohesiveKinTrivial(FaultCohesive, ModuleFaultCohesiveKinTrivial):
     #outputManager = pythia.pyre.inventory.facility("output", family="output_manager", factory=OutputFaultKinTrivial)
     #output.meta['tip'] = "Output manager associated with fault information."
 
-    def __init__(self, name="faultcohesivekinTrivial"):
+    def __init__(self, name="faultcohesivekintrivial"):
         """Initialize configuration.
         """
         FaultCohesive.__init__(self, name)

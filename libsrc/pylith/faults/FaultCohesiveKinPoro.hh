@@ -16,34 +16,34 @@
 // ----------------------------------------------------------------------
 //
 
-/** @file libsrc/faults/FaultPoroDiffusionCohesiveKin.hh
+/** @file libsrc/faults/FaultCohesiveKinPoro.hh
  *
  * @brief C++ implementation for a undrained poroelastic fault surface with
  * fluid diffusion and kinematic
  * (prescribed) slip implemented with cohesive elements.
  */
 
-#if !defined(pylith_faults_faultporodiffusioncohesivekin_hh)
-#define pylith_faults_faultporodiffusioncohesivekin_hh
+#if !defined(pylith_faults_faultcohesivekinporo_hh)
+#define pylith_faults_faultcohesivekinporo_hh
 
 #include "FaultCohesive.hh" // ISA FaultCohesive
 
 #include <string> // HASA std::string
 #include <map> // HASA std::map
 
-class pylith::faults::FaultPoroDiffusionCohesiveKin : public pylith::faults::FaultCohesive {
+class pylith::faults::FaultCohesiveKinPoro : public pylith::faults::FaultCohesive {
     // ** TO DO **
     // Implement this friend class
-    friend class TestFaultPoroDiffusionCohesiveKin; // unit testing
+    friend class TestFaultCohesiveKinPoro; // unit testing
 
     // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
 
     /// Default constructor.
-    FaultPoroDiffusionCohesiveKin(void);
+    FaultCohesiveKinPoro(void);
 
     /// Destructor.
-    ~FaultPoroDiffusionCohesiveKin(void);
+    ~FaultCohesiveKinPoro(void);
 
     /// Deallocate PETSc and local data structures.
     void deallocate(void);
@@ -221,8 +221,8 @@ private:
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
 
-    FaultPoroDiffusionCohesiveKin(const FaultPoroDiffusionCohesiveKin&); ///< Not implemented
-    const FaultPoroDiffusionCohesiveKin& operator=(const FaultPoroDiffusionCohesiveKin&); ///< Not implemented.
+    FaultCohesiveKinPoro(const FaultCohesiveKinPoro&); ///< Not implemented
+    const FaultCohesiveKinPoro& operator=(const FaultCohesiveKinPoro&); ///< Not implemented.
 
     static PetscErrorCode _zero(PetscInt dim,
                                 PetscReal t,
@@ -236,8 +236,8 @@ private:
         return 0;
     }
 
-}; // class FaultPoroDiffusionCohesiveKin
+}; // class FaultCohesiveKinPoro
 
-#endif // pylith_faults_faultporodiffusioncohesivekin_hh
+#endif // pylith_faults_faultcohesivekinporo_hh
 
 // End of file
