@@ -13,7 +13,7 @@
 #
 # ----------------------------------------------------------------------
 #
-# @file pylith/faults/FaultPoroDiffusionCohesiveKin.py
+# @file pylith/faults/FaultCohesiveKinPoro.py
 #
 # @brief Python object for a poroelastic fault surface with kinematic
 # (prescribed) slip, fluid diffusion implemented with cohesive elements.
@@ -21,7 +21,7 @@
 # Factory: fault
 
 from .FaultCohesive import FaultCohesive
-from .faults import FaultPoroDiffusionCohesiveKin as ModuleFaultPoroDiffusionCohesiveKin
+from .faults import FaultCohesiveKinPoro as ModuleFaultCohesiveKinPoro
 
 # ITEM FACTORIES ///////////////////////////////////////////////////////
 
@@ -34,7 +34,7 @@ def eqsrcFactory(name):
     return facility(name, family="eq_kinematic_src", factory=KinSrcStep)
 
 
-class FaultPoroDiffusionCohesiveKin(FaultCohesive, ModuleFaultPoroDiffusionCohesiveKin):
+class FaultCohesiveKinPoro(FaultCohesive, ModuleFaultCohesiveKinPoro):
     """Python object for a fault surface with kinematic (prescribed) slip and fluid diffusion
     implemented with cohesive elements.
 
@@ -63,7 +63,7 @@ class FaultPoroDiffusionCohesiveKin(FaultCohesive, ModuleFaultPoroDiffusionCohes
     useConstantPressureSource = pythia.pyre.inventory.bool("use_constant_pressure_source", default=False)
     useConstantPressureSource.meta['tip'] = "Include constant_pressure_source term in poroelastic fault equation."
 
-    def __init__(self, name="faultporodiffusioncohesivekin"):
+    def __init__(self, name="faultcohesivekinporo"):
         """Initialize configuration.
         """
         FaultCohesive.__init__(self, name)
@@ -81,19 +81,19 @@ class FaultPoroDiffusionCohesiveKin(FaultCohesive, ModuleFaultPoroDiffusionCohes
 
         for eqsrc in self.eqRuptures.components():
             eqsrc.preinitialize()
-        ModuleFaultPoroDiffusionCohesiveKin.setEqRuptures(
+        ModuleFaultCohesiveKinPoro.setEqRuptures(
             self, self.eqRuptures.inventory.facilityNames(), self.eqRuptures.components())
 
-        ModuleFaultPoroDiffusionCohesiveKin.useBodyForce(self, self.useBodyForce)
-        ModuleFaultPoroDiffusionCohesiveKin.useSource(self, self.useSource)
-        ModuleFaultPoroDiffusionCohesiveKin.useConstantPressureSource(self, self.useConstantPressureSource)
+        ModuleFaultCohesiveKinPoro.useBodyForce(self, self.useBodyForce)
+        ModuleFaultCohesiveKinPoro.useSource(self, self.useSource)
+        ModuleFaultCohesiveKinPoro.useConstantPressureSource(self, self.useConstantPressureSource)
         return
 
     def verifyConfiguration(self):
         """Verify compatibility of configuration.
         """
         FaultCohesive.verifyConfiguration(self)
-        ModuleFaultPoroDiffusionCohesiveKin.verifyConfiguration(self, self.mesh())
+        ModuleFaultCohesiveKinPoro.verifyConfiguration(self, self.mesh())
 
         for eqsrc in self.eqRuptures.components():
             eqsrc.verifyConfiguration()
@@ -117,18 +117,18 @@ class FaultPoroDiffusionCohesiveKin(FaultCohesive, ModuleFaultPoroDiffusionCohes
         return
 
     def _createModuleObj(self):
-        """Create handle to C++ FaultPoroDiffusionCohesiveKin.
+        """Create handle to C++ FaultCohesiveKinPoro.
         """
-        ModuleFaultPoroDiffusionCohesiveKin.__init__(self)
+        ModuleFaultCohesiveKinPoro.__init__(self)
         return
 
 
 # Factories
 
 def fault():
-    """Factory associated with FaultPoroDiffusionCohesiveKin.
+    """Factory associated with FaultCohesiveKinPoro.
     """
-    return FaultPoroDiffusionCohesiveKin()
+    return FaultCohesiveKinPoro()
 
 
 # End of file

@@ -75,8 +75,7 @@ namespace pylith {
         class FaultCohesiveKinTrivial;
 
         class BoundaryDirections;
-        // class FaultPoroCohesiveKin;
-        class FaultPoroDiffusionCohesiveKin;
+        class FaultCohesiveKinPoro;
 
     } // fekernels
 } // pylith
