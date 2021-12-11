@@ -2120,6 +2120,74 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::Jf0pedot(co
 } // Jf0pedot
 
 
+// -----------------------------------------------------------------------------
+// Jf0pdotp - Jf0 function for isotropic linear multiphaseporoelasticity plane strain.
+void
+pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::Jf0pdotp(const PylithInt dim,
+                                                                              const PylithInt numS,
+                                                                              const PylithInt numA,
+                                                                              const PylithInt sOff[],
+                                                                              const PylithInt sOff_x[],
+                                                                              const PylithScalar s[],
+                                                                              const PylithScalar s_t[],
+                                                                              const PylithScalar s_x[],
+                                                                              const PylithInt aOff[],
+                                                                              const PylithInt aOff_x[],
+                                                                              const PylithScalar a[],
+                                                                              const PylithScalar a_t[],
+                                                                              const PylithScalar a_x[],
+                                                                              const PylithReal t,
+                                                                              const PylithReal s_tshift,
+                                                                              const PylithScalar x[],
+                                                                              const PylithInt numConstants,
+                                                                              const PylithScalar constants[],
+                                                                              PylithScalar Jf0[]) {
+    const PylithInt _dim = 2;
+    const PylithInt _phases = 3;
+
+    assert(aOff);
+    assert(a);
+
+    for (PylithInt p = 0; p < _phases; ++p) {
+        Jf0[p*_dim+p] -= s_tshift;
+    } // for
+} // Jg0pdotp
+
+
+// -----------------------------------------------------------------------------
+// Jf0pdotpdot - Jf0 function for isotropic linear multiphaseporoelasticity plane strain.
+void
+pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::Jf0pdotpdot(const PylithInt dim,
+                                                                                 const PylithInt numS,
+                                                                                 const PylithInt numA,
+                                                                                 const PylithInt sOff[],
+                                                                                 const PylithInt sOff_x[],
+                                                                                 const PylithScalar s[],
+                                                                                 const PylithScalar s_t[],
+                                                                                 const PylithScalar s_x[],
+                                                                                 const PylithInt aOff[],
+                                                                                 const PylithInt aOff_x[],
+                                                                                 const PylithScalar a[],
+                                                                                 const PylithScalar a_t[],
+                                                                                 const PylithScalar a_x[],
+                                                                                 const PylithReal t,
+                                                                                 const PylithReal s_tshift,
+                                                                                 const PylithScalar x[],
+                                                                                 const PylithInt numConstants,
+                                                                                 const PylithScalar constants[],
+                                                                                 PylithScalar Jf0[]) {
+    const PylithInt _dim = 2;
+    const PylithInt _phases = 3;
+
+    assert(aOff);
+    assert(a);
+
+    for (PylithInt p = 0; p < _phases; ++p) {
+        Jf0[p*_dim+p] -= s_tshift;
+    } // for
+} // Jg0pdotpdot
+
+
 // ============================== RHS Residual =================================
 
 // ----------------------------------------------------------------------

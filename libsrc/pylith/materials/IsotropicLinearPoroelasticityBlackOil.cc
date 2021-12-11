@@ -19,7 +19,7 @@
 #include <portinfo>
 
 #include "pylith/materials/IsotropicLinearPoroelasticityBlackOil.hh" // implementation of object methods
-#include "pylith/materials/AuxiliaryFactoryPoroelastic.hh" // USES AuxiliaryFactory
+#include "pylith/materials/AuxiliaryFactoryPoroelasticBlackOil.hh" // USES AuxiliaryFactory
 
 #include "pylith/fekernels/IsotropicLinearPoroelasticityBlackOil.hh" // USES IsotropicLinearIncompElasticity kernels
 #include "pylith/fekernels/Elasticity.hh" // USES Elasticity kernels
@@ -115,10 +115,6 @@ pylith::materials::IsotropicLinearPoroelasticityBlackOil::addAuxiliarySubfields(
     // :ATTENTION: The order for adding subfields must match the order of the auxiliary fields in the point-wise
     // functions (kernels).
 
-    // if (_useReferenceState) {
-    //     _auxiliaryFactory->addReferenceStress(); // numA - 7
-    //     _auxiliaryFactory->addReferenceStrain(); // numA - 6
-    // } // if
     _auxiliaryFactory->addFluidDensities(); // Fluid density vector, rho, numA - 13
     _auxiliaryFactory->addSolutionOilGasRatio(); // Solution oil/gas ratio, R_v, numA - 12
     _auxiliaryFactory->addSolutionGasOilRatio(); // Solution gas/oil ratio, R_s, numA - 11
@@ -289,6 +285,50 @@ pylith::materials::IsotropicLinearPoroelasticity::getKernelg1v_explicit(const sp
 
 
 // =============================== LHS =========================================
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Select implicit f0u function.
+PetscPointFunc
+pylith::materials::IsotropicLinearPoroelasticityBlackOil: getKernelf0u_implicit(const spatialdata::geocoords::CoordSys* coordsys,
+                                                                                const bool _useBodyForce,
+                                                                                const bool _gravityField) const {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_COMPONENT_DEBUG("getKernelf0u="<<typeid(coordsys).name()<<")");
+
+    const int spaceDim = coordsys->getSpaceDim();
+    const int bitBodyForce = _useBodyForce ? 0x1 : 0x0;
+    const int bitGravity = _gravityField ? 0x2 : 0x0;
+    const int bitUse = bitBodyForce | bitGravity;
+
+    PetscPointFunc f0u = NULL;
+
+    switch (bitUse) {
+    case 0x0:
+        f0u = (3 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::f0u_implicit :
+              (2 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f0u_implicit :
+              NULL;
+        break;
+    case 0x1:
+        f0u = (3 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::f0u_body_implicit :
+              (2 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f0u_body_implicit :
+              NULL;
+        break;
+    case 0x2:
+        f0u = (3 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::f0u_grav_implicit :
+              (2 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f0u_grav_implicit :
+              NULL;
+        break;
+    case 0x3:
+        f0u = (3 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::f0u_body_grav_implicit :
+              (2 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f0u_body_grav_implicit :
+              NULL;
+        break;
+    default:
+        PYLITH_COMPONENT_LOGICERROR("Unknown case (bitUse=" << bitUse << ") for Poroelasticity Black Oil LHS residual kernels.");
+    } // switch
+
+    PYLITH_METHOD_RETURN(f0u);
+} // getKernelf0p_implicit
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Get variation in fluid content kernel for LHS residual, F(t,s,\dot{s})
