@@ -67,6 +67,10 @@ namespace pylith {
         class IsotropicLinearPoroelasticityPlaneStrain;
         class IsotropicLinearPoroelasticity3D;
 
+        class IsotropicLinearPoroelasticityBlackOil;
+        class IsotropicLinearPoroelasticityBlackOilPlaneStrain;
+        class IsotropicLinearPoroelasticityBlackOil3D;
+
         class TimeDependentFn;
         class NeumannTimeDependent;
         class AbsorbingDampers;
