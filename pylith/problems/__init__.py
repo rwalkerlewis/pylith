@@ -41,6 +41,7 @@ __all__ = [
     "SubfieldPressure",
     "SubfieldPressureDot",
     "SubfieldBlackOilPressure",
+    "SubfieldBlackOilPressureDot",
     "SubfieldTemperature",
     "SubfieldVelocity",
     "SubfieldTraceStrain",

@@ -40,7 +40,7 @@ swig_sources = \
 	IsotropicLinearPoroelasticity.i \
 	IsotropicLinearPoroelasticityBlackOil.i \
 	RheologyPoroelasticity.i \
-	RheologyMultiphasePoroelasticity.i \	
+	RheologyMultiphasePoroelasticity.i \
 	Poroelasticity.i \
 	../utils/PyreComponent.i
 

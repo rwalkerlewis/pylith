@@ -322,13 +322,13 @@ pylith::materials::AuxiliaryFactoryPoroelasticBlackOil::addThreePhaseSaturation(
 void
 pylith::materials::AuxiliaryFactoryPoroelasticBlackOil::addThreePhaseFluidViscosity(void) { // threePhaseFluidViscosity
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("addThreePhaseFluidModulus(void)");
+    PYLITH_JOURNAL_DEBUG("addThreePhaseFluidViscosity(void)");
 
-    const char* subfieldName = "fluid_bulk_modulus";
+    const char* subfieldName = "fluid_viscosity";
     const char* componentNames[3] = {
-        "water_bulk_modulus",
-        "oil_bulk_modulus",
-        "gas_bulk_modulus"
+        "water_viscosity",
+        "oil_viscosity",
+        "gas_viscosity"
     };
     const PylithReal pressureScale = _normalizer->getPressureScale();
     const PylithReal timeScale = _normalizer->getTimeScale();

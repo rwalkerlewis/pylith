@@ -58,6 +58,13 @@ namespace pylith {
         class IsotropicLinearPoroelasticity;
         class AuxiliaryFactoryPoroelastic;
 
+        class MultiphasePoroelasticity;
+        class AuxiliaryFactoryMultiphasePoroelasticity;
+
+        class RheologyMultiphasePoroelasticity;
+        class IsotropicLinearPoroelasticityBlackOil;
+        class AuxiliaryFactoryPoroelasticBlackOil;
+
         class Query;
 
     } // materials

@@ -63,6 +63,10 @@ namespace pylith {
         class PoroelasticityPlaneStrain;
         class Poroelasticity3D;
 
+        class MultiphasePoroelasticity;
+        class MultiphasePoroelasticityPlaneStrain;
+        class MultiphasePoroelasticity3D;
+
         class IsotropicLinearPoroelasticity;
         class IsotropicLinearPoroelasticityPlaneStrain;
         class IsotropicLinearPoroelasticity3D;

@@ -52,9 +52,9 @@ class SolnDispPresTracStrainVelPdotTdotBO(PetscComponent):
         "velocity", family="soln_subfield", factory=SubfieldVelocity)
     velocity.meta['tip'] = "Velocity subfield."
 
-    from .SubfieldPressureDot import SubfieldPressureDot
+    from .SubfieldBlackOilPressureDot import SubfieldBlackOilPressureDot
     pressure_t = pythia.pyre.inventory.facility(
-        "pressure_t", family="soln_subfield", factory=SubfieldPressureDot)
+        "pressure_t", family="soln_subfield", factory=SubfieldBlackOilPressureDot)
     pressure_t.meta['tip'] = "Pressure_t subfield."
 
     from .SubfieldTraceStrainDot import SubfieldTraceStrainDot

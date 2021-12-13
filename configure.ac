@@ -254,7 +254,7 @@ AC_CONFIG_FILES([Makefile
 		tests/fullscale/poroelasticity/cryer/Makefile
 		tests/fullscale/petsc/Makefile
 		tests/fullscale/eqinfo/Makefile
-    developer/Makefile
+   		developer/Makefile
 		doc/Makefile
 		doc/install/Makefile
 		doc/releasenotes/Makefile
