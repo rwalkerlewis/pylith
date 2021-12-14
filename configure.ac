@@ -266,6 +266,7 @@ AC_CONFIG_FILES([Makefile
 		examples/2d/reverse/Makefile
 		examples/2d/subduction/Makefile
 		examples/2d/bar_waves/Makefile
+		examples/2d/blackoil_test/Makefile		
 		examples/3d/Makefile
 		examples/3d/box/Makefile
 		examples/3d/subduction/Makefile

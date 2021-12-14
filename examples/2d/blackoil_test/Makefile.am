@@ -20,23 +20,11 @@ dist_noinst_DATA = \
 	quad.mesh \
 	tri.mesh \
 	pylithapp.cfg \
-	step01_axialdisp.cfg \
-	step02_sheardisp.cfg \
-	step03_sheardisptract.cfg \
-	step04_sheardispic.cfg \
-	step05_sheardisptractrate.cfg \
-	sheardisp_bc_xneg.spatialdb \
-	sheardisp_bc_xpos.spatialdb \
-	sheardisp_bc_yneg.spatialdb \
-	sheardisp_bc_ypos.spatialdb \
-	sheardisp_ic.spatialdb \
-	sheardisprate_bc_xneg.spatialdb \
-	sheardisprate_bc_yneg.spatialdb \
-	viz/plot_dispwarp.py
+	step01_gravity.cfg 
 
 
 # 'export' the input files by performing a mock install
-export_datadir = $(top_builddir)/examples/2d/box
+export_datadir = $(top_builddir)/examples/2d/blackoil_test
 export-data: $(dist_noinst_PYTHON) $(dist_noinst_DATA)
 	for f in $(dist_noinst_PYTHON) $(dist_noinst_DATA); do $(install_sh_DATA) $(srcdir)/$$f $(export_datadir); done
 

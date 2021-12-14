@@ -42,3 +42,9 @@ doc/userguide/userguide.lot
 doc/userguide/userguide.out
 *.log
 docs-sphinx/_build/
+Makefile
+*.po
+portinfo
+*.status
+libtool
+stamp-h1

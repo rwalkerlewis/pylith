@@ -33,6 +33,7 @@
 #include "pylith/materials/RheologyPoroelasticity.hh"
 #include "pylith/materials/RheologyMultiphasePoroelasticity.hh"
 #include "pylith/materials/IsotropicLinearPoroelasticity.hh"
+#include "pylith/materials/MultiphasePoroelasticity.hh"
 #include "pylith/materials/IsotropicLinearPoroelasticityBlackOil.hh"
 
 #include "pylith/utils/arrayfwd.hh"

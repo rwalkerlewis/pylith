@@ -20,7 +20,8 @@ SUBDIRS = \
 	box \
 	strikeslip \
 	reverse \
-	subduction
+	subduction \
+	blackoil_test
 
 
 # End of file

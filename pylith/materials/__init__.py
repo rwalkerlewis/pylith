@@ -41,6 +41,8 @@ __all__ = [
     "RheologyElasticity",
     "RheologyIncompressibleElasticity",
     "RheologyPoroelasticity",
+    "MultiphasePoroelasticity",
+    "IsotropicLinearPoroelasticityBlackOil"
 ]
 
 

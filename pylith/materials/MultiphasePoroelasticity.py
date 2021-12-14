@@ -22,7 +22,7 @@
 from .Material import Material
 from .materials import MultiphasePoroelasticity as ModuleMultiphasePoroelasticity
 
-from .IsotropicLinearMultiphasePoroelasticity import IsotropicLinearMultiphasePoroelasticity
+from .IsotropicLinearPoroelasticityBlackOil import IsotropicLinearPoroelasticityBlackOil
 
 
 class MultiphasePoroelasticity(Material, ModuleMultiphasePoroelasticity):
@@ -44,7 +44,7 @@ class MultiphasePoroelasticity(Material, ModuleMultiphasePoroelasticity):
     useStateVars.meta['tip'] = "Update auxiliary field terms with run."
 
     rheology = pythia.pyre.inventory.facility(
-        "bulk_rheology", family="multiphaseporoelasticity_rheology", factory=IsotropicLinearMultiphasePoroelasticity)
+        "bulk_rheology", family="multiphaseporoelasticity_rheology", factory=IsotropicLinearPoroelasticityBlackOil)
     rheology.meta['tip'] = "Bulk rheology for poroelastic material."
 
     # PUBLIC METHODS /////////////////////////////////////////////////////

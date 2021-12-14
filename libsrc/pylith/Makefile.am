@@ -76,6 +76,8 @@ libpylith_la_SOURCES = \
 	fekernels/IsotropicLinearIncompElasticity.cc \
 	fekernels/Poroelasticity.cc \
 	fekernels/IsotropicLinearPoroelasticity.cc \
+	fekernels/MultiphasePoroelasticity.cc \
+	fekernels/IsotropicLinearPoroelasticityBlackOil.cc \
 	fekernels/Solution.cc \
 	fekernels/DispVel.cc \
 	fekernels/TimeDependentFn.cc \
@@ -101,6 +103,11 @@ libpylith_la_SOURCES = \
 	materials/Poroelasticity.cc \
 	materials/RheologyPoroelasticity.cc \
 	materials/IsotropicLinearPoroelasticity.cc \
+	materials/MultiphasePoroelasticity.cc \
+	materials/IsotropicLinearPoroelasticityBlackOil.cc \
+	materials/AuxiliaryFactoryMultiphasePoroelasticity.cc \
+	materials/AuxiliaryFactoryPoroelasticBlackOil.cc \
+	materials/RheologyMultiphasePoroelasticity.cc \
 	materials/Query.cc \
 	meshio/BinaryIO.cc \
 	meshio/GMVFile.cc \
