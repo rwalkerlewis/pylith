@@ -269,7 +269,7 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
 
     // Lagrange Multipliers
     const char *lagrangeName = "lagrange_multiplier_fault";
-    const PylithInt numComponents = solution.getSpaceDim();
+    PylithInt numComponents = solution.getSpaceDim();
 
     pylith::int_array constrainedDOFLagrange;
     constrainedDOFLagrange.resize(numComponents);
@@ -335,7 +335,7 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
 
     // "FaultPressure" multipliers 
     const char *faultPressureName = "fault_pressure";
-
+    numComponents = 1;
     pylith::int_array constrainedDOFFaultPressure;
     constrainedDOFFaultPressure.resize(numComponents);
     for (int c = numComponents; c < numComponents*2; ++c)
@@ -356,7 +356,7 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
 
     err = DMCreateLabel(dm, labelnameFaultPressure.c_str());PYLITH_CHECK_ERROR(err);
     err = DMGetLabel(dm, getBuriedEdgesMarkerLabel(), &buriedLabelFaultPressure);PYLITH_CHECK_ERROR(err);
-    err = DMGetLabel(dm, labelnameMu.c_str(), &buriedCohesiveLabelFaultPressure);PYLITH_CHECK_ERROR(err);
+    err = DMGetLabel(dm, labelnameFaultPressure.c_str(), &buriedCohesiveLabelFaultPressure);PYLITH_CHECK_ERROR(err);
     err = DMLabelGetStratumIS(buriedLabelFaultPressure, 1, &pointISFaultPressure);PYLITH_CHECK_ERROR(err);
     err = ISGetLocalSize(pointISFaultPressure, &nFaultPressure);PYLITH_CHECK_ERROR(err);
     err = ISGetIndices(pointISFaultPressure, &pointsFaultPressure);PYLITH_CHECK_ERROR(err);
@@ -395,7 +395,7 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
     err = PetscObjectViewFromOptions((PetscObject)buriedLabelFaultPressure, NULL, "-buried_edge_label_view");
     err = PetscObjectViewFromOptions((PetscObject)buriedCohesiveLabelFaultPressure, NULL, "-buried_cohesive_edge_label_view");
     constraintFaultPressure->setConstrainedDOF(&constrainedDOFFaultPressure[0], constrainedDOFFaultPressure.size());
-    constraintFaultPressure->setSubfieldName(muName);
+    constraintFaultPressure->setSubfieldName(faultPressureName);
     constraintFaultPressure->setUserFn(_zero);
 
     // Package constraints and exit
@@ -471,7 +471,7 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
     _auxiliaryFactory->addShearModulusNegative(); // 8
     _auxiliaryFactory->addBulkModulusPositive(); // 9
     _auxiliaryFactory->addShearModulusPositive(); // 10
-    }
+    
     // :ATTENTION: The order for adding subfields must match the order of the auxiliary fields in the FE kernels.
 
     switch (_formulation) {

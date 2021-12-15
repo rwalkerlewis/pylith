@@ -45,7 +45,7 @@ namespace pylith
              * @param sources Array of kinematic earthquake sources.
              * @param numSources Number of earthquake sources.
              */
-            % apply(const char *const *string_list, const int list_len){
+            %apply(const char *const *string_list, const int list_len){
                   (const char *const *names,
                    const int numNames)};
             void setEqRuptures(const char *const *names,
@@ -53,7 +53,7 @@ namespace pylith
                                pylith::faults::KinSrc **ruptures,
                                const int numRuptures);
 
-            % clear(const char *const *names, const int numNames);
+            %clear(const char *const *names, const int numNames);
 
             /** Verify configuration is acceptable.
              *
@@ -73,7 +73,7 @@ namespace pylith
              * @param[in] solution Solution field.
              * @returns Constraint if applicable, otherwise NULL.
              */
-            pylith::feassemble::Constraint *createConstraints(const pylith::topology::Field &solution);
+            std::vector<pylith::feassemble::Constraint *> createConstraints(const pylith::topology::Field &solution);
 
             /** Create auxiliary field.
              *
