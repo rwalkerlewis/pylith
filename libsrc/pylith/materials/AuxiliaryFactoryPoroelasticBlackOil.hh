@@ -25,9 +25,9 @@
 #define pylith_materials_auxiliaryfactoryporoelasticblackoil_hh
 
 #include "materialsfwd.hh" // forward declarations
-#include "pylith/materials/AuxiliaryFactoryPoroelasticBlackOility.hh" // ISA AuxiliaryFactoryPoroelasticBlackOility
+#include "pylith/materials/AuxiliaryFactoryMultiphasePoroelasticity.hh" // ISA AuxiliaryFactoryMultiphasePoroelasticity
 
-class pylith::materials::AuxiliaryFactoryPoroelasticBlackOil : public pylith::materials::AuxiliaryFactoryPoroelasticBlackOility {
+class pylith::materials::AuxiliaryFactoryPoroelasticBlackOil : public pylith::materials::AuxiliaryFactoryMultiphasePoroelasticity {
     friend class TestAuxiliaryFactoryPoroelasticBlackOil; // unit testing
 
     // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////////////

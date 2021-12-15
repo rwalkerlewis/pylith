@@ -290,6 +290,7 @@ pylith::materials::AuxiliaryFactoryPoroelasticBlackOil::addThreePhaseSaturation(
     PYLITH_JOURNAL_DEBUG("addThreePhaseSaturation(void)");
 
     const char* subfieldName = "fluid_saturation";
+    const PylithReal noScale = 1;
     const char* componentNames[3] = {
         "water_saturation",
         "oil_saturation",
@@ -361,6 +362,7 @@ pylith::materials::AuxiliaryFactoryPoroelasticBlackOil::addRelativePermeability(
     PYLITH_JOURNAL_DEBUG("addRelativePermeability(void)");
 
     const char* subfieldName = "relative_permeability";
+    const PylithReal noScale = 1;
     const char* componentNames[3] = {
         "relative_water",
         "relative_oil",
@@ -396,6 +398,7 @@ pylith::materials::AuxiliaryFactoryPoroelasticBlackOil::addFormationVolumeFactor
     PYLITH_JOURNAL_DEBUG("addFormationVolumeFactors(void)");
 
     const char* subfieldName = "formation_volume_factor";
+    const PylithReal noScale = 1;
     const char* componentNames[3] = {
         "B_w",
         "B_o",
@@ -431,6 +434,7 @@ pylith::materials::AuxiliaryFactoryPoroelasticBlackOil::addSolutionGasOilRatio(v
     PYLITH_JOURNAL_DEBUG("solutionGasOilRatio(void)");
 
     const char* subfieldName = "solution_gas_oil_ratio";
+    const PylithReal noScale = 1;
     const PylithReal pressureScale = _normalizer->getPressureScale();
 
     pylith::topology::Field::Description description;
@@ -458,6 +462,7 @@ pylith::materials::AuxiliaryFactoryPoroelasticBlackOil::addSolutionOilGasRatio(v
     PYLITH_JOURNAL_DEBUG("solutionGasOilRatio(void)");
 
     const char* subfieldName = "solution_oil_gas_ratio";
+    const PylithReal noScale = 1;
     const PylithReal pressureScale = _normalizer->getPressureScale();
 
     pylith::topology::Field::Description description;
@@ -480,7 +485,7 @@ pylith::materials::AuxiliaryFactoryPoroelasticBlackOil::addSolutionOilGasRatio(v
 // ----------------------------------------------------------------------
 // Add fluid density subfield to auxiliary fields.
 void
-pylith::materials::AuxiliaryFactoryMultiphasePoroelasticity::addFluidDensities(void) { // fluidDensities
+pylith::materials::AuxiliaryFactoryPoroelasticBlackOil::addFluidDensities(void) { // fluidDensities
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addFluidDensities(void)");
 

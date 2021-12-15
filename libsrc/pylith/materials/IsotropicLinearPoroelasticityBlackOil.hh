@@ -72,7 +72,7 @@ public:
      *
      * @return Auxiliary factory for physics object.
      */
-    pylith::materials::AuxiliaryFactoryPoroelastic* getAuxiliaryFactory(void);
+    pylith::materials::AuxiliaryFactoryPoroelasticBlackOil* getAuxiliaryFactory(void);
 
     /** Add rheology subfields to auxiliary field.
      *
@@ -104,6 +104,13 @@ public:
     PetscPointFunc getKernelg1v_explicit(const spatialdata::geocoords::CoordSys* coordsys) const;
 
     // =============================== LHS =================================== //
+
+    // ---------------------------------------------------------------------------------------------------------------------
+    // Select implicit f0u function.
+    PetscPointFunc getKernelf0u_implicit(const spatialdata::geocoords::CoordSys* coordsys,
+                                         const bool _useBodyForce,
+                                         const bool _gravityField,
+                                         const bool _useSourceDensity) const;
 
     // ---------------------------------------------------------------------------------------------------------------------
     // Get variation in fluid content kernel for LHS residual, F(t,s,\dot{s})
@@ -210,7 +217,7 @@ protected:
     // PRIVATE MEMBERS /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
 
-    pylith::materials::AuxiliaryFactoryPoroelastic* _auxiliaryFactory; ///< Factory for auxiliary subfields.
+    pylith::materials::AuxiliaryFactoryPoroelasticBlackOil* _auxiliaryFactory; ///< Factory for auxiliary subfields.
     bool _useReferenceState; ///< Flag to use reference stress and strain.
     bool _useTensorPermeability; ///< Flag to use tensor permeability
 

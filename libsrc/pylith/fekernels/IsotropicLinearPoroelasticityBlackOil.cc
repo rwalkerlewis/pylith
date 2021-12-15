@@ -34,6 +34,197 @@
 
 // ============================== LHS Residuals ================================
 
+// ---------------------------------------------------------------------------------------------------------------------
+// f0u placeholder function for multiphaseporoelasticity equation
+void
+pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f0u_implicit(const PylithInt dim,
+                                                 const PylithInt numS,
+                                                 const PylithInt numA,
+                                                 const PylithInt sOff[],
+                                                 const PylithInt sOff_x[],
+                                                 const PylithScalar s[],
+                                                 const PylithScalar s_t[],
+                                                 const PylithScalar s_x[],
+                                                 const PylithInt aOff[],
+                                                 const PylithInt aOff_x[],
+                                                 const PylithScalar a[],
+                                                 const PylithScalar a_t[],
+                                                 const PylithScalar a_x[],
+                                                 const PylithReal t,
+                                                 const PylithScalar x[],
+                                                 const PylithInt numConstants,
+                                                 const PylithScalar constants[],
+                                                 PylithScalar f0[]) {
+    const PylithInt _dim = 2;
+    // Incoming solution fields.
+
+    // Incoming auxiliary fields.
+
+    for (PylithInt i = 0; i < _dim; ++i) {
+        f0[i] += 0.0;
+        // PetscPrintf(PETSC_COMM_WORLD, "f0u[%i]: %f\n",i, f0[i]);
+    } // for
+} // f0u
+
+// ---------------------------------------------------------------------------------------------------------------------
+// f0u placeholder function for multiphaseporoelasticity equation
+void
+pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f0u_body_implicit(const PylithInt dim,
+                                                 const PylithInt numS,
+                                                 const PylithInt numA,
+                                                 const PylithInt sOff[],
+                                                 const PylithInt sOff_x[],
+                                                 const PylithScalar s[],
+                                                 const PylithScalar s_t[],
+                                                 const PylithScalar s_x[],
+                                                 const PylithInt aOff[],
+                                                 const PylithInt aOff_x[],
+                                                 const PylithScalar a[],
+                                                 const PylithScalar a_t[],
+                                                 const PylithScalar a_x[],
+                                                 const PylithReal t,
+                                                 const PylithScalar x[],
+                                                 const PylithInt numConstants,
+                                                 const PylithScalar constants[],
+                                                 PylithScalar f0[]) {
+    const PylithInt _dim = 2;
+    // Incoming solution fields.
+
+    // Incoming auxiliary fields
+
+    // MultiphasePoroelasticity
+
+    // 3 + n
+    const PylithInt i_bodyForce = 4;
+
+    const PylithScalar* bodyForce = &a[aOff[i_bodyForce]];
+
+    for (PylithInt i = 0; i < _dim; ++i) {
+        f0[i] += bodyForce[i];
+    } // for
+} // f0u_body_implicit
+
+// ---------------------------------------------------------------------------------------------------------------------
+// f0u_grav_implicit - f0 function for generic multiphaseporoelasticity terms ( + grav body forces).
+void
+pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f0u_grav_implicit(const PylithInt dim,
+                                                      const PylithInt numS,
+                                                      const PylithInt numA,
+                                                      const PylithInt sOff[],
+                                                      const PylithInt sOff_x[],
+                                                      const PylithScalar s[],
+                                                      const PylithScalar s_t[],
+                                                      const PylithScalar s_x[],
+                                                      const PylithInt aOff[],
+                                                      const PylithInt aOff_x[],
+                                                      const PylithScalar a[],
+                                                      const PylithScalar a_t[],
+                                                      const PylithScalar a_x[],
+                                                      const PylithReal t,
+                                                      const PylithScalar x[],
+                                                      const PylithInt numConstants,
+                                                      const PylithScalar constants[],
+                                                      PylithScalar f0[]) {
+    const PylithInt _dim = 2;
+    const PylithInt _phases = 3;                                                          
+    // Incoming auxililary fields.
+
+    // MultiphasePoroelasticity
+    const PylithInt i_solid_density = 0;
+    const PylithInt i_porosity = 1;
+
+    // 3 + n
+    const PylithInt i_gravityField = 4;
+
+    // IsotropicLinearPoroelasticityBlackOil
+    const PylithInt i_fluid_density = numA - 13;
+    const PylithInt i_threePhaseSaturation = numA - 7;
+
+    const PylithScalar* fluidDensity = &a[aOff[i_fluid_density]];
+    const PylithScalar* saturation = &a[aOff[i_threePhaseSaturation]];
+    const PylithScalar* gravityField = &a[aOff[i_gravityField]];
+    const PylithScalar solidDensity = a[aOff[i_solid_density]];
+    const PylithScalar porosity = a[aOff[i_porosity]];
+
+    PylithScalar equivalentFluidDensity = 0.0, bulkDensity = 0.0;
+
+    for (PylithInt i = 0; i < _phases; ++i) {
+        equivalentFluidDensity += saturation[i]*fluidDensity[i];
+    }
+
+    bulkDensity = (1.0 - porosity)*solidDensity + porosity*equivalentFluidDensity;
+
+    for (PylithInt i = 0; i < dim; ++i) {
+        f0[i] += bulkDensity * gravityField[i];
+    } // for
+
+} // f0u_grav_implicit
+
+// ---------------------------------------------------------------------------------------------------------------------
+//f0u_body_grav_implicit - f0 function for generic multiphaseporoelasticity terms ( + grav body forces).
+void
+pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f0u_body_grav_implicit(const PylithInt dim,
+                                                      const PylithInt numS,
+                                                      const PylithInt numA,
+                                                      const PylithInt sOff[],
+                                                      const PylithInt sOff_x[],
+                                                      const PylithScalar s[],
+                                                      const PylithScalar s_t[],
+                                                      const PylithScalar s_x[],
+                                                      const PylithInt aOff[],
+                                                      const PylithInt aOff_x[],
+                                                      const PylithScalar a[],
+                                                      const PylithScalar a_t[],
+                                                      const PylithScalar a_x[],
+                                                      const PylithReal t,
+                                                      const PylithScalar x[],
+                                                      const PylithInt numConstants,
+                                                      const PylithScalar constants[],
+                                                      PylithScalar f0[]) {
+    const PylithInt _dim = 2;
+    const PylithInt _phases = 3;                                                          
+    // Incoming auxililary fields.
+
+    // MultiphasePoroelasticity
+    const PylithInt i_solid_density = 0;
+    const PylithInt i_porosity = 1;
+
+    // 3 + n
+    const PylithInt i_bodyForce = 4;
+    const PylithInt i_gravityField = 5;
+
+    // IsotropicLinearPoroelasticityBlackOil
+    const PylithInt i_fluid_density = numA - 13;
+    const PylithInt i_threePhaseSaturation = numA - 7;
+
+    const PylithScalar* fluidDensity = &a[aOff[i_fluid_density]];
+    const PylithScalar* saturation = &a[aOff[i_threePhaseSaturation]];
+    const PylithScalar* gravityField = &a[aOff[i_gravityField]];
+    const PylithScalar* bodyForce = &a[aOff[i_bodyForce]];
+    const PylithScalar solidDensity = a[aOff[i_solid_density]];
+    const PylithScalar porosity = a[aOff[i_porosity]];
+
+    PylithScalar equivalentFluidDensity = 0.0, bulkDensity = 0.0;
+
+    for (PylithInt i = 0; i < _phases; ++i) {
+        equivalentFluidDensity += saturation[i]*fluidDensity[i];
+    }
+
+    bulkDensity = (1.0 - porosity)*solidDensity + porosity*equivalentFluidDensity;
+
+    // gravity field
+    for (PylithInt i = 0; i < dim; ++i) {
+        f0[i] += bulkDensity * gravityField[i];
+    } // for
+
+    // body force
+    for (PylithInt i = 0; i < _dim; ++i) {
+        f0[i] += bodyForce[i];
+    } // for    
+
+} // f0u_body_grav_implicit
+
+
 // ----------------------------------------------------------------------
 // f0p function for explicit time stepping (dynamic).
 void
@@ -55,7 +246,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f0p_explici
                                                                                   const PylithInt numConstants,
                                                                                   const PylithScalar constants[],
                                                                                   PylithScalar f0[]) {
-    const PylithInt _dim = 2;
+    //const PylithInt _dim = 2;
 
     // Incoming re-packed solution field.
     const PylithInt i_pressure = 1;
@@ -694,7 +885,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1p(const P
                                                                          const PylithScalar constants[],
                                                                          PylithScalar f1[]) {
     const PylithInt _dim = 2;
-    const PylithInt _phases = 3;
+    //const PylithInt _phases = 3;
 
     // Incoming solution field.
     const PylithInt i_pressure = 1;
@@ -788,7 +979,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1p_tensor_
                                                                                              const PylithScalar constants[],
                                                                                              PylithScalar f1[]) {
     const PylithInt _dim = 2;
-    const PylithInt _phases = 3;
+    //const PylithInt _phases = 3;
 
     // Incoming solution field.
     const PylithInt i_pressure = 1;
@@ -897,7 +1088,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1p_body(co
                                                                               const PylithScalar constants[],
                                                                               PylithScalar f1[]) {
     const PylithInt _dim = 2;
-    const PylithInt _phases = 3;
+    //const PylithInt _phases = 3;
 
     // Incoming solution field.
     const PylithInt i_pressure = 1;
@@ -910,7 +1101,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1p_body(co
     const PylithInt i_bodyForce = 4;
 
     // IsotropicLinearPoroelasticityBlackOil
-    const PylithInt i_fluidDensity = numA - 13;
+    // const PylithInt i_fluidDensity = numA - 13;
     const PylithInt i_solutionOilGasRatio = numA - 12;
     const PylithInt i_solutionGasOilRatio = numA - 11;
     const PylithInt i_formationVolumeFactor = numA - 10;
@@ -932,7 +1123,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1p_body(co
 
     const PylithScalar* pressure_x = &s_x[sOff_x[i_pressure]];
 
-    const PylithScalar* fluidDensity = &a[aOff[i_fluidDensity]];
+    //const PylithScalar* fluidDensity = &a[aOff[i_fluidDensity]];
     const PylithScalar solutionOilGasRatio = a[aOff[i_solutionOilGasRatio]];
     const PylithScalar solutionGasOilRatio = a[aOff[i_solutionGasOilRatio]];
     const PylithScalar* formationVolumeFactor = &a[aOff[i_formationVolumeFactor]];
@@ -997,7 +1188,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1p_body_te
                                                                                                   const PylithScalar constants[],
                                                                                                   PylithScalar f1[]) {
     const PylithInt _dim = 2;
-    const PylithInt _phases = 3;
+    //const PylithInt _phases = 3;
 
     // Incoming solution field.
     const PylithInt i_pressure = 1;
@@ -1024,13 +1215,13 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1p_body_te
     assert(sOff_x);
     assert(sOff_x[i_pressure] >= 0);
     assert(aOff);
-    assert(aOff[i_fluidViscosity] >= 0);
+    assert(aOff[i_fluidDensity] >= 0);
     assert(aOff[i_tensorPermeability] >= 0);
     assert(f1);
 
     const PylithScalar* pressure_x = &s_x[sOff_x[i_pressure]];
 
-    const PylithScalar* fluidDensity = &a[aOff[i_fluidDensity]];
+    //const PylithScalar* fluidDensity = &a[aOff[i_fluidDensity]];
     const PylithScalar solutionOilGasRatio = a[aOff[i_solutionOilGasRatio]];
     const PylithScalar solutionGasOilRatio = a[aOff[i_solutionGasOilRatio]];
     const PylithScalar* formationVolumeFactor = &a[aOff[i_formationVolumeFactor]];
@@ -1109,7 +1300,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1p_gravity
                                                                                  const PylithScalar constants[],
                                                                                  PylithScalar f1[]) {
     const PylithInt _dim = 2;
-    const PylithInt _phases = 3;
+    //const PylithInt _phases = 3;
 
     // Incoming solution field.
     const PylithInt i_pressure = 1;
@@ -1121,6 +1312,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1p_gravity
     const PylithInt i_gravityField = 4;
 
     // IsotropicLinearPoroelasticityBlackOilBlackOil
+    const PylithInt i_fluidDensity = numA - 13;
     const PylithInt i_solutionOilGasRatio = numA - 12;
     const PylithInt i_solutionGasOilRatio = numA - 11;
     const PylithInt i_formationVolumeFactor = numA - 10;
@@ -1142,6 +1334,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1p_gravity
 
     const PylithScalar* pressure_x = &s_x[sOff_x[i_pressure]];
 
+    const PylithScalar* fluidDensity = &a[aOff[i_fluidDensity]];
     const PylithScalar solutionOilGasRatio = a[aOff[i_solutionOilGasRatio]];
     const PylithScalar solutionGasOilRatio = a[aOff[i_solutionGasOilRatio]];
     const PylithScalar* formationVolumeFactor = &a[aOff[i_formationVolumeFactor]];
@@ -1153,16 +1346,16 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1p_gravity
     PylithScalar vel_w[_dim], vel_o[_dim], vel_g[_dim];
 
     // Water
-    vel_w[0] = ( (isotropicPermeability * relativePermeability[0]) / fluidViscosity[0]) * (pressure_x[0] - fluidDensity * gravityField[0]);
-    vel_w[1] = ( (isotropicPermeability * relativePermeability[0]) / fluidViscosity[0]) * (pressure_x[1] - fluidDensity * gravityField[1]);
+    vel_w[0] = ( (isotropicPermeability * relativePermeability[0]) / fluidViscosity[0]) * (pressure_x[0] - fluidDensity[0] * gravityField[0]);
+    vel_w[1] = ( (isotropicPermeability * relativePermeability[0]) / fluidViscosity[0]) * (pressure_x[1] - fluidDensity[0] * gravityField[1]);
 
     // Oil
-    vel_o[0] = ( (isotropicPermeability * relativePermeability[1]) / fluidViscosity[1]) * (pressure_x[0] - fluidDensity * gravityField[0]);
-    vel_o[1] = ( (isotropicPermeability * relativePermeability[1]) / fluidViscosity[1]) * (pressure_x[1] - fluidDensity * gravityField[1]);
+    vel_o[0] = ( (isotropicPermeability * relativePermeability[1]) / fluidViscosity[1]) * (pressure_x[0] - fluidDensity[1] * gravityField[0]);
+    vel_o[1] = ( (isotropicPermeability * relativePermeability[1]) / fluidViscosity[1]) * (pressure_x[1] - fluidDensity[1] * gravityField[1]);
 
     // Gas
-    vel_g[0] = ( (isotropicPermeability * relativePermeability[2]) / fluidViscosity[2]) * (pressure_x[0] - fluidDensity * gravityField[0]);
-    vel_g[1] = ( (isotropicPermeability * relativePermeability[2]) / fluidViscosity[2]) * (pressure_x[1] - fluidDensity * gravityField[1]);
+    vel_g[0] = ( (isotropicPermeability * relativePermeability[2]) / fluidViscosity[2]) * (pressure_x[0] - fluidDensity[2] * gravityField[0]);
+    vel_g[1] = ( (isotropicPermeability * relativePermeability[2]) / fluidViscosity[2]) * (pressure_x[1] - fluidDensity[2] * gravityField[1]);
 
     // Water
     f1[0] += vel_w[0] / formationVolumeFactor[0];
@@ -1205,7 +1398,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1p_gravity
                                                                                                      const PylithScalar constants[],
                                                                                                      PylithScalar f1[]) {
     const PylithInt _dim = 2;
-    const PylithInt _phases = 3;
+    //const PylithInt _phases = 3;
 
     // Incoming solution field.
     const PylithInt i_pressure = 1;
@@ -1232,7 +1425,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1p_gravity
     assert(sOff_x);
     assert(sOff_x[i_pressure] >= 0);
     assert(aOff);
-    assert(aOff[i_fluidViscosity] >= 0);
+    assert(aOff[i_fluidDensity] >= 0);
     assert(aOff[i_tensorPermeability] >= 0);
     assert(f1);
 
@@ -1258,21 +1451,21 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1p_gravity
     // Water
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; j++) {
-            vel_w[i] += ( (tensorPermeability[i*_dim+j] * relativePermeability[0]) / fluidViscosity[0]) * (pressure_x[j+0*_dim] - fluidDensity * gravityField[j]);
+            vel_w[i] += ( (tensorPermeability[i*_dim+j] * relativePermeability[0]) / fluidViscosity[0]) * (pressure_x[j+0*_dim] - fluidDensity[0] * gravityField[j]);
         } // for
     } // for
 
     // Oil
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; j++) {
-            vel_o[i] += ( (tensorPermeability[i*_dim+j] * relativePermeability[1]) / fluidViscosity[1]) * (pressure_x[j+1*_dim] - fluidDensity * gravityField[j]);
+            vel_o[i] += ( (tensorPermeability[i*_dim+j] * relativePermeability[1]) / fluidViscosity[1]) * (pressure_x[j+1*_dim] - fluidDensity[1] * gravityField[j]);
         } // for
     } // for
 
     // Gas
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; j++) {
-            vel_g[i] += ( (tensorPermeability[i*_dim+j] * relativePermeability[2]) / fluidViscosity[2]) * (pressure_x[j+2*_dim] - fluidDensity * gravityField[j]);
+            vel_g[i] += ( (tensorPermeability[i*_dim+j] * relativePermeability[2]) / fluidViscosity[2]) * (pressure_x[j+2*_dim] - fluidDensity[2] * gravityField[j]);
         } // for
     } // for
 
@@ -1318,7 +1511,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1p_body_gr
                                                                                       const PylithScalar constants[],
                                                                                       PylithScalar f1[]) {
     const PylithInt _dim = 2;
-    const PylithInt _phases = 3;
+    //const PylithInt _phases = 3;
 
     // Incoming solution field.
     const PylithInt i_pressure = 1;
@@ -1358,24 +1551,24 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1p_body_gr
     const PylithScalar* formationVolumeFactor = &a[aOff[i_formationVolumeFactor]];
     const PylithScalar* relativePermeability = &a[aOff[i_relativePermeability]];
     const PylithScalar* fluidViscosity = &a[aOff[i_threePhaseViscosity]];
-    const PylithScalar *gravityField = &a[aOff[i_gravityField]];
-    const PylithScalar *bodyForce = &a[aOff[i_bodyForce]];
-    const PylithScalar fluidDensity = a[aOff[i_fluidDensity]];
+    const PylithScalar* gravityField = &a[aOff[i_gravityField]];
+    const PylithScalar* bodyForce = &a[aOff[i_bodyForce]];
+    const PylithScalar* fluidDensity = &a[aOff[i_fluidDensity]];
     const PylithScalar isotropicPermeability = a[aOff[i_isotropicPermeability]];
 
     PylithScalar vel_w[_dim], vel_o[_dim], vel_g[_dim];
 
     // Water
-    vel_w[0] = ( (isotropicPermeability * relativePermeability[0]) / fluidViscosity[0]) * (pressure_x[0] - bodyForce[0] - fluidDensity * gravityField[0]);
-    vel_w[1] = ( (isotropicPermeability * relativePermeability[0]) / fluidViscosity[0]) * (pressure_x[1] - bodyForce[1] - fluidDensity * gravityField[1]);
+    vel_w[0] = ( (isotropicPermeability * relativePermeability[0]) / fluidViscosity[0]) * (pressure_x[0] - bodyForce[0] - fluidDensity[0] * gravityField[0]);
+    vel_w[1] = ( (isotropicPermeability * relativePermeability[0]) / fluidViscosity[0]) * (pressure_x[1] - bodyForce[1] - fluidDensity[0] * gravityField[1]);
 
     // Oil
-    vel_o[0] = ( (isotropicPermeability * relativePermeability[1]) / fluidViscosity[1]) * (pressure_x[0] - bodyForce[0] - fluidDensity * gravityField[0]);
-    vel_o[1] = ( (isotropicPermeability * relativePermeability[1]) / fluidViscosity[1]) * (pressure_x[1] - bodyForce[1] - fluidDensity * gravityField[1]);
+    vel_o[0] = ( (isotropicPermeability * relativePermeability[1]) / fluidViscosity[1]) * (pressure_x[0] - bodyForce[0] - fluidDensity[1] * gravityField[0]);
+    vel_o[1] = ( (isotropicPermeability * relativePermeability[1]) / fluidViscosity[1]) * (pressure_x[1] - bodyForce[1] - fluidDensity[1] * gravityField[1]);
 
     // Gas
-    vel_g[0] = ( (isotropicPermeability * relativePermeability[2]) / fluidViscosity[2]) * (pressure_x[0] - bodyForce[0] - fluidDensity * gravityField[0]);
-    vel_g[1] = ( (isotropicPermeability * relativePermeability[2]) / fluidViscosity[2]) * (pressure_x[1] - bodyForce[1] - fluidDensity * gravityField[1]);
+    vel_g[0] = ( (isotropicPermeability * relativePermeability[2]) / fluidViscosity[2]) * (pressure_x[0] - bodyForce[0] - fluidDensity[2] * gravityField[0]);
+    vel_g[1] = ( (isotropicPermeability * relativePermeability[2]) / fluidViscosity[2]) * (pressure_x[1] - bodyForce[1] - fluidDensity[2] * gravityField[1]);
 
     // Water
     f1[0] += vel_w[0] / formationVolumeFactor[0];
@@ -1419,7 +1612,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1p_body_gr
                                                                                                           const PylithScalar constants[],
                                                                                                           PylithScalar f1[]) {
     const PylithInt _dim = 2;
-    const PylithInt _phases = 3;
+    //const PylithInt _phases = 3;
 
     // Incoming solution field.
     const PylithInt i_pressure = 1;
@@ -1447,7 +1640,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1p_body_gr
     assert(sOff_x);
     assert(sOff_x[i_pressure] >= 0);
     assert(aOff);
-    assert(aOff[i_fluidViscosity] >= 0);
+    assert(aOff[i_fluidDensity] >= 0);
     assert(aOff[i_tensorPermeability] >= 0);
     assert(f1);
 
@@ -1474,21 +1667,21 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1p_body_gr
     // Water
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; j++) {
-            vel_w[i] += ( (tensorPermeability[i*_dim+j] * relativePermeability[0]) / fluidViscosity[0]) * (pressure_x[j+0*_dim] - bodyForce[j] - fluidDensity * gravityField[j]);
+            vel_w[i] += ( (tensorPermeability[i*_dim+j] * relativePermeability[0]) / fluidViscosity[0]) * (pressure_x[j+0*_dim] - bodyForce[j] - fluidDensity[0] * gravityField[j]);
         } // for
     } // for
 
     // Oil
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; j++) {
-            vel_o[i] += ( (tensorPermeability[i*_dim+j] * relativePermeability[1]) / fluidViscosity[1]) * (pressure_x[j+1*_dim] - bodyForce[j] - fluidDensity * gravityField[j]);
+            vel_o[i] += ( (tensorPermeability[i*_dim+j] * relativePermeability[1]) / fluidViscosity[1]) * (pressure_x[j+1*_dim] - bodyForce[j] - fluidDensity[1] * gravityField[j]);
         } // for
     } // for
 
     // Gas
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; j++) {
-            vel_g[i] += ( (tensorPermeability[i*_dim+j] * relativePermeability[2]) / fluidViscosity[2]) * (pressure_x[j+2*_dim] - bodyForce[j] - fluidDensity * gravityField[j]);
+            vel_g[i] += ( (tensorPermeability[i*_dim+j] * relativePermeability[2]) / fluidViscosity[2]) * (pressure_x[j+2*_dim] - bodyForce[j] - fluidDensity[2] * gravityField[j]);
         } // for
     } // for
 
@@ -1814,7 +2007,6 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::Jf3pp_tenso
     PylithScalar solutionRatios[_dim*_dim], coeff[_dim*_dim];
     PylithScalar tensorPermeability[_dim*_dim];
 
-    PylithScalar tensorPermeability[4];
     tensorPermeability[0] = vectorPermeability[0];
     tensorPermeability[1] = vectorPermeability[3];
     tensorPermeability[2] = vectorPermeability[1];
@@ -2217,7 +2409,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::g0p(const P
     const PylithInt _dim = 2;
 
     // Incoming re-packed solution field.
-    const PylithInt i_pressure = 1;
+    //const PylithInt i_pressure = 1;
     const PylithInt i_velocity = 2;
 
     // Incoming re-packed auxiliary field.
@@ -2226,7 +2418,6 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::g0p(const P
     // IsotropicLinearPoroelasticityBlackOil
     const PylithInt i_biotCoefficient = numA - 3;
 
-    const PylithScalar pressure_t = s_t[sOff[i_pressure]];
     const PylithScalar* velocity_x = &s_x[sOff[i_velocity]];
 
     PylithScalar trace_strain_t = 0.0;
@@ -2268,7 +2459,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::g0p_source(
     const PylithInt _dim = 2;
 
     // Incoming re-packed solution field.
-    const PylithInt i_pressure = 1;
+    //const PylithInt i_pressure = 1;
     const PylithInt i_velocity = 2;
 
     // Incoming re-packed auxiliary field.
@@ -2280,7 +2471,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::g0p_source(
     const PylithInt i_biotCoefficient = numA - 3;
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
-    const PylithScalar pressure_t = s_t[sOff[i_pressure]];
+
     const PylithScalar* velocity_x = &s_x[sOff[i_velocity]];
 
     PylithScalar trace_strain_t = 0.0;
@@ -2321,7 +2512,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::g0p_source_
     const PylithInt _dim = 2;
 
     // Incoming re-packed solution field.
-    const PylithInt i_pressure = 1;
+
     const PylithInt i_velocity = 2;
 
     // Incoming re-packed auxiliary field.
@@ -2333,7 +2524,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::g0p_source_
     const PylithInt i_biotCoefficient = numA - 3;
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
-    const PylithScalar pressure_t = s_t[sOff[i_pressure]];
+
     const PylithScalar* velocity_x = &s_x[sOff[i_velocity]];
 
     PylithScalar trace_strain_t = 0.0;
@@ -2374,7 +2565,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::g0p_source_
     const PylithInt _dim = 2;
 
     // Incoming re-packed solution field.
-    const PylithInt i_pressure = 1;
+
     const PylithInt i_velocity = 2;
 
     // Incoming re-packed auxiliary field.
@@ -2386,7 +2577,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::g0p_source_
     const PylithInt i_biotCoefficient = numA - 3;
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
-    const PylithScalar pressure_t = s_t[sOff[i_pressure]];
+
     const PylithScalar* velocity_x = &s_x[sOff[i_velocity]];
 
     PylithScalar trace_strain_t = 0.0;
@@ -2427,7 +2618,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::g0p_source_
     const PylithInt _dim = 2;
 
     // Incoming re-packed solution field.
-    const PylithInt i_pressure = 1;
+
     const PylithInt i_velocity = 2;
 
     // Incoming re-packed auxiliary field.
@@ -2439,7 +2630,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::g0p_source_
     const PylithInt i_biotCoefficient = numA - 3;
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
-    const PylithScalar pressure_t = s_t[sOff[i_pressure]];
+
     const PylithScalar* velocity_x = &s_x[sOff[i_velocity]];
 
     PylithScalar trace_strain_t = 0.0;
@@ -2760,7 +2951,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::g1v_refstat
     // Incoming solution fields.
     const PylithInt i_displacement = 0;
     const PylithInt i_pressure = 1;
-    const PylithInt i_velocity = 2;
+
 
     const PylithScalar* displacement_x = &s_x[sOff_x[i_displacement]];
     const PylithScalar pressure = s[sOff[i_pressure]];
@@ -2863,12 +3054,12 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::cauchyStres
     const PylithInt i_shearModulus = numA - 5;
     const PylithInt i_drainedBulkModulus = numA - 4;
     const PylithInt i_biotCoefficient = numA - 3;
-    const PylithInt i_biotModulus = numA - 2;
+
 
     const PylithScalar shearModulus = a[aOff[i_shearModulus]];
     const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
-    const PylithScalar biotModulus = a[aOff[i_biotModulus]];
+
 
     // Create and populate stress tensor
 
@@ -2940,12 +3131,11 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::cauchyStres
     const PylithInt i_shearModulus = numA - 5;
     const PylithInt i_drainedBulkModulus = numA - 4;
     const PylithInt i_biotCoefficient = numA - 3;
-    const PylithInt i_biotModulus = numA - 2;
 
     const PylithScalar shearModulus = a[aOff[i_shearModulus]];
     const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
-    const PylithScalar biotModulus = a[aOff[i_biotModulus]];
+
     const PylithScalar* refStress = &a[aOff[i_rstress]]; // stress_xx, stress_yy, stress_zz, stress_xy
     const PylithScalar* refStrain = &a[aOff[i_rstrain]]; // strain_xx, strain_yy, strain_zz, strain_xy
 
@@ -2995,8 +3185,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::cauchyStres
 // ========================== Update Kernels ===================================
 
 // ---------------------------------------------------------------------------------------------------------------------
-/* Update porosity for a linear poroelastic material, implicit. 
-/* ASSUMES NO CAPILLARY PRESSURE
+/* Update porosity for a linear poroelastic material, implicit. ASSUMES NO CAPILLARY PRESSURE
  */
 void
 pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::updatePorosityImplicit(const PylithInt dim,
@@ -3045,8 +3234,8 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::updatePoros
     assert(porosity);
 
     // Do stuff
-    const PylithScalar* pressure_t = s ? &s[sOff[i_pressure_t]] : 0.0;
-    const PylithScalar trace_strain_t = s ? s[sOff[i_trace_strain_t]] : 0.0;
+    const PylithScalar* pressure_t = &s[sOff[i_pressure_t]];
+    const PylithScalar trace_strain_t = s[sOff[i_trace_strain_t]];
 
     const PylithScalar* saturation = &a[aOff[i_threePhaseSaturation]];
     const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
@@ -3103,12 +3292,12 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::updateSatur
     // IsotropicLinearPoroelasticityBlackOil
     const PylithInt i_threePhaseSaturation = numA - 7;
     const PylithInt i_threePhaseFluidModulus = numA - 6;
-    const PylithInt i_drainedBulkModulus = numA - 4;
+
     const PylithInt i_biotCoefficient = numA - 3;
     const PylithInt i_solidBulkModulus = numA -2;
 
     // Constants
-    const PylithScalar dt = constants[0];
+    // const PylithScalar dt = constants[0];
 
     // Run Checks
     assert(_dim == dim);
@@ -3122,9 +3311,9 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::updateSatur
     const PylithScalar* pressure = &s[sOff[i_pressure]];
     const PylithScalar trace_strain = s[sOff[i_trace_strain]];
 
-    const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
 
-    const PylithScalar* saturation = &a[aOff[i_threePhaseSaturation]];
+
+    const PylithScalar* saturation_old = &a[aOff[i_threePhaseSaturation]];
     const PylithScalar* fluidModulus = &a[aOff[i_threePhaseFluidModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
     const PylithScalar solidBulkModulus = a[aOff[i_solidBulkModulus]];
@@ -3145,29 +3334,29 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::updateSatur
     }
 
     // Nww
-    N_tensor[0] = porosity*saturation[0] * (1.0 / fluidModulus[0]) - porosity*dSw_dpco + saturation[0]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[0];
+    N_tensor[0] = porosity*saturation_old[0] * (1.0 / fluidModulus[0]) - porosity*dSw_dpco + saturation_old[0]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation_old[0];
     // Nwo
-    N_tensor[1] = porosity*dSw_dpco + saturation[0]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[1];
+    N_tensor[1] = porosity*dSw_dpco + saturation_old[0]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation_old[1];
     // Nwg
-    N_tensor[2] = saturation[0]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[2];
+    N_tensor[2] = saturation_old[0]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation_old[2];
     // Now
-    N_tensor[3] = porosity*dSw_dpco + saturation[1] * ( (biotCoefficient - porosity) / solidBulkModulus ) * saturation[1];
+    N_tensor[3] = porosity*dSw_dpco + saturation_old[1] * ( (biotCoefficient - porosity) / solidBulkModulus ) * saturation_old[1];
     // Noo
-    N_tensor[4] = porosity*saturation[1] * (1.0 / fluidModulus[1]) + porosity*( -dSw_dpco + dSg_dpcg) + saturation[1]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[0];
+    N_tensor[4] = porosity*saturation_old[1] * (1.0 / fluidModulus[1]) + porosity*( -dSw_dpco + dSg_dpcg) + saturation_old[1]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation_old[0];
     // Nog
-    N_tensor[5] = porosity*(-dSg_dpcg) + saturation[1]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[2];
+    N_tensor[5] = porosity*(-dSg_dpcg) + saturation_old[1]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation_old[2];
     // Ngw
-    N_tensor[6] = saturation[2]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[0];
+    N_tensor[6] = saturation_old[2]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation_old[0];
     // Ngo
-    N_tensor[7] = -porosity*dSg_dpcg + saturation[2]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[1];
+    N_tensor[7] = -porosity*dSg_dpcg + saturation_old[2]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation_old[1];
     // Ngg
-    N_tensor[8] = porosity*saturation[2]*(1.0 / fluidModulus[2]) + saturation[2]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[2] + porosity*dSg_dpcg;
+    N_tensor[8] = porosity*saturation_old[2]*(1.0 / fluidModulus[2]) + saturation_old[2]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation_old[2] + porosity*dSg_dpcg;
 
     for (PylithInt i = 0; i < _phases; ++i) {
         for (PylithInt j = 0; j < _phases; ++j) {
             Zeta[i] += N_tensor[i*_phases+j]*pressure[j];
         } // for
-        Zeta[i] += saturation[i]*biotCoefficient*trace_strain;
+        Zeta[i] += saturation_old[i]*biotCoefficient*trace_strain;
     } // for
 
     // Update saturation
@@ -3233,7 +3422,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::updatePoros
 
     // Do stuff
     const PylithScalar* saturation = &a[aOff[i_threePhaseSaturation]];
-    const PylithScalar pressure_t = s_t[sOff[i_pressure]];
+    const PylithScalar* pressure_t = &s_t[sOff[i_pressure]];
     const PylithScalar* velocity_x = &s_x[sOff[i_velocity]];
 
     const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
@@ -3269,6 +3458,198 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::updatePoros
 
 // ================================= LHS =======================================
 
+// ---------------------------------------------------------------------------------------------------------------------
+// f0u placeholder function for multiphaseporoelasticity equation
+void
+pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::f0u_implicit(const PylithInt dim,
+                                                 const PylithInt numS,
+                                                 const PylithInt numA,
+                                                 const PylithInt sOff[],
+                                                 const PylithInt sOff_x[],
+                                                 const PylithScalar s[],
+                                                 const PylithScalar s_t[],
+                                                 const PylithScalar s_x[],
+                                                 const PylithInt aOff[],
+                                                 const PylithInt aOff_x[],
+                                                 const PylithScalar a[],
+                                                 const PylithScalar a_t[],
+                                                 const PylithScalar a_x[],
+                                                 const PylithReal t,
+                                                 const PylithScalar x[],
+                                                 const PylithInt numConstants,
+                                                 const PylithScalar constants[],
+                                                 PylithScalar f0[]) {
+    const PylithInt _dim = 3;
+    // Incoming solution fields.
+
+    // Incoming auxiliary fields.
+
+    for (PylithInt i = 0; i < _dim; ++i) {
+        f0[i] += 0.0;
+        // PetscPrintf(PETSC_COMM_WORLD, "f0u[%i]: %f\n",i, f0[i]);
+    } // for
+} // f0u
+
+// ---------------------------------------------------------------------------------------------------------------------
+// f0u placeholder function for multiphaseporoelasticity equation
+void
+pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::f0u_body_implicit(const PylithInt dim,
+                                                 const PylithInt numS,
+                                                 const PylithInt numA,
+                                                 const PylithInt sOff[],
+                                                 const PylithInt sOff_x[],
+                                                 const PylithScalar s[],
+                                                 const PylithScalar s_t[],
+                                                 const PylithScalar s_x[],
+                                                 const PylithInt aOff[],
+                                                 const PylithInt aOff_x[],
+                                                 const PylithScalar a[],
+                                                 const PylithScalar a_t[],
+                                                 const PylithScalar a_x[],
+                                                 const PylithReal t,
+                                                 const PylithScalar x[],
+                                                 const PylithInt numConstants,
+                                                 const PylithScalar constants[],
+                                                 PylithScalar f0[]) {
+    const PylithInt _dim = 3;
+    // Incoming solution fields.
+
+    // Incoming auxiliary fields
+
+    // MultiphasePoroelasticity
+
+    // 3 + n
+    const PylithInt i_bodyForce = 4;
+
+    const PylithScalar* bodyForce = &a[aOff[i_bodyForce]];
+
+    for (PylithInt i = 0; i < _dim; ++i) {
+        f0[i] += bodyForce[i];
+    } // for
+} // f0u_body_implicit
+
+// ---------------------------------------------------------------------------------------------------------------------
+// f0u_grav_implicit - f0 function for generic multiphaseporoelasticity terms ( + grav body forces).
+void
+pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::f0u_grav_implicit(const PylithInt dim,
+                                                      const PylithInt numS,
+                                                      const PylithInt numA,
+                                                      const PylithInt sOff[],
+                                                      const PylithInt sOff_x[],
+                                                      const PylithScalar s[],
+                                                      const PylithScalar s_t[],
+                                                      const PylithScalar s_x[],
+                                                      const PylithInt aOff[],
+                                                      const PylithInt aOff_x[],
+                                                      const PylithScalar a[],
+                                                      const PylithScalar a_t[],
+                                                      const PylithScalar a_x[],
+                                                      const PylithReal t,
+                                                      const PylithScalar x[],
+                                                      const PylithInt numConstants,
+                                                      const PylithScalar constants[],
+                                                      PylithScalar f0[]) {
+    const PylithInt _dim = 3;
+    const PylithInt _phases = 3;                                                          
+    // Incoming auxililary fields.
+
+    // MultiphasePoroelasticity
+    const PylithInt i_solid_density = 0;
+    const PylithInt i_porosity = 1;
+
+    // 3 + n
+    const PylithInt i_gravityField = 4;
+
+    // IsotropicLinearPoroelasticityBlackOil
+    const PylithInt i_fluid_density = numA - 13;
+    const PylithInt i_threePhaseSaturation = numA - 7;
+
+    const PylithScalar* fluidDensity = &a[aOff[i_fluid_density]];
+    const PylithScalar* saturation = &a[aOff[i_threePhaseSaturation]];
+    const PylithScalar* gravityField = &a[aOff[i_gravityField]];
+    const PylithScalar solidDensity = a[aOff[i_solid_density]];
+    const PylithScalar porosity = a[aOff[i_porosity]];
+
+    PylithScalar equivalentFluidDensity = 0.0, bulkDensity = 0.0;
+
+    for (PylithInt i = 0; i < _phases; ++i) {
+        equivalentFluidDensity += saturation[i]*fluidDensity[i];
+    }
+
+    bulkDensity = (1.0 - porosity)*solidDensity + porosity*equivalentFluidDensity;
+
+    for (PylithInt i = 0; i < dim; ++i) {
+        f0[i] += bulkDensity * gravityField[i];
+    } // for
+
+} // f0u_grav_implicit
+
+// ---------------------------------------------------------------------------------------------------------------------
+//f0u_body_grav_implicit - f0 function for generic multiphaseporoelasticity terms ( + grav body forces).
+void
+pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::f0u_body_grav_implicit(const PylithInt dim,
+                                                      const PylithInt numS,
+                                                      const PylithInt numA,
+                                                      const PylithInt sOff[],
+                                                      const PylithInt sOff_x[],
+                                                      const PylithScalar s[],
+                                                      const PylithScalar s_t[],
+                                                      const PylithScalar s_x[],
+                                                      const PylithInt aOff[],
+                                                      const PylithInt aOff_x[],
+                                                      const PylithScalar a[],
+                                                      const PylithScalar a_t[],
+                                                      const PylithScalar a_x[],
+                                                      const PylithReal t,
+                                                      const PylithScalar x[],
+                                                      const PylithInt numConstants,
+                                                      const PylithScalar constants[],
+                                                      PylithScalar f0[]) {
+    const PylithInt _dim = 3;
+    const PylithInt _phases = 3;                                                          
+    // Incoming auxililary fields.
+
+    // MultiphasePoroelasticity
+    const PylithInt i_solid_density = 0;
+    const PylithInt i_porosity = 1;
+
+    // 3 + n
+    const PylithInt i_bodyForce = 4;
+    const PylithInt i_gravityField = 5;
+
+    // IsotropicLinearPoroelasticityBlackOil
+    const PylithInt i_fluid_density = numA - 13;
+    const PylithInt i_threePhaseSaturation = numA - 7;
+
+    const PylithScalar* fluidDensity = &a[aOff[i_fluid_density]];
+    const PylithScalar* saturation = &a[aOff[i_threePhaseSaturation]];
+    const PylithScalar* gravityField = &a[aOff[i_gravityField]];
+    const PylithScalar* bodyForce = &a[aOff[i_bodyForce]];
+    const PylithScalar solidDensity = a[aOff[i_solid_density]];
+    const PylithScalar porosity = a[aOff[i_porosity]];
+
+    PylithScalar equivalentFluidDensity = 0.0, bulkDensity = 0.0;
+
+    for (PylithInt i = 0; i < _phases; ++i) {
+        equivalentFluidDensity += saturation[i]*fluidDensity[i];
+    }
+
+    bulkDensity = (1.0 - porosity)*solidDensity + porosity*equivalentFluidDensity;
+
+    // gravity field
+    for (PylithInt i = 0; i < dim; ++i) {
+        f0[i] += bulkDensity * gravityField[i];
+    } // for
+
+    // body force
+    for (PylithInt i = 0; i < _dim; ++i) {
+        f0[i] += bodyForce[i];
+    } // for    
+
+} // f0u_body_grav_implicit
+
+
+
 // ----------------------------------------------------------------------
 // f0p function for explicit time stepping (dynamic).
 void
@@ -3290,7 +3671,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::f0p_explicit(const P
                                                                          const PylithInt numConstants,
                                                                          const PylithScalar constants[],
                                                                          PylithScalar f0[]) {
-    const PylithInt _dim = 3;
+    // const PylithInt _dim = 3;
 
     // Incoming re-packed solution field.
     const PylithInt i_pressure = 1;
@@ -3504,7 +3885,6 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::f0p_implicit_source_
     f0[0] -= source;
 } // f0p_implicit_source_body
 
-
 // ----------------------------------------------------------------------
 // f0p function for generic poroelasticity terms (body forces).
 // \left( \alpha \frac{\partial \epsilon_{v}}{\partial t} + \frac{1}{M} \frac{\partial p_{f}}{\partial t} \right)
@@ -3512,36 +3892,38 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::f0p_implicit_source_
 
 void
 pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::f0p_implicit_source_grav(const PylithInt dim,
-                                                                                     const PylithInt numS,
-                                                                                     const PylithInt numA,
-                                                                                     const PylithInt sOff[],
-                                                                                     const PylithInt sOff_x[],
-                                                                                     const PylithScalar s[],
-                                                                                     const PylithScalar s_t[],
-                                                                                     const PylithScalar s_x[],
-                                                                                     const PylithInt aOff[],
-                                                                                     const PylithInt aOff_x[],
-                                                                                     const PylithScalar a[],
-                                                                                     const PylithScalar a_t[],
-                                                                                     const PylithScalar a_x[],
-                                                                                     const PylithReal t,
-                                                                                     const PylithScalar x[],
-                                                                                     const PylithInt numConstants,
-                                                                                     const PylithScalar constants[],
-                                                                                     PylithScalar f0[]) {
+                                                                                              const PylithInt numS,
+                                                                                              const PylithInt numA,
+                                                                                              const PylithInt sOff[],
+                                                                                              const PylithInt sOff_x[],
+                                                                                              const PylithScalar s[],
+                                                                                              const PylithScalar s_t[],
+                                                                                              const PylithScalar s_x[],
+                                                                                              const PylithInt aOff[],
+                                                                                              const PylithInt aOff_x[],
+                                                                                              const PylithScalar a[],
+                                                                                              const PylithScalar a_t[],
+                                                                                              const PylithScalar a_x[],
+                                                                                              const PylithReal t,
+                                                                                              const PylithScalar x[],
+                                                                                              const PylithInt numConstants,
+                                                                                              const PylithScalar constants[],
+                                                                                              PylithScalar f0[]) {
     const PylithInt _dim = 3;
+    const PylithInt _phases = 3;
 
-    // Incoming re-packed solution field.
     const PylithInt i_pressure = 1;
     const PylithInt i_trace_strain = 2;
+
+    // Poroelasticity
+    const PylithInt i_porosity = 3;
     const PylithInt i_source = 5;
 
-    // Incoming re-packed auxiliary field.
-    // Poroelasticity
-
     // IsotropicLinearPoroelasticityBlackOil
+    const PylithInt i_saturation = numA - 7;
+    const PylithInt i_fluidModulus = numA - 6;
     const PylithInt i_biotCoefficient = numA - 3;
-    const PylithInt i_biotModulus = numA - 2;
+    const PylithInt i_solidBulkModulus = numA - 2;
 
     // Run Checks
     assert(_dim == dim);
@@ -3555,23 +3937,55 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::f0p_implicit_source_
     assert(sOff_x[i_trace_strain] >= 0);
     assert(aOff);
     assert(aOff[i_biotCoefficient] >= 0);
-    assert(aOff[i_biotModulus] >= 0);
-    assert(aOff[i_source] >= 0);
     assert(f0);
 
+    // Incoming re-packed auxiliary field.
+    // Poroelasticity
     const PylithScalar source = a[aOff[i_source]];
 
-    const PylithScalar pressure_t = s_t[sOff[i_pressure]];
+    const PylithScalar* pressure_t = &s_t[sOff[i_pressure]];
     const PylithScalar trace_strain_t = s_t[sOff[i_trace_strain]];
 
+    const PylithScalar porosity = a[aOff[i_porosity]];
+
+    const PylithScalar* saturation = &a[aOff[i_saturation]];
+    const PylithScalar* fluidModulus = &a[aOff[i_fluidModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
-    const PylithScalar biotModulus = a[aOff[i_biotModulus]];
+    const PylithScalar solidBulkModulus = a[aOff[i_solidBulkModulus]];
 
-    f0[0] += biotCoefficient*trace_strain_t;
-    f0[0] += pressure_t/biotModulus;
-    f0[0] -= source;
+    // Account for capiliarity
+    PylithScalar dSw_dpco = 0.0;
+    PylithScalar dSg_dpcg = 0.0;
+
+    // Generate N Tensor
+    PylithScalar N_tensor[_phases*_phases];
+
+    // Nww
+    N_tensor[0] = porosity*saturation[0] * (1.0 / fluidModulus[0]) - porosity*dSw_dpco + saturation[0]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[0];
+    // Nwo
+    N_tensor[1] = porosity*dSw_dpco + saturation[0]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[1];
+    // Nwg
+    N_tensor[2] = saturation[0]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[2];
+    // Now
+    N_tensor[3] = porosity*dSw_dpco + saturation[1] * ( (biotCoefficient - porosity) / solidBulkModulus ) * saturation[1];
+    // Noo
+    N_tensor[4] = porosity*saturation[1] * (1.0 / fluidModulus[1]) + porosity*( -dSw_dpco + dSg_dpcg) + saturation[1]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[0];
+    // Nog
+    N_tensor[5] = porosity*(-dSg_dpcg) + saturation[1]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[2];
+    // Ngw
+    N_tensor[6] = saturation[2]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[0];
+    // Ngo
+    N_tensor[7] = -porosity*dSg_dpcg + saturation[2]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[1];
+    // Ngg
+    N_tensor[8] = porosity*saturation[2]*(1.0 / fluidModulus[2]) + saturation[2]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[2] + porosity*dSg_dpcg;
+
+    for (PylithInt i = 0; i < _phases; ++i) {
+        for (PylithInt j = 0; j < _phases; ++j) {
+            f0[i] += N_tensor[i*_phases+j]*pressure_t[j];
+        } // for
+        f0[i] += saturation[i]*biotCoefficient*trace_strain_t - saturation[i]*source;
+    } // for
 } // f0p_implicit_source_grav
-
 
 // ----------------------------------------------------------------------
 // f0p function for generic poroelasticity terms (body forces).
@@ -3748,12 +4162,12 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::f1u_refstate(const P
     const PylithInt i_shearModulus = numA - 5;
     const PylithInt i_drainedBulkModulus = numA - 4;
     const PylithInt i_biotCoefficient = numA - 3;
-    const PylithInt i_biotModulus = numA - 2;
+
 
     const PylithScalar shearModulus = a[aOff[i_shearModulus]];
     const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
-    const PylithScalar biotModulus = a[aOff[i_biotModulus]];
+
     const PylithScalar* refStress = &a[aOff[i_rstress]]; // stress_xx, stress_yy, stress_zz, stress_xy
     const PylithScalar* refStrain = &a[aOff[i_rstrain]]; // strain_xx, strain_yy, strain_zz, strain_xy
 
@@ -3979,7 +4393,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::f1p_body(const Pylit
 
     const PylithScalar *pressure_x = &s_x[sOff_x[i_pressure]];
 
-    const PylithScalar fluidDensity = a[aOff[i_fluidDensity]];
+    // const PylithScalar fluidDensity = a[aOff[i_fluidDensity]];
     const PylithScalar fluidViscosity = a[aOff[i_fluidViscosity]];
 
     const PylithScalar *body_force = &a[aOff[i_body_force]];
@@ -4048,7 +4462,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::f1p_body_tensor_perm
 
     const PylithScalar *pressure_x = &s_x[sOff_x[i_pressure]];
 
-    const PylithScalar fluidDensity = a[aOff[i_fluidDensity]];
+    // const PylithScalar fluidDensity = a[aOff[i_fluidDensity]];
     const PylithScalar fluidViscosity = a[aOff[i_fluidViscosity]];
 
     const PylithScalar *body_force = &a[aOff[i_body_force]];
@@ -5156,7 +5570,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::g0p(const PylithInt 
     const PylithInt _dim = 3;
 
     // Incoming re-packed solution field.
-    const PylithInt i_pressure = 1;
+    // const PylithInt i_pressure = 1;
     const PylithInt i_velocity = 2;
 
     // Incoming re-packed auxiliary field.
@@ -5165,7 +5579,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::g0p(const PylithInt 
     // IsotropicLinearPoroelasticityBlackOil
     const PylithInt i_biotCoefficient = numA - 3;
 
-    const PylithScalar pressure_t = s_t[sOff[i_pressure]];
+
     const PylithScalar* velocity_x = &s_x[sOff[i_velocity]];
 
     PylithScalar trace_strain_t = 0.0;
@@ -5207,7 +5621,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::g0p_source(const Pyl
     const PylithInt _dim = 3;
 
     // Incoming re-packed solution field.
-    const PylithInt i_pressure = 1;
+
     const PylithInt i_velocity = 2;
 
     // Incoming re-packed auxiliary field.
@@ -5219,7 +5633,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::g0p_source(const Pyl
     const PylithInt i_biotCoefficient = numA - 3;
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
-    const PylithScalar pressure_t = s_t[sOff[i_pressure]];
+
     const PylithScalar* velocity_x = &s_x[sOff[i_velocity]];
 
     PylithScalar trace_strain_t = 0.0;
@@ -5260,7 +5674,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::g0p_source_body(cons
     const PylithInt _dim = 3;
 
     // Incoming re-packed solution field.
-    const PylithInt i_pressure = 1;
+
     const PylithInt i_velocity = 2;
 
     // Incoming re-packed auxiliary field.
@@ -5272,7 +5686,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::g0p_source_body(cons
     const PylithInt i_biotCoefficient = numA - 3;
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
-    const PylithScalar pressure_t = s_t[sOff[i_pressure]];
+
     const PylithScalar* velocity_x = &s_x[sOff[i_velocity]];
 
     PylithScalar trace_strain_t = 0.0;
@@ -5313,7 +5727,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::g0p_source_grav(cons
     const PylithInt _dim = 3;
 
     // Incoming re-packed solution field.
-    const PylithInt i_pressure = 1;
+
     const PylithInt i_velocity = 2;
 
     // Incoming re-packed auxiliary field.
@@ -5325,7 +5739,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::g0p_source_grav(cons
     const PylithInt i_biotCoefficient = numA - 3;
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
-    const PylithScalar pressure_t = s_t[sOff[i_pressure]];
+
     const PylithScalar* velocity_x = &s_x[sOff[i_velocity]];
 
     PylithScalar trace_strain_t = 0.0;
@@ -5366,7 +5780,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::g0p_source_grav_body
     const PylithInt _dim = 3;
 
     // Incoming re-packed solution field.
-    const PylithInt i_pressure = 1;
+
     const PylithInt i_velocity = 2;
 
     // Incoming re-packed auxiliary field.
@@ -5378,7 +5792,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::g0p_source_grav_body
     const PylithInt i_biotCoefficient = numA - 3;
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
-    const PylithScalar pressure_t = s_t[sOff[i_pressure]];
+
     const PylithScalar* velocity_x = &s_x[sOff[i_velocity]];
 
     PylithScalar trace_strain_t = 0.0;
@@ -5668,12 +6082,12 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::g1v(const PylithInt 
     const PylithInt i_shearModulus = numA - 5;
     const PylithInt i_drainedBulkModulus = numA - 4;
     const PylithInt i_biotCoefficient = numA - 3;
-    const PylithInt i_biotModulus = numA - 2;
+
 
     const PylithScalar shearModulus = a[aOff[i_shearModulus]];
     const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
-    const PylithScalar biotModulus = a[aOff[i_biotModulus]];
+    
 
     for (PylithInt c = 0; c < _dim; ++c) {
         for (PylithInt d = 0; d < _dim; ++d) {
@@ -5711,7 +6125,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::g1v_refstate(const P
     // Incoming solution fields.
     const PylithInt i_displacement = 0;
     const PylithInt i_pressure = 1;
-    const PylithInt i_velocity = 2;
+    //const PylithInt i_velocity = 2;
 
     const PylithScalar* displacement_x = &s_x[sOff_x[i_displacement]];
     const PylithScalar pressure = s[sOff[i_pressure]];
@@ -5812,12 +6226,11 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::cauchyStress(const P
     const PylithInt i_shearModulus = numA - 5;
     const PylithInt i_drainedBulkModulus = numA - 4;
     const PylithInt i_biotCoefficient = numA - 3;
-    const PylithInt i_biotModulus = numA - 2;
 
     const PylithScalar shearModulus = a[aOff[i_shearModulus]];
     const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
-    const PylithScalar biotModulus = a[aOff[i_biotModulus]];
+    //const PylithScalar biotModulus = a[aOff[i_biotModulus]];
 
     // Create and populate stress tensor
 
@@ -5889,12 +6302,11 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::cauchyStress_refstat
     const PylithInt i_shearModulus = numA - 5;
     const PylithInt i_drainedBulkModulus = numA - 4;
     const PylithInt i_biotCoefficient = numA - 3;
-    const PylithInt i_biotModulus = numA - 2;
 
     const PylithScalar shearModulus = a[aOff[i_shearModulus]];
     const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
-    const PylithScalar biotModulus = a[aOff[i_biotModulus]];
+
     const PylithScalar* refStress = &a[aOff[i_rstress]]; // stress_xx, stress_yy, stress_zz, stress_xy
     const PylithScalar* refStrain = &a[aOff[i_rstrain]]; // strain_xx, strain_yy, strain_zz, strain_xy
 
@@ -6050,12 +6462,12 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::updateSaturationImpl
     // IsotropicLinearPoroelasticityBlackOil
     const PylithInt i_threePhaseSaturation = numA - 7;
     const PylithInt i_threePhaseFluidModulus = numA - 6;
-    const PylithInt i_drainedBulkModulus = numA - 4;
+
     const PylithInt i_biotCoefficient = numA - 3;
     const PylithInt i_solidBulkModulus = numA -2;
 
     // Constants
-    const PylithScalar dt = constants[0];
+    //const PylithScalar dt = constants[0];
 
     // Run Checks
     assert(_dim == dim);
@@ -6069,9 +6481,9 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::updateSaturationImpl
     const PylithScalar* pressure = &s[sOff[i_pressure]];
     const PylithScalar trace_strain = s[sOff[i_trace_strain]];
 
-    const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
+    //const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
 
-    const PylithScalar* saturation = &a[aOff[i_threePhaseSaturation]];
+    const PylithScalar* saturation_old = &a[aOff[i_threePhaseSaturation]];
     const PylithScalar* fluidModulus = &a[aOff[i_threePhaseFluidModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
     const PylithScalar solidBulkModulus = a[aOff[i_solidBulkModulus]];
@@ -6092,29 +6504,29 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::updateSaturationImpl
     }
 
     // Nww
-    N_tensor[0] = porosity*saturation[0] * (1.0 / fluidModulus[0]) - porosity*dSw_dpco + saturation[0]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[0];
+    N_tensor[0] = porosity*saturation_old[0] * (1.0 / fluidModulus[0]) - porosity*dSw_dpco + saturation_old[0]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation_old[0];
     // Nwo
-    N_tensor[1] = porosity*dSw_dpco + saturation[0]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[1];
+    N_tensor[1] = porosity*dSw_dpco + saturation_old[0]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation_old[1];
     // Nwg
-    N_tensor[2] = saturation[0]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[2];
+    N_tensor[2] = saturation_old[0]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation_old[2];
     // Now
-    N_tensor[3] = porosity*dSw_dpco + saturation[1] * ( (biotCoefficient - porosity) / solidBulkModulus ) * saturation[1];
+    N_tensor[3] = porosity*dSw_dpco + saturation_old[1] * ( (biotCoefficient - porosity) / solidBulkModulus ) * saturation_old[1];
     // Noo
-    N_tensor[4] = porosity*saturation[1] * (1.0 / fluidModulus[1]) + porosity*( -dSw_dpco + dSg_dpcg) + saturation[1]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[0];
+    N_tensor[4] = porosity*saturation_old[1] * (1.0 / fluidModulus[1]) + porosity*( -dSw_dpco + dSg_dpcg) + saturation_old[1]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation_old[0];
     // Nog
-    N_tensor[5] = porosity*(-dSg_dpcg) + saturation[1]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[2];
+    N_tensor[5] = porosity*(-dSg_dpcg) + saturation_old[1]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation_old[2];
     // Ngw
-    N_tensor[6] = saturation[2]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[0];
+    N_tensor[6] = saturation_old[2]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation_old[0];
     // Ngo
-    N_tensor[7] = -porosity*dSg_dpcg + saturation[2]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[1];
+    N_tensor[7] = -porosity*dSg_dpcg + saturation_old[2]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation_old[1];
     // Ngg
-    N_tensor[8] = porosity*saturation[2]*(1.0 / fluidModulus[2]) + saturation[2]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation[2] + porosity*dSg_dpcg;
+    N_tensor[8] = porosity*saturation_old[2]*(1.0 / fluidModulus[2]) + saturation_old[2]*( (biotCoefficient - porosity) / solidBulkModulus )*saturation_old[2] + porosity*dSg_dpcg;
 
     for (PylithInt i = 0; i < _phases; ++i) {
         for (PylithInt j = 0; j < _phases; ++j) {
             Zeta[i] += N_tensor[i*_phases+j]*pressure[j];
         } // for
-        Zeta[i] += saturation[i]*biotCoefficient*trace_strain;
+        Zeta[i] += saturation_old[i]*biotCoefficient*trace_strain;
     } // for
 
     // Update saturation

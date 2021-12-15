@@ -55,7 +55,7 @@ public:
      * @return Auxiliary factory for physics object.
      */
     virtual
-    pylith::materials::AuxiliaryFactoryPoroelastic* getAuxiliaryFactory(void) = 0;
+    pylith::materials::AuxiliaryFactoryPoroelasticBlackOil* getAuxiliaryFactory(void) = 0;
 
     /// Add rheology subfields to auxiliary field.
     virtual
@@ -88,6 +88,14 @@ public:
     PetscPointFunc getKernelg1v_explicit(const spatialdata::geocoords::CoordSys* coordsys) const = 0;
 
     // =============================== LHS =================================== //
+
+    // ---------------------------------------------------------------------------------------------------------------------
+    // Select implicit f0u function.
+    virtual
+    PetscPointFunc getKernelf0u_implicit(const spatialdata::geocoords::CoordSys* coordsys,
+                                         const bool _useBodyForce,
+                                         const bool _gravityField,
+                                         const bool _useSourceDensity) const = 0;
 
     // ---------------------------------------------------------------------------------------------------------------------
     // Get variation in fluid content kernel for LHS residual, F(t,s,\dot{s})

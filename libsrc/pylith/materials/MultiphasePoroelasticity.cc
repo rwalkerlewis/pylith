@@ -21,7 +21,7 @@
 #include "pylith/materials/MultiphasePoroelasticity.hh" // implementation of object methods
 
 #include "pylith/materials/RheologyMultiphasePoroelasticity.hh" // HASA RheologyMultiphasePoroelasticity
-#include "pylith/materials/AuxiliaryFactoryPoroelastic.hh" // USES AuxiliaryFactory
+#include "pylith/materials/AuxiliaryFactoryPoroelasticBlackOil.hh" // USES AuxiliaryFactory
 #include "pylith/materials/DerivedFactoryElasticity.hh" // USES DerivedFactoryElasticity
 #include "pylith/feassemble/IntegratorDomain.hh" // USES IntegratorDomain
 #include "pylith/topology/Mesh.hh" // USES Mesh
@@ -359,7 +359,7 @@ pylith::materials::MultiphasePoroelasticity::_setKernelsResidual(pylith::feassem
     case QUASISTATIC: {
         if (!_useStateVars) {
             // Displacement
-            const PetscPointFunc f0u = _rheology->getKernelf0u_implicit(coordsys, _useBodyForce, _gravityField);
+            const PetscPointFunc f0u = _rheology->getKernelf0u_implicit(coordsys, _useBodyForce, _gravityField, _useSourceDensity);
             const PetscPointFunc f1u = _rheology->getKernelf1u_implicit(coordsys);
 
             // Pressure
@@ -377,7 +377,7 @@ pylith::materials::MultiphasePoroelasticity::_setKernelsResidual(pylith::feassem
             kernels[2] = ResidualKernels("trace_strain", pylith::feassemble::Integrator::RESIDUAL_LHS, f0e, f1e);
         } else if (_useStateVars) {
             // Displacement
-            const PetscPointFunc f0u = _rheology->getKernelf0u_implicit(coordsys, _useBodyForce, _gravityField);
+            const PetscPointFunc f0u = _rheology->getKernelf0u_implicit(coordsys, _useBodyForce, _gravityField, _useSourceDensity);
             const PetscPointFunc f1u = _rheology->getKernelf1u_implicit(coordsys);
 
             // Pressure
