@@ -36,12 +36,6 @@ class AuxSubfieldsMultiphasePoroelasticity(PetscComponent):
     solidDensity = pythia.pyre.inventory.facility("solid_density", family="auxiliary_subfield", factory=Subfield)
     solidDensity.meta['tip'] = "Solid density subfield."
 
-    fluidDensity = pythia.pyre.inventory.facility("fluid_density", family="auxiliary_subfield", factory=Subfield)
-    fluidDensity.meta['tip'] = "Fluid density subfield."
-
-    fluidViscosity = pythia.pyre.inventory.facility("fluid_viscosity", family="auxiliary_subfield", factory=Subfield)
-    fluidViscosity.meta['tip'] = "Fluid viscosity subfield."
-
     bodyForce = pythia.pyre.inventory.facility("body_force", family="auxiliary_subfield", factory=Subfield)
     bodyForce.meta['tip'] = "Body force subfield."
 

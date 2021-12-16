@@ -28,23 +28,29 @@
  * -- numA : number of auxiliary fields
  ***** Required fields(govening equations) + option fields + required fields (rheology)
  * - 0: solid_density(1)
- * - 1: fluid_density(1)
- * - 2: fluid_viscosity(1)
- * - 3: porosity(1)
+ * - 1: porosity(1)
  *
  ** Optional fields
- * - +1: gravity_field (2, optional)
- * - +1: body_force(2,optional)
+ * - +1: gravity_field (dim, optional)
+ * - +1: body_force(dim,optional)
  * - +1: source_density(1,optional)
- * - +1: reference_stress(4,optional) (stress_xx, stress_yy, stress_xy, stress_zz)
- * - +1: reference_strain(4,optional) (strain_xx, strain_yy, strain_xy, strain_zz)
+ * - +1: reference_stress(dim*dim,optional) (stress_xx, stress_yy, stress_xy, stress_zz)
+ * - +1: reference_strain(dim*dim,optional) (strain_xx, strain_yy, strain_xy, strain_zz)
  *
  ** Rheological fields
- * - numA - 5: addShearModulus(1)
- * - numA - 4: addBulkModulus(1)
- * - numA - 3: addBiotCoefficient(1)
- * - numA - 2: addIsotropicPermeability(1)
- * - numA - 1: addFluidBulkModulus(1)
+ * - numA - 11: addFluidDensities(3)
+ * - numA - 12: addSolutionOilGasRatio(1)
+ * - numA - 11: addSolutionGasOilRatio(1)
+ * - numA - 10: addFormationVolumeFactors(3)
+ * - numA -  9: addRelativePermeability(3)
+ * - numA -  8: addThreePhaseFluidViscosity(3)
+ * - numA -  7: addThreePhaseSaturation(3)
+ * - numA -  6: addThreePhaseFluidModulus(3)
+ * - numA -  5: addShearModulus(1)
+ * - numA -  4: addDrainedBulkModulus(1)
+ * - numA -  3: addBiotCoefficient(1)
+ * - numA -  2: addSolidBulkModulus(1)
+ * - numA -  1: addIsotropicPermeability(1) / addTensorPermeability(dim*dim)
  *
  *
  *

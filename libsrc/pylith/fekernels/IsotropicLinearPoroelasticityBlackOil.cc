@@ -780,7 +780,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f0p_implici
 // ---------------------------------------------------------------------------------------------------------------------
 // f0pdot function for multiphaseporoelasticity equation, implicit time stepping, quasistatic.
 void
-pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlainStrain::f0pdot_implicit(const PylithInt dim,
+pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f0pdot_implicit(const PylithInt dim,
                                                     const PylithInt numS,
                                                     const PylithInt numA,
                                                     const PylithInt sOff[],
@@ -896,6 +896,82 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1u(const P
         f1[c*_dim+c] += biotCoefficient*equivalentPressure;
     } // for
 } // f1u
+
+// ----------------------------------------------------------------------
+// f1u function for isotropic linear Poroelasticity plane strain with reference stress and strain.
+void
+pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f1u_refstate(const PylithInt dim,
+                                                                          const PylithInt numS,
+                                                                          const PylithInt numA,
+                                                                          const PylithInt sOff[],
+                                                                          const PylithInt sOff_x[],
+                                                                          const PylithScalar s[],
+                                                                          const PylithScalar s_t[],
+                                                                          const PylithScalar s_x[],
+                                                                          const PylithInt aOff[],
+                                                                          const PylithInt aOff_x[],
+                                                                          const PylithScalar a[],
+                                                                          const PylithScalar a_t[],
+                                                                          const PylithScalar a_x[],
+                                                                          const PylithReal t,
+                                                                          const PylithScalar x[],
+                                                                          const PylithInt numConstants,
+                                                                          const PylithScalar constants[],
+                                                                          PylithScalar f1[]) {
+    const PylithInt _dim = 2;
+
+    // Incoming solution fields.
+    const PylithInt i_displacement = 0;
+    const PylithInt i_pressure = 1;
+    const PylithInt i_trace_strain = 2;
+
+    const PylithScalar* displacement_x = &s_x[sOff_x[i_displacement]];
+    const PylithScalar pressure = s[sOff[i_pressure]];
+    const PylithScalar trace_strain = s[sOff[i_trace_strain]];
+
+    // Incoming auxiliary fields.
+
+    // IsotropicLinearPoroelasticity
+    const PylithInt i_rstress = numA - 7;
+    const PylithInt i_rstrain = numA - 6;
+    const PylithInt i_shearModulus = numA - 5;
+    const PylithInt i_drainedBulkModulus = numA - 4;
+    const PylithInt i_biotCoefficient = numA - 3;
+    const PylithInt i_biotModulus = numA - 2;
+
+    const PylithScalar shearModulus = a[aOff[i_shearModulus]];
+    const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
+    const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
+    const PylithScalar biotModulus = a[aOff[i_biotModulus]];
+    const PylithScalar* refStress = &a[aOff[i_rstress]]; // stress_xx, stress_yy, stress_zz, stress_xy
+    const PylithScalar* refStrain = &a[aOff[i_rstrain]]; // strain_xx, strain_yy, strain_zz, strain_xy
+
+    const PylithScalar ref_trace_strain = refStrain[0] + refStrain[1] + refStrain[2];
+    const PylithScalar meanrstress = (refStress[0] + refStress[1] + refStress[2]) / 3.0;
+    const PylithScalar meanStress = meanrstress + drainedBulkModulus * (trace_strain - ref_trace_strain);
+    const PylithScalar alphaPres = biotCoefficient * pressure;
+    const PylithReal traceTerm = (-2.0/3.0)*shearModulus * trace_strain;
+
+    // Convert reference vectors to refrence tensors
+    PylithScalar refStressTensor[_dim*_dim];
+    PylithScalar refStrainTensor[_dim*_dim];
+    PylithInt refTensorPos[9] = {0, 3, 5, 3, 1, 4, 5, 4, 2};
+
+    for (PylithInt i = 0; i < _dim; ++i) {
+        for (PylithInt j = 0; j < _dim; ++j) {
+            refStressTensor[i*_dim+j] = refStress[refTensorPos[i*_dim+j]];
+            refStrainTensor[i*_dim+j] = refStrain[refTensorPos[i*_dim+j]];
+        } // for
+    } // for
+
+    for (PylithInt i = 0; i < _dim; ++i) {
+        f1[i*_dim+i] -= (meanStress - alphaPres);
+        f1[i*_dim+i] -= refStress[i*_dim+i] - meanrstress + traceTerm;
+        for (PylithInt j = 0; j < _dim; ++j) {
+            f1[i*_dim+j] -= shearModulus * (displacement_x[i*_dim+j] + displacement_x[j*_dim+i]) - refStrain[i*_dim+j];
+        } // for
+    } // for
+} // f1u_refstate
 
 
 // ----------------------------------------------------------------------
@@ -2858,7 +2934,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::g1p(const P
  *
  */
 void
-pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::g1p_tensor_permeability(const PylithInt dim,
+pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::g1p_tensor_permeability(const PylithInt dim,
                                                                                      const PylithInt numS,
                                                                                      const PylithInt numA,
                                                                                      const PylithInt sOff[],

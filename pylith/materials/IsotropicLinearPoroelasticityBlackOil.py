@@ -20,14 +20,14 @@
 #
 # Factory: poroelasticityblackoil_rheology
 
-from .RheologyPoroelasticityBlackOil import RheologyPoroelasticityBlackOil
+from .RheologyMultiphasePoroelasticity import RheologyMultiphasePoroelasticity
 from .materials import IsotropicLinearPoroelasticityBlackOil as ModuleLinearPoroelasticityBlackOil
 
 
-class IsotropicLinearPoroelasticityBlackOil(RheologyPoroelasticityBlackOil, ModuleLinearPoroelasticityBlackOil):
+class IsotropicLinearPoroelasticityBlackOil(RheologyMultiphasePoroelasticity, ModuleLinearPoroelasticityBlackOil):
     """Python material for isotropic, linearly poroelastic plane strain.
 
-    FACTORY: poroelasticityblackoil_rheology
+    FACTORY: multiphaseporoelasticity_rheology
     """
 
     import pythia.pyre.inventory
@@ -43,7 +43,7 @@ class IsotropicLinearPoroelasticityBlackOil(RheologyPoroelasticityBlackOil, Modu
     def __init__(self, name="isotropiclinearporoelasticityblackoil"):
         """Constructor.
         """
-        RheologyPoroelasticityBlackOil.__init__(self, name)
+        RheologyMultiphasePoroelasticity.__init__(self, name)
         return
 
     def _defaults(self):
@@ -51,7 +51,7 @@ class IsotropicLinearPoroelasticityBlackOil(RheologyPoroelasticityBlackOil, Modu
         self.auxiliarySubfields = AuxSubfieldsIsotropicLinearPoroelasticityBlackOil("auxiliary_subfields")
 
     def preinitialize(self, mesh):
-        RheologyPoroelasticityBlackOil.preinitialize(self, mesh)
+        RheologyMultiphasePoroelasticity.preinitialize(self, mesh)
 
         ModuleLinearPoroelasticityBlackOil.useReferenceState(self, self.useReferenceState)
         ModuleLinearPoroelasticityBlackOil.useTensorPermeability(self, self.useTensorPermeability)
@@ -67,7 +67,7 @@ class IsotropicLinearPoroelasticityBlackOil(RheologyPoroelasticityBlackOil, Modu
 
 # FACTORIES ////////////////////////////////////////////////////////////
 
-def poroelasticityblackoil_rheology():
+def multiphaseporoelasticity_rheology():
     """Factory associated with IsotropicLinearPoroelasticityBlackOil.
     """
     return IsotropicLinearPoroelasticityBlackOil()

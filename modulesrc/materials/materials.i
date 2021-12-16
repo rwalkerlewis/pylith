@@ -77,5 +77,8 @@ import_array();
 %include "Poroelasticity.i"
 %include "RheologyPoroelasticity.i"
 %include "IsotropicLinearPoroelasticity.i"
+%include "MultiphasePoroelasticity.i"
+%include "RheologyMultiphasePoroelasticity.i"
+%include "IsotropicLinearPoroelasticityBlackOil.i"
 
 // End of file
