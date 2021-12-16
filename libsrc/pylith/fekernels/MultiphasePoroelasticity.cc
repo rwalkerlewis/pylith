@@ -183,46 +183,6 @@ pylith::fekernels::MultiphasePoroelasticity::f0e(const PylithInt dim,
     f0[0] -= trace_strain;
 } // f0e
 
-
-// ---------------------------------------------------------------------------------------------------------------------
-// f0pdot function for multiphaseporoelasticity equation, implicit time stepping, quasistatic.
-void
-pylith::fekernels::MultiphasePoroelasticity::f0pdot(const PylithInt dim,
-                                                    const PylithInt numS,
-                                                    const PylithInt numA,
-                                                    const PylithInt sOff[],
-                                                    const PylithInt sOff_x[],
-                                                    const PylithScalar s[],
-                                                    const PylithScalar s_t[],
-                                                    const PylithScalar s_x[],
-                                                    const PylithInt aOff[],
-                                                    const PylithInt aOff_x[],
-                                                    const PylithScalar a[],
-                                                    const PylithScalar a_t[],
-                                                    const PylithScalar a_x[],
-                                                    const PylithReal t,
-                                                    const PylithScalar x[],
-                                                    const PylithInt numConstants,
-                                                    const PylithScalar constants[],
-                                                    PylithScalar f0[]) {
-    // Incoming solution fields.
-    const PylithInt i_pressure = 1;
-    const PylithInt i_pdot = 4;
-
-    assert(sOff);
-    assert(sOff[i_pressure] >= 0);
-    assert(sOff[i_pdot] >= 0);
-    assert(s);
-    assert(s_t);
-
-    const PylithScalar pressure_t = s_t[sOff[i_pressure]]; // disp_t
-    const PylithScalar pdot = s[sOff[i_pdot]]; // vel
-
-    f0[0] += pressure_t;
-    f0[0] -= pdot;
-} // f0pdot
-
-
 // ---------------------------------------------------------------------------------------------------------------------
 // f0edot function for multiphaseporoelasticity equation, implicit time stepping, quasistatic.
 void

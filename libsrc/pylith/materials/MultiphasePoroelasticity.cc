@@ -393,7 +393,7 @@ pylith::materials::MultiphasePoroelasticity::_setKernelsResidual(pylith::feassem
             const PetscPointFunc f1v = NULL;
 
             // Time derivative of pressure
-            const PetscPointFunc f0pdot = pylith::fekernels::MultiphasePoroelasticity::f0pdot;
+            const PetscPointFunc f0pdot = _rheology->getKernelf0pdot_implicit(coordsys);
             const PetscPointFunc f1pdot = NULL;
 
             // Time derivative of Volumetric Strain
@@ -643,7 +643,7 @@ pylith::materials::MultiphasePoroelasticity::_setKernelsJacobian(pylith::feassem
             const PetscPointJac Jf2pdotu = NULL;
             const PetscPointJac Jf3pdotu = NULL;
 
-            const PetscPointJac Jf0pdotp = pylith::fekernels::MultiphasePoroelasticity::Jf0pdotp;
+            const PetscPointJac Jf0pdotp = _rheology->getKernelJf0pdotp(coordsys);
             const PetscPointJac Jf1pdotp = NULL;
             const PetscPointJac Jf2pdotp = NULL;
             const PetscPointJac Jf3pdotp = NULL;
@@ -658,7 +658,7 @@ pylith::materials::MultiphasePoroelasticity::_setKernelsJacobian(pylith::feassem
             const PetscPointJac Jf2pdotv = NULL;
             const PetscPointJac Jf3pdotv = NULL;
 
-            const PetscPointJac Jf0pdotpdot = pylith::fekernels::MultiphasePoroelasticity::Jf0pdotpdot;
+            const PetscPointJac Jf0pdotpdot = _rheology->getKernelJf0pdotp(coordsys);
             const PetscPointJac Jf1pdotpdot = NULL;
             const PetscPointJac Jf2pdotpdot = NULL;
             const PetscPointJac Jf3pdotpdot = NULL;

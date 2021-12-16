@@ -124,6 +124,10 @@ public:
                                          const bool _useSourceDensity) const;
 
     // ---------------------------------------------------------------------------------------------------------------------
+    // Get f0pdot kernel for LHS residual, F(t,s,\dot{s})
+    PetscPointFunc getKernelf0pdot_implicit(const spatialdata::geocoords::CoordSys* coordsys) const;
+
+    // ---------------------------------------------------------------------------------------------------------------------
     // Get stress kernel for LHS residual, F(t,s,\dot{s})
     PetscPointFunc getKernelf1u_implicit(const spatialdata::geocoords::CoordSys* coordsys) const;
 
@@ -167,6 +171,12 @@ public:
 
     // ---------------------------------------------------------------------------------------------------------------------
     PetscPointJac getKernelJf0pedot(const spatialdata::geocoords::CoordSys* coordsys) const;
+
+    // ---------------------------------------------------------------------------------------------------------------------
+    PetscPointJac getKernelJf0pdotp(const spatialdata::geocoords::CoordSys* coordsys) const;
+
+    // ---------------------------------------------------------------------------------------------------------------------
+    PetscPointJac getKernelJf0pdotpdot(const spatialdata::geocoords::CoordSys* coordsys) const;
 
     // ============================ DERIVED FIELDS ========================== //
 

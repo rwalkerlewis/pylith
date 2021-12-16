@@ -436,6 +436,22 @@ pylith::materials::IsotropicLinearPoroelasticityBlackOil::getKernelf0p_implicit(
 } // getKernelf0p_implicit
 
 // ---------------------------------------------------------------------------------------------------------------------
+// Get f0pdot kernel for LHS residual, F(t,s,\dot{s})
+PetscPointFunc
+pylith::materials::IsotropicLinearPoroelasticityBlackOil::getKernelf0pdot_implicit(const spatialdata::geocoords::CoordSys* coordsys) const {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_COMPONENT_DEBUG("getKernelf0pdot_implicit="<<typeid(coordsys).name()<<")");
+
+    const int spaceDim = coordsys->getSpaceDim();
+    PetscPointFunc f0pdot =
+        (3 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::f0pdot_implicit :
+        (2 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::f0pdot_implicit :
+        NULL;
+
+    PYLITH_METHOD_RETURN(f0pdot);
+} // getKernelf0pdot_implicit
+
+// ---------------------------------------------------------------------------------------------------------------------
 // Get stress kernel for LHS residual, F(t,s,\dot{s}).
 PetscPointFunc
 pylith::materials::IsotropicLinearPoroelasticityBlackOil::getKernelf1u_implicit(const spatialdata::geocoords::CoordSys* coordsys) const {
@@ -671,6 +687,35 @@ pylith::materials::IsotropicLinearPoroelasticityBlackOil::getKernelJf0pedot(cons
     PYLITH_METHOD_RETURN(Jf0pedot);
 } // getKernelJf0pedot
 
+// ---------------------------------------------------------------------------------------------------------------------
+PetscPointJac
+pylith::materials::IsotropicLinearPoroelasticityBlackOil::getKernelJf0pdotp(const spatialdata::geocoords::CoordSys* coordsys) const {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_COMPONENT_DEBUG("getKernelJf0pdotp(coordsys="<<typeid(coordsys).name()<<")");
+
+    const int spaceDim = coordsys->getSpaceDim();
+    PetscPointJac Jf0pdotp =
+        (3 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::Jf0pdotp :
+        (2 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::Jf0pdotp :
+        NULL;
+
+    PYLITH_METHOD_RETURN(Jf0pdotp);
+} // getKernelJf0pdotp
+
+// ---------------------------------------------------------------------------------------------------------------------
+PetscPointJac
+pylith::materials::IsotropicLinearPoroelasticityBlackOil::getKernelJf0pdotpdot(const spatialdata::geocoords::CoordSys* coordsys) const {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_COMPONENT_DEBUG("getKernelJf0pdotpdot(coordsys="<<typeid(coordsys).name()<<")");
+
+    const int spaceDim = coordsys->getSpaceDim();
+    PetscPointJac Jf0pdotpdot =
+        (3 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::Jf0pdotpdot :
+        (2 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::Jf0pdotpdot :
+        NULL;
+
+    PYLITH_METHOD_RETURN(Jf0pdotpdot);
+} // getKernelJf0pdotpdot
 
 // =========================== DERIVED FIELDS ==================================
 

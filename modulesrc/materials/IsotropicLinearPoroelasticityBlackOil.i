@@ -98,6 +98,13 @@ public:
 
    // ============================= LHS ==================================== //
 
+    // ---------------------------------------------------------------------------------------------------------------------
+    // Select implicit f0u function.
+    PetscPointFunc getKernelf0u_implicit(const spatialdata::geocoords::CoordSys* coordsys,
+                                            const bool _useBodyForce,
+                                            const bool _gravityField,
+                                            const bool _useSourceDensity) const;
+
    // ---------------------------------------------------------------------------------------------------------------------
    // Get variation in fluid content kernel for LHS residual, F(t,s,\dot{s})
    PetscPointFunc getKernelf0p_explicit(const spatialdata::geocoords::CoordSys* coordsys) const;
