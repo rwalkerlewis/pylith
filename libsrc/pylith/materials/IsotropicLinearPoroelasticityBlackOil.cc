@@ -121,7 +121,7 @@ pylith::materials::IsotropicLinearPoroelasticityBlackOil::addAuxiliarySubfields(
     _auxiliaryFactory->addFormationVolumeFactors(); // Formation volume factor vector, B, numA - 10
     _auxiliaryFactory->addRelativePermeability(); // Relative permeability vector, k_r, numA - 9
     _auxiliaryFactory->addThreePhaseFluidViscosity(); // Fluid viscosity vector, numA - 8
-    _auxiliaryFactory->addThreePhaseSaturation(); // Saturation vector, s, numA - 7
+    _auxiliaryFactory->addFluidSaturation(); // Saturation vector, s, numA - 7
     _auxiliaryFactory->addThreePhaseFluidModulus(); // Fluid modulus vector, K_f, numA - 6
     _auxiliaryFactory->addShearModulus(); // Shear Modulus, G, numA - 5
     _auxiliaryFactory->addDrainedBulkModulus(); // K_d, numA - 4
@@ -763,24 +763,37 @@ pylith::materials::IsotropicLinearPoroelasticityBlackOil::addKernelsUpdateStateV
                                                                                     const bool _useStateVars) const {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("addKernelsUpdateStateVarsImplicit(kernels="<<kernels<<", coordsys="<<coordsys<<")");
-    if (_useStateVars) {
-        const int spaceDim = coordsys->getSpaceDim();
 
-        const PetscPointFunc funcSaturation =
-            (3 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::updateSaturationImplicit :
-            (2 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::updateSaturationImplicit :
-            NULL;
+    const int spaceDim = coordsys->getSpaceDim();
+    int numKernels = 1;
+    assert(kernels);
+    size_t prevNumKernels = kernels->size();
+
+    const PetscPointFunc funcSaturation =
+        (3 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::updateSaturationImplicit :
+        (2 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::updateSaturationImplicit :
+        NULL;
+
+    if (_useStateVars) {
 
         const PetscPointFunc funcPorosity =
             (3 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::updatePorosityImplicit :
             (2 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::updatePorosityImplicit :
             NULL;
 
-        assert(kernels);
-        size_t prevNumKernels = kernels->size();
-        kernels->resize(prevNumKernels + 2);
-        (*kernels)[prevNumKernels+0] = ProjectKernels("saturation", funcSaturation);
+        numKernels += 1;
+        
+        // Update kernels
+        kernels->resize(prevNumKernels + numKernels);
+        (*kernels)[prevNumKernels+0] = ProjectKernels("fluid_saturation", funcSaturation);
         (*kernels)[prevNumKernels+1] = ProjectKernels("porosity", funcPorosity);
+
+    } else if (!_useStateVars) {
+
+        // Update kernels
+        kernels->resize(prevNumKernels + numKernels);
+        (*kernels)[prevNumKernels+0] = ProjectKernels("fluid_saturation", funcSaturation);        
+
     }
 
     PYLITH_METHOD_END;

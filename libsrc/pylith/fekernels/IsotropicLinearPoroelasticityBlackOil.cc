@@ -3297,6 +3297,42 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::cauchyStres
     stressVector[3] = stressTensor[0*_dim+1]; // stress_xy
 } // cauchyStress_refstate
 
+// ---------------------------------------------------------------------------------------------------------------------
+/* Return porosity value (updated for compaction, etc.)
+ */
+void
+pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::porosity(const PylithInt dim,
+                                                                                  const PylithInt numS,
+                                                                                  const PylithInt numA,
+                                                                                  const PylithInt sOff[],
+                                                                                  const PylithInt sOff_x[],
+                                                                                  const PylithScalar s[],
+                                                                                  const PylithScalar s_t[],
+                                                                                  const PylithScalar s_x[],
+                                                                                  const PylithInt aOff[],
+                                                                                  const PylithInt aOff_x[],
+                                                                                  const PylithScalar a[],
+                                                                                  const PylithScalar a_t[],
+                                                                                  const PylithScalar a_x[],
+                                                                                  const PylithReal t,
+                                                                                  const PylithScalar x[],
+                                                                                  const PylithInt numConstants,
+                                                                                  const PylithScalar constants[],
+                                                                                  PylithScalar porosity[]) {
+    const PylithInt _dim = 2;
+    // Incoming solution fields.
+
+    // Incoming re-packed auxiliary field.
+
+    // Poroelasticity
+    const PylithInt i_porosityPrev = 3;
+
+    const PylithScalar porosityPrev = a[aOff[i_porosityPrev]];
+
+    // return porosity
+    porosity[0] = porosityPrev; 
+}
+
 
 // ========================== Update Kernels ===================================
 
@@ -3410,7 +3446,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::updateSatur
     const PylithInt i_threePhaseFluidModulus = numA - 6;
 
     const PylithInt i_biotCoefficient = numA - 3;
-    const PylithInt i_solidBulkModulus = numA -2;
+    const PylithInt i_solidBulkModulus = numA - 2;
 
     // Constants
     // const PylithScalar dt = constants[0];
@@ -3480,8 +3516,9 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::updateSatur
     for (PylithInt i = 0; i < _phases; ++i ) {
         ZetaSum += Zeta[i];
     }
-    for (PylithInt j = 0; j < _phases; j++) {
-            saturation[j] += Zeta[j] / ZetaSum;
+    
+    for (PylithInt i = 0; i < _phases; i++) {
+        saturation[i] += Zeta[i] / ZetaSum;
     }
 } // updateSaturationImplicit
 

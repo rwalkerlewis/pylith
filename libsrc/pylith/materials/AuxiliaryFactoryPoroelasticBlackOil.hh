@@ -64,7 +64,7 @@ public:
     void addThreePhaseFluidModulus(void);
 
     /// Add three phase fluid saturation subfield to auxiliary subfields.
-    void addThreePhaseSaturation(void);
+    void addFluidSaturation(void);
 
     /// Add three phase fluid viscosity subfield to auxiliary subfields.
     void addThreePhaseFluidViscosity(void);

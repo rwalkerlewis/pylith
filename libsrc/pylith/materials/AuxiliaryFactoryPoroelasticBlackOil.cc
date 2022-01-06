@@ -285,9 +285,9 @@ pylith::materials::AuxiliaryFactoryPoroelasticBlackOil::addThreePhaseFluidModulu
 // --------------------------------------------------------------------
 // Add fluid saturation values subfield to auxiliary fields.
 void
-pylith::materials::AuxiliaryFactoryPoroelasticBlackOil::addThreePhaseSaturation(void) { // threePhaseSaturation
+pylith::materials::AuxiliaryFactoryPoroelasticBlackOil::addFluidSaturation(void) { // fluidSaturation
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("addThreePhaseSaturation(void)");
+    PYLITH_JOURNAL_DEBUG("addFluidSaturation(void)");
 
     const char* subfieldName = "fluid_saturation";
     const PylithReal noScale = 1;
@@ -315,7 +315,7 @@ pylith::materials::AuxiliaryFactoryPoroelasticBlackOil::addThreePhaseSaturation(
     this->setSubfieldQuery(subfieldName);
 
     PYLITH_METHOD_END;
-} // addThreePhaseSaturation
+} // addFluidSaturation
 
 
 // --------------------------------------------------------------------

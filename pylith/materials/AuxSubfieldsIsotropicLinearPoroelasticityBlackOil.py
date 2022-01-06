@@ -74,7 +74,8 @@ class AuxSubfieldsIsotropicLinearPoroelasticityBlackOil(PetscComponent):
         "undrained_bulk_modulus", family="auxiliary_subfield", factory=Subfield)
     undrainedBulkModulus.meta['tip'] = "Undrained bulk modulus subfield."
 
-    fluidViscosity = pythia.pyre.inventory.facility("fluid_viscosity", family="auxiliary_subfield", factory=Subfield)
+    fluidViscosity = pythia.pyre.inventory.facility(
+        "fluid_viscosity", family="auxiliary_subfield", factory=Subfield)
     fluidViscosity.meta['tip'] = "Fluid viscosity subfield."
 
     fluidSaturation = pythia.pyre.inventory.facility(
@@ -97,7 +98,8 @@ class AuxSubfieldsIsotropicLinearPoroelasticityBlackOil(PetscComponent):
         "solution_oil_gas_ratio", family="auxiliary_subfield", factory=Subfield)
     solutionOilGasRatio.meta['tip'] = "Solution oil gas ratio."
 
-    fluidDensity = pythia.pyre.inventory.facility("fluid_density", family="auxiliary_subfield", factory=Subfield)
+    fluidDensity = pythia.pyre.inventory.facility(
+        "fluid_density", family="auxiliary_subfield", factory=Subfield)
     fluidDensity.meta['tip'] = "Fluid density subfield."
 
     youngsModulus = pythia.pyre.inventory.facility(
