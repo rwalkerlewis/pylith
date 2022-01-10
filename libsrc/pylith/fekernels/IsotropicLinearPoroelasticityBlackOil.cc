@@ -3429,7 +3429,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::updateSatur
                                                                                             const PylithScalar x[],
                                                                                             const PylithInt numConstants,
                                                                                             const PylithScalar constants[],
-                                                                                            PylithScalar saturation[]) {
+                                                                                            PylithScalar fluid_saturation[]) {
     const PylithInt _dim = 2;
     const PylithInt _phases = 3;
     // Incoming solution fields.
@@ -3457,7 +3457,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::updateSatur
     assert(numA >= 3);
     assert(aOff);
     assert(aOff[i_porosity] >= 0);
-    assert(saturation);
+    assert(fluid_saturation);
 
     // Do stuff
     const PylithScalar* pressure = &s[sOff[i_pressure]];
@@ -3518,7 +3518,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::updateSatur
     }
     
     for (PylithInt i = 0; i < _phases; i++) {
-        saturation[i] += Zeta[i] / ZetaSum;
+        fluid_saturation[i] += Zeta[i] / ZetaSum;
     }
 } // updateSaturationImplicit
 

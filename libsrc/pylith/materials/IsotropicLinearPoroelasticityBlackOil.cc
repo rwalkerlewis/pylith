@@ -792,11 +792,9 @@ pylith::materials::IsotropicLinearPoroelasticityBlackOil::addKernelsUpdateStateV
 
         // Update kernels
         kernels->resize(prevNumKernels + numKernels);
-        (*kernels)[prevNumKernels+0] = ProjectKernels("fluid_saturation", funcSaturation);        
-
+        (*kernels)[prevNumKernels+0] = ProjectKernels("fluid_saturation", funcSaturation);
     }
 
-    PYLITH_METHOD_END;
 } // addKernelsUpdateStateVarsImplicit
 
 

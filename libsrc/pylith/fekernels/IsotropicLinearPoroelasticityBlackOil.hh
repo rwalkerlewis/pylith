@@ -1291,7 +1291,7 @@ public:
                         const PylithScalar x[],
                         const PylithInt numConstants,
                         const PylithScalar constants[],
-                        PylithScalar saturation[]);
+                        PylithScalar fluid_saturation[]);
 
     // ---------------------------------------------------------------------------------------------------------------------
     /* Update porosity for a linear poroelastic material, explicit.
