@@ -14,7 +14,7 @@
 # ----------------------------------------------------------------------
 #
 
-# @file pylith/problems/SolnDispPresTracStrain.py
+# @file pylith/problems/SolnDispPresTracStrainBO.py
 #
 # @brief Python subfields container with displacement, pore pressure, and trace strain subfields.
 
@@ -22,7 +22,7 @@ from pylith.utils.PetscComponent import PetscComponent
 from .Solution import Solution as SolutionBase
 
 
-class SolnDispPresTracStrain(PetscComponent):
+class SolnDispPresTracStrainBO(PetscComponent):
     """Python subfields container with displacement, pore pressure, and trace strain subfields.
 
     IMPORTANT: Use the Solution class (below) to set this object as the default facilities array for the solution
@@ -35,8 +35,8 @@ class SolnDispPresTracStrain(PetscComponent):
     displacement = pythia.pyre.inventory.facility("displacement", family="soln_subfield", factory=SubfieldDisplacement)
     displacement.meta['tip'] = "Displacement subfield."
 
-    from .SubfieldPressure import SubfieldPressure
-    pressure = pythia.pyre.inventory.facility("pressure", family="soln_subfield", factory=SubfieldPressure)
+    from .SubfieldBlackOilPressure import SubfieldBlackOilPressure
+    pressure = pythia.pyre.inventory.facility("pressure", family="soln_subfield", factory=SubfieldBlackOilPressure)
     pressure.meta['tip'] = "Pressure subfield."
 
     from .SubfieldTraceStrain import SubfieldTraceStrain
@@ -45,7 +45,7 @@ class SolnDispPresTracStrain(PetscComponent):
 
     # PUBLIC METHODS /////////////////////////////////////////////////////
 
-    def __init__(self, name="solndispprestracstrain"):
+    def __init__(self, name="solndispprestracstrainbo"):
         """Constructor.
         """
         PetscComponent.__init__(self, name, facility="soln_subfields")
@@ -71,7 +71,7 @@ class Solution(SolutionBase):
 
     from .SolutionSubfield import subfieldFactory
     subfields = pythia.pyre.inventory.facilityArray(
-        "subfields", family="soln_subfields", itemFactory=subfieldFactory, factory=SolnDispPresTracStrain)
+        "subfields", family="soln_subfields", itemFactory=subfieldFactory, factory=SolnDispPresTracStrainBO)
     subfields.meta['tip'] = "Subfields in solution."
 
 

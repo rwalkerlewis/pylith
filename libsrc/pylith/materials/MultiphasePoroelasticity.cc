@@ -227,8 +227,13 @@ pylith::materials::MultiphasePoroelasticity::createAuxiliaryField(const pylith::
     // ---------------------------------
     // Required Auxiliary
     auxiliaryFactory->addSolidDensity(); // 0 Rock Density
-    auxiliaryFactory->addPorosity(); // 1 Porosity
 
+    if (_useStateVars) {
+        auxiliaryFactory->addPorosityUpdate(); // 1 Porosity (updating)
+    } else if (!_useStateVars) {
+        auxiliaryFactory->addPorosity(); // 1 Porosity
+    }
+    
     // ---------------------------------
     // Optional Auxiliary
     if (_useBodyForce) {

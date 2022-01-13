@@ -53,6 +53,9 @@ public:
     /// Add porosity subfield to auxiliary subfields.
     void addPorosity(void);
 
+    /// Add porosity subfield with updating state to auxiliary subfields.
+    void addPorosityUpdate(void);
+
     /// Add solid density subfield to auxiliary subfields.
     void addSolidDensity(void);
 

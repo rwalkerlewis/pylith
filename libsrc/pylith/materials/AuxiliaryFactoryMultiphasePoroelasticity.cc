@@ -131,8 +131,6 @@ pylith::materials::AuxiliaryFactoryMultiphasePoroelasticity::addPorosity(void) {
     description.alias = subfieldName;
     description.vectorFieldType = pylith::topology::Field::SCALAR;
     description.numComponents = 1;
-    description.hasHistory = true;
-    description.historySize = 1;
     description.componentNames.resize(1);
     description.componentNames[0] = subfieldName;
     description.scale = noScale;
@@ -144,6 +142,33 @@ pylith::materials::AuxiliaryFactoryMultiphasePoroelasticity::addPorosity(void) {
     PYLITH_METHOD_END;
 } // addPorosity
 
+// ----------------------------------------------------------------------
+// Add porosity subfield with updating state to auxiliary fields.
+void
+pylith::materials::AuxiliaryFactoryMultiphasePoroelasticity::addPorosityUpdate(void) { // porosity
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addPorosityUpdate(void)");
+
+    const char* subfieldName = "porosity";
+    const PylithReal noScale = 1;
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.hasHistory = true;
+    description.historySize = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = subfieldName;
+    description.scale = noScale;
+    description.validator = pylith::topology::FieldQuery::validatorNonnegative;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addPorosityUpdate
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Add density subfield to auxiliary fields.
