@@ -20,6 +20,7 @@ dist_noinst_DATA = \
 	quad.mesh \
 	tri.mesh \
 	pylithapp.cfg \
+	step01.cfg \
 	step01_gravity.cfg 
 
 
