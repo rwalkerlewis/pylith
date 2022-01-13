@@ -266,7 +266,7 @@ pylith::materials::AuxiliaryFactoryPoroelasticBlackOil::addThreePhaseFluidModulu
     pylith::topology::Field::Description description;
     description.label = subfieldName;
     description.alias = subfieldName;
-    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.vectorFieldType = pylith::topology::Field::OTHER;
     description.numComponents = 3;
     description.componentNames.resize(3);
     for (int i = 0; i < 3; ++i) {
@@ -296,11 +296,10 @@ pylith::materials::AuxiliaryFactoryPoroelasticBlackOil::addFluidSaturation(void)
         "oil_saturation",
         "gas_saturation"
     };
-
     pylith::topology::Field::Description description;
     description.label = subfieldName;
     description.alias = subfieldName;
-    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.vectorFieldType = pylith::topology::Field::OTHER;
     description.numComponents = 3;
     description.hasHistory = true;
     description.historySize = 1;
@@ -338,7 +337,7 @@ pylith::materials::AuxiliaryFactoryPoroelasticBlackOil::addThreePhaseFluidViscos
     pylith::topology::Field::Description description;
     description.label = subfieldName;
     description.alias = subfieldName;
-    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.vectorFieldType = pylith::topology::Field::OTHER;
     description.numComponents = 3;
     description.componentNames.resize(3);
     for (int i = 0; i < 3; ++i) {
@@ -372,10 +371,10 @@ pylith::materials::AuxiliaryFactoryPoroelasticBlackOil::addRelativePermeability(
     pylith::topology::Field::Description description;
     description.label = subfieldName;
     description.alias = subfieldName;
-    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.vectorFieldType = pylith::topology::Field::OTHER;
     description.numComponents = 3;
-    description.hasHistory = true;
-    description.historySize = 1;
+    // description.hasHistory = true;
+    // description.historySize = 1;
     description.componentNames.resize(3);
     for (int i = 0; i < 3; ++i) {
         description.componentNames[i] = componentNames[i];
@@ -408,10 +407,10 @@ pylith::materials::AuxiliaryFactoryPoroelasticBlackOil::addFormationVolumeFactor
     pylith::topology::Field::Description description;
     description.label = subfieldName;
     description.alias = subfieldName;
-    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.vectorFieldType = pylith::topology::Field::OTHER;
     description.numComponents = 3;
-    description.hasHistory = true;
-    description.historySize = 1;
+    // description.hasHistory = true;
+    // description.historySize = 1;
     description.componentNames.resize(3);
     for (int i = 0; i < 3; ++i) {
         description.componentNames[i] = componentNames[i];
@@ -500,10 +499,10 @@ pylith::materials::AuxiliaryFactoryPoroelasticBlackOil::addFluidDensities(void) 
     pylith::topology::Field::Description description;
     description.label = subfieldName;
     description.alias = subfieldName;
-    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.vectorFieldType = pylith::topology::Field::OTHER;
     description.numComponents = 3;
-    description.hasHistory = true;
-    description.historySize = 1;
+    // description.hasHistory = true;
+    // description.historySize = 1;
     description.componentNames.resize(3);
     for (int i = 0; i < 3; ++i) {
         description.componentNames[i] = componentNames[i];
