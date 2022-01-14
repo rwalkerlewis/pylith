@@ -3463,8 +3463,6 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::updateSatur
     const PylithScalar* pressure = &s[sOff[i_pressure]];
     const PylithScalar trace_strain = s[sOff[i_trace_strain]];
 
-
-
     const PylithScalar* saturation_old = &a[aOff[i_threePhaseSaturation]];
     const PylithScalar* fluidModulus = &a[aOff[i_threePhaseFluidModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
@@ -3516,9 +3514,14 @@ pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::updateSatur
     for (PylithInt i = 0; i < _phases; ++i ) {
         ZetaSum += Zeta[i];
     }
-    
-    for (PylithInt i = 0; i < _phases; i++) {
-        fluid_saturation[i] += Zeta[i] / ZetaSum;
+    if (ZetaSum == 0.0) {
+        for (PylithInt i = 0; i < _phases; i++) {
+            fluid_saturation[i] += 0.0;
+        } 
+    } else {
+        for (PylithInt i = 0; i < _phases; i++) {
+            fluid_saturation[i] += Zeta[i] / ZetaSum;
+        }
     }
 } // updateSaturationImplicit
 
