@@ -172,63 +172,6 @@ pylith::materials::AuxiliaryFactoryMultiphasePoroelasticity::addSolidDensity(voi
 
 
 // ----------------------------------------------------------------------
-// Add fluid density subfield to auxiliary fields.
-void
-pylith::materials::AuxiliaryFactoryMultiphasePoroelasticity::addFluidDensity(void) { // fluidDensity
-    PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("addFluidDensity(void)");
-
-    const char* subfieldName = "fluid_density";
-    const PylithReal densityScale = _normalizer->getDensityScale();
-
-    pylith::topology::Field::Description description;
-    description.label = subfieldName;
-    description.alias = subfieldName;
-    description.vectorFieldType = pylith::topology::Field::SCALAR;
-    description.numComponents = 1;
-    description.componentNames.resize(1);
-    description.componentNames[0] = subfieldName;
-    description.scale = densityScale;
-    description.validator = pylith::topology::FieldQuery::validatorPositive;
-
-    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
-    this->setSubfieldQuery(subfieldName);
-
-    PYLITH_METHOD_END;
-} // addFluidDensity
-
-
-// ----------------------------------------------------------------------
-// Add fluid viscosity subfield to auxiliary fields.
-void
-pylith::materials::AuxiliaryFactoryMultiphasePoroelasticity::addFluidViscosity(void) { // fluidViscosity
-    PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("addFluidViscosity(void)");
-
-    const char* subfieldName = "fluid_viscosity";
-    const PylithReal pressureScale = _normalizer->getPressureScale();
-    const PylithReal timeScale = _normalizer->getTimeScale();
-    const PylithReal viscosityScale = pressureScale*timeScale;
-
-    pylith::topology::Field::Description description;
-    description.label = subfieldName;
-    description.alias = subfieldName;
-    description.vectorFieldType = pylith::topology::Field::SCALAR;
-    description.numComponents = 1;
-    description.componentNames.resize(1);
-    description.componentNames[0] = subfieldName;
-    description.scale = viscosityScale;
-    description.validator = pylith::topology::FieldQuery::validatorPositive;
-
-    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
-    this->setSubfieldQuery(subfieldName);
-
-    PYLITH_METHOD_END;
-
-} // addFluidViscosity
-
-
-// ----------------------------------------------------------------------
 // Add source density subfield to auxiliary fields.
 void
 pylith::materials::AuxiliaryFactoryMultiphasePoroelasticity::addSourceDensity(void) { // sourceDensity

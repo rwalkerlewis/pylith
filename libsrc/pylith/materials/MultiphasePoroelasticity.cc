@@ -330,9 +330,8 @@ pylith::materials::MultiphasePoroelasticity::_setKernelsResidual(pylith::feassem
             const PetscPointFunc f1u = _rheology->getKernelf1u_implicit(coordsys);
 
             // Pressure
-            PetscPointFunc f0p = _rheology->getKernelf0p_implicit(coordsys, _useBodyForce, _gravityField, _useSourceDensity);
-            PetscPointFunc f1p = _rheology->getKernelf1p_implicit(coordsys, _useBodyForce, _gravityField); // darcy
-                                                                                                           // velocity
+            const PetscPointFunc f0p = _rheology->getKernelf0p_implicit(coordsys, _useBodyForce, _gravityField, _useSourceDensity);
+            const PetscPointFunc f1p = _rheology->getKernelf1p_implicit(coordsys, _useBodyForce, _gravityField); // darcy velocity
 
             // Volumetric Strain
             const PetscPointFunc f0e = pylith::fekernels::MultiphasePoroelasticity::f0e;
@@ -342,14 +341,15 @@ pylith::materials::MultiphasePoroelasticity::_setKernelsResidual(pylith::feassem
             kernels[0] = ResidualKernels("displacement", pylith::feassemble::Integrator::RESIDUAL_LHS, f0u, f1u);
             kernels[1] = ResidualKernels("pressure", pylith::feassemble::Integrator::RESIDUAL_LHS, f0p, f1p);
             kernels[2] = ResidualKernels("trace_strain", pylith::feassemble::Integrator::RESIDUAL_LHS, f0e, f1e);
+            
         } else if (_useStateVars) {
             // Displacement
             const PetscPointFunc f0u = _rheology->getKernelf0u_implicit(coordsys, _useBodyForce, _gravityField, _useSourceDensity);
             const PetscPointFunc f1u = _rheology->getKernelf1u_implicit(coordsys);
 
             // Pressure
-            PetscPointFunc f0p = _rheology->getKernelf0p_implicit(coordsys, _useBodyForce, _gravityField, _useSourceDensity);
-            PetscPointFunc f1p = _rheology->getKernelf1p_implicit(coordsys, _useBodyForce, _gravityField);
+            const PetscPointFunc f0p = _rheology->getKernelf0p_implicit(coordsys, _useBodyForce, _gravityField, _useSourceDensity);
+            const PetscPointFunc f1p = _rheology->getKernelf1p_implicit(coordsys, _useBodyForce, _gravityField);
 
             // Volumetric Strain
             const PetscPointFunc f0e = pylith::fekernels::MultiphasePoroelasticity::f0e;

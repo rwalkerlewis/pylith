@@ -84,6 +84,14 @@ namespace pylith
                                         const bool _gravityField,
                                         const bool _useSourceDensity) const;
 
+       // ---------------------------------------------------------------------------------------------------------------------
+       // Get g0v kernel for RHS residual, G(t,s)
+       PetscPointFunc getKernelg0v_explicit(const spatialdata::geocoords::CoordSys* coordsys,
+                                   const bool _useBodyForce,
+                                   const bool _gravityField,
+                                   const bool _useSourceDensity) const;
+
+
             // ---------------------------------------------------------------------------------------------------------------------
             /** Get pressure kernel for RHS residual, G(t,s).
    *

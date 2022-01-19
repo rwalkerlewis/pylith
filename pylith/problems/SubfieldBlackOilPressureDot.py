@@ -60,7 +60,7 @@ class SubfieldBlackOilPressureDot(SolutionSubfield):
         Initialize subfield metadata.
         """
         from pylith.topology.Field import Field
-        self.vectorFieldType = Field.SCALAR
+        self.vectorFieldType = Field.VECTOR
         self.scale = normalizer.getPressureScale() / normalizer.getTimeScale()
         self._setFluidComponents(3)
         return
@@ -81,7 +81,7 @@ def soln_subfield():
     """
     Factory associated with SubfieldPressureDot.
     """
-    return SubfieldPressureDot()
+    return SubfieldBlackOilPressureDot()
 
 
 # End of file

@@ -56,12 +56,6 @@ public:
     /// Add solid density subfield to auxiliary subfields.
     void addSolidDensity(void);
 
-    /// Add fluid density subfield to auxiliary subfields.
-    void addFluidDensity(void);
-
-    /// Add fluid viscosity subfield to auxiliary subfields.
-    void addFluidViscosity(void);
-
     /// Add reference sourceDensity subfield to auxiliary fields.
     void addSourceDensity(void);
 
