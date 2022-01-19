@@ -56,6 +56,13 @@ namespace pylith
                                                    const bool _gravityField,
                                                    const bool _useSourceDensity) const = 0;
 
+                // ---------------------------------------------------------------------------------------------------------------------
+                // Get g0v kernel for RHS residual, G(t,s)
+                virtual getKernelg0v_explicit(const spatialdata::geocoords::CoordSys* coordsys,
+                                                const bool _useBodyForce,
+                                                const bool _gravityField,
+                                                const bool _useSourceDensity) const = 0;
+
                // ---------------------------------------------------------------------------------------------------------------------
                /** Get pressure kernel for RHS residual.
      *

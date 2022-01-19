@@ -250,6 +250,66 @@ pylith::materials::IsotropicLinearPoroelasticityBlackOil::getKernelg1p_explicit(
     PYLITH_METHOD_RETURN(g1p);
 } // getKernelg1p_implicit
 
+// ---------------------------------------------------------------------------------------------------------------------
+// Get g0v for RHS residual, G(t,s).
+PetscPointFunc
+pylith::materials::IsotropicLinearPoroelasticityBlackOil::getKernelg0v_explicit(const spatialdata::geocoords::CoordSys* coordsys,
+                                                               const bool _useBodyForce,
+                                                               const bool _gravityField,
+                                                               const bool _useSourceDensity)  const {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_COMPONENT_DEBUG("getKernelg0v_explicit(coordsys="<<typeid(coordsys).name()<<")");
+
+    PetscPointFunc g1v = NULL;
+
+    const int bitBodyForce = _useBodyForce ? 0x1 : 0x0;
+    const int bitGravity = _gravityField ? 0x2 : 0x0;
+    const int bitSourceDensity = _useSourceDensity ? 0x4 : 0x0;
+    const int bitUse = bitBodyForce | bitGravity | bitSourceDensity;
+
+    PetscPointFunc g0v = NULL;
+    switch (bitUse) {
+    case 0x0:
+        break;
+    case 0x1:
+        g0v = (3 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::g0v_bodyforce :
+              (2 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::g0v_bodyforce :
+              NULL;
+        break;
+    case 0x2:
+        g0v = (3 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::g0v_gravity :
+              (2 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::g0v_gravity :
+              NULL;
+        break;
+    case 0x4:
+        break;
+    case 0x3:
+        g0v = (3 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::g0v_gravity_bodyforce :
+              (2 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::g0v_gravity_bodyforce :
+              NULL;
+        break;
+    case 0x5:
+        g0v = (3 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::g0v_bodyforce :
+              (2 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::g0v_bodyforce :
+              NULL;
+        break;
+    case 0x6:
+        g0v = (3 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::g0v_gravity :
+              (2 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::g0v_gravity :
+              NULL;
+        break;
+    case 0x7:
+        g0v = (3 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::g0v_gravity_bodyforce :
+              (2 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::g0v_gravity_bodyforce :
+              NULL;
+        break;
+    default:
+        PYLITH_COMPONENT_LOGICERROR("Unknown case (bitUse=" << bitUse << ") for residual kernels.");
+    } // switch
+
+    PYLITH_METHOD_RETURN(g0v);
+} // getKernelResidualStress
+
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Get stress kernel for RHS residual, G(t,s).
@@ -765,7 +825,7 @@ pylith::materials::IsotropicLinearPoroelasticityBlackOil::addKernelsUpdateStateV
     PYLITH_COMPONENT_DEBUG("addKernelsUpdateStateVarsImplicit(kernels="<<kernels<<", coordsys="<<coordsys<<")");
 
     const int spaceDim = coordsys->getSpaceDim();
-    int numKernels = 1;
+    int numKernels = 2;
     assert(kernels);
     size_t prevNumKernels = kernels->size();
 
@@ -775,24 +835,23 @@ pylith::materials::IsotropicLinearPoroelasticityBlackOil::addKernelsUpdateStateV
         NULL;
 
     if (_useStateVars) {
-
         const PetscPointFunc funcPorosity =
             (3 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::updatePorosityImplicit :
             (2 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::updatePorosityImplicit :
             NULL;
-
-        numKernels += 1;
-        
+        // Update kernels
+        kernels->resize(prevNumKernels + numKernels);
+        (*kernels)[prevNumKernels+0] = ProjectKernels("fluid_saturation", funcSaturation);
+        (*kernels)[prevNumKernels+1] = ProjectKernels("porosity", funcPorosity);            
+    } else if (!_useStateVars) {
+        const PetscPointFunc funcPorosity =
+            (3 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOil3D::updatePorosityNone :
+            (2 == spaceDim) ? pylith::fekernels::IsotropicLinearPoroelasticityBlackOilPlaneStrain::updatePorosityNone :
+            NULL;
         // Update kernels
         kernels->resize(prevNumKernels + numKernels);
         (*kernels)[prevNumKernels+0] = ProjectKernels("fluid_saturation", funcSaturation);
         (*kernels)[prevNumKernels+1] = ProjectKernels("porosity", funcPorosity);
-
-    } else if (!_useStateVars) {
-
-        // Update kernels
-        kernels->resize(prevNumKernels + numKernels);
-        (*kernels)[prevNumKernels+0] = ProjectKernels("fluid_saturation", funcSaturation);
     }
 
 } // addKernelsUpdateStateVarsImplicit

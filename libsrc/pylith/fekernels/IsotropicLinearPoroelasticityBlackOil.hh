@@ -1011,6 +1011,78 @@ public:
                               const PylithScalar constants[],
                               PylithScalar g0[]);
 
+    // ----------------------------------------------------------------------
+    // g0p function for generic poroelasticityblackoil terms.
+    // \left( \alpha \frac{\partial \epsilon_{v}}{\partial t} + \frac{1}{M} \frac{\partial p_{f}}{\partial t} \right)
+    // \frac{\partial \epsilon)_{v}}{\partial t} = \frac{\nabla \cdot \vec{u}}{dt}
+    static
+    void g0v_gravity(const PylithInt dim,
+             const PylithInt numS,
+             const PylithInt numA,
+             const PylithInt sOff[],
+             const PylithInt sOff_x[],
+             const PylithScalar s[],
+             const PylithScalar s_t[],
+             const PylithScalar s_x[],
+             const PylithInt aOff[],
+             const PylithInt aOff_x[],
+             const PylithScalar a[],
+             const PylithScalar a_t[],
+             const PylithScalar a_x[],
+             const PylithReal t,
+             const PylithScalar x[],
+             const PylithInt numConstants,
+             const PylithScalar constants[],
+             PylithScalar g0v[]);
+
+    // ----------------------------------------------------------------------
+    // g0p function for generic poroelasticityblackoil terms.
+    // \left( \alpha \frac{\partial \epsilon_{v}}{\partial t} + \frac{1}{M} \frac{\partial p_{f}}{\partial t} \right)
+    // \frac{\partial \epsilon)_{v}}{\partial t} = \frac{\nabla \cdot \vec{u}}{dt}
+    static
+    void g0v_bodyforce(const PylithInt dim,
+             const PylithInt numS,
+             const PylithInt numA,
+             const PylithInt sOff[],
+             const PylithInt sOff_x[],
+             const PylithScalar s[],
+             const PylithScalar s_t[],
+             const PylithScalar s_x[],
+             const PylithInt aOff[],
+             const PylithInt aOff_x[],
+             const PylithScalar a[],
+             const PylithScalar a_t[],
+             const PylithScalar a_x[],
+             const PylithReal t,
+             const PylithScalar x[],
+             const PylithInt numConstants,
+             const PylithScalar constants[],
+             PylithScalar g0v[]);
+
+    // ----------------------------------------------------------------------
+    // g0p function for generic poroelasticityblackoil terms.
+    // \left( \alpha \frac{\partial \epsilon_{v}}{\partial t} + \frac{1}{M} \frac{\partial p_{f}}{\partial t} \right)
+    // \frac{\partial \epsilon)_{v}}{\partial t} = \frac{\nabla \cdot \vec{u}}{dt}
+    static
+    void g0v_gravity_bodyforce(const PylithInt dim,
+             const PylithInt numS,
+             const PylithInt numA,
+             const PylithInt sOff[],
+             const PylithInt sOff_x[],
+             const PylithScalar s[],
+             const PylithScalar s_t[],
+             const PylithScalar s_x[],
+             const PylithInt aOff[],
+             const PylithInt aOff_x[],
+             const PylithScalar a[],
+             const PylithScalar a_t[],
+             const PylithScalar a_x[],
+             const PylithReal t,
+             const PylithScalar x[],
+             const PylithInt numConstants,
+             const PylithScalar constants[],
+             PylithScalar g0v[]);
+
     // -----------------------------------------------------------------------------
     /** g1p / darcy flow / including gravity
      *
@@ -1298,6 +1370,29 @@ public:
      */
     static
     void updatePorosityExplicit(const PylithInt dim,
+                        const PylithInt numS,
+                        const PylithInt numA,
+                        const PylithInt sOff[],
+                        const PylithInt sOff_x[],
+                        const PylithScalar s[],
+                        const PylithScalar s_t[],
+                        const PylithScalar s_x[],
+                        const PylithInt aOff[],
+                        const PylithInt aOff_x[],
+                        const PylithScalar a[],
+                        const PylithScalar a_t[],
+                        const PylithScalar a_x[],
+                        const PylithReal t,
+                        const PylithScalar x[],
+                        const PylithInt numConstants,
+                        const PylithScalar constants[],
+                        PylithScalar porosity[]);
+
+    // ---------------------------------------------------------------------------------------------------------------------
+    /* Update porosity for a linear poroelastic material, unchanged value.
+     */
+    static
+    void updatePorosityNone(const PylithInt dim,
                         const PylithInt numS,
                         const PylithInt numA,
                         const PylithInt sOff[],
@@ -2262,6 +2357,78 @@ public:
                               const PylithScalar constants[],
                               PylithScalar g0[]);
 
+    // ----------------------------------------------------------------------
+    // g0p function for generic poroelasticityblackoil terms.
+    // \left( \alpha \frac{\partial \epsilon_{v}}{\partial t} + \frac{1}{M} \frac{\partial p_{f}}{\partial t} \right)
+    // \frac{\partial \epsilon)_{v}}{\partial t} = \frac{\nabla \cdot \vec{u}}{dt}
+    static
+    void g0v_gravity(const PylithInt dim,
+             const PylithInt numS,
+             const PylithInt numA,
+             const PylithInt sOff[],
+             const PylithInt sOff_x[],
+             const PylithScalar s[],
+             const PylithScalar s_t[],
+             const PylithScalar s_x[],
+             const PylithInt aOff[],
+             const PylithInt aOff_x[],
+             const PylithScalar a[],
+             const PylithScalar a_t[],
+             const PylithScalar a_x[],
+             const PylithReal t,
+             const PylithScalar x[],
+             const PylithInt numConstants,
+             const PylithScalar constants[],
+             PylithScalar g0v[]);
+
+    // ----------------------------------------------------------------------
+    // g0p function for generic poroelasticityblackoil terms.
+    // \left( \alpha \frac{\partial \epsilon_{v}}{\partial t} + \frac{1}{M} \frac{\partial p_{f}}{\partial t} \right)
+    // \frac{\partial \epsilon)_{v}}{\partial t} = \frac{\nabla \cdot \vec{u}}{dt}
+    static
+    void g0v_bodyforce(const PylithInt dim,
+             const PylithInt numS,
+             const PylithInt numA,
+             const PylithInt sOff[],
+             const PylithInt sOff_x[],
+             const PylithScalar s[],
+             const PylithScalar s_t[],
+             const PylithScalar s_x[],
+             const PylithInt aOff[],
+             const PylithInt aOff_x[],
+             const PylithScalar a[],
+             const PylithScalar a_t[],
+             const PylithScalar a_x[],
+             const PylithReal t,
+             const PylithScalar x[],
+             const PylithInt numConstants,
+             const PylithScalar constants[],
+             PylithScalar g0v[]);
+
+    // ----------------------------------------------------------------------
+    // g0p function for generic poroelasticityblackoil terms.
+    // \left( \alpha \frac{\partial \epsilon_{v}}{\partial t} + \frac{1}{M} \frac{\partial p_{f}}{\partial t} \right)
+    // \frac{\partial \epsilon)_{v}}{\partial t} = \frac{\nabla \cdot \vec{u}}{dt}
+    static
+    void g0v_gravity_bodyforce(const PylithInt dim,
+             const PylithInt numS,
+             const PylithInt numA,
+             const PylithInt sOff[],
+             const PylithInt sOff_x[],
+             const PylithScalar s[],
+             const PylithScalar s_t[],
+             const PylithScalar s_x[],
+             const PylithInt aOff[],
+             const PylithInt aOff_x[],
+             const PylithScalar a[],
+             const PylithScalar a_t[],
+             const PylithScalar a_x[],
+             const PylithReal t,
+             const PylithScalar x[],
+             const PylithInt numConstants,
+             const PylithScalar constants[],
+             PylithScalar g0v[]);
+
     // -----------------------------------------------------------------------------
     /** g1p / darcy flow / including gravity
      *
@@ -2543,6 +2710,30 @@ public:
                         const PylithInt numConstants,
                         const PylithScalar constants[],
                         PylithScalar porosity[]);
+
+    // ---------------------------------------------------------------------------------------------------------------------
+    /* Update porosity for a linear poroelastic material, unchanged value.
+     */
+    static
+    void updatePorosityNone(const PylithInt dim,
+                        const PylithInt numS,
+                        const PylithInt numA,
+                        const PylithInt sOff[],
+                        const PylithInt sOff_x[],
+                        const PylithScalar s[],
+                        const PylithScalar s_t[],
+                        const PylithScalar s_x[],
+                        const PylithInt aOff[],
+                        const PylithInt aOff_x[],
+                        const PylithScalar a[],
+                        const PylithScalar a_t[],
+                        const PylithScalar a_x[],
+                        const PylithReal t,
+                        const PylithScalar x[],
+                        const PylithInt numConstants,
+                        const PylithScalar constants[],
+                        PylithScalar porosity[]);
+
 
 #endif // pylith_fekernels_isotropiclinearporoelasticityblackoil_hh
 

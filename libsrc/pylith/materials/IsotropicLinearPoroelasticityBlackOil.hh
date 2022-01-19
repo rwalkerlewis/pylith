@@ -90,6 +90,13 @@ public:
                                 const bool _useSourceDensity) const;
 
     // ---------------------------------------------------------------------------------------------------------------------
+    // Get g0v kernel for RHS residual, G(t,s)
+    PetscPointFunc getKernelg0v_explicit(const spatialdata::geocoords::CoordSys* coordsys,
+                                const bool _useBodyForce,
+                                const bool _gravityField,
+                                const bool _useSourceDensity) const;
+
+    // ---------------------------------------------------------------------------------------------------------------------
     /** Get pressure kernel for RHS residual, G(t,s).
      *
      * @param[in] coordsys Coordinate system.
@@ -98,6 +105,7 @@ public:
      */
     PetscPointFunc getKernelg1p_explicit(const spatialdata::geocoords::CoordSys* coordsys,
                                          const bool _gravityField) const;
+
 
     // ---------------------------------------------------------------------------------------------------------------------
     // Get stress kernel for RHS residual, G(t,s)

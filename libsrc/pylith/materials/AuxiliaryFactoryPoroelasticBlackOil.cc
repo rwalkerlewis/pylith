@@ -338,6 +338,7 @@ pylith::materials::AuxiliaryFactoryPoroelasticBlackOil::addThreePhaseFluidViscos
     description.label = subfieldName;
     description.alias = subfieldName;
     description.vectorFieldType = pylith::topology::Field::OTHER;
+    
     description.numComponents = 3;
     description.componentNames.resize(3);
     for (int i = 0; i < 3; ++i) {

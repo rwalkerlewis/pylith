@@ -21,8 +21,8 @@ dist_noinst_DATA = \
 	tri.mesh \
 	pylithapp.cfg \
 	step01.cfg \
-	step01_gravity.cfg 
-
+	step01_gravity.cfg \
+	step01_update.cfg 
 
 # 'export' the input files by performing a mock install
 export_datadir = $(top_builddir)/examples/2d/blackoil_test

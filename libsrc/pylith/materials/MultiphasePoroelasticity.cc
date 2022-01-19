@@ -227,12 +227,7 @@ pylith::materials::MultiphasePoroelasticity::createAuxiliaryField(const pylith::
     // ---------------------------------
     // Required Auxiliary
     auxiliaryFactory->addSolidDensity(); // 0 Rock Density
-
-    if (_useStateVars) {
-        auxiliaryFactory->addPorosityUpdate(); // 1 Porosity (updating)
-    } else if (!_useStateVars) {
-        auxiliaryFactory->addPorosity(); // 1 Porosity
-    }
+    auxiliaryFactory->addPorosity(); // 1 Porosity
     
     // ---------------------------------
     // Optional Auxiliary
@@ -326,39 +321,6 @@ pylith::materials::MultiphasePoroelasticity::_setKernelsResidual(pylith::feassem
 
     const spatialdata::geocoords::CoordSys* coordsys = solution.getMesh().getCoordSys();
 
-    const int bitBodyForce = _useBodyForce ? 0x1 : 0x0;
-    const int bitGravity = _gravityField ? 0x2 : 0x0;
-    const int bitSourceDensity = _useSourceDensity ? 0x4 : 0x0;
-    const int bitUse = bitBodyForce | bitGravity | bitSourceDensity;
-
-    PetscPointFunc r0 = NULL;
-    switch (bitUse) {
-    case 0x0:
-        break;
-    case 0x1:
-        r0 = pylith::fekernels::MultiphasePoroelasticity::g0v_bodyforce;
-        break;
-    case 0x2:
-        r0 = pylith::fekernels::MultiphasePoroelasticity::g0v_grav;
-        break;
-    case 0x4:
-        break;
-    case 0x3:
-        r0 = pylith::fekernels::MultiphasePoroelasticity::g0v_grav_bodyforce;
-        break;
-    case 0x5:
-        r0 = pylith::fekernels::MultiphasePoroelasticity::g0v_bodyforce;
-        break;
-    case 0x6:
-        r0 = pylith::fekernels::MultiphasePoroelasticity::g0v_grav;
-        break;
-    case 0x7:
-        r0 = pylith::fekernels::MultiphasePoroelasticity::g0v_grav_bodyforce;
-        break;
-    default:
-        PYLITH_COMPONENT_LOGICERROR("Unknown case (bitUse=" << bitUse << ") for residual kernels.");
-    } // switch
-
     std::vector<ResidualKernels> kernels;
     switch (_formulation) {
     case QUASISTATIC: {
@@ -432,7 +394,7 @@ pylith::materials::MultiphasePoroelasticity::_setKernelsResidual(pylith::feassem
         // Velocity
         const PetscPointFunc f0v = pylith::fekernels::MultiphasePoroelasticity::f0v_explicit;
         const PetscPointFunc f1v = NULL;
-        const PetscPointFunc g0v = r0;
+        const PetscPointFunc g0v = _rheology->getKernelg0v_explicit(coordsys, _useBodyForce, _gravityField, _useSourceDensity);
         const PetscPointFunc g1v = _rheology->getKernelg1v_explicit(coordsys);
 
         kernels.resize(6);
