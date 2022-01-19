@@ -58,7 +58,7 @@ namespace pylith
 
                 // ---------------------------------------------------------------------------------------------------------------------
                 // Get g0v kernel for RHS residual, G(t,s)
-                virtual getKernelg0v_explicit(const spatialdata::geocoords::CoordSys* coordsys,
+                virtual PetscPointFunc getKernelg0v_explicit(const spatialdata::geocoords::CoordSys* coordsys,
                                                 const bool _useBodyForce,
                                                 const bool _gravityField,
                                                 const bool _useSourceDensity) const = 0;

@@ -261,7 +261,8 @@ pylith::materials::IsotropicLinearPoroelasticityBlackOil::getKernelg0v_explicit(
     PYLITH_COMPONENT_DEBUG("getKernelg0v_explicit(coordsys="<<typeid(coordsys).name()<<")");
 
     PetscPointFunc g1v = NULL;
-
+    
+    const int spaceDim = coordsys->getSpaceDim();
     const int bitBodyForce = _useBodyForce ? 0x1 : 0x0;
     const int bitGravity = _gravityField ? 0x2 : 0x0;
     const int bitSourceDensity = _useSourceDensity ? 0x4 : 0x0;
