@@ -809,6 +809,7 @@ pylith::materials::IsotropicLinearPoroelasticityBlackOil::updateKernelConstants(
 
     assert(kernelConstants);
 
+    // This is a 1D buffer, items must be loaded iteratively
     if (1 != kernelConstants->size()) { kernelConstants->resize(1);}
     (*kernelConstants)[0] = dt;
 
