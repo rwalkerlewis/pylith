@@ -144,10 +144,10 @@ void pylith::faults::FaultCohesiveKinTrivial::verifyConfiguration(const pylith::
         throw std::runtime_error(msg.str());
     } // if
 
-    if (!solution.hasSubfield("mu_multiplier_fault"))
+    if (!solution.hasSubfield("mu_fault"))
     {
         std::ostringstream msg;
-        msg << "Cannot find 'mu_multiplier_fault' subfield in solution field for fault implementation in component '"
+        msg << "Cannot find 'mu_fault' subfield in solution field for fault implementation in component '"
             << PyreComponent::getIdentifier() << "'.";
         throw std::runtime_error(msg.str());
     } // if    
@@ -286,7 +286,7 @@ pylith::faults::FaultCohesiveKinTrivial::createConstraints(const pylith::topolog
     constraintLagrange->setUserFn(_zero);
 
     // "Mu" multipliers (test case same as lagrange)
-    const char *muName = "mu_multiplier_fault";
+    const char *muName = "mu_fault";
 
     pylith::int_array constrainedDOFMu;
     constrainedDOFMu.resize(numComponents);
@@ -712,7 +712,7 @@ void pylith::faults::FaultCohesiveKinTrivial::_setKernelsResidual(pylith::feasse
                                      f0u_pos, f1u_pos);
         kernels[2] = ResidualKernels("lagrange_multiplier_fault", integrator_t::RESIDUAL_LHS, integrator_t::FAULT_FACE,
                                      f0l, f1l);
-        kernels[3] = ResidualKernels("mu_multiplier_fault", integrator_t::RESIDUAL_LHS, integrator_t::FAULT_FACE,
+        kernels[3] = ResidualKernels("mu_fault", integrator_t::RESIDUAL_LHS, integrator_t::FAULT_FACE,
                                      f0mu, f1mu);
 
         break;
@@ -780,7 +780,7 @@ void pylith::faults::FaultCohesiveKinTrivial::_setKernelsJacobian(pylith::feasse
         kernels.resize(6);
         const char *nameDisplacement = "displacement";
         const char *nameLagrangeMultiplier = "lagrange_multiplier_fault";
-        const char *nameMu = "mu_multiplier_fault";
+        const char *nameMu = "mu_fault";
         kernels[0] = JacobianKernels(nameDisplacement, nameLagrangeMultiplier, integrator_t::JACOBIAN_LHS,
                                      integrator_t::NEGATIVE_FACE, Jf0ul_neg, Jf1ul_neg, Jf2ul_neg, Jf3ul_neg);
         kernels[1] = JacobianKernels(nameDisplacement, nameLagrangeMultiplier, integrator_t::JACOBIAN_LHS,
