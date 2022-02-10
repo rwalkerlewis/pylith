@@ -60,8 +60,8 @@ pylith::faults::KinSrcStep::thicknessFn(const PylithInt dim,
                                    const PylithScalar x[],
                                    const PylithInt numConstants,
                                    const PylithScalar constants[],
-                                   PylithScalar slip[]) {
-    const PylithInt _numA = 2;
+                                   PylithScalar thickness[]) {
+    // const PylithInt _numA = 2;
     // TO DO
     // CURRENTLY FOR DEBUGGING, JUST SET EVERYTING TO 0
     /**
@@ -79,11 +79,12 @@ pylith::faults::KinSrcStep::thicknessFn(const PylithInt dim,
     const PylithScalar originTime = constants[i_originTime];
     const PylithScalar t0 = originTime + initiationTime;
     */ 
-    if (t >= 0.0) {
-        for (PylithInt i = 0; i < 1; ++i) {
-            slip[i] = 1.0;
-        } // for
-    } // if
+    // if (t >= 0.0) {
+    //     for (PylithInt i = 0; i < 1; ++i) {
+    //         slip[i] = 1.0;
+    //     } // for
+    // } // if
+    thickness[0] += 0.0;
 
 } // thicknessFn
 

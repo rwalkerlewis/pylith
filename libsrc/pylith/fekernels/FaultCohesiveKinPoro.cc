@@ -391,6 +391,8 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0u_pos(const PylithInt dim,
 // ----------------------------------------------------------------------
 // f0 function for bulk pressure: f0p = [\kappa_{cz} / \mu * ((p^+ - p^f)/h - n \cdot f_f),
 //                                       \kappa_{cz} / \mu * ((p^- - p^f)/h + n \cdot f_f)]
+// Assumes material has isotropic permeability
+// NEGATIVE Fault face 
 void pylith::fekernels::FaultCohesiveKinPoro::f0p_neg(const PylithInt dim,
                                                                const PylithInt numS,
                                                                const PylithInt numA,
@@ -417,19 +419,19 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_neg(const PylithInt dim,
 
     assert(numS >= 5);
     assert(a);
-    assert(numA >= 10);
+    assert(numA >= 9);
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
     const PylithInt i_thickness = 0;
-    const PylithInt i_permeability_normal = 5;
-    const PylithInt i_fluid_viscosity = 6;
+    const PylithInt i_permeability_normal = numA - 1;
+    const PylithInt i_fluid_viscosity = 2;
     const PylithInt sOffPressureN = _FaultCohesiveKinPoro::pressure_sOff_quasistatic(sOff, numS);
     // const PylithInt sOffPressureP = sOffPressureN + 1;
     const PylithInt sOffPressureFault = _FaultCohesiveKinPoro::fault_pressure_sOff(sOff, numS);
     const PylithInt fOffN = 0;
     const PylithInt fOffP = fOffN + 1;
 
-    const PylithScalar thickness = a[aOff[i_thickness]];
+    const PylithScalar thickness = 1.0;//a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeability_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
     const PylithScalar pressureN = s[sOffPressureN];
@@ -445,6 +447,8 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_neg(const PylithInt dim,
 // ----------------------------------------------------------------------
 // f0 function for bulk pressure: f0p = [\kappa_{cz} / \mu * ((p^+ - p^f)/h - n \cdot f_f),
 //                                       \kappa_{cz} / \mu * ((p^- - p^f)/h + n \cdot f_f)]
+// Assumes material has isotropic permeability
+// Positive Fault face 
 void pylith::fekernels::FaultCohesiveKinPoro::f0p_pos(const PylithInt dim,
                                                                const PylithInt numS,
                                                                const PylithInt numA,
@@ -471,19 +475,19 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_pos(const PylithInt dim,
 
     assert(numS >= 5);
     assert(a);
-    assert(numA >= 10);
+    assert(numA >= 9);
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
     const PylithInt i_thickness = 0;
-    const PylithInt i_permeability_normal = 5;
-    const PylithInt i_fluid_viscosity = 6;
+    const PylithInt i_permeability_normal = numA - 1;
+    const PylithInt i_fluid_viscosity = 2;
     const PylithInt sOffPressureN = _FaultCohesiveKinPoro::pressure_sOff_quasistatic(sOff, numS);
     const PylithInt sOffPressureP = sOffPressureN + 1;
     const PylithInt sOffPressureFault = _FaultCohesiveKinPoro::fault_pressure_sOff(sOff, numS);
     const PylithInt fOffN = 0;
     const PylithInt fOffP = fOffN + 1;
 
-    const PylithScalar thickness = a[aOff[i_thickness]];
+    const PylithScalar thickness = 1.0; //a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeability_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
     // const PylithScalar pressureN = s[sOffPressureN];
@@ -525,12 +529,12 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_body_neg(const PylithInt dim,
 
     assert(numS >= 5);
     assert(a);
-    assert(numA >= 10);
+    assert(numA >= 9);
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
     const PylithInt i_thickness = 0;
-    const PylithInt i_permeability_normal = 5;
-    const PylithInt i_fluid_viscosity = 6;
+    const PylithInt i_permeability_normal = numA - 1;
+    const PylithInt i_fluid_viscosity = 2;
     const PylithInt i_body_force = numA - 3;
     const PylithInt sOffPressureN = _FaultCohesiveKinPoro::pressure_sOff_quasistatic(sOff, numS);
     //const PylithInt sOffPressureP = sOffPressureN + 1;
@@ -538,7 +542,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_body_neg(const PylithInt dim,
     const PylithInt fOffN = 0;
     //const PylithInt fOffP = fOffN + 1;
 
-    const PylithScalar thickness = a[aOff[i_thickness]];
+    const PylithScalar thickness = 1.0; //a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeability_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
     const PylithScalar *bodyForce = &a[aOff[i_body_force]];
@@ -587,12 +591,12 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_body_pos(const PylithInt dim,
 
     assert(numS >= 5);
     assert(a);
-    assert(numA >= 10);
+    assert(numA >= 9);
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
     const PylithInt i_thickness = 0;
-    const PylithInt i_permeability_normal = 5;
-    const PylithInt i_fluid_viscosity = 6;
+    const PylithInt i_permeability_normal = numA - 1;
+    const PylithInt i_fluid_viscosity = 2;
     const PylithInt i_body_force = numA - 3;
     const PylithInt sOffPressureN = _FaultCohesiveKinPoro::pressure_sOff_quasistatic(sOff, numS);
     const PylithInt sOffPressureP = sOffPressureN + 1;
@@ -600,7 +604,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_body_pos(const PylithInt dim,
     const PylithInt fOffN = 0;
     const PylithInt fOffP = fOffN + 1;
 
-    const PylithScalar thickness = a[aOff[i_thickness]];
+    const PylithScalar thickness = 1.0; //a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeability_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
     const PylithScalar *bodyForce = &a[aOff[i_body_force]];
@@ -779,6 +783,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0l_v(const PylithInt dim,
 //                         + \beta^\sigma * (-n \cdot \lambda ))
 //             + \kappa_{fx} / \mu * \vnabla(2D) \cdot body_force
 //             - \kappa_{fz} / \mu * (p^+ - 2p_f + p^-) / h^2 - source
+// FAULT COHESIVE Face
 void pylith::fekernels::FaultCohesiveKinPoro::f0p_fault(const PylithInt dim,
                                                                  const PylithInt numS,
                                                                  const PylithInt numA,
@@ -1335,6 +1340,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_fault_body_source(const Pylith
 // ----------------------------------------------------------------------
 // f1 function for p_fault constraint equation:
 // f1p_fault = \kappa_{fx} / (4\mu) \vnabla (p^+ + 2 p^f + p^-)
+// FAULT COHESIVE Face
 void pylith::fekernels::FaultCohesiveKinPoro::f1p_fault(const PylithInt dim,
                                                                  const PylithInt numS,
                                                                  const PylithInt numA,
@@ -1396,6 +1402,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::f1p_fault(const PylithInt dim,
  *
  * Solution fields = [disp(dim), ..., lagrange(dim)]
  * Auxiliary fields = None
+ * NEGATIVE Fault face
  */
 void pylith::fekernels::FaultCohesiveKinPoro::Jf0ul_neg(const PylithInt dim,
                                                                  const PylithInt numS,
@@ -1419,7 +1426,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::Jf0ul_neg(const PylithInt dim,
                                                                  PylithScalar Jf0[])
 {
     assert(numS >= 5);
-    assert(numA >= 10);
+    assert(numA >= 9);
     assert(Jf0);
     assert(sOff);
     assert(aOff);
@@ -1443,6 +1450,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::Jf0ul_neg(const PylithInt dim,
  *
  * Solution fields = [disp(dim), ..., lagrange(dim)]
  * Auxiliary fields = None
+ * Positive fault face
  */
 void pylith::fekernels::FaultCohesiveKinPoro::Jf0ul_pos(const PylithInt dim,
                                                                  const PylithInt numS,
@@ -1466,7 +1474,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::Jf0ul_pos(const PylithInt dim,
                                                                  PylithScalar Jf0[])
 {
     assert(numS >= 5);
-    assert(numA >= 10);
+    assert(numA >= 9);
     assert(Jf0);
     assert(sOff);
     assert(aOff);
@@ -1760,6 +1768,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp(const PylithInt dim,
  *
  * Solution fields = [disp(dim), ..., lagrange(dim)]
  * Auxiliary fields = None
+ * NEGATIVE Fault Face
  */
 void pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_neg(const PylithInt dim,
                                                                  const PylithInt numS,
@@ -1783,7 +1792,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_neg(const PylithInt dim,
                                                                  PylithScalar Jf0[])
 {
     assert(numS >= 5);
-    assert(numA >= 10);
+    assert(numA >= 9);
     assert(Jf0);
     assert(sOff);
     assert(aOff);
@@ -1791,10 +1800,10 @@ void pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_neg(const PylithInt dim,
 
     // Index for auxiliary fields
     const PylithInt i_thickness = 0;
-    const PylithInt i_permeabilility_normal = 5;
-    const PylithInt i_fluid_viscosity = 6;
+    const PylithInt i_permeabilility_normal = numA - 1;
+    const PylithInt i_fluid_viscosity = 2;
 
-    const PylithScalar thickness = a[aOff[i_thickness]];
+    const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeabilility_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
 
@@ -1811,6 +1820,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_neg(const PylithInt dim,
  *
  * Solution fields = [disp(dim), ..., lagrange(dim)]
  * Auxiliary fields = None
+ * POSITIVE Fault face
  */
 void pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_pos(const PylithInt dim,
                                                                  const PylithInt numS,
@@ -1834,7 +1844,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_pos(const PylithInt dim,
                                                                  PylithScalar Jf0[])
 {
     assert(numS >= 5);
-    assert(numA >= 10);
+    assert(numA >= 9);
     assert(Jf0);
     assert(sOff);
     assert(aOff);
@@ -1842,10 +1852,10 @@ void pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_pos(const PylithInt dim,
 
     // Index for auxiliary fields
     const PylithInt i_thickness = 0;
-    const PylithInt i_permeabilility_normal = 5;
-    const PylithInt i_fluid_viscosity = 6;
+    const PylithInt i_permeabilility_normal = numA - 1;
+    const PylithInt i_fluid_viscosity = 2;
 
-    const PylithScalar thickness = a[aOff[i_thickness]];
+    const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeabilility_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
 
@@ -1862,6 +1872,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_pos(const PylithInt dim,
  * [-\kappa_cz / \mu / h, -\kappa_cz / \mu / h]
  * Solution fields = [disp(dim), ..., lagrange(dim)]
  * Auxiliary fields = None
+ * NEGATIVE Fault face
  */
 void pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_f_neg(const PylithInt dim,
                                                                    const PylithInt numS,
@@ -1885,7 +1896,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_f_neg(const PylithInt dim,
                                                                    PylithScalar Jf0[])
 {
     assert(numS >= 5);
-    assert(numA >= 10);
+    assert(numA >= 9);
     assert(Jf0);
     assert(sOff);
     assert(aOff);
@@ -1893,10 +1904,10 @@ void pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_f_neg(const PylithInt dim,
 
     // Index for auxiliary fields
     const PylithInt i_thickness = 0;
-    const PylithInt i_permeabilility_normal = 5;
-    const PylithInt i_fluid_viscosity = 6;
+    const PylithInt i_permeabilility_normal = numA - 1;
+    const PylithInt i_fluid_viscosity = 2;
 
-    const PylithScalar thickness = a[aOff[i_thickness]];
+    const PylithScalar thickness = 1.0; //a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeabilility_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
 
@@ -1913,6 +1924,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_f_neg(const PylithInt dim,
  * [-\kappa_cz / \mu / h, -\kappa_cz / \mu / h]
  * Solution fields = [disp(dim), ..., lagrange(dim)]
  * Auxiliary fields = None
+ * POSITIVE Fault face
  */
 void pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_f_pos(const PylithInt dim,
                                                                    const PylithInt numS,
@@ -1936,7 +1948,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_f_pos(const PylithInt dim,
                                                                    PylithScalar Jf0[])
 {
     assert(numS >= 5);
-    assert(numA >= 10);
+    assert(numA >= 9);
     assert(Jf0);
     assert(sOff);
     assert(aOff);
@@ -1944,10 +1956,10 @@ void pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_f_pos(const PylithInt dim,
 
     // Index for auxiliary fields
     const PylithInt i_thickness = 0;
-    const PylithInt i_permeabilility_normal = 5;
-    const PylithInt i_fluid_viscosity = 6;
+    const PylithInt i_permeabilility_normal = numA - 1;
+    const PylithInt i_fluid_viscosity = 2;
 
-    const PylithScalar thickness = a[aOff[i_thickness]];
+    const PylithScalar thickness = 1.0; //a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeabilility_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
 
