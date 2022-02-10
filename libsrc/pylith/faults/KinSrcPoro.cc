@@ -646,6 +646,9 @@ pylith::faults::KinSrcPoro::updateSlipAcc(PetscVec slipAccLocalVec,
 } // updateSlipAcc
 
 
+// TO DO:
+// Check whether one needs to call this _setFEConstants in every update function above
+// Check if numConstants should be one or not
 // ----------------------------------------------------------------------
 // Set constants used in finite-element integrations.
 void
