@@ -62,7 +62,9 @@ pylith::faults::KinSrcStep::thicknessFn(const PylithInt dim,
                                    const PylithScalar constants[],
                                    PylithScalar slip[]) {
     const PylithInt _numA = 2;
-
+    // TO DO
+    // CURRENTLY FOR DEBUGGING, JUST SET EVERYTING TO 0
+    /**
     assert(_numA == numA);
     assert(aOff);
     assert(a);
@@ -76,10 +78,10 @@ pylith::faults::KinSrcStep::thicknessFn(const PylithInt dim,
     const PylithInt i_originTime = 0;
     const PylithScalar originTime = constants[i_originTime];
     const PylithScalar t0 = originTime + initiationTime;
-
-    if (t >= t0) {
-        for (PylithInt i = 0; i < dim; ++i) {
-            slip[i] = finalSlip[i];
+    */ 
+    if (t >= 0.0) {
+        for (PylithInt i = 0; i < 1; ++i) {
+            slip[i] = 1.0;
         } // for
     } // if
 
@@ -149,6 +151,19 @@ pylith::faults::KinSrcStep::_auxiliaryFieldSetup(const spatialdata::units::Nondi
     _auxiliaryFactory->addInitiationTime(); // 0
     _auxiliaryFactory->addFinalSlip(); // 1
 
+        // ADD BULLSHIT KERNELS
+    // Add other kernels
+    _thicknessFnKernel = pylith::faults::KinSrcStep::thicknessFn; 
+    _porosityFnKernel = pylith::faults::KinSrcStep::thicknessFn;
+    _beta_pFnKernel = pylith::faults::KinSrcStep::thicknessFn;
+    _beta_sigmaFnKernel = pylith::faults::KinSrcStep::thicknessFn; 
+    _permeability_tangentialFnKernel = pylith::faults::KinSrcStep::thicknessFn; 
+    _permeability_normalFnKernel = pylith::faults::KinSrcStep::thicknessFn; 
+    _fluid_viscosityFnKernel = pylith::faults::KinSrcStep::thicknessFn; 
+    _bulk_modulus_negativeFnKernel = pylith::faults::KinSrcStep::thicknessFn; 
+    _shear_modulus_negativeFnKernel = pylith::faults::KinSrcStep::thicknessFn; 
+    _bulk_modulus_positiveFnKernel = pylith::faults::KinSrcStep::thicknessFn; 
+    _shear_modulus_positiveFnKernel = pylith::faults::KinSrcStep::thicknessFn; 
     _slipFnKernel = pylith::faults::KinSrcStep::slipFn;
     _slipRateFnKernel = NULL; // Undefined for step function.
     _slipAccFnKernel = NULL; // Undefined for step function.
