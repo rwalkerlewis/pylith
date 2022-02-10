@@ -40,6 +40,50 @@ pylith::faults::KinSrcStep::KinSrcStep(void) {
 // Destructor.
 pylith::faults::KinSrcStep::~KinSrcStep(void) {}
 
+// ---------------------------------------------------------------------------------------------------------------------
+// Thickness time function kernel.
+void
+pylith::faults::KinSrcStep::thicknessFn(const PylithInt dim,
+                                   const PylithInt numS,
+                                   const PylithInt numA,
+                                   const PylithInt sOff[],
+                                   const PylithInt sOff_x[],
+                                   const PylithScalar s[],
+                                   const PylithScalar s_t[],
+                                   const PylithScalar s_x[],
+                                   const PylithInt aOff[],
+                                   const PylithInt aOff_x[],
+                                   const PylithScalar a[],
+                                   const PylithScalar a_t[],
+                                   const PylithScalar a_x[],
+                                   const PylithReal t,
+                                   const PylithScalar x[],
+                                   const PylithInt numConstants,
+                                   const PylithScalar constants[],
+                                   PylithScalar slip[]) {
+    const PylithInt _numA = 2;
+
+    assert(_numA == numA);
+    assert(aOff);
+    assert(a);
+    assert(slip);
+
+    const PylithInt i_initiationTime = 0;
+    const PylithInt i_finalSlip = 1;
+    const PylithScalar initiationTime = a[aOff[i_initiationTime]];
+    const PylithScalar* finalSlip = &a[aOff[i_finalSlip]];
+
+    const PylithInt i_originTime = 0;
+    const PylithScalar originTime = constants[i_originTime];
+    const PylithScalar t0 = originTime + initiationTime;
+
+    if (t >= t0) {
+        for (PylithInt i = 0; i < dim; ++i) {
+            slip[i] = finalSlip[i];
+        } // for
+    } // if
+
+} // thicknessFn
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Slip time function kernel.

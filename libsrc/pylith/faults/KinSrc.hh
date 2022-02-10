@@ -167,6 +167,21 @@ protected:
 protected:
 
     pylith::faults::KinSrcAuxiliaryFactory* _auxiliaryFactory; ///< Factory for auxiliary subfields.
+    // ADD BULLSHIT KERNELS
+    // Add other kernels
+    PetscPointFunc _thicknessFnKernel; ///< Kernel for slip time function.
+    PetscPointFunc _porosityFnKernel; ///< Kernel for slip time function.
+    PetscPointFunc _beta_pFnKernel; ///< Kernel for slip time function.
+    PetscPointFunc _beta_sigmaFnKernel; ///< Kernel for slip time function.
+    PetscPointFunc _permeability_tangentialFnKernel; ///< Kernel for slip time function.
+    PetscPointFunc _permeability_normalFnKernel; ///< Kernel for slip time function.
+    PetscPointFunc _fluid_viscosityFnKernel; ///< Kernel for slip time function.
+    PetscPointFunc _bulk_modulus_negativeFnKernel; ///< Kernel for slip time function.
+    PetscPointFunc _shear_modulus_negativeFnKernel; ///< Kernel for slip time function.
+    PetscPointFunc _bulk_modulus_positiveFnKernel; ///< Kernel for slip time function.
+    PetscPointFunc _shear_modulus_positiveFnKernel; ///< Kernel for slip time function.
+
+    // Original kernels
     PetscPointFunc _slipFnKernel; ///< Kernel for slip time function.
     PetscPointFunc _slipRateFnKernel; ///< Kernel for slip rate time function.
     PetscPointFunc _slipAccFnKernel; ///< Kernel for slip acceleration time function.
