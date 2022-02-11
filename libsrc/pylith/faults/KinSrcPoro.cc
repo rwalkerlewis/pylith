@@ -20,7 +20,7 @@
 
 #include "KinSrcPoro.hh" // implementation of object methods
 
-#include "pylith/faults/KinSrcPoroAuxiliaryFactory.hh" // USES KinSrcPoroAuxiliaryFactory
+#include "pylith/faults/KinSrcAuxiliaryFactory.hh" // USES KinSrcAuxiliaryFactory
 #include "pylith/topology/Field.hh" // USES Field
 #include "pylith/topology/FieldOps.hh" // USES FieldOps::checkDisretization()
 
@@ -35,7 +35,7 @@
 // ----------------------------------------------------------------------
 // Default constructor.
 pylith::faults::KinSrcPoro::KinSrcPoro(void) :
-    _auxiliaryFactory(new pylith::faults::KinSrcPoroAuxiliaryFactory),
+    _auxiliaryFactory(new pylith::faults::KinSrcAuxiliaryFactory),
     _thicknessFnKernel(NULL),
     _porosityFnKernel(NULL),
     _beta_pFnKernel(NULL),

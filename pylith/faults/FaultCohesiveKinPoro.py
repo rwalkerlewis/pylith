@@ -30,8 +30,8 @@ def eqsrcFactory(name):
     """Factory for earthquake source items.
     """
     from pythia.pyre.inventory import facility
-    from .KinSrcStep import KinSrcStep
-    return facility(name, family="eq_kinematic_src", factory=KinSrcStep)
+    from .KinSrcPoroStep import KinSrcPoroStep
+    return facility(name, family="eq_kinematic_poro_src", factory=KinSrcPoroStep)
 
 
 class FaultCohesiveKinPoro(FaultCohesive, ModuleFaultCohesiveKinPoro):
@@ -43,8 +43,8 @@ class FaultCohesiveKinPoro(FaultCohesive, ModuleFaultCohesiveKinPoro):
 
     import pythia.pyre.inventory
 
-    from .SingleRupture import SingleRupture
-    eqRuptures = pythia.pyre.inventory.facilityArray("eq_ruptures", itemFactory=eqsrcFactory, factory=SingleRupture)
+    from .SingleRupturePoro import SingleRupturePoro
+    eqRuptures = pythia.pyre.inventory.facilityArray("eq_ruptures", itemFactory=eqsrcFactory, factory=SingleRupturePoro)
     eqRuptures.meta['tip'] = "Kinematic earthquake sources information."
 
     from pylith.utils.NullComponent import NullComponent

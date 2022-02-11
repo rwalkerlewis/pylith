@@ -744,7 +744,7 @@ pylith::faults::FaultCohesiveKinPoro::_updateSlipAcceleration(pylith::topology::
     err = VecGetArrayRead(_slipVecTotal, &slipAccArray);PYLITH_CHECK_ERROR(err);
 
     for (PetscInt p = pStart, iSlipAcc = 0; p < pEnd; ++p) {
-        consslip timet PetscInt slipAccDof = auxiliaryVisitor.sectionDof(p);
+        const PetscInt slipAccDof = auxiliaryVisitor.sectionDof(p);
         const PetscInt slipAccOff = auxiliaryVisitor.sectionOffset(p);
         for (PetscInt iDof = 0; iDof < slipAccDof; ++iDof, ++iSlipAcc) {
             auxiliaryArray[slipAccOff+iDof] = slipAccArray[iSlipAcc];

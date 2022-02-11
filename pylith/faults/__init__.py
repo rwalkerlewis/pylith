@@ -29,7 +29,10 @@ __all__ = [
     "KinSrcBrune",
     "KinSrcLiuCos",
     "KinSrcTimeHistory",
+    "KinSrcPoro",
+    "KinSrcPoroStep",
     "SingleRupture",
+    "SingleRupturePoro"
     ]
 
 

@@ -57,7 +57,7 @@ public:
      */
     void setEqRuptures(const char* const* names,
                        const int numNames,
-                       KinSrc** ruptures,
+                       KinSrcPoro** ruptures,
                        const int numRuptures);
 
     /** Include body force?
@@ -186,7 +186,7 @@ protected:
     // PRIVATE TYPEDEFS ////////////////////////////////////////////////////////////////////////////////////////////////
 private:
 
-    typedef std::map<std::string, KinSrc*> srcs_type;
+    typedef std::map<std::string, KinSrcPoro*> srcs_type;
 
     // PRIVATE MEMBERS /////////////////////////////////////////////////////////////////////////////////////////////////
 private:

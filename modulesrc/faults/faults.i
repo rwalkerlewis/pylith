@@ -30,6 +30,8 @@
 #include "pylith/faults/KinSrcBrune.hh"
 #include "pylith/faults/KinSrcLiuCos.hh"
 #include "pylith/faults/KinSrcTimeHistory.hh"
+#include "pylith/faults/KinSrcPoro.hh"
+#include "pylith/faults/KinSrcPoroStep.hh"
 %}
 
 %include "exception.i" 
@@ -70,5 +72,7 @@ import_array();
 %include "KinSrcBrune.i" 
 %include "KinSrcLiuCos.i" 
 %include "KinSrcTimeHistory.i"
+%include "KinSrcPoro.i"
+%include "KinSrcPoroStep.i"
 
 // End of file
