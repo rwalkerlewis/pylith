@@ -26,7 +26,7 @@ from .faults import KinSrcPoroStep as ModuleKinSrcPoro
 class KinSrcPoroStep(KinSrcPoro, ModuleKinSrcPoro):
     """Python object for a step slip time function.
 
-    Factory: eq_kinematic_poro_src
+    Factory: eq_kinematic_src
     """
 
     # PUBLIC METHODS /////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ class KinSrcPoroStep(KinSrcPoro, ModuleKinSrcPoro):
 
 # FACTORIES ////////////////////////////////////////////////////////////
 
-def eq_kinematic_poro_src():
+def eq_kinematic_src():
     """Factory associated with KinSrcPoroStep.
     """
     return KinSrcPoroStep()

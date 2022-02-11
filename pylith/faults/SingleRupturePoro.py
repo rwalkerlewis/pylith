@@ -13,7 +13,7 @@
 #
 # ----------------------------------------------------------------------
 #
-# @file pylith/faults/SingleRupurePoro.py
+# @file pylith/faults/SingleRupturePoro.py
 #
 # @brief Python kinematic rupture container with one poroelastic rupture.
 
@@ -27,12 +27,12 @@ class SingleRupturePoro(PetscComponent):
     import pythia.pyre.inventory
 
     from .KinSrcPoroStep import KinSrcPoroStep
-    rupture = pythia.pyre.inventory.facility("rupture", family="eq_kinematic_poro_src", factory=KinSrcPoroStep)
+    rupture = pythia.pyre.inventory.facility("rupture", family="eq_kinematic_src", factory=KinSrcPoroStep)
     rupture.meta['tip'] = "Kinematic, poroelastic earthquake rupture in problem."
 
     # PUBLIC METHODS /////////////////////////////////////////////////////
 
-    def __init__(self, name="singlerupture"):
+    def __init__(self, name="singleruptureporo"):
         """Constructor.
         """
         PetscComponent.__init__(self, name, facility="rupture")

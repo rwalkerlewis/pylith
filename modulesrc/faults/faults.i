@@ -47,6 +47,7 @@
 %include "../include/scalartypemaps.i" 
 %include "../include/chararray.i" 
 %include "../include/kinsrcarray.i"
+%include "../include/kinsrcporoarray.i"
 
 // Numpy interface stuff
 %{

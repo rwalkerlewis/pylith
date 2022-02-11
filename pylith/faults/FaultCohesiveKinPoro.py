@@ -31,7 +31,7 @@ def eqsrcFactory(name):
     """
     from pythia.pyre.inventory import facility
     from .KinSrcPoroStep import KinSrcPoroStep
-    return facility(name, family="eq_kinematic_poro_src", factory=KinSrcPoroStep)
+    return facility(name, family="eq_kinematic_src", factory=KinSrcPoroStep)
 
 
 class FaultCohesiveKinPoro(FaultCohesive, ModuleFaultCohesiveKinPoro):
@@ -72,6 +72,7 @@ class FaultCohesiveKinPoro(FaultCohesive, ModuleFaultCohesiveKinPoro):
 
         for eqsrc in self.eqRuptures.components():
             eqsrc.preinitialize()
+        print(self.eqRuptures.components())
         ModuleFaultCohesiveKinPoro.setEqRuptures(
             self, self.eqRuptures.inventory.facilityNames(), self.eqRuptures.components())
 

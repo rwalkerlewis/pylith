@@ -15,8 +15,8 @@
 #
 # @file pylith/faults/KinSrcPoro.py
 #
-# @brief Python abstract base class for managing parameters for a kinematic
-# earthquake sources.
+# @brief Python abstract base class for managing parameters for a kinematic,
+# poroelastic earthquake sources.
 #
 # KinSrcPoro is responsible for providing the value of slip at time t
 # over a fault surface.
@@ -30,7 +30,7 @@ from .faults import KinSrcPoro as ModuleKinSrcPoro
 class KinSrcPoro(PetscComponent, ModuleKinSrcPoro):
     """Python object for managing parameters for a kinematic earthquake sources.
 
-    Factory: eq_kinematic_poro_src
+    Factory: eq_kinematic_src
     """
 
     import pythia.pyre.inventory
@@ -48,7 +48,7 @@ class KinSrcPoro(PetscComponent, ModuleKinSrcPoro):
     def __init__(self, name="kinsrcporo"):
         """Constructor.
         """
-        PetscComponent.__init__(self, name, facility="eq_kinematic_poro_src")
+        PetscComponent.__init__(self, name, facility="eq_kinematic_src")
         return
 
     def preinitialize(self):
