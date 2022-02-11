@@ -329,7 +329,7 @@ protected:
     // PROTECTED MEMBERS //////////////////////////////////////////////////
 protected:
 
-    pylith::faults::KinSrcPoroAuxiliaryFactory* _auxiliaryFactory; ///< Factory for auxiliary subfields.
+    pylith::faults::KinSrcAuxiliaryFactory* _auxiliaryFactory; ///< Factory for auxiliary subfields.
     // implement the following add* functions
     /** -- numA : number of auxiliary fields
      ***** Required fields
@@ -349,8 +349,8 @@ protected:
      * - numA - 1: slip(dim)
      */
     // Add other kernels
-    PetscPointFunc _thicknessFnKernel; ///< Kernel for slip time function.
-    PetscPointFunc _porosityFnKernel; ///< Kernel for slip time function.
+    PetscPointFunc _thicknessFnKernel; ///< Kernel for fault thickness function.
+    PetscPointFunc _porosityFnKernel; ///< Kernel for porosity function.
     PetscPointFunc _beta_pFnKernel; ///< Kernel for slip time function.
     PetscPointFunc _beta_sigmaFnKernel; ///< Kernel for slip time function.
     PetscPointFunc _permeability_tangentialFnKernel; ///< Kernel for slip time function.

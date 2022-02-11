@@ -18,7 +18,7 @@
 
 #include <portinfo>
 
-#include "KinSrcStep.hh" // implementation of object methods
+#include "KinSrcPoroStep.hh" // implementation of object methods
 
 #include "pylith/faults/KinSrcAuxiliaryFactory.hh" // USES KinSrcAuxiliaryFactory
 
@@ -31,19 +31,67 @@
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Default constructor.
-pylith::faults::KinSrcStep::KinSrcStep(void) {
-    pylith::utils::PyreComponent::setName("kinsrcstep");
+pylith::faults::KinSrcPoroStep::KinSrcPoroStep(void) {
+    pylith::utils::PyreComponent::setName("kinsrcporostep");
 } // constructor
 
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Destructor.
-pylith::faults::KinSrcStep::~KinSrcStep(void) {}
+pylith::faults::KinSrcPoroStep::~KinSrcPoroStep(void) {}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Thickness time function kernel.
+void
+pylith::faults::KinSrcPoroStep::thicknessFn(const PylithInt dim,
+                                   const PylithInt numS,
+                                   const PylithInt numA,
+                                   const PylithInt sOff[],
+                                   const PylithInt sOff_x[],
+                                   const PylithScalar s[],
+                                   const PylithScalar s_t[],
+                                   const PylithScalar s_x[],
+                                   const PylithInt aOff[],
+                                   const PylithInt aOff_x[],
+                                   const PylithScalar a[],
+                                   const PylithScalar a_t[],
+                                   const PylithScalar a_x[],
+                                   const PylithReal t,
+                                   const PylithScalar x[],
+                                   const PylithInt numConstants,
+                                   const PylithScalar constants[],
+                                   PylithScalar thickness[]) {
+    // const PylithInt _numA = 2;
+    // TO DO
+    // CURRENTLY FOR DEBUGGING, JUST SET EVERYTING TO 0
+    /**
+    assert(_numA == numA);
+    assert(aOff);
+    assert(a);
+    assert(slip);
+
+    const PylithInt i_initiationTime = 0;
+    const PylithInt i_finalSlip = 1;
+    const PylithScalar initiationTime = a[aOff[i_initiationTime]];
+    const PylithScalar* finalSlip = &a[aOff[i_finalSlip]];
+
+    const PylithInt i_originTime = 0;
+    const PylithScalar originTime = constants[i_originTime];
+    const PylithScalar t0 = originTime + initiationTime;
+    */ 
+    // if (t >= 0.0) {
+    //     for (PylithInt i = 0; i < 1; ++i) {
+    //         slip[i] = 1.0;
+    //     } // for
+    // } // if
+    thickness[0] += 0.0;
+
+} // thicknessFn
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Slip time function kernel.
 void
-pylith::faults::KinSrcStep::slipFn(const PylithInt dim,
+pylith::faults::KinSrcPoroStep::slipFn(const PylithInt dim,
                                    const PylithInt numS,
                                    const PylithInt numA,
                                    const PylithInt sOff[],
@@ -89,7 +137,7 @@ pylith::faults::KinSrcStep::slipFn(const PylithInt dim,
 // ---------------------------------------------------------------------------------------------------------------------
 // Preinitialize earthquake source. Set names/sizes of auxiliary subfields.
 void
-pylith::faults::KinSrcStep::_auxiliaryFieldSetup(const spatialdata::units::Nondimensional& normalizer,
+pylith::faults::KinSrcPoroStep::_auxiliaryFieldSetup(const spatialdata::units::Nondimensional& normalizer,
                                                  const spatialdata::geocoords::CoordSys* cs) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_auxiliaryFieldSetup()");
@@ -103,6 +151,22 @@ pylith::faults::KinSrcStep::_auxiliaryFieldSetup(const spatialdata::units::Nondi
 
     _auxiliaryFactory->addInitiationTime(); // 0
     _auxiliaryFactory->addFinalSlip(); // 1
+
+    // Add other kernels
+    _thicknessFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 0 
+    _porosityFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 1
+    _beta_pFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 2
+    _beta_sigmaFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 3
+    _permeability_tangentialFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 4
+    _permeability_normalFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 5
+    _fluid_viscosityFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 6
+    _bulk_modulus_negativeFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 7
+    _shear_modulus_negativeFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 8
+    _bulk_modulus_positiveFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 9
+    _shear_modulus_positiveFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 10
+    _slipFnKernel = pylith::faults::KinSrcPoroStep::slipFn; // numA - 1
+    _slipRateFnKernel = NULL; // Undefined for step function.
+    _slipAccFnKernel = NULL; // Undefined for step function.
 
     PYLITH_METHOD_END;
 } // _auxiliaryFieldSetup

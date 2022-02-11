@@ -20,8 +20,9 @@
 
 #include "FaultCohesiveKinPoro.hh" // implementation of object methods
 
-#include "pylith/faults/KinSrc.hh" // USES KinSrc
+#include "pylith/faults/KinSrcPoro.hh" // USES KinSrcPoro
 #include "pylith/faults/AuxiliaryFactoryKinematic.hh" // USES AuxiliaryFactoryKinematic
+#include "pylith/faults/AuxiliaryFactoryKinematicPoro.hh" // USES AuxiliaryFactoryKinematicPoro
 #include "pylith/feassemble/IntegratorInterface.hh" // USES IntegratorInterface
 #include "pylith/feassemble/InterfacePatches.hh" // USES InterfacePatches
 #include "pylith/feassemble/ConstraintSimple.hh" // USES ConstraintSimple
@@ -132,7 +133,7 @@ pylith::faults::FaultCohesiveKinPoro::deallocate(void) {
 void
 pylith::faults::FaultCohesiveKinPoro::setEqRuptures(const char *const *names,
                                                              const int numNames,
-                                                             KinSrc **ruptures,
+                                                             KinSrcPoro **ruptures,
                                                              const int numRuptures) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("setEqRuptures(names=" << names << ", numNames=" << numNames << ", ruptures=" << ruptures << ", numRuptures=" << numRuptures << ")");
@@ -455,7 +456,7 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
      * - 7: bulk_modulus_negative(1)
      * - 8: shear_modulus_negative(1)
      * - 9: bulk_modulus_positive(1)
-     * - 10: shear_modulus_positive(1)
+     * - 10: shear_modulus_positive(1)KinSrc
      * - numA - 3: body_force(dim)
      * - numA - 2: source(1)
      * - numA - 1: slip(dim)
@@ -501,7 +502,7 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
     assert(auxiliaryField);
     const srcs_type::const_iterator rupturesEnd = _ruptures.end();
     for (srcs_type::iterator r_iter = _ruptures.begin(); r_iter != rupturesEnd; ++r_iter) {
-        KinSrc *src = r_iter->second;
+        KinSrcPoro *src = r_iter->second;
         assert(src);
         src->initialize(*auxiliaryField, *_normalizer, solution.getMesh().getCoordSys());
     } // for
@@ -536,6 +537,21 @@ pylith::faults::FaultCohesiveKinPoro::updateAuxiliaryField(pylith::topology::Fie
 
     assert(auxiliaryField);
     assert(_normalizer);
+
+    // only need to pass auxiliary field at time t once; this occurs
+    // with slip function
+    
+    // this->_updateThickness(auxiliaryField, t); // 0
+    // this->_updatePorosity(auxiliaryField, t); // 1
+    // this->_updateBeta_p(auxiliaryField, t); // 2
+    // this->_updateBeta_sigma(auxiliaryField, t); // 3
+    // this->_updatePermeablityTangential(auxiliaryField, t); // 4
+    // this->_updatePermeablityNormal(auxiliaryField, t); // 5
+    // this->_updateFluidViscosity(auxiliaryField, t); // 6
+    // this->_bulkModulusNegative(auxiliaryField, t); // 7
+    // this->_shearModulusNegative(auxiliaryField, t); // 8
+    // this->_bulkModulusPositive(auxiliaryField, t); // 9
+    // this->_shearModulusPositive(auxiliaryField, t); // 10
 
     switch (_formulation) {
     case QUASISTATIC:
@@ -603,11 +619,11 @@ pylith::faults::FaultCohesiveKinPoro::_updateSlip(pylith::topology::Field *auxil
         err = VecSet(_slipVecRupture, 0.0);
         PYLITH_CHECK_ERROR(err);
 
-        KinSrc *src = r_iter->second;
+        KinSrcPoro *src = r_iter->second;
         assert(src);
         src->updateSlip(_slipVecRupture, auxiliaryField, t, _normalizer->getTimeScale());
         err = VecAYPX(_slipVecTotal, 1.0, _slipVecRupture);
-    } // for
+    } // forslip time
 
     // Transfer slip values from local PETSc slip vector to fault auxiliary field.
     PetscInt pStart = 0, pEnd = 0;
@@ -659,7 +675,7 @@ pylith::faults::FaultCohesiveKinPoro::_updateSlipRate(pylith::topology::Field *a
         err = VecSet(_slipVecRupture, 0.0);
         PYLITH_CHECK_ERROR(err);
 
-        KinSrc *src = r_iter->second;
+        KinSrcPoro *src = r_iter->second;
         assert(src);
         src->updateSlipRate(_slipVecRupture, auxiliaryField, t, _normalizer->getTimeScale());
         err = VecAYPX(_slipVecTotal, 1.0, _slipVecRupture);
@@ -712,7 +728,7 @@ pylith::faults::FaultCohesiveKinPoro::_updateSlipAcceleration(pylith::topology::
     for (srcs_type::iterator r_iter = _ruptures.begin(); r_iter != rupturesEnd; ++r_iter) {
         err = VecSet(_slipVecRupture, 0.0);PYLITH_CHECK_ERROR(err);
 
-        KinSrc* src = r_iter->second;assert(src);
+        KinSrcPoro* src = r_iter->second;assert(src);
         src->updateSlipAcc(_slipVecRupture, auxiliaryField, t, _normalizer->getTimeScale());
         err = VecAYPX(_slipVecTotal, 1.0, _slipVecRupture);
     } // for
@@ -728,7 +744,7 @@ pylith::faults::FaultCohesiveKinPoro::_updateSlipAcceleration(pylith::topology::
     err = VecGetArrayRead(_slipVecTotal, &slipAccArray);PYLITH_CHECK_ERROR(err);
 
     for (PetscInt p = pStart, iSlipAcc = 0; p < pEnd; ++p) {
-        const PetscInt slipAccDof = auxiliaryVisitor.sectionDof(p);
+        consslip timet PetscInt slipAccDof = auxiliaryVisitor.sectionDof(p);
         const PetscInt slipAccOff = auxiliaryVisitor.sectionOffset(p);
         for (PetscInt iDof = 0; iDof < slipAccDof; ++iDof, ++iSlipAcc) {
             auxiliaryArray[slipAccOff+iDof] = slipAccArray[iSlipAcc];
