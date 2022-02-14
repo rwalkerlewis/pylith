@@ -17,7 +17,7 @@
  */
 
 #include <portinfo>
-
+#include <iostream>
 #include "pylith/fekernels/FaultCohesiveKinPoro.hh"
 
 #include <cassert> // USES assert()
@@ -345,6 +345,8 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0u_neg(const PylithInt dim,
     {
         f0[fOffN + i] += -lagrange[i];
     } // for
+    // DEBUG LINES
+    // std::cout << "Kernel f0u_neg computed!" << "\n";
 } // f0u_neg
 
 // ----------------------------------------------------------------------
@@ -386,6 +388,9 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0u_pos(const PylithInt dim,
     {
         f0[fOffP + i] += +lagrange[i];
     } // for
+
+    // DEBUG LINES
+    // std::cout << "Kernel f0u_pos computed!" << "\n";
 } // f0u_pos
 
 // ----------------------------------------------------------------------
@@ -442,6 +447,9 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_neg(const PylithInt dim,
                  ((pressureN - pressureFault) / thickness);
     //f0[fOffP] += permeabilityNormal / fluidViscosity *
     //             ((pressureP - pressureFault) / thickness);
+    // DEBUG LINEs
+    std::cout << "In f0p_neg added: " << permeabilityNormal / fluidViscosity *
+                 ((pressureN - pressureFault) / thickness) << "\n";
 } // f0p_neg
 
 // ----------------------------------------------------------------------
@@ -498,6 +506,10 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_pos(const PylithInt dim,
     //             ((pressureN - pressureFault) / thickness);
     f0[fOffP] += permeabilityNormal / fluidViscosity *
                  ((pressureP - pressureFault) / thickness);
+    
+    // DEBUG LINEs
+    std::cout << "In f0p_pos added: " << permeabilityNormal / fluidViscosity *
+                 ((pressureP - pressureFault) / thickness) << "\n";
 } // f0p_pos
 
 // ----------------------------------------------------------------------
@@ -555,11 +567,16 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_body_neg(const PylithInt dim,
     {
         nDotBodyForce += n[i] * bodyForce[i];
     }
-
+    
     f0[fOffN] += permeabilityNormal / fluidViscosity *
                  ((pressureN - pressureFault) / thickness + nDotBodyForce);
     //f0[fOffP] += permeabilityNormal / fluidViscosity *
     //             ((pressureP - pressureFault) / thickness - nDotBodyForce);
+    
+    // std::cout << "f0p_body_neg added by : " << permeabilityNormal / fluidViscosity *
+    //              ((pressureN - pressureFault) / thickness + nDotBodyForce) << "\n";
+    // std::cout << "Kernel f0p_body_neg computed!" << "\n";
+    
 } // f0p_body_neg
 
 // ----------------------------------------------------------------------
@@ -622,6 +639,9 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_body_pos(const PylithInt dim,
     //             ((pressureN - pressureFault) / thickness + nDotBodyForce);
     f0[fOffP] += permeabilityNormal / fluidViscosity *
                  ((pressureP - pressureFault) / thickness - nDotBodyForce);
+    
+    // DEBUG LINES
+    // std::cout << "Kernel f0p_body_pos computed!" << "\n";
 } // f0p_body_pos
 
 // ----------------------------------------------------------------------
@@ -699,6 +719,8 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0l_u(const PylithInt dim,
     default:
         assert(0);
     } // switch
+    // DEBUG LINES
+    // std::cout << "Kernel f0l_u computed!" << "\n";
 } // f0l_u
 
 // ----------------------------------------------------------------------
@@ -775,6 +797,8 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0l_v(const PylithInt dim,
     default:
         assert(0);
     } // switch
+    // DEBUG LINES
+    // std::cout << "Kernel f0l_vcomputed!" << "\n";
 } // f0l_v
 
 // ----------------------------------------------------------------------
@@ -905,7 +929,22 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_fault(const PylithInt dim,
     f0[fOffp_fault] += porosity * (betaP * (pressureN_t + 2. * pressureFault_t + pressureP_t) / 4. +
                                    betaSigma * nDotLagrange_t) +
                            permeabilityTangential / fluidViscosity - permeabilityNormal / fluidViscosity * (pressureP - 2. * pressureFault + pressureN) / (thickness*thickness);
+    // DEBUG LINEs
+    std::cout << "In f0p_fault added: " << porosity * (betaP * (pressureN_t + 2. * pressureFault_t + pressureP_t) / 4. +
+                                   betaSigma * nDotLagrange_t) +
+                           permeabilityTangential / fluidViscosity - permeabilityNormal / fluidViscosity * (pressureP - 2. * pressureFault + pressureN) / (thickness*thickness) << "\n";
+    // std::cout << "Thickness = " << thickness << "\n";
+    // std::cout << "fluidViscosity = " << fluidViscosity << "\n";
+    std::cout << "numA = " << numA << "\n";
+    std::cout << "aOff = [";
+    for (int i = 0; i < numA + 1; i++) std::cout << aOff[i] << " ";
+    std::cout << "]" << "\n";
+    std::cout << "a = [";
+    for (int i = 0; i < 13; i++) std::cout << a[i] << " ";
+    std::cout << "]" << "\n";
 
+    // DEBUG LINES
+    std::cout << "Kernel f0p_fault computed!" << "\n";
 } // f0p_fault
 
 // ----------------------------------------------------------------------
@@ -1051,6 +1090,22 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_fault_body(const PylithInt dim
                                    betaSigma * nDotLagrange_t) 
                         + permeabilityTangential / fluidViscosity * bodyForce_div 
                         - permeabilityNormal / fluidViscosity * (pressureP - 2. * pressureFault + pressureN) / (thickness*thickness);
+    // DEBUG LINEs
+    std::cout << "In f0p_fault_body added: " << porosity * (betaP * (pressureN_t + 2. * pressureFault_t + pressureP_t) / 4. +
+                                   betaSigma * nDotLagrange_t) + permeabilityTangential / fluidViscosity * bodyForce_div 
+                        - permeabilityNormal / fluidViscosity * (pressureP - 2. * pressureFault + pressureN) / (thickness*thickness) << "\n";
+    std::cout << "Thickness = " << thickness << "\n";
+    std::cout << "fluidViscosity = " << fluidViscosity << "\n";
+    std::cout << "numA = " << numA << "\n";
+    // std::cout << "aOff = [";
+    // for (int i = 0; i < numA + 1; i++) std::cout << aOff[i] << " ";
+    // std::cout << "]" << "\n";
+    // std::cout << "a = [";
+    // for (int i = 0; i < 13; i++) std::cout << a[i] << " ";
+    // std::cout << "]" << "\n";
+
+    // DEBUG LINES
+    std::cout << "Kernel f0p_fault_body computed!" << "\n";
 
 } // f0p_fault_body
 
@@ -1334,7 +1389,23 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_fault_body_source(const Pylith
                         + permeabilityTangential / fluidViscosity * bodyForce_div
                         - permeabilityNormal / fluidViscosity * (pressureP - 2. * pressureFault + pressureN) / thickness / thickness 
                         - source;
+    
+    // DEBUG LINEs
+    std::cout << "In f0p_fault_body_source added: " << porosity * (betaP * (pressureN_t + 2. * pressureFault_t + pressureP_t) / 4. +
+                                   betaSigma * nDotLagrange_t) + permeabilityTangential / fluidViscosity * bodyForce_div 
+                        - permeabilityNormal / fluidViscosity * (pressureP - 2. * pressureFault + pressureN) / (thickness*thickness) - source << "\n";
+    std::cout << "Thickness = " << thickness << "\n";
+    std::cout << "fluidViscosity = " << fluidViscosity << "\n";
+    std::cout << "numA = " << numA << "\n";
+    // std::cout << "aOff = [";
+    // for (int i = 0; i < numA + 1; i++) std::cout << aOff[i] << " ";
+    // std::cout << "]" << "\n";
+    // std::cout << "a = [";
+    // for (int i = 0; i < 13; i++) std::cout << a[i] << " ";
+    // std::cout << "]" << "\n";
 
+    // DEBUG LINES
+    std::cout << "Kernel f0p_fault_body_source computed!" << "\n";
 } // f0p_fault_body_source
 
 // ----------------------------------------------------------------------

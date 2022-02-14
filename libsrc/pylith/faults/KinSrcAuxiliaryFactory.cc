@@ -127,6 +127,424 @@ pylith::faults::KinSrcAuxiliaryFactory::addFinalSlip(void) {
     PYLITH_METHOD_END;
 } // addFinalSlip
 
+// ---------------------------------------------------------------------------------------------------------------------
+// Add final thickness subfield to auxiliary field.
+void
+pylith::faults::KinSrcAuxiliaryFactory::addFinalThickness(void) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addFinalThickness(void)");
+
+    const char* subfieldName = "final_thickness";
+    const char* componentName = "final_thickness";
+
+    const PylithReal lengthScale = _normalizer->getLengthScale();
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = componentName;
+    description.scale = lengthScale;
+    description.validator = pylith::topology::FieldQuery::validatorPositive;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addFinalThickness
+
+// ---------------------------------------------------------------------
+// Add layer porosity to auxiliary fields.
+void
+pylith::faults::KinSrcAuxiliaryFactory::addFinalPorosity(void) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addFinalPorosity(void)");
+
+    const char* subfieldName = "final_porosity";
+
+    const PylithReal noScale = 1;
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = subfieldName;
+    description.scale = noScale;
+    description.validator = pylith::topology::FieldQuery::validatorPositive;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+
+    // ** TO DO **
+    // Is this step correct?
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addFinalPorosity
+
+
+// ---------------------------------------------------------------------
+// Add beta p to auxiliary fields.
+void
+pylith::faults::KinSrcAuxiliaryFactory::addFinalBetaP(void) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addFinalBetaP(void)");
+
+    const char* subfieldName = "final_beta_p";
+
+    // ** TO DO **
+    // This works? The scale should be 1/Pa
+    const PylithReal betaScale = 1. / _normalizer->getPressureScale();
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = subfieldName;
+    description.scale = betaScale;
+    description.validator = pylith::topology::FieldQuery::validatorPositive;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+
+    // ** TO DO **
+    // Is this step correct?
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addFinalBetaP
+
+
+// Add final_beta_sigma to auxiliary fields.
+void
+pylith::faults::KinSrcAuxiliaryFactory::addFinalBetaSigma(void) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addFinalBetaSigma(void)");
+
+    const char* subfieldName = "final_beta_sigma";
+
+    const PylithReal betaScale = 1. / _normalizer->getPressureScale();
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = subfieldName;
+    description.scale = betaScale;
+    description.validator = pylith::topology::FieldQuery::validatorPositive;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+
+    // ** TO DO **
+    // Is this step correct?
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addFinalBetaSigma
+
+
+// Add tangential permeability to auxiliary fields.
+void
+pylith::faults::KinSrcAuxiliaryFactory::addFinalPermeabilityTangential(void) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addFinalPermeabilityTangential(void)");
+
+    const char* subfieldName = "final_permeability_tangential";
+
+    // ** TO DO **
+    // Please verify this following line
+    // Permeability scale should be m^2
+    const PylithReal lengthScale = _normalizer->getLengthScale();
+    const PylithReal permeabilityScale = lengthScale*lengthScale;
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = subfieldName;
+    description.scale = permeabilityScale;
+    description.validator = pylith::topology::FieldQuery::validatorPositive;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+
+    // ** TO DO **
+    // Is this step correct?
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addFinalPermeabilityTangential
+
+
+// Add final normal permeability to auxiliary fields.
+void
+pylith::faults::KinSrcAuxiliaryFactory::addFinalPermeabilityNormal(void) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addFinalPermeabilityNormal(void)");
+
+    const char* subfieldName = "final_permeability_normal";
+
+    // ** TO DO **
+    // Please verify this following line
+    // Permeability scale should be m^2
+    const PylithReal lengthScale = _normalizer->getLengthScale();
+    const PylithReal permeabilityScale = lengthScale*lengthScale;
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = subfieldName;
+    description.scale = permeabilityScale;
+    description.validator = pylith::topology::FieldQuery::validatorPositive;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+
+    // ** TO DO **
+    // Is this step correct?
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addFinalPermeabilityNormal
+
+
+// ---------------------------------------------------------------------
+// Add final fluid viscosity to auxiliary fields.
+void
+pylith::faults::KinSrcAuxiliaryFactory::addFinalFluidViscosity(void) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addFinalFluidViscosity(void)");
+
+    const char* subfieldName = "final_fluid_viscosity";
+
+    // ** TO DO **
+    // Please verify this following line
+    // viscosity scale should be pa s
+    const PylithReal fluidViscosityScale = _normalizer->getPressureScale()
+                                           * _normalizer->getTimeScale();
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = subfieldName;
+    description.scale = fluidViscosityScale;
+    description.validator = pylith::topology::FieldQuery::validatorPositive;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+
+    // ** TO DO **
+    // Is this step correct?
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addFinalFluidViscosity
+
+
+// ---------------------------------------------------------------------
+// Add negative side final bulk modulus to auxiliary fields.
+void
+pylith::faults::KinSrcAuxiliaryFactory::addFinalBulkModulusNegative(void) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addFinalBulkModulusNegative(void)");
+
+    const char* subfieldName = "final_bulk_modulus_negative";
+
+    const PylithReal bulkModulusScale = _normalizer->getPressureScale();
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = subfieldName;
+    description.scale = bulkModulusScale;
+    description.validator = pylith::topology::FieldQuery::validatorPositive;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+
+    // ** TO DO **
+    // Is this step correct?
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addFinalBulkModulusNegative
+
+
+// ---------------------------------------------------------------------
+// Add positive side bulk modulus to auxiliary fields.
+void
+pylith::faults::KinSrcAuxiliaryFactory::addFinalBulkModulusPositive(void) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addFinalBulkModulusPositive(void)");
+
+    const char* subfieldName = "final_bulk_modulus_positive";
+
+    const PylithReal bulkModulusScale = _normalizer->getPressureScale();
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = subfieldName;
+    description.scale = bulkModulusScale;
+    description.validator = pylith::topology::FieldQuery::validatorPositive;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+
+    // ** TO DO **
+    // Is this step correct?
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addFinalBulkModulusPositive
+
+
+// ---------------------------------------------------------------------
+// Add negative side shear modulus to auxiliary fields.
+void
+pylith::faults::KinSrcAuxiliaryFactory::addFinalShearModulusNegative(void) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addFinalShearModulusNegative(void)");
+
+    const char* subfieldName = "final_shear_modulus_negative";
+
+    const PylithReal shearModulusScale = _normalizer->getPressureScale();
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = subfieldName;
+    description.scale = shearModulusScale;
+    description.validator = pylith::topology::FieldQuery::validatorPositive;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+
+    // ** TO DO **
+    // Is this step correct?
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addFinalShearModulusNegative
+
+
+// ---------------------------------------------------------------------
+// Add positive side shear modulus to auxiliary fields.
+void
+pylith::faults::KinSrcAuxiliaryFactory::addFinalShearModulusPositive(void) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addFinalShearModulusPositive(void)");
+
+    const char* subfieldName = "final_shear_modulus_positive";
+
+    const PylithReal shearModulusScale = _normalizer->getPressureScale();
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = subfieldName;
+    description.scale = shearModulusScale;
+    description.validator = pylith::topology::FieldQuery::validatorPositive;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+
+    // ** TO DO **
+    // Is this step correct?
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addFinalShearModulusPositive
+
+
+// ---------------------------------------------------------------------
+// Add body force subfield to auxiliary fields.
+void
+pylith::faults::KinSrcAuxiliaryFactory::addFinalBodyForce(void) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addFinalBodyForce(void)");
+
+    const char* fieldName = "final_body_force";
+    const char* componentNames[3] = { "final_body_force_x", "final_body_force_y", "final_body_force_z" };
+
+    // ** TO DO **
+    // Verify this line
+    // The scale should be pa / m
+    const PylithReal bodyForceScale = _normalizer->getPressureScale() / _normalizer->getLengthScale();
+
+    pylith::topology::Field::Description description;
+    description.label = fieldName;
+    description.alias = fieldName;
+    description.vectorFieldType = pylith::topology::Field::VECTOR;
+    description.numComponents = _spaceDim;
+    description.componentNames.resize(_spaceDim);
+    for (int i = 0; i < _spaceDim; ++i) {
+        description.componentNames[i] = componentNames[i];
+    } // for
+    description.scale = bodyForceScale;
+    description.validator = NULL;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(fieldName));
+    // No query; populated by kinematic source at beginning of time step.
+
+    // ** TO DO **
+    // Is this step correct?
+    this->setSubfieldQuery(fieldName);
+
+    PYLITH_METHOD_END;
+} // addFinalBodyForce
+
+
+// ---------------------------------------------------------------------
+// Add source to auxiliary fields.
+void
+pylith::faults::KinSrcAuxiliaryFactory::addFinalSource(void) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addFinalSource(void)");
+
+    const char* subfieldName = "final_source";
+    // ** TO DO **
+    // Verify this line
+    // The scale for source is 1 / s
+    const PylithReal sourceScale = 1. / _normalizer->getTimeScale();
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = subfieldName;
+    description.scale = sourceScale;
+    description.validator = pylith::topology::FieldQuery::validatorNonnegative;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+
+    // ** TO DO **
+    // Is this step correct?
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addFinalSource
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Add slip rate subfield to auxiliary field.

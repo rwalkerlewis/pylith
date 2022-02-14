@@ -48,6 +48,46 @@ public:
     /// Add final_slip subfield to auxiliary field.
     void addFinalSlip(void);
 
+    // Newly added components
+    /// Add thickness subfield to auxiliary field
+    void addFinalThickness(void);
+
+    /// Add porosity subfield to auxiliary field
+    void addFinalPorosity(void);
+
+    /// Add beta_p subfield to auxiliary field
+    void addFinalBetaP(void);
+
+    /// Add beta_sigma subfield to auxiliary field
+    void addFinalBetaSigma(void);
+
+    /// Add permeability_tangential subfield to auxiliary field
+    void addFinalPermeabilityTangential(void);
+
+    /// Add permeability_normal subfield to auxiliary field
+    void addFinalPermeabilityNormal(void);
+
+    /// Add fluid_viscosity subfield to auxiliary field
+    void addFinalFluidViscosity(void);
+
+    /// Add bulkmodulusnegative subfield to auxiliary field
+    void addFinalBulkModulusNegative(void);
+
+    /// Add bulkmoduluspositive subfield to auxiliary field
+    void addFinalBulkModulusPositive(void);
+
+    /// Add shearmodulusnegative subfield to auxiliary field
+    void addFinalShearModulusNegative(void);
+
+    /// Add shearmoduluspositive subfield to auxiliary field
+    void addFinalShearModulusPositive(void);
+
+    /// Add bodyforce subfield to auxiliary field
+    void addFinalBodyForce(void);
+
+    /// Add source subfield to auxiliary field
+    void addFinalSource(void);
+
     /// Add slip_rate subfield to auxiliary field.
     void addSlipRate(void);
 

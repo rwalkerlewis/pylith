@@ -556,7 +556,7 @@ pylith::faults::KinSrcPoro::updateSlip(PetscVec slipLocalVec,
     assert(_auxiliaryField);
 
     _setFEConstants(*faultAuxiliaryField); // Constants are attached to the auxiliary field for the slip vector.
-
+    
     PetscPointFunc subfieldKernels[12];
     subfieldKernels[0] = _thicknessFnKernel; // 0
     subfieldKernels[1] = _porosityFnKernel; // 1

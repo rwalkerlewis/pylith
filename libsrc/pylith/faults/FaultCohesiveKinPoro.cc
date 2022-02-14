@@ -49,7 +49,7 @@
 #include <sstream> // USES std::ostringstream
 #include <stdexcept> // USES std::runtime_error
 #include <typeinfo> // USES typeid()
-
+#include <iostream>
 // ---------------------------------------------------------------------------------------------------------------------
 typedef pylith::feassemble::IntegratorInterface::ResidualKernels ResidualKernels;
 typedef pylith::feassemble::IntegratorInterface::JacobianKernels JacobianKernels;
@@ -510,6 +510,10 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
     // Create local PETSc vector to hold current slip.
     PetscErrorCode err = 0;
     err = DMCreateLocalVector(auxiliaryField->getDM(), &_slipVecRupture);
+    // DEBUG LINES
+    // int vecSize;
+    // VecGetSize(_slipVecRupture, &vecSize);
+    // std::cout << "_slipVecRupture size = " << vecSize << "\n";
     PYLITH_CHECK_ERROR(err);
     err = DMCreateLocalVector(auxiliaryField->getDM(), &_slipVecTotal);
     PYLITH_CHECK_ERROR(err);

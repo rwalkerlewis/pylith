@@ -89,7 +89,7 @@ public:
                 const PylithScalar x[],
                 const PylithInt numConstants,
                 const PylithScalar constants[],
-                PylithScalar slip[]);
+                PylithScalar thickness[]);
     
     /** Porosity time function kernel.
      *
@@ -132,7 +132,7 @@ public:
                 const PylithScalar x[],
                 const PylithInt numConstants,
                 const PylithScalar constants[],
-                PylithScalar slip[]);
+                PylithScalar porosity[]);
     
     /** Beta_p time function kernel.
      *
