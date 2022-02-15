@@ -40,124 +40,57 @@ pylith::faults::KinSrcPoroStep::KinSrcPoroStep(void) {
 // Destructor.
 pylith::faults::KinSrcPoroStep::~KinSrcPoroStep(void) {}
 
+
 // ---------------------------------------------------------------------------------------------------------------------
 // Thickness time function kernel.
 void
 pylith::faults::KinSrcPoroStep::thicknessFn(const PylithInt dim,
-                                   const PylithInt numS,
-                                   const PylithInt numA,
-                                   const PylithInt sOff[],
-                                   const PylithInt sOff_x[],
-                                   const PylithScalar s[],
-                                   const PylithScalar s_t[],
-                                   const PylithScalar s_x[],
-                                   const PylithInt aOff[],
-                                   const PylithInt aOff_x[],
-                                   const PylithScalar a[],
-                                   const PylithScalar a_t[],
-                                   const PylithScalar a_x[],
-                                   const PylithReal t,
-                                   const PylithScalar x[],
-                                   const PylithInt numConstants,
-                                   const PylithScalar constants[],
-                                   PylithScalar thickness[]) {
+                                            const PylithInt numS,
+                                            const PylithInt numA,
+                                            const PylithInt sOff[],
+                                            const PylithInt sOff_x[],
+                                            const PylithScalar s[],
+                                            const PylithScalar s_t[],
+                                            const PylithScalar s_x[],
+                                            const PylithInt aOff[],
+                                            const PylithInt aOff_x[],
+                                            const PylithScalar a[],
+                                            const PylithScalar a_t[],
+                                            const PylithScalar a_x[],
+                                            const PylithReal t,
+                                            const PylithScalar x[],
+                                            const PylithInt numConstants,
+                                            const PylithScalar constants[],
+                                            PylithScalar thickness[]) {
     // const PylithInt _numA = 2;
-    // TO DO
-    // CURRENTLY FOR DEBUGGING, JUST SET EVERYTING TO 0
-    /**
-    assert(_numA == numA);
-    assert(aOff);
-    assert(a);
-    assert(slip);
 
-    const PylithInt i_initiationTime = 0;
-    const PylithInt i_finalSlip = 1;
-    const PylithScalar initiationTime = a[aOff[i_initiationTime]];
-    const PylithScalar* finalSlip = &a[aOff[i_finalSlip]];
-
-    const PylithInt i_originTime = 0;
-    const PylithScalar originTime = constants[i_originTime];
-    const PylithScalar t0 = originTime + initiationTime;
-    */ 
-    // if (t >= 0.0) {
-    //     for (PylithInt i = 0; i < 1; ++i) {
-    //         slip[i] = 1.0;
-    //     } // for
-    // } // if
-    thickness[0] = 1.0;
+    thickness[0] += 0.0;
 
 } // thicknessFn
 
-// ---------------------------------------------------------------------------------------------------------------------
-// Thickness time function kernel.
-void
-pylith::faults::KinSrcPoroStep::porosityFn(const PylithInt dim,
-                                   const PylithInt numS,
-                                   const PylithInt numA,
-                                   const PylithInt sOff[],
-                                   const PylithInt sOff_x[],
-                                   const PylithScalar s[],
-                                   const PylithScalar s_t[],
-                                   const PylithScalar s_x[],
-                                   const PylithInt aOff[],
-                                   const PylithInt aOff_x[],
-                                   const PylithScalar a[],
-                                   const PylithScalar a_t[],
-                                   const PylithScalar a_x[],
-                                   const PylithReal t,
-                                   const PylithScalar x[],
-                                   const PylithInt numConstants,
-                                   const PylithScalar constants[],
-                                   PylithScalar porosity[]) {
-    // const PylithInt _numA = 2;
-    // TO DO
-    // CURRENTLY FOR DEBUGGING, JUST SET EVERYTING TO 0
-    /**
-    assert(_numA == numA);
-    assert(aOff);
-    assert(a);
-    assert(slip);
-
-    const PylithInt i_initiationTime = 0;
-    const PylithInt i_finalSlip = 1;
-    const PylithScalar initiationTime = a[aOff[i_initiationTime]];
-    const PylithScalar* finalSlip = &a[aOff[i_finalSlip]];
-
-    const PylithInt i_originTime = 0;
-    const PylithScalar originTime = constants[i_originTime];
-    const PylithScalar t0 = originTime + initiationTime;
-    */ 
-    // if (t >= 0.0) {
-    //     for (PylithInt i = 0; i < 1; ++i) {
-    //         slip[i] = 1.0;
-    //     } // for
-    // } // if
-    porosity[0] = 2.0;
-
-} // porosityFn
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Slip time function kernel.
 void
 pylith::faults::KinSrcPoroStep::slipFn(const PylithInt dim,
-                                   const PylithInt numS,
-                                   const PylithInt numA,
-                                   const PylithInt sOff[],
-                                   const PylithInt sOff_x[],
-                                   const PylithScalar s[],
-                                   const PylithScalar s_t[],
-                                   const PylithScalar s_x[],
-                                   const PylithInt aOff[],
-                                   const PylithInt aOff_x[],
-                                   const PylithScalar a[],
-                                   const PylithScalar a_t[],
-                                   const PylithScalar a_x[],
-                                   const PylithReal t,
-                                   const PylithScalar x[],
-                                   const PylithInt numConstants,
-                                   const PylithScalar constants[],
-                                   PylithScalar slip[]) {
-    const PylithInt _numA = 13;
+                                       const PylithInt numS,
+                                       const PylithInt numA,
+                                       const PylithInt sOff[],
+                                       const PylithInt sOff_x[],
+                                       const PylithScalar s[],
+                                       const PylithScalar s_t[],
+                                       const PylithScalar s_x[],
+                                       const PylithInt aOff[],
+                                       const PylithInt aOff_x[],
+                                       const PylithScalar a[],
+                                       const PylithScalar a_t[],
+                                       const PylithScalar a_x[],
+                                       const PylithReal t,
+                                       const PylithScalar x[],
+                                       const PylithInt numConstants,
+                                       const PylithScalar constants[],
+                                       PylithScalar slip[]) {
+    const PylithInt _numA = 2;
 
     assert(_numA == numA);
     assert(aOff);
@@ -175,8 +108,7 @@ pylith::faults::KinSrcPoroStep::slipFn(const PylithInt dim,
 
     if (t >= t0) {
         for (PylithInt i = 0; i < dim; ++i) {
-            // slip[i] = finalSlip[i];
-            slip[i] = -3.;
+            slip[i] = finalSlip[i];
         } // for
     } // if
 } // slipFn
@@ -186,7 +118,7 @@ pylith::faults::KinSrcPoroStep::slipFn(const PylithInt dim,
 // Preinitialize earthquake source. Set names/sizes of auxiliary subfields.
 void
 pylith::faults::KinSrcPoroStep::_auxiliaryFieldSetup(const spatialdata::units::Nondimensional& normalizer,
-                                                 const spatialdata::geocoords::CoordSys* cs) {
+                                                     const spatialdata::geocoords::CoordSys* cs) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_auxiliaryFieldSetup()");
 
@@ -199,23 +131,10 @@ pylith::faults::KinSrcPoroStep::_auxiliaryFieldSetup(const spatialdata::units::N
 
     _auxiliaryFactory->addInitiationTime(); // 0
     _auxiliaryFactory->addFinalSlip(); // 1
-    
-    // ADD NEW KERNELS
-    _auxiliaryFactory->addFinalThickness(); // 2
-    _auxiliaryFactory->addFinalPorosity(); // 3
-    _auxiliaryFactory->addFinalBetaP(); // 4
-    _auxiliaryFactory->addFinalBetaSigma(); //5
-    _auxiliaryFactory->addFinalPermeabilityTangential(); // 6
-    _auxiliaryFactory->addFinalPermeabilityNormal(); // 7
-    _auxiliaryFactory->addFinalFluidViscosity(); // 8
-    _auxiliaryFactory->addFinalBulkModulusNegative(); // 9
-    _auxiliaryFactory->addFinalShearModulusNegative(); // 10
-    _auxiliaryFactory->addFinalBulkModulusPositive(); // 11
-    _auxiliaryFactory->addFinalShearModulusPositive(); // 12
 
     // Add other kernels
-    _thicknessFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 0 
-    _porosityFnKernel = pylith::faults::KinSrcPoroStep::porosityFn; // 1
+    _thicknessFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 0
+    _porosityFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 1
     _beta_pFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 2
     _beta_sigmaFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 3
     _permeability_tangentialFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 4

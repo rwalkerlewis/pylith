@@ -225,6 +225,8 @@ pylith::faults::AuxiliaryFactoryKinematic::addSlipAcceleration(void) {
 
     PYLITH_METHOD_END;
 } // addSlipAcc
+
+
 // --------------------------------------------------------------------
 // Add undrained bulk modulus subfield to auxiliary fields.
 void
@@ -307,6 +309,7 @@ pylith::faults::AuxiliaryFactoryKinematic::addSkemptonCoefficient(void) { // ske
 
     PYLITH_METHOD_END;
 } // addSkemptonCoefficient
+
 
 // Add auxilliary fields for FaultPoroDiffusionCohesiveKin
 
@@ -510,13 +513,9 @@ pylith::faults::AuxiliaryFactoryKinematic::addFluidViscosity(void) {
     PYLITH_JOURNAL_DEBUG("addFluidViscosity(void)");
 
     const char* subfieldName = "fluid_viscosity";
-
-    // ** TO DO **
-    // Please verify this following line
-    // viscosity scale should be pa s
-    const PylithReal fluidViscosityScale = _normalizer->getPressureScale()
-                                           * _normalizer->getTimeScale();
-
+    const PylithReal pressureScale = _normalizer->getPressureScale();
+    const PylithReal timeScale = _normalizer->getTimeScale();
+    const PylithReal viscosityScale = pressureScale * timeScale;
     pylith::topology::Field::Description description;
     description.label = subfieldName;
     description.alias = subfieldName;
@@ -524,13 +523,10 @@ pylith::faults::AuxiliaryFactoryKinematic::addFluidViscosity(void) {
     description.numComponents = 1;
     description.componentNames.resize(1);
     description.componentNames[0] = subfieldName;
-    description.scale = fluidViscosityScale;
+    description.scale = viscosityScale;
     description.validator = pylith::topology::FieldQuery::validatorPositive;
 
     _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
-
-    // ** TO DO **
-    // Is this step correct?
     this->setSubfieldQuery(subfieldName);
 
     PYLITH_METHOD_END;

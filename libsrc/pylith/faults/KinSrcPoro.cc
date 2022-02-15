@@ -116,8 +116,8 @@ pylith::faults::KinSrcPoro::auxFieldDB(spatialdata::spatialdb::SpatialDB* value)
 // Initialize kinematic (prescribed slip) earthquake source.
 void
 pylith::faults::KinSrcPoro::initialize(const pylith::topology::Field& faultAuxField,
-                                   const spatialdata::units::Nondimensional& normalizer,
-                                   const spatialdata::geocoords::CoordSys* cs) {
+                                       const spatialdata::units::Nondimensional& normalizer,
+                                       const spatialdata::geocoords::CoordSys* cs) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("initialize(faultAuxField"<<faultAuxField.getLabel()<<", normalizer, cs="<<typeid(cs).name()<<")");
 
@@ -150,400 +150,14 @@ pylith::faults::KinSrcPoro::initialize(const pylith::topology::Field& faultAuxFi
 } // initialize
 
 
-// // ----------------------------------------------------------------------
-// // Set thickness values at time t.
-// void
-// pylith::faults::KinSrcPoro::updatethickness(PetscVec thicknessLocalVec,
-//                                    pylith::topology::Field* faultAuxiliaryField,
-//                                    const PylithScalar t,
-//                                    const PylithScalar timeScale) {
-//     PYLITH_METHOD_BEGIN;
-//     PYLITH_COMPONENT_DEBUG("updateThickness(thicknessLocalVec="<<slipLocalVec<<", faultAuxiliaryField="<<faultAuxiliaryField
-//                                                      <<", t="<<t<<", timeScale="<<timeScale<<")");
-
-//     if (!_thicknessFnKernel || (t < _originTime)) {
-//         PYLITH_METHOD_END;
-//     } // if
-
-//     assert(thicknessLocalVec);
-//     assert(_auxiliaryField);
-
-//     _setFEConstants(*faultAuxiliaryField); // Constants are attached to the auxiliary field for the slip vector.
-
-//     PetscPointFunc subfieldKernels[1];
-//     subfieldKernels[0] = _thicknessFnKernel;
-
-//     // Create local vector for slip for this source.
-//     PetscErrorCode err = 0;
-//     PetscDM faultAuxiliaryDM = faultAuxiliaryField->getDM();
-//     PetscDMLabel dmLabel = NULL;
-//     PetscInt labelValue = 0;
-//     err = DMSetAuxiliaryVec(faultAuxiliaryDM, dmLabel, labelValue,
-//                             _auxiliaryField->getLocalVector());PYLITH_CHECK_ERROR(err);
-//     err = DMProjectFieldLocal(faultAuxiliaryDM, t, thicknessLocalVec, subfieldKernels, INSERT_VALUES,
-//                               thicknessLocalVec);PYLITH_CHECK_ERROR(err);
-
-//     PYLITH_METHOD_END;
-// } // updateThickness
-
-// // Set porosity values at time t.
-// void
-// pylith::faults::KinSrcPoro::updateporosity(PetscVec porosityLocalVec,
-//                                    pylith::topology::Field* faultAuxiliaryField,
-//                                    const PylithScalar t,
-//                                    const PylithScalar timeScale) {
-//     PYLITH_METHOD_BEGIN;
-//     PYLITH_COMPONENT_DEBUG("updateporosity(porosityLocalVec="<<slipLocalVec<<", faultAuxiliaryField="<<faultAuxiliaryField
-//                                                      <<", t="<<t<<", timeScale="<<timeScale<<")");
-
-//     if (!_porosityFnKernel || (t < _originTime)) {
-//         PYLITH_METHOD_END;
-//     } // if
-
-//     assert(porosityLocalVec);
-//     assert(_auxiliaryField);
-
-//     _setFEConstants(*faultAuxiliaryField); // Constants are attached to the auxiliary field for the slip vector.
-
-//     PetscPointFunc subfieldKernels[1];
-//     subfieldKernels[0] = _porosityFnKernel;
-
-//     // Create local vector for slip for this source.
-//     PetscErrorCode err = 0;
-//     PetscDM faultAuxiliaryDM = faultAuxiliaryField->getDM();
-//     PetscDMLabel dmLabel = NULL;
-//     PetscInt labelValue = 0;
-//     err = DMSetAuxiliaryVec(faultAuxiliaryDM, dmLabel, labelValue,
-//                             _auxiliaryField->getLocalVector());PYLITH_CHECK_ERROR(err);
-//     err = DMProjectFieldLocal(faultAuxiliaryDM, t, porosityLocalVec, subfieldKernels, INSERT_VALUES,
-//                               porosityLocalVec);PYLITH_CHECK_ERROR(err);
-
-//     PYLITH_METHOD_END;
-// } // updateporosity
-
-// // Set beta_p values at time t.
-// void
-// pylith::faults::KinSrcPoro::updatebeta_p(PetscVec beta_pLocalVec,
-//                                    pylith::topology::Field* faultAuxiliaryField,
-//                                    const PylithScalar t,
-//                                    const PylithScalar timeScale) {
-//     PYLITH_METHOD_BEGIN;
-//     PYLITH_COMPONENT_DEBUG("updatebeta_p(beta_pLocalVec="<<slipLocalVec<<", faultAuxiliaryField="<<faultAuxiliaryField
-//                                                      <<", t="<<t<<", timeScale="<<timeScale<<")");
-
-//     if (!_beta_pFnKernel || (t < _originTime)) {
-//         PYLITH_METHOD_END;
-//     } // if
-
-//     assert(beta_pLocalVec);
-//     assert(_auxiliaryField);
-
-//     _setFEConstants(*faultAuxiliaryField); // Constants are attached to the auxiliary field for the slip vector.
-
-//     PetscPointFunc subfieldKernels[1];
-//     subfieldKernels[0] = _beta_pFnKernel;
-
-//     // Create local vector for slip for this source.
-//     PetscErrorCode err = 0;
-//     PetscDM faultAuxiliaryDM = faultAuxiliaryField->getDM();
-//     PetscDMLabel dmLabel = NULL;
-//     PetscInt labelValue = 0;
-//     err = DMSetAuxiliaryVec(faultAuxiliaryDM, dmLabel, labelValue,
-//                             _auxiliaryField->getLocalVector());PYLITH_CHECK_ERROR(err);
-//     err = DMProjectFieldLocal(faultAuxiliaryDM, t, beta_pLocalVec, subfieldKernels, INSERT_VALUES,
-//                               beta_pLocalVec);PYLITH_CHECK_ERROR(err);
-
-//     PYLITH_METHOD_END;
-// } // updatebeta_p
-
-// // Set beta_sigma values at time t.
-// void
-// pylith::faults::KinSrcPoro::updatebeta_sigma(PetscVec beta_sigmaLocalVec,
-//                                    pylith::topology::Field* faultAuxiliaryField,
-//                                    const PylithScalar t,
-//                                    const PylithScalar timeScale) {
-//     PYLITH_METHOD_BEGIN;
-//     PYLITH_COMPONENT_DEBUG("updatebeta_sigma(beta_sigmaLocalVec="<<slipLocalVec<<", faultAuxiliaryField="<<faultAuxiliaryField
-//                                                      <<", t="<<t<<", timeScale="<<timeScale<<")");
-
-//     if (!_beta_sigmaFnKernel || (t < _originTime)) {
-//         PYLITH_METHOD_END;
-//     } // if
-
-//     assert(beta_sigmaLocalVec);
-//     assert(_auxiliaryField);
-
-//     _setFEConstants(*faultAuxiliaryField); // Constants are attached to the auxiliary field for the slip vector.
-
-//     PetscPointFunc subfieldKernels[1];
-//     subfieldKernels[0] = _beta_sigmaFnKernel;
-
-//     // Create local vector for slip for this source.
-//     PetscErrorCode err = 0;
-//     PetscDM faultAuxiliaryDM = faultAuxiliaryField->getDM();
-//     PetscDMLabel dmLabel = NULL;
-//     PetscInt labelValue = 0;
-//     err = DMSetAuxiliaryVec(faultAuxiliaryDM, dmLabel, labelValue,
-//                             _auxiliaryField->getLocalVector());PYLITH_CHECK_ERROR(err);
-//     err = DMProjectFieldLocal(faultAuxiliaryDM, t, beta_sigmaLocalVec, subfieldKernels, INSERT_VALUES,
-//                               beta_sigmaLocalVec);PYLITH_CHECK_ERROR(err);
-
-//     PYLITH_METHOD_END;
-// } // updatebeta_sigma
-
-// // Set permeability_tangential values at time t.
-// void
-// pylith::faults::KinSrcPoro::updatepermeability_tangential(PetscVec permeability_tangentialLocalVec,
-//                                    pylith::topology::Field* faultAuxiliaryField,
-//                                    const PylithScalar t,
-//                                    const PylithScalar timeScale) {
-//     PYLITH_METHOD_BEGIN;
-//     PYLITH_COMPONENT_DEBUG("updatepermeability_tangential(permeability_tangentialLocalVec="<<slipLocalVec<<", faultAuxiliaryField="<<faultAuxiliaryField
-//                                                      <<", t="<<t<<", timeScale="<<timeScale<<")");
-
-//     if (!_permeability_tangentialFnKernel || (t < _originTime)) {
-//         PYLITH_METHOD_END;
-//     } // if
-
-//     assert(permeability_tangentialLocalVec);
-//     assert(_auxiliaryField);
-
-//     _setFEConstants(*faultAuxiliaryField); // Constants are attached to the auxiliary field for the slip vector.
-
-//     PetscPointFunc subfieldKernels[1];
-//     subfieldKernels[0] = _permeability_tangentialFnKernel;
-
-//     // Create local vector for slip for this source.
-//     PetscErrorCode err = 0;
-//     PetscDM faultAuxiliaryDM = faultAuxiliaryField->getDM();
-//     PetscDMLabel dmLabel = NULL;
-//     PetscInt labelValue = 0;
-//     err = DMSetAuxiliaryVec(faultAuxiliaryDM, dmLabel, labelValue,
-//                             _auxiliaryField->getLocalVector());PYLITH_CHECK_ERROR(err);
-//     err = DMProjectFieldLocal(faultAuxiliaryDM, t, permeability_tangentialLocalVec, subfieldKernels, INSERT_VALUES,
-//                               permeability_tangentialLocalVec);PYLITH_CHECK_ERROR(err);
-
-//     PYLITH_METHOD_END;
-// } // updatepermeability_tangential
-
-// // Set permeability_normal values at time t.
-// void
-// pylith::faults::KinSrcPoro::updatepermeability_normal(PetscVec permeability_normalLocalVec,
-//                                    pylith::topology::Field* faultAuxiliaryField,
-//                                    const PylithScalar t,
-//                                    const PylithScalar timeScale) {
-//     PYLITH_METHOD_BEGIN;
-//     PYLITH_COMPONENT_DEBUG("updatepermeability_normal(permeability_normalLocalVec="<<slipLocalVec<<", faultAuxiliaryField="<<faultAuxiliaryField
-//                                                      <<", t="<<t<<", timeScale="<<timeScale<<")");
-
-//     if (!_permeability_normalFnKernel || (t < _originTime)) {
-//         PYLITH_METHOD_END;
-//     } // if
-
-//     assert(permeability_normalLocalVec);
-//     assert(_auxiliaryField);
-
-//     _setFEConstants(*faultAuxiliaryField); // Constants are attached to the auxiliary field for the slip vector.
-
-//     PetscPointFunc subfieldKernels[1];
-//     subfieldKernels[0] = _permeability_normalFnKernel;
-
-//     // Create local vector for slip for this source.
-//     PetscErrorCode err = 0;
-//     PetscDM faultAuxiliaryDM = faultAuxiliaryField->getDM();
-//     PetscDMLabel dmLabel = NULL;
-//     PetscInt labelValue = 0;
-//     err = DMSetAuxiliaryVec(faultAuxiliaryDM, dmLabel, labelValue,
-//                             _auxiliaryField->getLocalVector());PYLITH_CHECK_ERROR(err);
-//     err = DMProjectFieldLocal(faultAuxiliaryDM, t, permeability_normalLocalVec, subfieldKernels, INSERT_VALUES,
-//                               permeability_normalLocalVec);PYLITH_CHECK_ERROR(err);
-
-//     PYLITH_METHOD_END;
-// } // updatepermeability_normal
-
-// // Set fluid_viscosity values at time t.
-// void
-// pylith::faults::KinSrcPoro::updatefluid_viscosity(PetscVec fluid_viscosityLocalVec,
-//                                    pylith::topology::Field* faultAuxiliaryField,
-//                                    const PylithScalar t,
-//                                    const PylithScalar timeScale) {
-//     PYLITH_METHOD_BEGIN;
-//     PYLITH_COMPONENT_DEBUG("updatefluid_viscosity(fluid_viscosityLocalVec="<<slipLocalVec<<", faultAuxiliaryField="<<faultAuxiliaryField
-//                                                      <<", t="<<t<<", timeScale="<<timeScale<<")");
-
-//     if (!_fluid_viscosityFnKernel || (t < _originTime)) {
-//         PYLITH_METHOD_END;
-//     } // if
-
-//     assert(fluid_viscosityLocalVec);
-//     assert(_auxiliaryField);
-
-//     _setFEConstants(*faultAuxiliaryField); // Constants are attached to the auxiliary field for the slip vector.
-
-//     PetscPointFunc subfieldKernels[1];
-//     subfieldKernels[0] = _fluid_viscosityFnKernel;
-
-//     // Create local vector for slip for this source.
-//     PetscErrorCode err = 0;
-//     PetscDM faultAuxiliaryDM = faultAuxiliaryField->getDM();
-//     PetscDMLabel dmLabel = NULL;
-//     PetscInt labelValue = 0;
-//     err = DMSetAuxiliaryVec(faultAuxiliaryDM, dmLabel, labelValue,
-//                             _auxiliaryField->getLocalVector());PYLITH_CHECK_ERROR(err);
-//     err = DMProjectFieldLocal(faultAuxiliaryDM, t, fluid_viscosityLocalVec, subfieldKernels, INSERT_VALUES,
-//                               fluid_viscosityLocalVec);PYLITH_CHECK_ERROR(err);
-
-//     PYLITH_METHOD_END;
-// } // updatefluid_viscosity
-
-// // Set bulk_modulus_negative values at time t.
-// void
-// pylith::faults::KinSrcPoro::updatebulk_modulus_negative(PetscVec bulk_modulus_negativeLocalVec,
-//                                    pylith::topology::Field* faultAuxiliaryField,
-//                                    const PylithScalar t,
-//                                    const PylithScalar timeScale) {
-//     PYLITH_METHOD_BEGIN;
-//     PYLITH_COMPONENT_DEBUG("updatebulk_modulus_negative(bulk_modulus_negativeLocalVec="<<slipLocalVec<<", faultAuxiliaryField="<<faultAuxiliaryField
-//                                                      <<", t="<<t<<", timeScale="<<timeScale<<")");
-
-//     if (!_bulk_modulus_negativeFnKernel || (t < _originTime)) {
-//         PYLITH_METHOD_END;
-//     } // if
-
-//     assert(bulk_modulus_negativeLocalVec);
-//     assert(_auxiliaryField);
-
-//     _setFEConstants(*faultAuxiliaryField); // Constants are attached to the auxiliary field for the slip vector.
-
-//     PetscPointFunc subfieldKernels[1];
-//     subfieldKernels[0] = _bulk_modulus_negativeFnKernel;
-
-//     // Create local vector for slip for this source.
-//     PetscErrorCode err = 0;
-//     PetscDM faultAuxiliaryDM = faultAuxiliaryField->getDM();
-//     PetscDMLabel dmLabel = NULL;
-//     PetscInt labelValue = 0;
-//     err = DMSetAuxiliaryVec(faultAuxiliaryDM, dmLabel, labelValue,
-//                             _auxiliaryField->getLocalVector());PYLITH_CHECK_ERROR(err);
-//     err = DMProjectFieldLocal(faultAuxiliaryDM, t, bulk_modulus_negativeLocalVec, subfieldKernels, INSERT_VALUES,
-//                               bulk_modulus_negativeLocalVec);PYLITH_CHECK_ERROR(err);
-
-//     PYLITH_METHOD_END;
-// } // updatebulk_modulus_negative
-
-// // Set shear_modulus_negative values at time t.
-// void
-// pylith::faults::KinSrcPoro::updateshear_modulus_negative(PetscVec shear_modulus_negativeLocalVec,
-//                                    pylith::topology::Field* faultAuxiliaryField,
-//                                    const PylithScalar t,
-//                                    const PylithScalar timeScale) {
-//     PYLITH_METHOD_BEGIN;
-//     PYLITH_COMPONENT_DEBUG("updateshear_modulus_negative(shear_modulus_negativeLocalVec="<<slipLocalVec<<", faultAuxiliaryField="<<faultAuxiliaryField
-//                                                      <<", t="<<t<<", timeScale="<<timeScale<<")");
-
-//     if (!_shear_modulus_negativeFnKernel || (t < _originTime)) {
-//         PYLITH_METHOD_END;
-//     } // if
-
-//     assert(shear_modulus_negativeLocalVec);
-//     assert(_auxiliaryField);
-
-//     _setFEConstants(*faultAuxiliaryField); // Constants are attached to the auxiliary field for the slip vector.
-
-//     PetscPointFunc subfieldKernels[1];
-//     subfieldKernels[0] = _shear_modulus_negativeFnKernel;
-
-//     // Create local vector for slip for this source.
-//     PetscErrorCode err = 0;
-//     PetscDM faultAuxiliaryDM = faultAuxiliaryField->getDM();
-//     PetscDMLabel dmLabel = NULL;
-//     PetscInt labelValue = 0;
-//     err = DMSetAuxiliaryVec(faultAuxiliaryDM, dmLabel, labelValue,
-//                             _auxiliaryField->getLocalVector());PYLITH_CHECK_ERROR(err);
-//     err = DMProjectFieldLocal(faultAuxiliaryDM, t, shear_modulus_negativeLocalVec, subfieldKernels, INSERT_VALUES,
-//                               shear_modulus_negativeLocalVec);PYLITH_CHECK_ERROR(err);
-
-//     PYLITH_METHOD_END;
-// } // updateshear_modulus_negative
-
-// // Set bulk_modulus_positive values at time t.
-// void
-// pylith::faults::KinSrcPoro::updatebulk_modulus_positive(PetscVec bulk_modulus_positiveLocalVec,
-//                                    pylith::topology::Field* faultAuxiliaryField,
-//                                    const PylithScalar t,
-//                                    const PylithScalar timeScale) {
-//     PYLITH_METHOD_BEGIN;
-//     PYLITH_COMPONENT_DEBUG("updatebulk_modulus_positive(bulk_modulus_positiveLocalVec="<<slipLocalVec<<", faultAuxiliaryField="<<faultAuxiliaryField
-//                                                      <<", t="<<t<<", timeScale="<<timeScale<<")");
-
-//     if (!_bulk_modulus_positiveFnKernel || (t < _originTime)) {
-//         PYLITH_METHOD_END;
-//     } // if
-
-//     assert(bulk_modulus_positiveLocalVec);
-//     assert(_auxiliaryField);
-
-//     _setFEConstants(*faultAuxiliaryField); // Constants are attached to the auxiliary field for the slip vector.
-
-//     PetscPointFunc subfieldKernels[1];
-//     subfieldKernels[0] = _bulk_modulus_positiveFnKernel;
-
-//     // Create local vector for slip for this source.
-//     PetscErrorCode err = 0;
-//     PetscDM faultAuxiliaryDM = faultAuxiliaryField->getDM();
-//     PetscDMLabel dmLabel = NULL;
-//     PetscInt labelValue = 0;
-//     err = DMSetAuxiliaryVec(faultAuxiliaryDM, dmLabel, labelValue,
-//                             _auxiliaryField->getLocalVector());PYLITH_CHECK_ERROR(err);
-//     err = DMProjectFieldLocal(faultAuxiliaryDM, t, bulk_modulus_positiveLocalVec, subfieldKernels, INSERT_VALUES,
-//                               bulk_modulus_positiveLocalVec);PYLITH_CHECK_ERROR(err);
-
-//     PYLITH_METHOD_END;
-// } // updatebulk_modulus_positive
-
-// // Set shear_modulus_positive values at time t.
-// void
-// pylith::faults::KinSrcPoro::updateshear_modulus_positive(PetscVec shear_modulus_positiveLocalVec,
-//                                    pylith::topology::Field* faultAuxiliaryField,
-//                                    const PylithScalar t,
-//                                    const PylithScalar timeScale) {
-//     PYLITH_METHOD_BEGIN;
-//     PYLITH_COMPONENT_DEBUG("updateshear_modulus_positive(shear_modulus_positiveLocalVec="<<slipLocalVec<<", faultAuxiliaryField="<<faultAuxiliaryField
-//                                                      <<", t="<<t<<", timeScale="<<timeScale<<")");
-
-//     if (!_shear_modulus_positiveFnKernel || (t < _originTime)) {
-//         PYLITH_METHOD_END;
-//     } // if
-
-//     assert(shear_modulus_positiveLocalVec);
-//     assert(_auxiliaryField);
-
-//     _setFEConstants(*faultAuxiliaryField); // Constants are attached to the auxiliary field for the slip vector.
-
-//     PetscPointFunc subfieldKernels[1];
-//     subfieldKernels[0] = _shear_modulus_positiveFnKernel;
-
-//     // Create local vector for slip for this source.
-//     PetscErrorCode err = 0;
-//     PetscDM faultAuxiliaryDM = faultAuxiliaryField->getDM();
-//     PetscDMLabel dmLabel = NULL;
-//     PetscInt labelValue = 0;
-//     err = DMSetAuxiliaryVec(faultAuxiliaryDM, dmLabel, labelValue,
-//                             _auxiliaryField->getLocalVector());PYLITH_CHECK_ERROR(err);
-//     err = DMProjectFieldLocal(faultAuxiliaryDM, t, shear_modulus_positiveLocalVec, subfieldKernels, INSERT_VALUES,
-//                               shear_modulus_positiveLocalVec);PYLITH_CHECK_ERROR(err);
-
-//     PYLITH_METHOD_END;
-// } // updateshear_modulus_positive
-
 // ----------------------------------------------------------------------
 // Set slip values at time t.
 // Also set rest of auxiliary fields
 void
 pylith::faults::KinSrcPoro::updateSlip(PetscVec slipLocalVec,
-                                   pylith::topology::Field* faultAuxiliaryField,
-                                   const PylithScalar t,
-                                   const PylithScalar timeScale) {
+                                       pylith::topology::Field* faultAuxiliaryField,
+                                       const PylithScalar t,
+                                       const PylithScalar timeScale) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("updateSlip(slipLocalVec="<<slipLocalVec<<", faultAuxiliaryField="<<faultAuxiliaryField
                                                      <<", t="<<t<<", timeScale="<<timeScale<<")");
@@ -556,19 +170,19 @@ pylith::faults::KinSrcPoro::updateSlip(PetscVec slipLocalVec,
     assert(_auxiliaryField);
 
     _setFEConstants(*faultAuxiliaryField); // Constants are attached to the auxiliary field for the slip vector.
-    
+
     PetscPointFunc subfieldKernels[12];
     subfieldKernels[0] = _thicknessFnKernel; // 0
     subfieldKernels[1] = _porosityFnKernel; // 1
-    subfieldKernels[2] = _beta_pFnKernel; // 2 
+    subfieldKernels[2] = _beta_pFnKernel; // 2
     subfieldKernels[3] = _beta_sigmaFnKernel; // 3
-    subfieldKernels[4] =_permeability_tangentialFnKernel; // 4
+    subfieldKernels[4] = _permeability_tangentialFnKernel; // 4
     subfieldKernels[5] = _permeability_normalFnKernel; // 5
     subfieldKernels[6] = _fluid_viscosityFnKernel; // 6
     subfieldKernels[7] = _bulk_modulus_negativeFnKernel; // 7
     subfieldKernels[8] = _shear_modulus_negativeFnKernel; // 8
     subfieldKernels[9] = _bulk_modulus_positiveFnKernel; // 9
-    subfieldKernels[10] = _shear_modulus_positiveFnKernel; // 10 
+    subfieldKernels[10] = _shear_modulus_positiveFnKernel; // 10
     subfieldKernels[11] = _slipFnKernel; // 11
 
     // Create local vector for slip for this source.
@@ -583,7 +197,7 @@ pylith::faults::KinSrcPoro::updateSlip(PetscVec slipLocalVec,
 
     // DEBUG LINES
     VecView(slipLocalVec, PETSC_VIEWER_STDOUT_SELF);
-    
+
     PYLITH_METHOD_END;
 } // updateSlip
 
@@ -592,9 +206,9 @@ pylith::faults::KinSrcPoro::updateSlip(PetscVec slipLocalVec,
 // Set slip rate values at time t.
 void
 pylith::faults::KinSrcPoro::updateSlipRate(PetscVec slipRateLocalVec,
-                                       pylith::topology::Field* faultAuxiliaryField,
-                                       const PylithScalar t,
-                                       const PylithScalar timeScale) {
+                                           pylith::topology::Field* faultAuxiliaryField,
+                                           const PylithScalar t,
+                                           const PylithScalar timeScale) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("updateSlipRate(slipRateLocalVec="<<slipRateLocalVec<<", faultAuxiliaryField="<<faultAuxiliaryField
                                                              <<", t="<<t<<", timeScale="<<timeScale<<")");
@@ -611,15 +225,15 @@ pylith::faults::KinSrcPoro::updateSlipRate(PetscVec slipRateLocalVec,
     PetscPointFunc subfieldKernels[12];
     subfieldKernels[0] = _thicknessFnKernel; // 0
     subfieldKernels[1] = _porosityFnKernel; // 1
-    subfieldKernels[2] = _beta_pFnKernel; // 2 
+    subfieldKernels[2] = _beta_pFnKernel; // 2
     subfieldKernels[3] = _beta_sigmaFnKernel; // 3
-    subfieldKernels[4] =_permeability_tangentialFnKernel; // 4
+    subfieldKernels[4] = _permeability_tangentialFnKernel; // 4
     subfieldKernels[5] = _permeability_normalFnKernel; // 5
     subfieldKernels[6] = _fluid_viscosityFnKernel; // 6
     subfieldKernels[7] = _bulk_modulus_negativeFnKernel; // 7
     subfieldKernels[8] = _shear_modulus_negativeFnKernel; // 8
     subfieldKernels[9] = _bulk_modulus_positiveFnKernel; // 9
-    subfieldKernels[10] = _shear_modulus_positiveFnKernel; // 10 
+    subfieldKernels[10] = _shear_modulus_positiveFnKernel; // 10
     subfieldKernels[11] = _slipRateFnKernel;
 
     // Create local vector for slip for this source.
@@ -640,9 +254,9 @@ pylith::faults::KinSrcPoro::updateSlipRate(PetscVec slipRateLocalVec,
 // Set slip acceleration values at time t.
 void
 pylith::faults::KinSrcPoro::updateSlipAcc(PetscVec slipAccLocalVec,
-                                      pylith::topology::Field* faultAuxiliaryField,
-                                      const PylithScalar t,
-                                      const PylithScalar timeScale) {
+                                          pylith::topology::Field* faultAuxiliaryField,
+                                          const PylithScalar t,
+                                          const PylithScalar timeScale) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("updateSlipAcc(slipAccLocalVec="<<slipAccLocalVec<<", faultAuxiliaryField="<<faultAuxiliaryField
                                                            <<", t="<<t<<", timeScale="<<timeScale<<")");
@@ -659,15 +273,15 @@ pylith::faults::KinSrcPoro::updateSlipAcc(PetscVec slipAccLocalVec,
     PetscPointFunc subfieldKernels[12];
     subfieldKernels[0] = _thicknessFnKernel; // 0
     subfieldKernels[1] = _porosityFnKernel; // 1
-    subfieldKernels[2] = _beta_pFnKernel; // 2 
+    subfieldKernels[2] = _beta_pFnKernel; // 2
     subfieldKernels[3] = _beta_sigmaFnKernel; // 3
-    subfieldKernels[4] =_permeability_tangentialFnKernel; // 4
+    subfieldKernels[4] = _permeability_tangentialFnKernel; // 4
     subfieldKernels[5] = _permeability_normalFnKernel; // 5
     subfieldKernels[6] = _fluid_viscosityFnKernel; // 6
     subfieldKernels[7] = _bulk_modulus_negativeFnKernel; // 7
     subfieldKernels[8] = _shear_modulus_negativeFnKernel; // 8
     subfieldKernels[9] = _bulk_modulus_positiveFnKernel; // 9
-    subfieldKernels[10] = _shear_modulus_positiveFnKernel; // 10 
+    subfieldKernels[10] = _shear_modulus_positiveFnKernel; // 10
     subfieldKernels[11] = _slipAccFnKernel;
 
     // Create local vector for slip for this source.

@@ -22,7 +22,6 @@
 
 #include "pylith/faults/KinSrcPoro.hh" // USES KinSrcPoro
 #include "pylith/faults/AuxiliaryFactoryKinematic.hh" // USES AuxiliaryFactoryKinematic
-#include "pylith/faults/AuxiliaryFactoryKinematicPoro.hh" // USES AuxiliaryFactoryKinematicPoro
 #include "pylith/feassemble/IntegratorInterface.hh" // USES IntegratorInterface
 #include "pylith/feassemble/InterfacePatches.hh" // USES InterfacePatches
 #include "pylith/feassemble/ConstraintSimple.hh" // USES ConstraintSimple
@@ -132,9 +131,9 @@ pylith::faults::FaultCohesiveKinPoro::deallocate(void) {
 // Set kinematic earthquake ruptures.
 void
 pylith::faults::FaultCohesiveKinPoro::setEqRuptures(const char *const *names,
-                                                             const int numNames,
-                                                             KinSrcPoro **ruptures,
-                                                             const int numRuptures) {
+                                                    const int numNames,
+                                                    KinSrcPoro **ruptures,
+                                                    const int numRuptures) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("setEqRuptures(names=" << names << ", numNames=" << numNames << ", ruptures=" << ruptures << ", numRuptures=" << numRuptures << ")");
 
@@ -175,15 +174,14 @@ pylith::faults::FaultCohesiveKinPoro::verifyConfiguration(const pylith::topology
      */
     // ** TO DO **
     // Seems that pressure is not part of the fault, but part of poroelastic material implementation
-    
+
     if (!solution.hasSubfield("pressure")) {
         std::ostringstream msg;
         msg << "Cannot find 'pressure' subfield in solution field for poroelastic diffusive fault implementation in component '"
             << PyreComponent::getIdentifier() << "'.";
         throw std::runtime_error(msg.str());
     } // if
-    
-   
+
     if (!solution.hasSubfield("fault_pressure")) {
         std::ostringstream msg;
         msg << "Cannot find 'fault_pressure' subfield in solution field for poroelastic diffusive fault implementation in component '"
@@ -245,8 +243,9 @@ pylith::faults::FaultCohesiveKinPoro::createIntegrator(const pylith::topology::F
     _setKernelsResidual(integrator, solution);
     _setKernelsJacobian(integrator, solution);
 
-    //_FaultCohesiveKinPoro::setKernelsLHSResidual(integrator, *this, solution, _useBodyForce, _useSource, _formulation);
-    //_FaultCohesiveKinPoro::setKernelsLHSJacobian(integrator, *this, solution, _formulation);
+    // _FaultCohesiveKinPoro::setKernelsLHSResidual(integrator, *this, solution, _useBodyForce, _useSource,
+    // _formulation);
+    // _FaultCohesiveKinPoro::setKernelsLHSJacobian(integrator, *this, solution, _formulation);
     // No state variables.
     // _FaultCohesiveKinPoro::setKernelsDerivedFields(integrator, *this, solution);
 
@@ -257,8 +256,7 @@ pylith::faults::FaultCohesiveKinPoro::createIntegrator(const pylith::topology::F
 // ------------------------------------------------------------------------------------------------
 // Create constraint for buried fault edges and faces.
 std::vector<pylith::feassemble::Constraint*>
-pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::Field &solution)
-{
+pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::Field &solution) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("createConstraints(solution=" << solution.getLabel() << ")");
 
@@ -274,8 +272,7 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
 
     pylith::int_array constrainedDOFLagrange;
     constrainedDOFLagrange.resize(numComponents);
-    for (int c = 0; c < numComponents; ++c)
-    {
+    for (int c = 0; c < numComponents; ++c) {
         constrainedDOFLagrange[c] = c;
     }
     // Make new label for cohesive edges and faces
@@ -334,17 +331,16 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
     constraintLagrange->setSubfieldName(lagrangeName);
     constraintLagrange->setUserFn(_zero);
 
-    // "FaultPressure" multipliers 
+    // "FaultPressure" multipliers
     const char *faultPressureName = "fault_pressure";
     numComponents = 1;
     pylith::int_array constrainedDOFFaultPressure;
     constrainedDOFFaultPressure.resize(numComponents);
-    for (int c = numComponents; c < numComponents*2; ++c)
-    {
+    for (int c = numComponents; c < numComponents*2; ++c) {
         constrainedDOFFaultPressure[c] = c;
     }
-     // Make new label for cohesive edges and faces
-    //PetscDM dm = solution.getDM();
+    // Make new label for cohesive edges and faces
+    // PetscDM dm = solution.getDM();
     PetscDMLabel buriedLabelFaultPressure = NULL;
     PetscDMLabel buriedCohesiveLabelFaultPressure = NULL;
     PetscIS pointISFaultPressure = NULL;
@@ -353,7 +349,7 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
     std::ostringstream labelstreamFaultPressure;
     labelstreamFaultPressure << getBuriedEdgesMarkerLabel() << "_cohesive";
     std::string labelnameFaultPressure = labelstreamFaultPressure.str();
-    //PetscErrorCode err;
+    // PetscErrorCode err;
 
     err = DMCreateLabel(dm, labelnameFaultPressure.c_str());PYLITH_CHECK_ERROR(err);
     err = DMGetLabel(dm, getBuriedEdgesMarkerLabel(), &buriedLabelFaultPressure);PYLITH_CHECK_ERROR(err);
@@ -402,15 +398,16 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
     // Package constraints and exit
     constraintArray.resize(2);
     constraintArray[0] = constraintLagrange;
-    constraintArray[1] = constraintFaultPressure;    
+    constraintArray[1] = constraintFaultPressure;
     PYLITH_METHOD_RETURN(constraintArray);
 } // createConstraints
+
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Create auxiliary field.
 pylith::topology::Field *
 pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topology::Field &solution,
-                                                                    const pylith::topology::Mesh &domainMesh) {
+                                                           const pylith::topology::Mesh &domainMesh) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("createAuxiliaryField(solution=" << solution.getLabel() << ", domainMesh=)" << typeid(domainMesh).name() << ")");
 
@@ -429,10 +426,13 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
 
     // // Set default discretization of auxiliary subfields to match lagrange_multiplier_fault subfield in solution.
     // assert(_auxiliaryFactory);
-    // const pylith::topology::FieldBase::Discretization &discretization1 = solution.getSubfieldInfo("fault_pressure").fe;
+    // const pylith::topology::FieldBase::Discretization &discretization1 =
+    // solution.getSubfieldInfo("fault_pressure").fe;
     // isFaultOnly = false;
-    // _auxiliaryFactory->setSubfieldDiscretization("default", discretization1.basisOrder, discretization1.quadOrder, -1, isFaultOnly,
-    //                                              discretization1.cellBasis, discretization1.feSpace, discretization1.isBasisContinuous);
+    // _auxiliaryFactory->setSubfieldDiscretization("default", discretization1.basisOrder, discretization1.quadOrder,
+    // -1, isFaultOnly,
+    //                                              discretization1.cellBasis, discretization1.feSpace,
+    // discretization1.isBasisContinuous);
 
     // ** TO DO **
     // Set discretization of aux fields to match also
@@ -457,8 +457,6 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
      * - 8: shear_modulus_negative(1)
      * - 9: bulk_modulus_positive(1)
      * - 10: shear_modulus_positive(1)KinSrc
-     * - numA - 3: body_force(dim)
-     * - numA - 2: source(1)
      * - numA - 1: slip(dim)
      */
     _auxiliaryFactory->addThickness(); // 0
@@ -472,7 +470,7 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
     _auxiliaryFactory->addShearModulusNegative(); // 8
     _auxiliaryFactory->addBulkModulusPositive(); // 9
     _auxiliaryFactory->addShearModulusPositive(); // 10
-    
+
     // :ATTENTION: The order for adding subfields must match the order of the auxiliary fields in the FE kernels.
 
     switch (_formulation) {
@@ -496,7 +494,10 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
     auxiliaryField->createOutputVector();
 
     // We don't populate the auxiliary field via a spatial database, because they will be set from the earthquake
-    // rupture.
+    // rupture. EDIT - YES WE DO
+
+    assert(_auxiliaryFactory);
+    _auxiliaryFactory->setValuesFromDB();
 
     // Initialize auxiliary fields for kinematic ruptures.
     assert(auxiliaryField);
@@ -526,7 +527,7 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
 // Create derived field.
 pylith::topology::Field *
 pylith::faults::FaultCohesiveKinPoro::createDerivedField(const pylith::topology::Field &solution,
-                                                                  const pylith::topology::Mesh &domainMesh) {
+                                                         const pylith::topology::Mesh &domainMesh) {
     return NULL;
 } // createDerivedField
 
@@ -535,7 +536,7 @@ pylith::faults::FaultCohesiveKinPoro::createDerivedField(const pylith::topology:
 // Update auxiliary fields at beginning of time step.
 void
 pylith::faults::FaultCohesiveKinPoro::updateAuxiliaryField(pylith::topology::Field *auxiliaryField,
-                                                                    const double t) {
+                                                           const double t) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("updateAuxiliaryField(auxiliaryField=" << auxiliaryField << ", t=" << t << ")");
 
@@ -544,7 +545,7 @@ pylith::faults::FaultCohesiveKinPoro::updateAuxiliaryField(pylith::topology::Fie
 
     // only need to pass auxiliary field at time t once; this occurs
     // with slip function
-    
+
     // this->_updateThickness(auxiliaryField, t); // 0
     // this->_updatePorosity(auxiliaryField, t); // 1
     // this->_updateBeta_p(auxiliaryField, t); // 2
@@ -608,7 +609,7 @@ pylith::faults::FaultCohesiveKinPoro::_updateKernelConstants(const PylithReal dt
 // Update slip subfield in auxiliary field at beginning of time step.
 void
 pylith::faults::FaultCohesiveKinPoro::_updateSlip(pylith::topology::Field *auxiliaryField,
-                                                           const double t) {
+                                                  const double t) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("updateSlip(auxiliaryField=" << auxiliaryField << ", t=" << t << ")");
 
@@ -666,7 +667,7 @@ pylith::faults::FaultCohesiveKinPoro::_updateSlip(pylith::topology::Field *auxil
 // Update slip rate subfield in auxiliary field at beginning of time step.
 void
 pylith::faults::FaultCohesiveKinPoro::_updateSlipRate(pylith::topology::Field *auxiliaryField,
-                                                               const double t) {
+                                                      const double t) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_updateSlipRate(auxiliaryField=" << auxiliaryField << ", t=" << t << ")");
 
@@ -717,11 +718,12 @@ pylith::faults::FaultCohesiveKinPoro::_updateSlipRate(pylith::topology::Field *a
     PYLITH_METHOD_END;
 } // _updateSlipRate
 
+
 // ------------------------------------------------------------------------------------------------
 // Update slip acceleration subfield in auxiliary field at beginning of time step.
 void
 pylith::faults::FaultCohesiveKinPoro::_updateSlipAcceleration(pylith::topology::Field* auxiliaryField,
-                                                                       const double t) {
+                                                              const double t) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_updateSlipAcceleration(auxiliaryField="<<auxiliaryField<<", t="<<t<<")");
 
@@ -766,14 +768,16 @@ pylith::faults::FaultCohesiveKinPoro::_updateSlipAcceleration(pylith::topology::
     PYLITH_METHOD_END;
 } // _updateSlipAcceleration
 
+
 // ---------------------------------------------------------------------------------------------------------------------
 // Set kernels for residual.
-void pylith::faults::FaultCohesiveKinPoro::_setKernelsResidual(pylith::feassemble::IntegratorInterface *integrator,
-                                                                         const pylith::topology::Field &solution) const {
+void
+pylith::faults::FaultCohesiveKinPoro::_setKernelsResidual(pylith::feassemble::IntegratorInterface *integrator,
+                                                          const pylith::topology::Field &solution) const {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_setKernelsResidual(integrator="<<integrator<<", solution="<<solution.getLabel()<<")");
     typedef pylith::feassemble::IntegratorInterface integrator_t;
-    
+
     std::vector<ResidualKernels> kernels;
 
     switch (_formulation) {
@@ -781,55 +785,34 @@ void pylith::faults::FaultCohesiveKinPoro::_setKernelsResidual(pylith::feassembl
         // Current solution field is
         // [displacement, pressure, trace_strain, lagrange, fault_pressure]
 
-        // Elasticity equation (displacement/velocity).
+        // Poroelastic equation (displacement) for the negative side of the fault.
         const PetscBdPointFunc f0u_neg = pylith::fekernels::FaultCohesiveKinPoro::f0u_neg;
         const PetscBdPointFunc f1u_neg = NULL;
 
-        // Elasticity equation (displacement/velocity).
+        // Poroelastic equation (pressure) for the negative side of the fault.
+        const PetscBdPointFunc f0p_neg = pylith::fekernels::FaultCohesiveKinPoro::f0p_neg;
+        const PetscBdPointFunc f1p_neg = NULL;
+
+        // // Poroelastic equation (trace_strain) for the negative side of the fault.
+        // const PetscBdPointFunc f0e_neg = NULL;
+        // const PetscBdPointFunc f1e_neg = NULL;
+
+        // Poroelastic equation (displacement) for the positive side of the fault.
         const PetscBdPointFunc f0u_pos = pylith::fekernels::FaultCohesiveKinPoro::f0u_pos;
-        const PetscBdPointFunc f1u_pos = NULL; 
+        const PetscBdPointFunc f1u_pos = NULL;
 
-        // Trace_strain constraint
-        // const PetscBdPointFunc f0e = NULL;
-        // const PetscBdPointFunc f1e = NULL;
+        // Poroelastic equation (pressure) for the positive side of the fault.
+        const PetscBdPointFunc f0p_pos = pylith::fekernels::FaultCohesiveKinPoro::f0p_pos;
+        const PetscBdPointFunc f1p_pos = NULL;
 
-        // Pressure constraint and Fault_pressure constraint
-        PetscBdPointFunc f0p_neg = NULL;
-        PetscBdPointFunc f0p_pos = NULL;
-        PetscBdPointFunc f0p_fault = NULL;
-        PetscBdPointFunc f1p_neg = NULL;
-        PetscBdPointFunc f1p_pos = NULL;
-        PetscBdPointFunc f1p_fault = NULL;
+        // // Poroelastic equation (trace_strain) for the positive side of the fault.
+        // const PetscBdPointFunc f0e_pos = NULL;
+        // const PetscBdPointFunc f1e_pos = NULL;
 
-        const int bitBodyForce = _useBodyForce ? 0x1 : 0x0;
-        const int bitSource = _useSource ? 0x2 : 0x0;
-        const int bitUse = bitBodyForce | bitSource;
+        // Poroelastic equation for the fault pressure constraint.
+        const PetscBdPointFunc f0p_fault = pylith::fekernels::FaultCohesiveKinPoro::f0p_fault;
+        const PetscBdPointFunc f1p_fault = NULL;
 
-        switch (bitUse) {
-        case 0x0:
-            f0p_neg = pylith::fekernels::FaultCohesiveKinPoro::f0p_neg;
-            f0p_pos = pylith::fekernels::FaultCohesiveKinPoro::f0p_pos;
-            f0p_fault = pylith::fekernels::FaultCohesiveKinPoro::f0p_fault;
-            break;
-        case 0x1:
-            f0p_neg = pylith::fekernels::FaultCohesiveKinPoro::f0p_body_neg;
-            f0p_pos = pylith::fekernels::FaultCohesiveKinPoro::f0p_body_pos;
-            f0p_fault = pylith::fekernels::FaultCohesiveKinPoro::f0p_fault_body;
-            break;
-        case 0x2:
-            f0p_neg = pylith::fekernels::FaultCohesiveKinPoro::f0p_neg;
-            f0p_pos = pylith::fekernels::FaultCohesiveKinPoro::f0p_pos;
-            f0p_fault = pylith::fekernels::FaultCohesiveKinPoro::f0p_fault_source;
-            break;
-        case 0x3:
-            f0p_neg = pylith::fekernels::FaultCohesiveKinPoro::f0p_body_neg;
-            f0p_pos = pylith::fekernels::FaultCohesiveKinPoro::f0p_body_pos;
-            f0p_fault = pylith::fekernels::FaultCohesiveKinPoro::f0p_fault_body_source;
-            break;
-        default:
-            PYLITH_JOURNAL_LOGICERROR("Unknown case (bitUse=" << bitUse << ") for f0p f0p_fault residual kernels.");
-        } // switch
-        
         // Fault slip constraint equation.
         const PetscBdPointFunc f0l = pylith::fekernels::FaultCohesiveKinPoro::f0l_u;
         const PetscBdPointFunc f1l = NULL;
@@ -846,7 +829,7 @@ void pylith::faults::FaultCohesiveKinPoro::_setKernelsResidual(pylith::feassembl
         kernels[4] = ResidualKernels("lagrange_multiplier_fault", integrator_t::RESIDUAL_LHS, integrator_t::FAULT_FACE,
                                      f0l, f1l);
         kernels[5] = ResidualKernels("fault_pressure", integrator_t::RESIDUAL_LHS, integrator_t::FAULT_FACE,
-                                     f0p_fault, f1p_fault); 
+                                     f0p_fault, f1p_fault);
         break;
     } // QUASISTATIC
 
@@ -865,20 +848,21 @@ void pylith::faults::FaultCohesiveKinPoro::_setKernelsResidual(pylith::feassembl
     PYLITH_METHOD_END;
 } // _setKernelsResidual
 
+
 // ---------------------------------------------------------------------------------------------------------------------
 // Set kernels for Jacobian.
 void
 pylith::faults::FaultCohesiveKinPoro::_setKernelsJacobian(pylith::feassemble::IntegratorInterface* integrator,
-                                                                    const pylith::topology::Field& solution) const {
+                                                          const pylith::topology::Field& solution) const {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_setKernelsJacobian(integrator="<<integrator<<", solution="<<solution.getLabel()<<")");
     typedef pylith::feassemble::IntegratorInterface integrator_t;
-    
+
     // Ten non-trivial kernels,
     // Jful_neg, Jful_pos, Jfp_fp_f, Jfp_fl, Jfp_fp;
     // Jfpp_neg, Jfpp_pos, Jfpp_f_neg, Jfpp_f_pos, Jflu;
     std::vector<JacobianKernels> kernels;
-    switch(_formulation) {
+    switch (_formulation) {
     case QUASISTATIC: {
         const PetscBdPointJac Jf0ul_neg = pylith::fekernels::FaultCohesiveKinPoro::Jf0ul_neg;
         const PetscBdPointJac Jf1ul_neg = NULL;
@@ -899,7 +883,7 @@ pylith::faults::FaultCohesiveKinPoro::_setKernelsJacobian(pylith::feassemble::In
         const PetscBdPointJac Jf1p_fl = NULL;
         const PetscBdPointJac Jf2p_fl = NULL;
         const PetscBdPointJac Jf3p_fl = NULL;
-        
+
         const PetscBdPointJac Jf0p_fp = pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fp;
         const PetscBdPointJac Jf1p_fp = NULL;
         const PetscBdPointJac Jf2p_fp = NULL;
@@ -967,7 +951,7 @@ pylith::faults::FaultCohesiveKinPoro::_setKernelsJacobian(pylith::feassemble::In
     default:
         PYLITH_COMPONENT_LOGICERROR("Unknown formulation '"<<_formulation<<"'.");
     } // switch
- 
+
     assert(integrator);
     integrator->setKernelsJacobian(kernels, solution);
 

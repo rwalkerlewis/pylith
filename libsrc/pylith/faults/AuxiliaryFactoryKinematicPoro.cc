@@ -225,6 +225,8 @@ pylith::faults::AuxiliaryFactoryKinematicPoro::addSlipAcceleration(void) {
 
     PYLITH_METHOD_END;
 } // addSlipAcc
+
+
 // --------------------------------------------------------------------
 // Add undrained bulk modulus subfield to auxiliary fields.
 void
@@ -307,6 +309,7 @@ pylith::faults::AuxiliaryFactoryKinematicPoro::addSkemptonCoefficient(void) { //
 
     PYLITH_METHOD_END;
 } // addSkemptonCoefficient
+
 
 // Add auxilliary fields for FaultPoroDiffusionCohesiveKin
 
@@ -404,6 +407,7 @@ pylith::faults::AuxiliaryFactoryKinematicPoro::addBetaP(void) {
 } // addBetaP
 
 
+// ---------------------------------------------------------------------
 // Add beta_sigma to auxiliary fields.
 void
 pylith::faults::AuxiliaryFactoryKinematicPoro::addBetaSigma(void) {
@@ -434,6 +438,7 @@ pylith::faults::AuxiliaryFactoryKinematicPoro::addBetaSigma(void) {
 } // addBetaSigma
 
 
+// ---------------------------------------------------------------------
 // Add tangential permeability to auxiliary fields.
 void
 pylith::faults::AuxiliaryFactoryKinematicPoro::addPermeabilityTangential(void) {
@@ -468,6 +473,7 @@ pylith::faults::AuxiliaryFactoryKinematicPoro::addPermeabilityTangential(void) {
 } // addPermeabilityTangential
 
 
+// ---------------------------------------------------------------------
 // Add normal permeability to auxiliary fields.
 void
 pylith::faults::AuxiliaryFactoryKinematicPoro::addPermeabilityNormal(void) {
@@ -510,12 +516,9 @@ pylith::faults::AuxiliaryFactoryKinematicPoro::addFluidViscosity(void) {
     PYLITH_JOURNAL_DEBUG("addFluidViscosity(void)");
 
     const char* subfieldName = "fluid_viscosity";
-
-    // ** TO DO **
-    // Please verify this following line
-    // viscosity scale should be pa s
-    const PylithReal fluidViscosityScale = _normalizer->getPressureScale()
-                                           * _normalizer->getTimeScale();
+    const PylithReal pressureScale = _normalizer->getPressureScale();
+    const PylithReal timeScale = _normalizer->getTimeScale();
+    const PylithReal viscosityScale = pressureScale * timeScale;
 
     pylith::topology::Field::Description description;
     description.label = subfieldName;
@@ -524,7 +527,7 @@ pylith::faults::AuxiliaryFactoryKinematicPoro::addFluidViscosity(void) {
     description.numComponents = 1;
     description.componentNames.resize(1);
     description.componentNames[0] = subfieldName;
-    description.scale = fluidViscosityScale;
+    description.scale = viscosityScale;
     description.validator = pylith::topology::FieldQuery::validatorPositive;
 
     _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
@@ -731,7 +734,7 @@ pylith::faults::AuxiliaryFactoryKinematicPoro::addSource(void) {
     PYLITH_METHOD_END;
 } // addSource
 
-#include "pylith/faults/AuxiliaryFactoryKinematicPoro.hh" // USES AuxiliaryFactoryKinematicPoro
+
 // ----------------------------------------------------------------------
 // Add constant pressure source subfield to auxiliary fields.
 void
