@@ -581,6 +581,9 @@ pylith::faults::KinSrcPoro::updateSlip(PetscVec slipLocalVec,
     err = DMProjectFieldLocal(faultAuxiliaryDM, t, slipLocalVec, subfieldKernels, INSERT_VALUES,
                               slipLocalVec);PYLITH_CHECK_ERROR(err);
 
+    // DEBUG LINES
+    VecView(slipLocalVec, PETSC_VIEWER_STDOUT_SELF);
+    
     PYLITH_METHOD_END;
 } // updateSlip
 

@@ -48,7 +48,8 @@
 #include <sstream> // USES std::ostringstream
 #include <stdexcept> // USES std::runtime_error
 #include <typeinfo> // USES typeid()
-
+// DEBUG LINES
+# include <iostream>
 // ------------------------------------------------------------------------------------------------
 typedef pylith::feassemble::IntegratorInterface::ResidualKernels ResidualKernels;
 typedef pylith::feassemble::IntegratorInterface::JacobianKernels JacobianKernels;
@@ -425,7 +426,12 @@ pylith::faults::FaultCohesiveKin::_updateSlip(pylith::topology::Field* auxiliary
         src->updateSlip(_slipVecRupture, auxiliaryField, t, _normalizer->getTimeScale());
         err = VecAYPX(_slipVecTotal, 1.0, _slipVecRupture);
     } // for
+    // DEBUG LINES
+    int slipVecSize;
+    VecGetSize(_slipVecTotal, &slipVecSize);
+    std::cout << "Vector _slipVecTotal is of size : " << slipVecSize << "\n";
 
+    VecView(_slipVecTotal, PETSC_VIEWER_STDOUT_SELF);
     // Transfer slip values from local PETSc slip vector to fault auxiliary field.
     PetscInt pStart = 0, pEnd = 0;
     err = PetscSectionGetChart(auxiliaryField->getLocalSection(), &pStart, &pEnd);PYLITH_CHECK_ERROR(err);
@@ -441,6 +447,7 @@ pylith::faults::FaultCohesiveKin::_updateSlip(pylith::topology::Field* auxiliary
         const PetscInt slipOff = auxiliaryVisitor.sectionOffset(p);
         for (PetscInt iDof = 0; iDof < slipDof; ++iDof, ++iSlip) {
             auxiliaryArray[slipOff+iDof] = slipArray[iSlip];
+            std::cout << "p = " << p << " slipOff = " << slipOff << " slipDof = " << slipDof << " Added slip value : " << slipArray[iSlip] << "\n";
         } // for
     } // for
     err = VecRestoreArrayRead(_slipVecTotal, &slipArray);PYLITH_CHECK_ERROR(err);
