@@ -419,7 +419,7 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_neg(const PylithInt dim,
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
     const PylithInt i_thickness = 0;
-    const PylithInt i_permeability_normal = numA - 1;
+    const PylithInt i_permeability_normal = 5;
     const PylithInt i_fluid_viscosity = 2;
     const PylithInt sOffPressureN = _FaultCohesiveKinPoro::pressure_sOff_quasistatic(sOff, numS);
     // const PylithInt sOffPressureP = sOffPressureN + 1;
@@ -427,7 +427,8 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_neg(const PylithInt dim,
     const PylithInt fOffN = 0;
     const PylithInt fOffP = fOffN + 1;
 
-    const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
+    // const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
+    const PylithScalar thickness = a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeability_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
     const PylithScalar pressureN = s[sOffPressureN];
@@ -479,7 +480,7 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_pos(const PylithInt dim,
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
     const PylithInt i_thickness = 0;
-    const PylithInt i_permeability_normal = numA - 1;
+    const PylithInt i_permeability_normal = 5;
     const PylithInt i_fluid_viscosity = 2;
     const PylithInt sOffPressureN = _FaultCohesiveKinPoro::pressure_sOff_quasistatic(sOff, numS);
     const PylithInt sOffPressureP = sOffPressureN + 1;
@@ -487,7 +488,8 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_pos(const PylithInt dim,
     const PylithInt fOffN = 0;
     const PylithInt fOffP = fOffN + 1;
 
-    const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
+    // const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
+    const PylithScalar thickness = a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeability_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
     // const PylithScalar pressureN = s[sOffPressureN];
@@ -547,7 +549,8 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_body_neg(const PylithInt dim,
     const PylithInt fOffN = 0;
     // const PylithInt fOffP = fOffN + 1;
 
-    const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
+    // const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
+    const PylithScalar thickness = a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeability_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
     const PylithScalar *bodyForce = &a[aOff[i_body_force]];
@@ -605,7 +608,7 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_body_pos(const PylithInt dim,
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
     const PylithInt i_thickness = 0;
-    const PylithInt i_permeability_normal = numA - 1;
+    const PylithInt i_permeability_normal = 5;
     const PylithInt i_fluid_viscosity = 2;
     const PylithInt i_body_force = numA - 3;
     const PylithInt sOffPressureN = _FaultCohesiveKinPoro::pressure_sOff_quasistatic(sOff, numS);
@@ -614,7 +617,8 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_body_pos(const PylithInt dim,
     const PylithInt fOffN = 0;
     const PylithInt fOffP = fOffN + 1;
 
-    const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
+    // const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
+    const PylithScalar thickness = a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeability_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
     const PylithScalar *bodyForce = &a[aOff[i_body_force]];
@@ -1003,11 +1007,49 @@ pylith::fekernels::FaultCohesiveKinPoro::f1p_fault(const PylithInt dim,
     const PylithScalar *pressureP_x = &s_x[sOff_x[sOffPressureP]];
     const PylithScalar *pressureFault_x = &s_x[sOff_x[sOffPressureFault]];
     const PylithInt fOffp_fault = 0;
+    const PylithScalar tempConst = permeabilityTangential / fluidViscosity / 4.;
 
+    // Do transformation for gradient
+    switch (spaceDim) {
+        case 2: {
+            const PylithInt _spaceDim = 2;
+            const PylithScalar tanDir[2] = {-n[1], n[0]};
+            f1[fOffp_fault] += tempConst * tanDir[0] * tanDir[0] * (pressureN_x[0] + 2. * pressureFault_x[0] + pressureP_x[0])
+                               + tempConst * tanDir[0] * tanDir[1] * (pressureN_x[1] + 2. * pressureFault_x[1] + pressureP_x[1]);
+            f1[fOffp_fault + 1] += tempConst * tanDir[1] * tanDir[0] * (pressureN_x[0] + 2. * pressureFault_x[0] + pressureP_x[0])
+                                   + tempConst * tanDir[1] * tanDir[1] * (pressureN_x[1] + 2. * pressureFault_x[1] + pressureP_x[1]);
+            break;
+        } // case 2
+
+        case 3: {
+            const PylithInt _spaceDim = 3;
+            const PylithScalar *refDir1 = &constants[0];
+            const PylithScalar *refDir2 = &constants[3];
+            PylithScalar tanDir1[3], tanDir2[3];
+            pylith::fekernels::_FaultCohesiveKinPoro::tangential_directions(_spaceDim, refDir1, refDir2, n, tanDir1, tanDir2);
+            f1[fOffp_fault] += tempConst * ((tanDir1[0] * tanDir1[0] + tanDir2[0] * tanDir2[0])  * (pressureN_x[0] + 2. * pressureFault_x[0] + pressureP_x[0])
+                                            + (tanDir1[0] * tanDir1[1] + tanDir2[0] * tanDir2[1])  * (pressureN_x[1] + 2. * pressureFault_x[1] + pressureP_x[1])
+                                            + (tanDir1[0] * tanDir1[2] + tanDir2[0] * tanDir2[2])  * (pressureN_x[2] + 2. * pressureFault_x[2] + pressureP_x[2]));
+            f1[fOffp_fault + 1] += tempConst * ((tanDir1[1] * tanDir1[0] + tanDir2[1] * tanDir2[0])  * (pressureN_x[0] + 2. * pressureFault_x[0] + pressureP_x[0])
+                                                + (tanDir1[1] * tanDir1[1] + tanDir2[1] * tanDir2[1])  * (pressureN_x[1] + 2. * pressureFault_x[1] + pressureP_x[1])
+                                                + (tanDir1[1] * tanDir1[2] + tanDir2[1] * tanDir2[2])  * (pressureN_x[2] + 2. * pressureFault_x[2] + pressureP_x[2]));
+            f1[fOffp_fault + 2] += tempConst * ((tanDir1[2] * tanDir1[0] + tanDir2[2] * tanDir2[0])  * (pressureN_x[0] + 2. * pressureFault_x[0] + pressureP_x[0])
+                                                + (tanDir1[2] * tanDir1[1] + tanDir2[2] * tanDir2[1])  * (pressureN_x[1] + 2. * pressureFault_x[1] + pressureP_x[1])
+                                                + (tanDir1[2] * tanDir1[2] + tanDir2[2] * tanDir2[2])  * (pressureN_x[2] + 2. * pressureFault_x[2] + pressureP_x[2]));
+            
+            break;
+        } // case 3
+
+        default:
+            assert(0);
+    }
+    /**
+    const PylithScalar tanDir[2] = {-n[1], n[0]};
     for (PylithInt i = 0; i < spaceDim; ++i) {
         f1[fOffp_fault + i] += permeabilityTangential / fluidViscosity / 4. *
                                (pressureN_x[i] + 2. * pressureFault_x[i] + pressureP_x[i]);
     }
+    */
 
 } // f1p_fault
 
@@ -1209,10 +1251,45 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp_f(const PylithInt dim,
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
 
     const PylithInt ncols = spaceDim;
+    const PylithScalar tempConst = permeabilityTangential / fluidViscosity / 2.;
+    // Do transformation for gradient
+    switch (spaceDim) {
+        case 2: {
+            const PylithInt _spaceDim = 2;
+            const PylithScalar tanDir[2] = {-n[1], n[0]};
+            Jf3[0 * ncols + 0] += tempConst * tanDir[0] * tanDir[0];
+            Jf3[0 * ncols + 1] += tempConst * tanDir[0] * tanDir[1];
+            Jf3[1 * ncols + 0] += tempConst * tanDir[1] * tanDir[0];
+            Jf3[1 * ncols + 0] += tempConst * tanDir[1] * tanDir[1];
+            break;
+        } // case 2
+
+        case 3: {
+            const PylithInt _spaceDim = 3;
+            const PylithScalar *refDir1 = &constants[0];
+            const PylithScalar *refDir2 = &constants[3];
+            PylithScalar tanDir1[3], tanDir2[3];
+            pylith::fekernels::_FaultCohesiveKinPoro::tangential_directions(_spaceDim, refDir1, refDir2, n, tanDir1, tanDir2);
+            Jf3[0 * ncols + 0] += tempConst * (tanDir1[0] * tanDir1[0] + tanDir2[0] * tanDir2[0]);
+            Jf3[0 * ncols + 1] += tempConst * (tanDir1[0] * tanDir1[1] + tanDir2[0] * tanDir2[1]);
+            Jf3[0 * ncols + 2] += tempConst * (tanDir1[0] * tanDir1[2] + tanDir2[0] * tanDir2[2]);
+            Jf3[1 * ncols + 0] += tempConst * (tanDir1[1] * tanDir1[0] + tanDir2[1] * tanDir2[0]);
+            Jf3[1 * ncols + 1] += tempConst * (tanDir1[1] * tanDir1[1] + tanDir2[1] * tanDir2[1]);
+            Jf3[1 * ncols + 2] += tempConst * (tanDir1[1] * tanDir1[2] + tanDir2[1] * tanDir2[2]); 
+            Jf3[2 * ncols + 0] += tempConst * (tanDir1[2] * tanDir1[0] + tanDir2[2] * tanDir2[0]);
+            Jf3[2 * ncols + 1] += tempConst * (tanDir1[2] * tanDir1[1] + tanDir2[2] * tanDir2[1]);
+            Jf3[2 * ncols + 2] += tempConst * (tanDir1[2] * tanDir1[2] + tanDir2[2] * tanDir2[2]); 
+            break;
+        } // case 3
+
+        default:
+            assert(0);
+    }
+    /**
     for (PylithInt i = 0; i < spaceDim; ++i) {
         Jf3[i * ncols + i] += permeabilityTangential / (2. * fluidViscosity);
     }
-
+    */
 } // Jf3p_fp_f
 
 
@@ -1372,12 +1449,71 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp(const PylithInt dim,
     const PylithInt gOffP = gOffN + spaceDim;
 
     const PylithInt ncols = 2 * spaceDim;
+    const PylithScalar tempConst = permeabilityTangential / fluidViscosity / 4.;
+    // Do transformation for gradient
+    switch (spaceDim) {
+        case 2: {
+            const PylithInt _spaceDim = 2;
+            const PylithScalar tanDir[2] = {-n[1], n[0]};
+            Jf3[0 * ncols + 0] += tempConst * tanDir[0] * tanDir[0];
+            Jf3[0 * ncols + 1] += tempConst * tanDir[0] * tanDir[1];
+            Jf3[1 * ncols + 0] += tempConst * tanDir[1] * tanDir[0];
+            Jf3[1 * ncols + 0] += tempConst * tanDir[1] * tanDir[1];
 
+            Jf3[0 * ncols + 0] += tempConst * tanDir[0] * tanDir[0];
+            Jf3[0 * ncols + 1] += tempConst * tanDir[0] * tanDir[1];
+            Jf3[1 * ncols + 0] += tempConst * tanDir[1] * tanDir[0];
+            Jf3[1 * ncols + 0] += tempConst * tanDir[1] * tanDir[1];
+
+            Jf3[0 * ncols + gOffP + 0] += tempConst * tanDir[0] * tanDir[0];
+            Jf3[0 * ncols + gOffP + 1] += tempConst * tanDir[0] * tanDir[1];
+            Jf3[1 * ncols + gOffP + 0] += tempConst * tanDir[1] * tanDir[0];
+            Jf3[1 * ncols + gOffP + 0] += tempConst * tanDir[1] * tanDir[1];
+
+            Jf3[0 * ncols + gOffP + 0] += tempConst * tanDir[0] * tanDir[0];
+            Jf3[0 * ncols + gOffP + 1] += tempConst * tanDir[0] * tanDir[1];
+            Jf3[1 * ncols + gOffP + 0] += tempConst * tanDir[1] * tanDir[0];
+            Jf3[1 * ncols + gOffP + 0] += tempConst * tanDir[1] * tanDir[1];
+            break;
+        } // case 2
+
+        case 3: {
+            const PylithInt _spaceDim = 3;
+            const PylithScalar *refDir1 = &constants[0];
+            const PylithScalar *refDir2 = &constants[3];
+            PylithScalar tanDir1[3], tanDir2[3];
+            pylith::fekernels::_FaultCohesiveKinPoro::tangential_directions(_spaceDim, refDir1, refDir2, n, tanDir1, tanDir2);
+            Jf3[0 * ncols + 0] += tempConst * (tanDir1[0] * tanDir1[0] + tanDir2[0] * tanDir2[0]);
+            Jf3[0 * ncols + 1] += tempConst * (tanDir1[0] * tanDir1[1] + tanDir2[0] * tanDir2[1]);
+            Jf3[0 * ncols + 2] += tempConst * (tanDir1[0] * tanDir1[2] + tanDir2[0] * tanDir2[2]);
+            Jf3[1 * ncols + 0] += tempConst * (tanDir1[1] * tanDir1[0] + tanDir2[1] * tanDir2[0]);
+            Jf3[1 * ncols + 1] += tempConst * (tanDir1[1] * tanDir1[1] + tanDir2[1] * tanDir2[1]);
+            Jf3[1 * ncols + 2] += tempConst * (tanDir1[1] * tanDir1[2] + tanDir2[1] * tanDir2[2]); 
+            Jf3[2 * ncols + 0] += tempConst * (tanDir1[2] * tanDir1[0] + tanDir2[2] * tanDir2[0]);
+            Jf3[2 * ncols + 1] += tempConst * (tanDir1[2] * tanDir1[1] + tanDir2[2] * tanDir2[1]);
+            Jf3[2 * ncols + 2] += tempConst * (tanDir1[2] * tanDir1[2] + tanDir2[2] * tanDir2[2]); 
+
+            Jf3[0 * ncols + gOffP + 0] += tempConst * (tanDir1[0] * tanDir1[0] + tanDir2[0] * tanDir2[0]);
+            Jf3[0 * ncols + gOffP + 1] += tempConst * (tanDir1[0] * tanDir1[1] + tanDir2[0] * tanDir2[1]);
+            Jf3[0 * ncols + gOffP + 2] += tempConst * (tanDir1[0] * tanDir1[2] + tanDir2[0] * tanDir2[2]);
+            Jf3[1 * ncols + gOffP + 0] += tempConst * (tanDir1[1] * tanDir1[0] + tanDir2[1] * tanDir2[0]);
+            Jf3[1 * ncols + gOffP + 1] += tempConst * (tanDir1[1] * tanDir1[1] + tanDir2[1] * tanDir2[1]);
+            Jf3[1 * ncols + gOffP + 2] += tempConst * (tanDir1[1] * tanDir1[2] + tanDir2[1] * tanDir2[2]); 
+            Jf3[2 * ncols + gOffP + 0] += tempConst * (tanDir1[2] * tanDir1[0] + tanDir2[2] * tanDir2[0]);
+            Jf3[2 * ncols + gOffP + 1] += tempConst * (tanDir1[2] * tanDir1[1] + tanDir2[2] * tanDir2[1]);
+            Jf3[2 * ncols + gOffP + 2] += tempConst * (tanDir1[2] * tanDir1[2] + tanDir2[2] * tanDir2[2]); 
+            break;
+        } // case 3
+        default:
+            assert(0);
+    }
+    /**
     for (PylithInt i = 0; i < spaceDim; ++i) {
         Jf3[i * ncols + gOffN + i] += permeabilityTangential / (4. * fluidViscosity);
         Jf3[i * ncols + gOffP + i] += permeabilityTangential / (4. * fluidViscosity);
     }
-} // Jf3p_fp
+    */
+}; // Jf3p_fp
 
 
 // ----------------------------------------------------------------------
@@ -1420,7 +1556,8 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_neg(const PylithInt dim,
     const PylithInt i_permeabilility_normal = numA - 1;
     const PylithInt i_fluid_viscosity = 2;
 
-    const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
+    // const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
+    const PylithScalar thickness = a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeabilility_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
 
@@ -1522,7 +1659,8 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_f_neg(const PylithInt dim,
     const PylithInt i_permeabilility_normal = numA - 1;
     const PylithInt i_fluid_viscosity = 2;
 
-    const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
+    // const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
+    const PylithScalar thickness = a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeabilility_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
 
@@ -1575,7 +1713,8 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_f_pos(const PylithInt dim,
     const PylithInt i_permeabilility_normal = numA - 1;
     const PylithInt i_fluid_viscosity = 2;
 
-    const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
+    // const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
+    const PylithScalar thickness = a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeabilility_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
 
