@@ -196,7 +196,7 @@ pylith::faults::KinSrcPoro::updateSlip(PetscVec slipLocalVec,
                               slipLocalVec);PYLITH_CHECK_ERROR(err);
 
     // DEBUG LINES
-    VecView(slipLocalVec, PETSC_VIEWER_STDOUT_SELF);
+    // VecView(slipLocalVec, PETSC_VIEWER_STDOUT_SELF);
 
     PYLITH_METHOD_END;
 } // updateSlip

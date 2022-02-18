@@ -439,8 +439,8 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_neg(const PylithInt dim,
     // f0[fOffP] += permeabilityNormal / fluidViscosity *
     //             ((pressureP - pressureFault) / thickness);
     // DEBUG LINEs
-    std::cout << "In f0p_neg added: " << permeabilityNormal / fluidViscosity *
-    ((pressureN - pressureFault) / thickness) << "\n";
+    // std::cout << "In f0p_neg added: " << permeabilityNormal / fluidViscosity *
+    // ((pressureN - pressureFault) / thickness) << "\n";
 } // f0p_neg
 
 
@@ -500,8 +500,8 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_pos(const PylithInt dim,
                  ((pressureP - pressureFault) / thickness);
 
     // DEBUG LINEs
-    std::cout << "In f0p_pos added: " << permeabilityNormal / fluidViscosity *
-    ((pressureP - pressureFault) / thickness) << "\n";
+    // std::cout << "In f0p_pos added: " << permeabilityNormal / fluidViscosity *
+    // ((pressureP - pressureFault) / thickness) << "\n";
 } // f0p_pos
 
 
@@ -918,34 +918,36 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_fault(const PylithInt dim,
     }
 
     f0[fOffp_fault] += porosity * (betaP * (pressureN_t + 2. * pressureFault_t + pressureP_t) / 4. +
-                                   betaSigma * nDotLagrange_t) +
-                       permeabilityTangential / fluidViscosity - permeabilityNormal / fluidViscosity * (pressureP - 2. * pressureFault + pressureN) / (thickness*thickness);
+                                   betaSigma * nDotLagrange_t) - permeabilityNormal / fluidViscosity * (pressureP - 2. * pressureFault + pressureN) / (thickness*thickness);
+
     // DEBUG LINEs
-    std::cout << "In f0p_fault added: " << porosity * (betaP * (pressureN_t + 2. * pressureFault_t + pressureP_t) / 4. +
-                                                       betaSigma * nDotLagrange_t) +
-        permeabilityTangential / fluidViscosity - permeabilityNormal / fluidViscosity * (pressureP - 2. * pressureFault + pressureN) / (thickness*thickness) << "\n";
+    // std::cout << "In f0p_fault added: " << porosity * (betaP * (pressureN_t + 2. * pressureFault_t + pressureP_t) /
+    // 4. +
+    //                                                    betaSigma * nDotLagrange_t) +
+    //     permeabilityTangential / fluidViscosity - permeabilityNormal / fluidViscosity * (pressureP - 2. *
+    // pressureFault + pressureN) / (thickness*thickness) << "\n";
 
-    std::cout << "porosity = " << porosity << "\n";
-    std::cout << "betaP = " << betaP << "\n";
-    std::cout << "pressureN_t = " << pressureN_t << "\n";
-    std::cout << "pressureP_t = " << pressureP_t << "\n";
-    std::cout << "nDotLagrange_t = " << nDotLagrange_t << "\n";
-    std::cout << "Thickness = " << thickness << "\n";
-    std::cout << "fluidViscosity = " << fluidViscosity << "\n";
-    std::cout << "numA = " << numA << "\n";
-    std::cout << "aOff = [";
-    for (int i = 0; i < numA + 1; i++) {
-        std::cout << aOff[i] << " ";
-    }
-    std::cout << "]" << "\n";
-    std::cout << "a = [";
-    for (int i = 0; i < numA; i++) {
-        std::cout << a[aOff[i]] << " ";
-    }
-    std::cout << "]" << "\n";
+    // std::cout << "porosity = " << porosity << "\n";
+    // std::cout << "betaP = " << betaP << "\n";
+    // std::cout << "pressureN_t = " << pressureN_t << "\n";
+    // std::cout << "pressureP_t = " << pressureP_t << "\n";
+    // std::cout << "nDotLagrange_t = " << nDotLagrange_t << "\n";
+    // std::cout << "Thickness = " << thickness << "\n";
+    // std::cout << "fluidViscosity = " << fluidViscosity << "\n";
+    // std::cout << "numA = " << numA << "\n";
+    // std::cout << "aOff = [";
+    // for (int i = 0; i < numA + 1; i++) {
+    //     std::cout << aOff[i] << " ";
+    // }
+    // std::cout << "]" << "\n";
+    // std::cout << "a = [";
+    // for (int i = 0; i < numA; i++) {
+    //     std::cout << a[aOff[i]] << " ";
+    // }
+    // std::cout << "]" << "\n";
 
-    // DEBUG LINES
-    std::cout << "Kernel f0p_fault computed!" << "\n";
+    // // DEBUG LINES
+    // std::cout << "Kernel f0p_fault computed!" << "\n";
 } // f0p_fault
 
 
@@ -1006,6 +1008,7 @@ pylith::fekernels::FaultCohesiveKinPoro::f1p_fault(const PylithInt dim,
         f1[fOffp_fault + i] += permeabilityTangential / fluidViscosity / 4. *
                                (pressureN_x[i] + 2. * pressureFault_x[i] + pressureP_x[i]);
     }
+
 } // f1p_fault
 
 
@@ -1054,7 +1057,7 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0ul_neg(const PylithInt dim,
         Jf0[(gOffN + i) * ncols + i] += -1.0;
         // Jf0[(gOffP + i) * ncols + i] += +1.0;
     } // for
-} // Jg0ul_neg
+} // Jf0ul_neg
 
 
 // ----------------------------------------------------------------------
@@ -1102,7 +1105,7 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0ul_pos(const PylithInt dim,
         // Jf0[(gOffN + i) * ncols + i] += -1.0;
         Jf0[(gOffP + i) * ncols + i] += +1.0;
     } // for
-} // Jg0ul_pos
+} // Jf0ul_pos
 
 
 // ----------------------------------------------------------------------
@@ -1154,7 +1157,8 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fp_f(const PylithInt dim,
     const PylithScalar permeabilityNormal = a[aOff[i_permeabilility_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
 
-    Jf0[gOff] += 2. * permeabilityNormal / (fluidViscosity * thickness * thickness) + 2. * porosity * betaP * s_tshift;
+    Jf0[gOff] += 2. * permeabilityNormal / (fluidViscosity * thickness * thickness) + 2. * porosity * betaP *
+                 s_tshift;
 
 } // Jf0p_fp_f
 
@@ -1206,7 +1210,7 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp_f(const PylithInt dim,
 
     const PylithInt ncols = spaceDim;
     for (PylithInt i = 0; i < spaceDim; ++i) {
-        Jf3[i * ncols + i] += permeabilityTangential / 2. / fluidViscosity;
+        Jf3[i * ncols + i] += permeabilityTangential / (2. * fluidViscosity);
     }
 
 } // Jf3p_fp_f
@@ -1315,8 +1319,8 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fp(const PylithInt dim,
     const PylithInt gOffN = 0;
     const PylithInt gOffP = gOffN + 1;
 
-    Jf0[gOffN] += s_tshift * porosity * betaP / 4. - permeabilityNormal / fluidViscosity / thickness / thickness;
-    Jf0[gOffP] += s_tshift * porosity * betaP / 4. - permeabilityNormal / fluidViscosity / thickness / thickness;
+    Jf0[gOffN] += (s_tshift * porosity * betaP) / 4. - permeabilityNormal / (fluidViscosity * thickness * thickness);
+    Jf0[gOffP] += (s_tshift * porosity * betaP) / 4. - permeabilityNormal / (fluidViscosity * thickness * thickness);
 
 } // Jf0p_fp
 
@@ -1370,8 +1374,8 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp(const PylithInt dim,
     const PylithInt ncols = 2 * spaceDim;
 
     for (PylithInt i = 0; i < spaceDim; ++i) {
-        Jf3[i * ncols + gOffN + i] += permeabilityTangential / 4. / fluidViscosity;
-        Jf3[i * ncols + gOffP + i] += permeabilityTangential / 4. / fluidViscosity;
+        Jf3[i * ncols + gOffN + i] += permeabilityTangential / (4. * fluidViscosity);
+        Jf3[i * ncols + gOffP + i] += permeabilityTangential / (4. * fluidViscosity);
     }
 } // Jf3p_fp
 
@@ -1423,7 +1427,7 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_neg(const PylithInt dim,
     const PylithInt gOffN = 0;
     // const PylithInt gOffP = gOffN + 3;
 
-    Jf0[gOffN] += permeabilityNormal / thickness / fluidViscosity;
+    Jf0[gOffN] += permeabilityNormal / (thickness * fluidViscosity);
     // Jf0[gOffP] += permeabilityNormal / thickness / fluidViscosity;
 
 } // Jf0pp_neg
@@ -1431,10 +1435,6 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_neg(const PylithInt dim,
 
 // ----------------------------------------------------------------------
 /* Jf0pp function for integration of the slip constraint equation.
- *
- * Solution fields = [disp(dim), ..., lagrange(dim)]
- * Auxiliary fields = None
- * POSITIVE Fault face
  */
 void
 pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_pos(const PylithInt dim,
@@ -1469,7 +1469,7 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_pos(const PylithInt dim,
     const PylithInt i_permeabilility_normal = numA - 1;
     const PylithInt i_fluid_viscosity = 2;
 
-    const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
+    const PylithScalar thickness = a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeabilility_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
 
@@ -1477,7 +1477,7 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_pos(const PylithInt dim,
     const PylithInt gOffP = gOffN + 3;
 
     // Jf0[gOffN] += permeabilityNormal / thickness / fluidViscosity;
-    Jf0[gOffP] += permeabilityNormal / thickness / fluidViscosity;
+    Jf0[gOffP] += permeabilityNormal / (thickness * fluidViscosity);
 
 } // Jf0pp_pos
 
@@ -1529,7 +1529,7 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_f_neg(const PylithInt dim,
     const PylithInt gOffN = 0;
     // const PylithInt gOffP = gOffN + 1;
 
-    Jf0[gOffN] += -permeabilityNormal / thickness / fluidViscosity;
+    Jf0[gOffN] += -permeabilityNormal / (thickness * fluidViscosity);
     // Jf0[gOffP] += -permeabilityNormal / thickness / fluidViscosity;
 
 } // Jf0pp_f_neg
@@ -1583,13 +1583,13 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_f_pos(const PylithInt dim,
     const PylithInt gOffP = gOffN + 1;
 
     // Jf0[gOffN] += -permeabilityNormal / thickness / fluidViscosity;
-    Jf0[gOffP] += -permeabilityNormal / thickness / fluidViscosity;
+    Jf0[gOffP] += -permeabilityNormal / (thickness * fluidViscosity);
 
 } // Jf0pp_f_pos
 
 
 // ----------------------------------------------------------------------
-/* Jg0 function for integration of the slip constraint equation.
+/* Jf0 function for integration of the slip constraint equation.
  *
  * Solution fields = [disp(dim), ..., lagrange(dim)]
  * Auxiliary fields = None
@@ -1632,7 +1632,7 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0lu(const PylithInt dim,
         Jf0[i * ncols + gOffN + i] += -1.0;
         Jf0[i * ncols + gOffP + i] += +1.0;
     } // for
-} // Jg0lu
+} // Jf0lu
 
 
 // End of file

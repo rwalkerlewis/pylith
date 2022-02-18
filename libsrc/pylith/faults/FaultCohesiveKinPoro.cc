@@ -629,8 +629,8 @@ pylith::faults::FaultCohesiveKinPoro::_updateSlip(pylith::topology::Field *auxil
         src->updateSlip(_slipVecRupture, auxiliaryField, t, _normalizer->getTimeScale());
         err = VecAYPX(_slipVecTotal, 1.0, _slipVecRupture);
     } // forslip time
-    // DEBUG LINES
-    VecView(_slipVecTotal, PETSC_VIEWER_STDOUT_SELF);
+      // DEBUG LINES
+      // VecView(_slipVecTotal, PETSC_VIEWER_STDOUT_SELF);
 
     // Transfer slip values from local PETSc slip vector to fault auxiliary field.
     PetscInt pStart = 0, pEnd = 0;
@@ -894,7 +894,7 @@ pylith::faults::FaultCohesiveKinPoro::_setKernelsJacobian(pylith::feassemble::In
         const PetscBdPointJac Jf2pp_neg = NULL;
         const PetscBdPointJac Jf3pp_neg = NULL;
 
-        const PetscBdPointJac Jf0pp_pos = pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_neg;
+        const PetscBdPointJac Jf0pp_pos = pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_pos;
         const PetscBdPointJac Jf1pp_pos = NULL;
         const PetscBdPointJac Jf2pp_pos = NULL;
         const PetscBdPointJac Jf3pp_pos = NULL;
