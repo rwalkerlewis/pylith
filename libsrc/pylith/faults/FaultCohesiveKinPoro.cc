@@ -453,10 +453,10 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
      * - 4: permeability_tangential(1)
      * - 5: permeability_normal(1)
      * - 6: fluid_viscosity(1)
-     * - 7: bulk_modulus_negative(1)
-     * - 8: shear_modulus_negative(1)
-     * - 9: bulk_modulus_positive(1)
-     * - 10: shear_modulus_positive(1)KinSrc
+    //  * - 7: bulk_modulus_negative(1)
+    //  * - 8: shear_modulus_negative(1)
+    //  * - 9: bulk_modulus_positive(1)
+    //  * - 10: shear_modulus_positive(1)
      * - numA - 1: slip(dim)
      */
     _auxiliaryFactory->addThickness(); // 0
@@ -466,10 +466,10 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
     _auxiliaryFactory->addPermeabilityTangential(); // 4
     _auxiliaryFactory->addPermeabilityNormal(); // 5
     _auxiliaryFactory->addFluidViscosity(); // 6
-    _auxiliaryFactory->addBulkModulusNegative(); // 7
-    _auxiliaryFactory->addShearModulusNegative(); // 8
-    _auxiliaryFactory->addBulkModulusPositive(); // 9
-    _auxiliaryFactory->addShearModulusPositive(); // 10
+    // _auxiliaryFactory->addBulkModulusNegative(); // 7
+    // _auxiliaryFactory->addShearModulusNegative(); // 8
+    // _auxiliaryFactory->addBulkModulusPositive(); // 9
+    // _auxiliaryFactory->addShearModulusPositive(); // 10
 
     // :ATTENTION: The order for adding subfields must match the order of the auxiliary fields in the FE kernels.
 
