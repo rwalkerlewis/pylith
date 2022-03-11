@@ -64,7 +64,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS :
 
     // Solid Density
     static double solid_density(const double x,
-                          const double y) {
+                                const double y) {
         return 2500.0;
     } // solid_density
 
@@ -74,7 +74,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS :
 
     // Fluid Density
     static double fluid_density(const double x,
-                          const double y) {
+                                const double y) {
         return 1000.0;
     } // fluid_density
 
@@ -84,7 +84,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS :
 
     // Fluid Viscosity
     static double fluid_viscosity(const double x,
-                            const double y) {
+                                  const double y) {
         return 1.0;
     } // fluid_viscosity
 
@@ -94,7 +94,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS :
 
     // Porosity
     static double porosity(const double x,
-                            const double y) {
+                           const double y) {
         return 0.5;
     } // porosity
 
@@ -104,7 +104,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS :
 
     // Shear Modulus
     static double shear_modulus(const double x,
-                            const double y) {
+                                const double y) {
         return 0.5;
     } // shear_modulus
 
@@ -114,7 +114,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS :
 
     // Drained Bulk Modulus
     static double drained_bulk_modulus(const double x,
-                            const double y) {
+                                       const double y) {
         return 0.5;
     } // shear_modulus
 
@@ -124,17 +124,17 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS :
 
     // Biot Coefficient
     static double biot_coefficient(const double x,
-                        const double y){
+                                   const double y) {
         return 1.0;
     } // alpha
-    
+
     static const char* biot_coefficient_units(void) {
         return "one";
     } // alpha_units
 
     // Fluid Bulk Modulus
     static double fluid_bulk_modulus(const double x,
-                            const double y) {
+                                     const double y) {
         return 0.5;
     } // fluid_bulk_modulus
 
@@ -144,7 +144,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS :
 
     // Solid Bulk Modulus
     static double solid_bulk_modulus(const double x,
-                            const double y) {
+                                     const double y) {
         return 0.5;
     } // solid_bulk_modulus
 
@@ -182,7 +182,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS :
 
     static const char* fault_porosity_units(void) {
         return "one";
-    } // fault_porosity_units    
+    } // fault_porosity_units
 
     // Beta p
     static double beta_p(const double x,
@@ -196,7 +196,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS :
 
     // Beta sigma
     static double beta_sigma(const double x,
-                         const double y) {
+                             const double y) {
         return 1.0;
     } // beta_sigma
 
@@ -216,7 +216,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS :
 
     // Normal Permeability
     static double normal_permeability(const double x,
-                                         const double y) {
+                                      const double y) {
         return 1.0;
     } // normal_permeability
 
@@ -278,26 +278,22 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS :
 
     static double disp_y(const double x,
                          const double y,
-                         const double t,
-                         PetscInt flag) {
-        const double disp = 0.75e-3;
-        if (!flag) {
-            return x < 0.0 ? +disp : -disp;
-        } else {
-            return flag < 0 ? +disp : -disp;
-        } // if/else
+                         const double t) {
+        return y*abs(y);
     } // disp_y
-    
+
     // Volumetric Strain
     static double trace_strain(const double x,
-                             const double y,
-                             const double t) {
+                               const double y,
+                               const double t) {
         if (y > 0) {
             return -2.0*y;
         } else if (y < 0) {
             return 2.0*y;
+        } else {
+            return 0.0;
         } // if/else
-    } //trace_strain
+    } // trace_strain
 
     // Pressure
     static double pressure(const double x,
@@ -339,26 +335,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS :
         CPPUNIT_ASSERT(s);
 
         s[0] = disp_x(x[0], x[1], t);
-        PetscInt flag = 0;
-        if (context) {
-            PetscInt cell = 0;
-            DMPolytopeType cellType = DM_POLYTOPE_UNKNOWN;
-            DMPlexGetActivePoint((PetscDM) context, &cell);
-            DMPlexGetCellType((PetscDM) context, cell, &cellType);
-            PetscInt numCellsLeftFault = 0;
-            switch (cellType) {
-            case DM_POLYTOPE_TRIANGLE:
-                numCellsLeftFault = 4;
-                break;
-            case DM_POLYTOPE_QUADRILATERAL:
-                numCellsLeftFault = 2;
-                break;
-            default:
-                CPPUNIT_FAIL("Unknown cell type in solution displacement kernel.");
-            }
-            flag = cell < numCellsLeftFault ? -1 : +1;
-        } // if
-        s[1] = disp_y(x[0], x[1], t, flag);
+        s[1] = disp_y(x[0], x[1], t);
 
         return 0;
     } // solnkernel_disp
@@ -466,7 +443,7 @@ protected:
             pylith::topology::Field::Discretization(0, 1), // solid_density
             pylith::topology::Field::Discretization(0, 1), // fluid_density
             pylith::topology::Field::Discretization(0, 1), // fluid_viscosity
-            pylith::topology::Field::Discretization(0, 1), // porosity                                    
+            pylith::topology::Field::Discretization(0, 1), // porosity
             pylith::topology::Field::Discretization(0, 1), // shear_modulus
             pylith::topology::Field::Discretization(0, 1), // drained_bulk_modulus
             pylith::topology::Field::Discretization(0, 1), // biot_coefficient
@@ -481,7 +458,7 @@ protected:
         CPPUNIT_ASSERT(_data->matAuxDB);
         _data->matAuxDB->addValue("solid_density", solid_density, solid_density_units());
         _data->matAuxDB->addValue("fluid_density", fluid_density, fluid_density_units());
-        _data->matAuxDB->addValue("fluid_viscosity", fluid_viscosity, fluid_viscosity_units());        
+        _data->matAuxDB->addValue("fluid_viscosity", fluid_viscosity, fluid_viscosity_units());
         _data->matAuxDB->addValue("porosity", porosity, porosity_units());
         _data->matAuxDB->addValue("shear_modulus", shear_modulus, shear_modulus_units());
         _data->matAuxDB->addValue("drained_bulk_modulus", drained_bulk_modulus, drained_bulk_modulus_units());
@@ -502,7 +479,7 @@ protected:
         _data->faultAuxDB->addValue("beta_sigma", beta_sigma, beta_sigma_units());
         _data->faultAuxDB->addValue("normal_permeability", normal_permeability, normal_permeability_units());
         _data->faultAuxDB->addValue("tangential_permeability", tangential_permeability, tangential_permeability_units());
-        _data->faultAuxDB->addValue("fluid_viscosity", fluid_viscosity, fluid_viscosity_units());        
+        _data->faultAuxDB->addValue("fluid_viscosity", fluid_viscosity, fluid_viscosity_units());
         _data->faultAuxDB->addValue("initiation_time", initiation_time, time_units());
         _data->faultAuxDB->addValue("final_slip_opening", finalslip_opening, slip_units());
         _data->faultAuxDB->addValue("final_slip_left_lateral", finalslip_leftlateral, slip_units());
@@ -518,8 +495,8 @@ protected:
             pylith::topology::Field::Discretization(0, 1), // beta_sigma
             pylith::topology::Field::Discretization(0, 1), // permeability_tangential
             pylith::topology::Field::Discretization(0, 1), // permeability_normal
-            pylith::topology::Field::Discretization(0, 1), // fluid_viscosity                                                               
-            pylith::topology::Field::Discretization(0, 1), // slip            
+            pylith::topology::Field::Discretization(0, 1), // fluid_viscosity
+            pylith::topology::Field::Discretization(0, 1), // slip
         };
         _data->faultAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_faultAuxDiscretizations);
 
@@ -547,8 +524,8 @@ protected:
         static const PylithInt constrainedDOF[2] = {0, 1};
         static const PylithInt numConstrained = 2;
         static const PylithInt constrainedDOF_pressure[1] = {0};
-        static const PylithInt numConstrained_pressure = 1;        
-        _bcs.resize(4);
+        static const PylithInt numConstrained_pressure = 1;
+        _bcs.resize(8);
         { // boundary_xpos
             pylith::bc::DirichletUserFn* bc = new pylith::bc::DirichletUserFn();
             bc->setConstrainedDOF(constrainedDOF, numConstrained);
@@ -581,6 +558,38 @@ protected:
             bc->setUserFn(solnkernel_pressure);
             _bcs[3] = bc;
         } // boundary_xneg_neu
+        { // boundary_ypos
+            pylith::bc::DirichletUserFn* bc = new pylith::bc::DirichletUserFn();
+            bc->setConstrainedDOF(constrainedDOF, numConstrained);
+            bc->setMarkerLabel("boundary_ypos");
+            bc->setSubfieldName("displacement");
+            bc->setUserFn(solnkernel_disp);
+            _bcs[4] = bc;
+        } // boundary_ypos
+        { // boundary_yneg
+            pylith::bc::DirichletUserFn* bc = new pylith::bc::DirichletUserFn();
+            bc->setConstrainedDOF(constrainedDOF, numConstrained);
+            bc->setMarkerLabel("boundary_yneg");
+            bc->setSubfieldName("displacement");
+            bc->setUserFn(solnkernel_disp);
+            _bcs[5] = bc;
+        } // boundary_yneg
+        { // boundary_ypos_neu
+            pylith::bc::DirichletUserFn* bc = new pylith::bc::DirichletUserFn();
+            bc->setConstrainedDOF(constrainedDOF_pressure, numConstrained_pressure);
+            bc->setMarkerLabel("boundary_ypos_neu");
+            bc->setSubfieldName("pressure");
+            bc->setUserFn(solnkernel_pressure);
+            _bcs[6] = bc;
+        } // boundary_ypos_neu
+        { // boundary_yneg_neu
+            pylith::bc::DirichletUserFn* bc = new pylith::bc::DirichletUserFn();
+            bc->setConstrainedDOF(constrainedDOF_pressure, numConstrained_pressure);
+            bc->setMarkerLabel("boundary_yneg_neu");
+            bc->setSubfieldName("pressure");
+            bc->setUserFn(solnkernel_pressure);
+            _bcs[7] = bc;
+        } // boundary_yneg_neu
 
         _fault->setInterfaceId(100);
         _fault->setSurfaceMarkerLabel("fault");
@@ -636,7 +645,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS_TriP1 :
             pylith::topology::Field::Discretization(1, 1), // pressure
             pylith::topology::Field::Discretization(1, 1), // trace_strain
             pylith::topology::Field::Discretization(1, 1, 1, -1, true), // lagrange_multiplier_fault
-            pylith::topology::Field::Discretization(1, 1, 1, -1, true), // fault_pressure            
+            pylith::topology::Field::Discretization(1, 1, 1, -1, true), // fault_pressure
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
 
@@ -662,12 +671,14 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS_TriP2 :
             pylith::topology::Field::Discretization(0, 2), // solid_density
             pylith::topology::Field::Discretization(0, 2), // fluid_density
             pylith::topology::Field::Discretization(0, 2), // fluid_viscosity
-            pylith::topology::Field::Discretization(0, 2), // porosity                                    
+            pylith::topology::Field::Discretization(0, 2), // porosity
             pylith::topology::Field::Discretization(0, 2), // shear_modulus
             pylith::topology::Field::Discretization(0, 2), // drained_bulk_modulus
             pylith::topology::Field::Discretization(0, 2), // biot_coefficient
             pylith::topology::Field::Discretization(0, 2), // fluid_bulk_modulus
-            pylith::topology::Field::Discretization(0, 2), // solid_bulk_modulus
+            pylith::top
+            return 0.0;
+        }ology::Field::Discretization(0, 2), // solid_bulk_modulus
             pylith::topology::Field::Discretization(0, 2), // isotropic_permeability
         };
         _data->matAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_matAuxDiscretizations);
@@ -679,8 +690,8 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS_TriP2 :
             pylith::topology::Field::Discretization(0, 2), // beta_sigma
             pylith::topology::Field::Discretization(0, 2), // permeability_tangential
             pylith::topology::Field::Discretization(0, 2), // permeability_normal
-            pylith::topology::Field::Discretization(0, 2), // fluid_viscosity                                                               
-            pylith::topology::Field::Discretization(0, 2), // slip   
+            pylith::topology::Field::Discretization(0, 2), // fluid_viscosity
+            pylith::topology::Field::Discretization(0, 2), // slip
         };
         _data->faultAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_faultAuxDiscretizations);
 
@@ -690,7 +701,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS_TriP2 :
             pylith::topology::Field::Discretization(2, 2), // pressure
             pylith::topology::Field::Discretization(2, 2), // trace_strain
             pylith::topology::Field::Discretization(2, 2, 1, -1, true), // lagrange_multiplier_fault
-            pylith::topology::Field::Discretization(2, 2, 1, -1, true), // fault_pressure            
+            pylith::topology::Field::Discretization(2, 2, 1, -1, true), // fault_pressure
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
 
@@ -716,7 +727,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS_TriP3 :
             pylith::topology::Field::Discretization(0, 3), // solid_density
             pylith::topology::Field::Discretization(0, 3), // fluid_density
             pylith::topology::Field::Discretization(0, 3), // fluid_viscosity
-            pylith::topology::Field::Discretization(0, 3), // porosity                                    
+            pylith::topology::Field::Discretization(0, 3), // porosity
             pylith::topology::Field::Discretization(0, 3), // shear_modulus
             pylith::topology::Field::Discretization(0, 3), // drained_bulk_modulus
             pylith::topology::Field::Discretization(0, 3), // biot_coefficient
@@ -733,8 +744,8 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS_TriP3 :
             pylith::topology::Field::Discretization(0, 3), // beta_sigma
             pylith::topology::Field::Discretization(0, 3), // permeability_tangential
             pylith::topology::Field::Discretization(0, 3), // permeability_normal
-            pylith::topology::Field::Discretization(0, 3), // fluid_viscosity                                                               
-            pylith::topology::Field::Discretization(0, 3), // slip   
+            pylith::topology::Field::Discretization(0, 3), // fluid_viscosity
+            pylith::topology::Field::Discretization(0, 3), // slip
         };
         _data->faultAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_faultAuxDiscretizations);
 
@@ -744,7 +755,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS_TriP3 :
             pylith::topology::Field::Discretization(3, 3), // pressure
             pylith::topology::Field::Discretization(3, 3), // trace_strain
             pylith::topology::Field::Discretization(1, 3, 1, -1, true), // lagrange_multiplier_fault
-            pylith::topology::Field::Discretization(3, 3, 1, -1, true), // fault_pressure            
+            pylith::topology::Field::Discretization(3, 3, 1, -1, true), // fault_pressure
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
 
@@ -770,7 +781,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS_TriP4 :
             pylith::topology::Field::Discretization(0, 4), // solid_density
             pylith::topology::Field::Discretization(0, 4), // fluid_density
             pylith::topology::Field::Discretization(0, 4), // fluid_viscosity
-            pylith::topology::Field::Discretization(0, 4), // porosity                                    
+            pylith::topology::Field::Discretization(0, 4), // porosity
             pylith::topology::Field::Discretization(0, 4), // shear_modulus
             pylith::topology::Field::Discretization(0, 4), // drained_bulk_modulus
             pylith::topology::Field::Discretization(0, 4), // biot_coefficient
@@ -787,8 +798,8 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS_TriP4 :
             pylith::topology::Field::Discretization(0, 4), // beta_sigma
             pylith::topology::Field::Discretization(0, 4), // permeability_tangential
             pylith::topology::Field::Discretization(0, 4), // permeability_normal
-            pylith::topology::Field::Discretization(0, 4), // fluid_viscosity                                                               
-            pylith::topology::Field::Discretization(0, 4), // slip   
+            pylith::topology::Field::Discretization(0, 4), // fluid_viscosity
+            pylith::topology::Field::Discretization(0, 4), // slip
         };
         _data->faultAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_faultAuxDiscretizations);
 
@@ -798,7 +809,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS_TriP4 :
             pylith::topology::Field::Discretization(4, 4), // pressure
             pylith::topology::Field::Discretization(4, 4), // trace_strain
             pylith::topology::Field::Discretization(4, 4, 1, -1, true), // lagrange_multiplier_fault
-            pylith::topology::Field::Discretization(4, 4, 1, -1, true), // fault_pressure            
+            pylith::topology::Field::Discretization(4, 4, 1, -1, true), // fault_pressure
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
 
@@ -826,7 +837,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS_QuadQ1 :
             pylith::topology::Field::Discretization(1, 1), // pressure
             pylith::topology::Field::Discretization(1, 1), // trace_strain
             pylith::topology::Field::Discretization(1, 1, 1, -1, true), // lagrange_multiplier_fault
-            pylith::topology::Field::Discretization(1, 1, 1, -1, true), // fault_pressure            
+            pylith::topology::Field::Discretization(1, 1, 1, -1, true), // fault_pressure
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
 
@@ -844,14 +855,14 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS_QuadQ2 :
 
     void setUp(void) {
         TestFaultKinPoro2D_MMS::setUp();
-        CPPUNIT_ASSERT(_data);    
+        CPPUNIT_ASSERT(_data);
         _data->meshFilename = "data/quad.mesh";
 
         static const pylith::topology::Field::Discretization _matAuxDiscretizations[10] = {
             pylith::topology::Field::Discretization(0, 2), // solid_density
             pylith::topology::Field::Discretization(0, 2), // fluid_density
             pylith::topology::Field::Discretization(0, 2), // fluid_viscosity
-            pylith::topology::Field::Discretization(0, 2), // porosity                                    
+            pylith::topology::Field::Discretization(0, 2), // porosity
             pylith::topology::Field::Discretization(0, 2), // shear_modulus
             pylith::topology::Field::Discretization(0, 2), // drained_bulk_modulus
             pylith::topology::Field::Discretization(0, 2), // biot_coefficient
@@ -868,8 +879,8 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS_QuadQ2 :
             pylith::topology::Field::Discretization(0, 2), // beta_sigma
             pylith::topology::Field::Discretization(0, 2), // permeability_tangential
             pylith::topology::Field::Discretization(0, 2), // permeability_normal
-            pylith::topology::Field::Discretization(0, 2), // fluid_viscosity                                                               
-            pylith::topology::Field::Discretization(0, 2), // slip   
+            pylith::topology::Field::Discretization(0, 2), // fluid_viscosity
+            pylith::topology::Field::Discretization(0, 2), // slip
         };
         _data->faultAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_faultAuxDiscretizations);
 
@@ -879,7 +890,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS_QuadQ2 :
             pylith::topology::Field::Discretization(2, 2), // pressure
             pylith::topology::Field::Discretization(2, 2), // trace_strain
             pylith::topology::Field::Discretization(2, 2, 1, -1, true), // lagrange_multiplier_fault
-            pylith::topology::Field::Discretization(2, 2, 1, -1, true), // fault_pressure            
+            pylith::topology::Field::Discretization(2, 2, 1, -1, true), // fault_pressure
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
 
@@ -905,7 +916,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS_QuadQ3 :
             pylith::topology::Field::Discretization(0, 3), // solid_density
             pylith::topology::Field::Discretization(0, 3), // fluid_density
             pylith::topology::Field::Discretization(0, 3), // fluid_viscosity
-            pylith::topology::Field::Discretization(0, 3), // porosity                                    
+            pylith::topology::Field::Discretization(0, 3), // porosity
             pylith::topology::Field::Discretization(0, 3), // shear_modulus
             pylith::topology::Field::Discretization(0, 3), // drained_bulk_modulus
             pylith::topology::Field::Discretization(0, 3), // biot_coefficient
@@ -926,7 +937,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS_QuadQ3 :
             pylith::topology::Field::Discretization(3, 3), // pressure
             pylith::topology::Field::Discretization(3, 3), // trace_strain
             pylith::topology::Field::Discretization(3, 3, 1, -1, true), // lagrange_multiplier_fault
-            pylith::topology::Field::Discretization(3, 3, 1, -1, true), // fault_pressure            
+            pylith::topology::Field::Discretization(3, 3, 1, -1, true), // fault_pressure
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
 
@@ -952,7 +963,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS_QuadQ4 :
             pylith::topology::Field::Discretization(0, 4), // solid_density
             pylith::topology::Field::Discretization(0, 4), // fluid_density
             pylith::topology::Field::Discretization(0, 4), // fluid_viscosity
-            pylith::topology::Field::Discretization(0, 4), // porosity                                    
+            pylith::topology::Field::Discretization(0, 4), // porosity
             pylith::topology::Field::Discretization(0, 4), // shear_modulus
             pylith::topology::Field::Discretization(0, 4), // drained_bulk_modulus
             pylith::topology::Field::Discretization(0, 4), // biot_coefficient
@@ -969,8 +980,8 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS_QuadQ4 :
             pylith::topology::Field::Discretization(0, 4), // beta_sigma
             pylith::topology::Field::Discretization(0, 4), // permeability_tangential
             pylith::topology::Field::Discretization(0, 4), // permeability_normal
-            pylith::topology::Field::Discretization(0, 4), // fluid_viscosity                                                               
-            pylith::topology::Field::Discretization(0, 4), // slip   
+            pylith::topology::Field::Discretization(0, 4), // fluid_viscosity
+            pylith::topology::Field::Discretization(0, 4), // slip
         };
         _data->faultAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_faultAuxDiscretizations);
 
@@ -980,7 +991,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS_QuadQ4 :
             pylith::topology::Field::Discretization(4, 4), // pressure
             pylith::topology::Field::Discretization(4, 4), // trace_strain
             pylith::topology::Field::Discretization(4, 4, 1, -1, true), // lagrange_multiplier_fault
-            pylith::topology::Field::Discretization(4, 4, 1, -1, true), // fault_pressure            
+            pylith::topology::Field::Discretization(4, 4, 1, -1, true), // fault_pressure
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
 
