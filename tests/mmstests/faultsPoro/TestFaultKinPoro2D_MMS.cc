@@ -676,9 +676,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS_TriP2 :
             pylith::topology::Field::Discretization(0, 2), // drained_bulk_modulus
             pylith::topology::Field::Discretization(0, 2), // biot_coefficient
             pylith::topology::Field::Discretization(0, 2), // fluid_bulk_modulus
-            pylith::top
-            return 0.0;
-        }ology::Field::Discretization(0, 2), // solid_bulk_modulus
+            pylith::topology::Field::Discretization(0, 2), // solid_bulk_modulus
             pylith::topology::Field::Discretization(0, 2), // isotropic_permeability
         };
         _data->matAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_matAuxDiscretizations);
