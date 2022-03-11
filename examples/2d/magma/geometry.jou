@@ -1,0 +1,85 @@
+# -*- Python -*- (syntax highlighting)
+# ----------------------------------------------------------------------
+#
+# Brad T. Aagaard, U.S. Geological Survey
+# Charles A. Williams, GNS Science
+# Matthew G. Knepley, University at Buffalo
+#
+# This code was developed as part of the Computational Infrastructure
+# for Geodynamics (http://geodynamics.org).
+#
+# Copyright (c) 2010-2021 University of California, Davis
+#
+# See LICENSE.md for license information.
+#
+# ----------------------------------------------------------------------
+#
+# CUBIT journal file with geometry for 2-D strike-slip example.
+#
+# ----------------------------------------------------------------------
+# Set units to SI.
+# ----------------------------------------------------------------------
+${Units('si')}
+#
+# ----------------------------------------------------------------------
+# Reset geometry.
+# ----------------------------------------------------------------------
+reset
+
+# Make sure undo is off to prevent errors in stitching volumes.
+undo off
+
+# Turn on IDless journal files for maximum compatibility.
+# The commands echoed to the log will replace the object ID with a
+# geometric specification of the object. Note that this means changing
+# the geometry will require changes to subsequent journal commands.
+journal idless on
+
+# ----------------------------------------------------------------------
+# Create domain
+# ----------------------------------------------------------------------
+#{length = 20*km}
+#{depth  = 20*km}
+
+Create Surface rectangle width {length} height {depth} ZPLANE
+surface {Id("surface")} move x {length/2} y {depth/-2} z 0
+surface {Id("surface")} name "domain"
+
+# ----------------------------------------------------------------------
+# Create intrusion 
+# ----------------------------------------------------------------------
+#{major = 2*km}
+#{minor  = 4*km}
+
+Create Surface Ellipse major radius {major} minor radius {minor} on surface domain
+surface {Id("surface")} move x {length/2} y {-depth} z 0
+surface {Id("surface")} name "mirror_intrusion"
+
+${faultLength=150.0*km}
+
+
+# ----------------------------------------------------------------------
+# Create interface surfaces
+# ----------------------------------------------------------------------
+
+# Create fault (yz plane) at x = 0.0
+split surface {idS} across location position 0 {-blockLength/2.0} 0 location position 0 {blockLength/2.0} 0
+
+# curve 17 name "fault_surface"
+curve ( at 0 0 0 ordinal 1 ordered ) name "fault_surface"
+
+# ----------------------------------------------------------------------
+# Combine intrusion and domain
+# ----------------------------------------------------------------------
+intersect surface domain mirror_intrusion keep
+surface {Id("surface")} rename "intrusion"
+
+subtract surface intrusion from surface domain keep_tool
+delete surface mirror_intrusion
+
+imprint all
+merge all
+
+
+# End of file
+

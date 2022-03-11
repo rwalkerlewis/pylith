@@ -1,0 +1,64 @@
+# ----------------------------------------------------------------------
+# Create blocks for materials
+# ----------------------------------------------------------------------
+block 1 surface 4
+block 1 name "domain"
+
+# ----------------------------------------------------------------------
+# Create nodeset for fault
+# ----------------------------------------------------------------------
+group "fault" add node in curve 7 
+nodeset 10 group fault
+nodeset 10 name "fault"
+
+# ----------------------------------------------------------------------
+# Create nodeset for +x boundary
+# ----------------------------------------------------------------------
+group "boundary_xpos" add node in curve 4
+nodeset 20 group boundary_xpos
+nodeset 20 name "boundary_xpos"
+
+# ----------------------------------------------------------------------
+# Create nodeset for +y boundary
+# ----------------------------------------------------------------------
+group "boundary_ypos" add node in curve 1
+nodeset 21 group boundary_ypos
+nodeset 21 name "boundary_ypos"
+
+# ----------------------------------------------------------------------
+# Create nodeset for -x boundary
+# ----------------------------------------------------------------------
+group "boundary_xneg" add node in curve 2
+nodeset 22 group boundary_xneg
+nodeset 22 name "boundary_xneg"
+
+# ----------------------------------------------------------------------
+# Create nodeset for -y boundary
+# ----------------------------------------------------------------------
+group "boundary_yneg" add node in curve 6 9 10
+nodeset 23 group boundary_yneg
+nodeset 23 name "boundary_yneg"
+
+# ----------------------------------------------------------------------
+# Create nodeset for -y boundary for intrusion
+# ----------------------------------------------------------------------
+group "boundary_yneg_intrusion" add node in curve 6
+nodeset 30 group boundary_yneg_intrusion
+nodeset 30 name "boundary_yneg_intrusion"
+
+
+# ----------------------------------------------------------------------
+# Create nodeset for domain
+# ----------------------------------------------------------------------
+group "domain_all" add node all
+nodeset 40 group domain_all
+nodeset 40 name "domain_all"
+
+# ----------------------------------------------------------------------
+# Create nodeset for all vertices but fault
+# ----------------------------------------------------------------------
+group "domain_nofault" add node all
+group "domain_nofault" remove node in fault
+nodeset 50 group domain_nofault
+nodeset 50 name "domain_nofault"
+
