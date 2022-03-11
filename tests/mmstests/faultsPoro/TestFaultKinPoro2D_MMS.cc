@@ -317,7 +317,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS :
     static double faulttraction_t(const double x,
                                   const double y,
                                   const double t) {
-        return 0.0;
+        return t;
     } // faulttraction_t
 
     // Fault Pressure
@@ -496,6 +496,13 @@ protected:
         _data->kinsrcporo = new pylith::faults::KinSrcPoroStep();CPPUNIT_ASSERT(_data->kinsrcporo);
         _data->kinsrcporo->originTime(0.0);
         CPPUNIT_ASSERT(_data->faultAuxDB);
+        _data->faultAuxDB->addValue("thickness", thickness, thickness_units());
+        _data->faultAuxDB->addValue("porosity", porosity, porosity_units());
+        _data->faultAuxDB->addValue("beta_p", beta_p, beta_p_units());
+        _data->faultAuxDB->addValue("beta_sigma", beta_sigma, beta_sigma_units());
+        _data->faultAuxDB->addValue("normal_permeability", normal_permeability, normal_permeability_units());
+        _data->faultAuxDB->addValue("tangential_permeability", tangential_permeability, tangential_permeability_units());
+        _data->faultAuxDB->addValue("fluid_viscosity", fluid_viscosity, fluid_viscosity_units());        
         _data->faultAuxDB->addValue("initiation_time", initiation_time, time_units());
         _data->faultAuxDB->addValue("final_slip_opening", finalslip_opening, slip_units());
         _data->faultAuxDB->addValue("final_slip_left_lateral", finalslip_leftlateral, slip_units());
@@ -541,7 +548,7 @@ protected:
         static const PylithInt numConstrained = 2;
         static const PylithInt constrainedDOF_pressure[1] = {0};
         static const PylithInt numConstrained_pressure = 1;        
-        _bcs.resize(2);
+        _bcs.resize(4);
         { // boundary_xpos
             pylith::bc::DirichletUserFn* bc = new pylith::bc::DirichletUserFn();
             bc->setConstrainedDOF(constrainedDOF, numConstrained);
@@ -557,23 +564,23 @@ protected:
             bc->setSubfieldName("displacement");
             bc->setUserFn(solnkernel_disp);
             _bcs[1] = bc;
-        } // boundary_zneg
+        } // boundary_xneg
         { // boundary_xpos_neu
             pylith::bc::DirichletUserFn* bc = new pylith::bc::DirichletUserFn();
             bc->setConstrainedDOF(constrainedDOF_pressure, numConstrained_pressure);
             bc->setMarkerLabel("boundary_xpos_neu");
             bc->setSubfieldName("pressure");
             bc->setUserFn(solnkernel_pressure);
-            _bcs[0] = bc;
-        } // boundary_xpos
-        { // boundary_xneg
+            _bcs[2] = bc;
+        } // boundary_xpos_neu
+        { // boundary_xneg_neu
             pylith::bc::DirichletUserFn* bc = new pylith::bc::DirichletUserFn();
             bc->setConstrainedDOF(constrainedDOF_pressure, numConstrained_pressure);
             bc->setMarkerLabel("boundary_xneg_neu");
             bc->setSubfieldName("pressure");
             bc->setUserFn(solnkernel_pressure);
-            _bcs[1] = bc;
-        } // boundary_zneg
+            _bcs[3] = bc;
+        } // boundary_xneg_neu
 
         _fault->setInterfaceId(100);
         _fault->setSurfaceMarkerLabel("fault");
@@ -636,7 +643,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS_TriP1 :
     } // setUp
 
 }; // TestFaultKinPoro2D_MMS_TriP1
-_SUITE_REGISTRATION(pylith::mmstests::TestFaultKinPoro2D_MMS_TriP1);
+CPPUNIT_TEST_SUITE_REGISTRATION(pylith::mmstests::TestFaultKinPoro2D_MMS_TriP1);
 
 // ---------------------------------------------------------------------------------------------------------------------
 class pylith::mmstests::TestFaultKinPoro2D_MMS_TriP2 :
@@ -833,7 +840,11 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS_QuadQ2 :
     public pylith::mmstests::TestFaultKinPoro2D_MMS {
     CPPUNIT_TEST_SUB_SUITE(TestFaultKinPoro2D_MMS_QuadQ2,
                            TestFaultKinPoro);
-    CPPUNIT_TEST_SUITE_END();2
+    CPPUNIT_TEST_SUITE_END();
+
+    void setUp(void) {
+        TestFaultKinPoro2D_MMS::setUp();
+        CPPUNIT_ASSERT(_data);    
         _data->meshFilename = "data/quad.mesh";
 
         static const pylith::topology::Field::Discretization _matAuxDiscretizations[10] = {

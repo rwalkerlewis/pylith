@@ -27,7 +27,7 @@ check_PROGRAMS = $(TESTS)
 
 test_faultkinporo_SOURCES = \
 	TestFaultKinPoro.cc \
-	TestFaultKinPoro2D_RigidBlocksStatic.cc \
+	TestFaultKinPoro2D_MMS.cc \
 	test_driver.cc
 
 
