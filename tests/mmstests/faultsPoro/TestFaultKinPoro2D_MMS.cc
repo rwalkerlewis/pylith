@@ -466,7 +466,6 @@ protected:
         _data->matAuxDB->addValue("fluid_bulk_modulus", fluid_bulk_modulus, fluid_bulk_modulus_units());
         _data->matAuxDB->addValue("solid_bulk_modulus", solid_bulk_modulus, solid_bulk_modulus_units());
         _data->matAuxDB->addValue("isotropic_permeability", isotropic_permeability, isotropic_permeability_units());
-
         _data->matAuxDB->setCoordSys(*_data->cs);
 
         CPPUNIT_ASSERT(!_data->kinsrcporo);
@@ -477,8 +476,8 @@ protected:
         _data->faultAuxDB->addValue("porosity", porosity, porosity_units());
         _data->faultAuxDB->addValue("beta_p", beta_p, beta_p_units());
         _data->faultAuxDB->addValue("beta_sigma", beta_sigma, beta_sigma_units());
-        _data->faultAuxDB->addValue("normal_permeability", normal_permeability, normal_permeability_units());
-        _data->faultAuxDB->addValue("tangential_permeability", tangential_permeability, tangential_permeability_units());
+        _data->faultAuxDB->addValue("permeability_normal", normal_permeability, normal_permeability_units());
+        _data->faultAuxDB->addValue("permeability_tangential", tangential_permeability, tangential_permeability_units());
         _data->faultAuxDB->addValue("fluid_viscosity", fluid_viscosity, fluid_viscosity_units());
         _data->faultAuxDB->addValue("initiation_time", initiation_time, time_units());
         _data->faultAuxDB->addValue("final_slip_opening", finalslip_opening, slip_units());
