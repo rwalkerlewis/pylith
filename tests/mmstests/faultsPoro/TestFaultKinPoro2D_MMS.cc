@@ -99,7 +99,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS :
     } // porosity
 
     static const char* porosity_units(void) {
-        return "one";
+        return "none";
     } // porosity_units
 
     // Shear Modulus
@@ -129,7 +129,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS :
     } // alpha
 
     static const char* biot_coefficient_units(void) {
-        return "one";
+        return "none";
     } // alpha_units
 
     // Fluid Bulk Modulus
