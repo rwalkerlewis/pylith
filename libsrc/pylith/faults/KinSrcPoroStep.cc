@@ -20,7 +20,7 @@
 
 #include "KinSrcPoroStep.hh" // implementation of object methods
 
-#include "pylith/faults/KinSrcAuxiliaryFactory.hh" // USES KinSrcAuxiliaryFactory
+#include "pylith/faults/KinSrcPoroAuxiliaryFactory.hh" // USES KinSrcPoroAuxiliaryFactory
 
 #include "pylith/utils/journals.hh" // USES PYLITH_COMPONENT_*
 #include "pylith/utils/error.hh" // USES PYLITH_METHOD_BEGIN/END
@@ -130,7 +130,7 @@ pylith::faults::KinSrcPoroStep::_auxiliaryFieldSetup(const spatialdata::units::N
     // kernel.
 
     _auxiliaryFactory->addInitiationTime(); // 0
-    _auxiliaryFactory->addFinalSlip(); // 1
+    _auxiliaryFactory->addSlip(); // 1
 
     // Add other kernels
     _thicknessFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 0
@@ -140,10 +140,10 @@ pylith::faults::KinSrcPoroStep::_auxiliaryFieldSetup(const spatialdata::units::N
     _permeability_tangentialFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 4
     _permeability_normalFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 5
     _fluid_viscosityFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 6
-    _bulk_modulus_negativeFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 7
-    _shear_modulus_negativeFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 8
-    _bulk_modulus_positiveFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 9
-    _shear_modulus_positiveFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 10
+    // _bulk_modulus_negativeFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 7
+    // _shear_modulus_negativeFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 8
+    // _bulk_modulus_positiveFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 9
+    // _shear_modulus_positiveFnKernel = pylith::faults::KinSrcPoroStep::thicknessFn; // 10
     _slipFnKernel = pylith::faults::KinSrcPoroStep::slipFn; // numA - 1
     _slipRateFnKernel = NULL; // Undefined for step function.
     _slipAccFnKernel = NULL; // Undefined for step function.

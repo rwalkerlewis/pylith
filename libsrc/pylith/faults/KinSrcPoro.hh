@@ -186,7 +186,7 @@ protected:
     // PROTECTED MEMBERS //////////////////////////////////////////////////
 protected:
 
-    pylith::faults::KinSrcAuxiliaryFactory* _auxiliaryFactory; ///< Factory for auxiliary subfields.
+    pylith::faults::KinSrcPoroAuxiliaryFactory* _auxiliaryFactory; ///< Factory for auxiliary subfields.
     // implement the following add* functions
     /** -- numA : number of auxiliary fields
      ***** Required fields
@@ -197,10 +197,10 @@ protected:
      * - 4: permeability_tangential(1)
      * - 5: permeability_normal(1)
      * - 6: fluid_viscosity(1)
-     * - 7: bulk_modulus_negative(1)
-     * - 8: shear_modulus_negative(1)
-     * - 9: bulk_modulus_positive(1)
-     * - 10: shear_modulus_positive(1)
+    //  * - 7: bulk_modulus_negative(1)
+    //  * - 8: shear_modulus_negative(1)
+    //  * - 9: bulk_modulus_positive(1)
+    //  * - 10: shear_modulus_positive(1)
      * - numA - 3: body_force(dim)
      * - numA - 2: source(1)
      * - numA - 1: slip(dim)

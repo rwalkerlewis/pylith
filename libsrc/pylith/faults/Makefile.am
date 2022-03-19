@@ -36,6 +36,7 @@ subpkginclude_HEADERS = \
 	KinSrcAuxiliaryFactory.hh \
 	KinSrcPoro.hh \
 	KinSrcPoroStep.hh \
+	KinSrcPoroAuxiliaryFactory.hh \
 	faultsfwd.hh
 
 noinst_HEADERS = \

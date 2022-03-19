@@ -158,24 +158,9 @@ pylith::faults::KinSrc::updateSlip(PetscVec slipLocalVec,
     assert(_auxiliaryField);
 
     _setFEConstants(*faultAuxiliaryField); // Constants are attached to the auxiliary field for the slip vector.
-    /**
+
     PetscPointFunc subfieldKernels[1];
     subfieldKernels[0] = _slipFnKernel;
-    */
-    PetscPointFunc subfieldKernels[12];
-    subfieldKernels[0] = _thicknessFnKernel; ///< Kernel for slip time function.
-    subfieldKernels[1] = _porosityFnKernel; ///< Kernel for slip time function.
-    subfieldKernels[2] = _beta_pFnKernel; ///< Kernel for slip time function.
-    subfieldKernels[3] = _beta_sigmaFnKernel; ///< Kernel for slip time function.
-    subfieldKernels[4] = _permeability_tangentialFnKernel; ///< Kernel for slip time function.
-    subfieldKernels[5] = _permeability_normalFnKernel; ///< Kernel for slip time function.
-    subfieldKernels[6] = _fluid_viscosityFnKernel; ///< Kernel for slip time function.
-    subfieldKernels[7] = _bulk_modulus_negativeFnKernel; ///< Kernel for slip time function.
-    subfieldKernels[8] = _shear_modulus_negativeFnKernel; ///< Kernel for slip time function.
-    subfieldKernels[9] = _bulk_modulus_positiveFnKernel; ///< Kernel for slip time function.
-    subfieldKernels[10] = _shear_modulus_positiveFnKernel; ///< Kernel for slip time function.
-
-    subfieldKernels[11] = _slipFnKernel;
 
     // Create local vector for slip for this source.
     PetscErrorCode err = 0;

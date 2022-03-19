@@ -751,7 +751,7 @@ class pylith::mmstests::TestFaultKinPoro2D_MMS_TriP3 :
             pylith::topology::Field::Discretization(3, 3), // disp
             pylith::topology::Field::Discretization(3, 3), // pressure
             pylith::topology::Field::Discretization(3, 3), // trace_strain
-            pylith::topology::Field::Discretization(1, 3, 1, -1, true), // lagrange_multiplier_fault
+            pylith::topology::Field::Discretization(3, 3, 1, -1, true), // lagrange_multiplier_fault
             pylith::topology::Field::Discretization(3, 3, 1, -1, true), // fault_pressure
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);

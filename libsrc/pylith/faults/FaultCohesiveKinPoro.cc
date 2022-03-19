@@ -21,7 +21,7 @@
 #include "FaultCohesiveKinPoro.hh" // implementation of object methods
 
 #include "pylith/faults/KinSrcPoro.hh" // USES KinSrcPoro
-#include "pylith/faults/AuxiliaryFactoryKinematic.hh" // USES AuxiliaryFactoryKinematic
+#include "pylith/faults/AuxiliaryFactoryKinematicPoro.hh" // USES AuxiliaryFactoryKinematicPoro
 #include "pylith/feassemble/IntegratorInterface.hh" // USES IntegratorInterface
 #include "pylith/feassemble/InterfacePatches.hh" // USES InterfacePatches
 #include "pylith/feassemble/ConstraintSimple.hh" // USES ConstraintSimple
@@ -97,7 +97,8 @@ public:
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Default constructor.
-pylith::faults::FaultCohesiveKinPoro::FaultCohesiveKinPoro(void) : _auxiliaryFactory(new pylith::faults::AuxiliaryFactoryKinematic),
+pylith::faults::FaultCohesiveKinPoro::FaultCohesiveKinPoro(void) :
+    _auxiliaryFactory(new pylith::faults::AuxiliaryFactoryKinematic),
     _slipVecRupture(NULL),
     _slipVecTotal(NULL) {
     pylith::utils::PyreComponent::setName(_FaultCohesiveKinPoro::pyreComponent);
@@ -242,12 +243,6 @@ pylith::faults::FaultCohesiveKinPoro::createIntegrator(const pylith::topology::F
 
     _setKernelsResidual(integrator, solution);
     _setKernelsJacobian(integrator, solution);
-
-    // _FaultCohesiveKinPoro::setKernelsLHSResidual(integrator, *this, solution, _useBodyForce, _useSource,
-    // _formulation);
-    // _FaultCohesiveKinPoro::setKernelsLHSJacobian(integrator, *this, solution, _formulation);
-    // No state variables.
-    // _FaultCohesiveKinPoro::setKernelsDerivedFields(integrator, *this, solution);
 
     PYLITH_METHOD_RETURN(integrator);
 } // createIntegrator
@@ -420,23 +415,11 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
     // Set default discretization of auxiliary subfields to match lagrange_multiplier_fault subfield in solution.
     assert(_auxiliaryFactory);
     const pylith::topology::FieldBase::Discretization &discretization = solution.getSubfieldInfo("lagrange_multiplier_fault").fe;
+    const PylithInt dimension = -1;
     bool isFaultOnly = false;
-    _auxiliaryFactory->setSubfieldDiscretization("default", discretization.basisOrder, discretization.quadOrder, -1, isFaultOnly,
-                                                 discretization.cellBasis, discretization.feSpace, discretization.isBasisContinuous);
-
-    // // Set default discretization of auxiliary subfields to match lagrange_multiplier_fault subfield in solution.
-    // assert(_auxiliaryFactory);
-    // const pylith::topology::FieldBase::Discretization &discretization1 =
-    // solution.getSubfieldInfo("fault_pressure").fe;
-    // isFaultOnly = false;
-    // _auxiliaryFactory->setSubfieldDiscretization("default", discretization1.basisOrder, discretization1.quadOrder,
-    // -1, isFaultOnly,
-    //                                              discretization1.cellBasis, discretization1.feSpace,
-    // discretization1.isBasisContinuous);
-
-    // ** TO DO **
-    // Set discretization of aux fields to match also
-    // pressure (\Gamma^+ and - sides), trace_strain (\Gamma^+ and - sides), fault_pressure (only \Gamma^f)
+    _auxiliaryFactory->setSubfieldDiscretization("default", discretization.basisOrder, discretization.quadOrder, dimension,
+                                                 isFaultOnly, discretization.cellBasis, discretization.feSpace,
+                                                 discretization.isBasisContinuous);
 
     assert(_auxiliaryFactory);
     assert(_normalizer);
@@ -453,10 +436,10 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
      * - 4: permeability_tangential(1)
      * - 5: permeability_normal(1)
      * - 6: fluid_viscosity(1)
-    //  * - 7: bulk_modulus_negative(1)
-    //  * - 8: shear_modulus_negative(1)
-    //  * - 9: bulk_modulus_positive(1)
-    //  * - 10: shear_modulus_positive(1)
+     * //  * - 7: bulk_modulus_negative(1)
+     * //  * - 8: shear_modulus_negative(1)
+     * //  * - 9: bulk_modulus_positive(1)
+     * //  * - 10: shear_modulus_positive(1)
      * - numA - 1: slip(dim)
      */
     _auxiliaryFactory->addThickness(); // 0
