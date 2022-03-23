@@ -429,8 +429,8 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_neg(const PylithInt dim,
     const PylithInt fOffN = 0;
     const PylithInt fOffP = fOffN + 1;
 
-    // const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
-    const PylithScalar thickness = a[aOff[i_thickness]];
+    const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
+    // const PylithScalar thickness = a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeability_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
     const PylithScalar pressureN = s[sOffPressureN];
@@ -491,8 +491,8 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_pos(const PylithInt dim,
     const PylithInt fOffN = 0;
     const PylithInt fOffP = fOffN + 1;
 
-    // const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
-    const PylithScalar thickness = a[aOff[i_thickness]];
+    const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
+    // const PylithScalar thickness = a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeability_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
     // const PylithScalar pressureN = s[sOffPressureN];
@@ -554,8 +554,8 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_body_neg(const PylithInt dim,
     const PylithInt fOffN = 0;
     // const PylithInt fOffP = fOffN + 1;
 
-    // const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
-    const PylithScalar thickness = a[aOff[i_thickness]];
+    const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
+    // const PylithScalar thickness = a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeability_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
     const PylithScalar *bodyForce = &a[aOff[i_body_force]];
@@ -624,8 +624,8 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_body_pos(const PylithInt dim,
     const PylithInt fOffN = 0;
     const PylithInt fOffP = fOffN + 1;
 
-    // const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
-    const PylithScalar thickness = a[aOff[i_thickness]];
+    const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
+    // const PylithScalar thickness = a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeability_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
     const PylithScalar *bodyForce = &a[aOff[i_body_force]];
@@ -853,10 +853,6 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_fault(const PylithInt dim,
     const PylithInt i_permeabilility_tangential = 4;
     const PylithInt i_permeabilility_normal = 5;
     const PylithInt i_fluid_viscosity = 6;
-    // const PylithInt i_bulk_modulus_negative = 7;
-    // const PylithInt i_shear_modulus_negative = 8;
-    // const PylithInt i_bulk_modulus_positive = 9;
-    // const PylithInt i_shear_modulus_positive = 10;
 
     const PylithScalar thickness = a[aOff[i_thickness]];
     const PylithScalar porosity = a[aOff[i_porosity]];
@@ -1563,8 +1559,8 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_neg(const PylithInt dim,
     const PylithInt i_permeabilility_normal = numA - 1;
     const PylithInt i_fluid_viscosity = 2;
 
-    // const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
-    const PylithScalar thickness = a[aOff[i_thickness]];
+    // const PylithScalar thickness = a[aOff[i_thickness]];
+    const PylithScalar thickness = 1.0;
     const PylithScalar permeabilityNormal = a[aOff[i_permeabilility_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
 
@@ -1613,7 +1609,8 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_pos(const PylithInt dim,
     const PylithInt i_permeabilility_normal = numA - 1;
     const PylithInt i_fluid_viscosity = 2;
 
-    const PylithScalar thickness = a[aOff[i_thickness]];
+    const PylithScalar thickness = 1.0;
+    // const PylithScalar thickness = a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeabilility_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
 
@@ -1666,8 +1663,8 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_f_neg(const PylithInt dim,
     const PylithInt i_permeabilility_normal = numA - 1;
     const PylithInt i_fluid_viscosity = 2;
 
-    // const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
-    const PylithScalar thickness = a[aOff[i_thickness]];
+    const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
+    // const PylithScalar thickness = a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeabilility_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
 
@@ -1720,8 +1717,8 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_f_pos(const PylithInt dim,
     const PylithInt i_permeabilility_normal = numA - 1;
     const PylithInt i_fluid_viscosity = 2;
 
-    // const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
-    const PylithScalar thickness = a[aOff[i_thickness]];
+    const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
+    // const PylithScalar thickness = a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeabilility_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
 
