@@ -197,10 +197,6 @@ protected:
      * - 4: permeability_tangential(1)
      * - 5: permeability_normal(1)
      * - 6: fluid_viscosity(1)
-    //  * - 7: bulk_modulus_negative(1)
-    //  * - 8: shear_modulus_negative(1)
-    //  * - 9: bulk_modulus_positive(1)
-    //  * - 10: shear_modulus_positive(1)
      * - numA - 3: body_force(dim)
      * - numA - 2: source(1)
      * - numA - 1: slip(dim)
@@ -213,10 +209,6 @@ protected:
     PetscPointFunc _permeability_tangentialFnKernel; ///< Kernel for slip time function.
     PetscPointFunc _permeability_normalFnKernel; ///< Kernel for slip time function.
     PetscPointFunc _fluid_viscosityFnKernel; ///< Kernel for slip time function.
-    PetscPointFunc _bulk_modulus_negativeFnKernel; ///< Kernel for slip time function.
-    PetscPointFunc _shear_modulus_negativeFnKernel; ///< Kernel for slip time function.
-    PetscPointFunc _bulk_modulus_positiveFnKernel; ///< Kernel for slip time function.
-    PetscPointFunc _shear_modulus_positiveFnKernel; ///< Kernel for slip time function.
 
     // Original slip function kernels inherited from KinSrc
     PetscPointFunc _slipFnKernel; ///< Kernel for slip time function.

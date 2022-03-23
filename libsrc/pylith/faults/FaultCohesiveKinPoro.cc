@@ -98,7 +98,7 @@ public:
 // ---------------------------------------------------------------------------------------------------------------------
 // Default constructor.
 pylith::faults::FaultCohesiveKinPoro::FaultCohesiveKinPoro(void) :
-    _auxiliaryFactory(new pylith::faults::AuxiliaryFactoryKinematic),
+    _auxiliaryFactory(new pylith::faults::AuxiliaryFactoryKinematicPoro),
     _slipVecRupture(NULL),
     _slipVecTotal(NULL) {
     pylith::utils::PyreComponent::setName(_FaultCohesiveKinPoro::pyreComponent);
@@ -436,10 +436,6 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
      * - 4: permeability_tangential(1)
      * - 5: permeability_normal(1)
      * - 6: fluid_viscosity(1)
-     * //  * - 7: bulk_modulus_negative(1)
-     * //  * - 8: shear_modulus_negative(1)
-     * //  * - 9: bulk_modulus_positive(1)
-     * //  * - 10: shear_modulus_positive(1)
      * - numA - 1: slip(dim)
      */
     _auxiliaryFactory->addThickness(); // 0
@@ -449,10 +445,6 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
     _auxiliaryFactory->addPermeabilityTangential(); // 4
     _auxiliaryFactory->addPermeabilityNormal(); // 5
     _auxiliaryFactory->addFluidViscosity(); // 6
-    // _auxiliaryFactory->addBulkModulusNegative(); // 7
-    // _auxiliaryFactory->addShearModulusNegative(); // 8
-    // _auxiliaryFactory->addBulkModulusPositive(); // 9
-    // _auxiliaryFactory->addShearModulusPositive(); // 10
 
     // :ATTENTION: The order for adding subfields must match the order of the auxiliary fields in the FE kernels.
 
@@ -477,7 +469,7 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
     auxiliaryField->createOutputVector();
 
     // We don't populate the auxiliary field via a spatial database, because they will be set from the earthquake
-    // rupture. EDIT - YES WE DO
+    // rupture. EDIT - YES WE DO, except for slip
 
     assert(_auxiliaryFactory);
     _auxiliaryFactory->setValuesFromDB();
@@ -536,11 +528,7 @@ pylith::faults::FaultCohesiveKinPoro::updateAuxiliaryField(pylith::topology::Fie
     // this->_updatePermeablityTangential(auxiliaryField, t); // 4
     // this->_updatePermeablityNormal(auxiliaryField, t); // 5
     // this->_updateFluidViscosity(auxiliaryField, t); // 6
-    // this->_bulkModulusNegative(auxiliaryField, t); // 7
-    // this->_shearModulusNegative(auxiliaryField, t); // 8
-    // this->_bulkModulusPositive(auxiliaryField, t); // 9
-    // this->_shearModulusPositive(auxiliaryField, t); // 10
-
+    
     switch (_formulation) {
     case QUASISTATIC:
         this->_updateSlip(auxiliaryField, t);

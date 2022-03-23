@@ -104,6 +104,10 @@ pylith::faults::KinSrcStep::_auxiliaryFieldSetup(const spatialdata::units::Nondi
     _auxiliaryFactory->addInitiationTime(); // 0
     _auxiliaryFactory->addFinalSlip(); // 1
 
+    _slipFnKernel = pylith::faults::KinSrcStep::slipFn;
+    _slipRateFnKernel = NULL; // Undefined for step function.
+    _slipAccFnKernel = NULL; // Undefined for step function.
+
     PYLITH_METHOD_END;
 } // _auxiliaryFieldSetup
 

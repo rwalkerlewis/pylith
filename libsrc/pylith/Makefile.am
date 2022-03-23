@@ -57,6 +57,7 @@ libpylith_la_SOURCES = \
 	faults/KinSrcAuxiliaryFactory.cc \
 	faults/KinSrcPoro.cc \
 	faults/KinSrcPoroStep.cc \
+	faults/KinSrcPoroAuxiliaryFactory.cc \
 	faults/TopologyOps.cc \
 	feassemble/PhysicsImplementation.cc \
 	feassemble/Integrator.cc \

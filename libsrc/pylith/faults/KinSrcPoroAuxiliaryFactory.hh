@@ -45,8 +45,8 @@ public:
     /// Add rise time subfield to auxiliary field.
     void addRiseTime(void);
 
-    /// Add _slip subfield to auxiliary field.
-    void addSlip(void);
+    /// Add final slip subfield to auxiliary field.
+    void addFinalSlip(void);
 
     // Newly added components
     /// Add thickness subfield to auxiliary field

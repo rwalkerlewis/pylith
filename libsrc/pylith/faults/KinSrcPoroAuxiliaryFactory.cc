@@ -98,14 +98,14 @@ pylith::faults::KinSrcPoroAuxiliaryFactory::addRiseTime(void) {
 
 
 // ---------------------------------------------------------------------------------------------------------------------
-// Add  slip subfield to auxiliary field.
+// Add final slip subfield to auxiliary field.
 void
-pylith::faults::KinSrcPoroAuxiliaryFactory::addSlip(void) {
+pylith::faults::KinSrcPoroAuxiliaryFactory::addFinalSlip(void) {
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("addSlip(void)");
+    PYLITH_JOURNAL_DEBUG("addFinalSlip(void)");
 
     const char* subfieldName = "slip";
-    const char* componentNames[3] = { "slip_opening", "_slip_left_lateral", "_slip_reverse" };
+    const char* componentNames[3] = { "final_slip_opening", "final_slip_left_lateral", "final_slip_reverse" };
 
     const PylithReal lengthScale = _normalizer->getLengthScale();
 
@@ -125,7 +125,8 @@ pylith::faults::KinSrcPoroAuxiliaryFactory::addSlip(void) {
     this->setSubfieldQuery(subfieldName);
 
     PYLITH_METHOD_END;
-} // addSlip
+} // addFinalSlip
+
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Add  thickness subfield to auxiliary field.
@@ -149,10 +150,13 @@ pylith::faults::KinSrcPoroAuxiliaryFactory::addThickness(void) {
     description.validator = pylith::topology::FieldQuery::validatorPositive;
 
     _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
-    this->setSubfieldQuery(subfieldName);
+    // No query; populated by kinematic fault at beginning of time step.
+
+    // this->setSubfieldQuery(subfieldName);
 
     PYLITH_METHOD_END;
 } // addThickness
+
 
 // ---------------------------------------------------------------------
 // Add layer porosity to auxiliary fields.
@@ -176,10 +180,10 @@ pylith::faults::KinSrcPoroAuxiliaryFactory::addPorosity(void) {
     description.validator = pylith::topology::FieldQuery::validatorPositive;
 
     _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
-
+    // No query; populated by kinematic fault at beginning of time step.
     // ** TO DO **
     // Is this step correct?
-    this->setSubfieldQuery(subfieldName);
+    // this->setSubfieldQuery(subfieldName);
 
     PYLITH_METHOD_END;
 } // addPorosity
@@ -209,10 +213,10 @@ pylith::faults::KinSrcPoroAuxiliaryFactory::addBetaP(void) {
     description.validator = pylith::topology::FieldQuery::validatorPositive;
 
     _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
-
+    // No query; populated by kinematic fault at beginning of time step.
     // ** TO DO **
     // Is this step correct?
-    this->setSubfieldQuery(subfieldName);
+    // this->setSubfieldQuery(subfieldName);
 
     PYLITH_METHOD_END;
 } // addBetaP
@@ -239,10 +243,10 @@ pylith::faults::KinSrcPoroAuxiliaryFactory::addBetaSigma(void) {
     description.validator = pylith::topology::FieldQuery::validatorPositive;
 
     _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
-
+    // No query; populated by kinematic fault at beginning of time step.
     // ** TO DO **
     // Is this step correct?
-    this->setSubfieldQuery(subfieldName);
+    // this->setSubfieldQuery(subfieldName);
 
     PYLITH_METHOD_END;
 } // addBetaSigma
@@ -273,10 +277,10 @@ pylith::faults::KinSrcPoroAuxiliaryFactory::addPermeabilityTangential(void) {
     description.validator = pylith::topology::FieldQuery::validatorPositive;
 
     _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
-
+    // No query; populated by kinematic fault at beginning of time step.
     // ** TO DO **
     // Is this step correct?
-    this->setSubfieldQuery(subfieldName);
+    // this->setSubfieldQuery(subfieldName);
 
     PYLITH_METHOD_END;
 } // addPermeabilityTangential
@@ -307,10 +311,10 @@ pylith::faults::KinSrcPoroAuxiliaryFactory::addPermeabilityNormal(void) {
     description.validator = pylith::topology::FieldQuery::validatorPositive;
 
     _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
-
+    // No query; populated by kinematic fault at beginning of time step.
     // ** TO DO **
     // Is this step correct?
-    this->setSubfieldQuery(subfieldName);
+    // this->setSubfieldQuery(subfieldName);
 
     PYLITH_METHOD_END;
 } // addPermeabilityNormal
@@ -342,10 +346,10 @@ pylith::faults::KinSrcPoroAuxiliaryFactory::addFluidViscosity(void) {
     description.validator = pylith::topology::FieldQuery::validatorPositive;
 
     _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
-
+    // No query; populated by kinematic fault at beginning of time step.
     // ** TO DO **
     // Is this step correct?
-    this->setSubfieldQuery(subfieldName);
+    // this->setSubfieldQuery(subfieldName);
 
     PYLITH_METHOD_END;
 } // addFluidViscosity
@@ -507,7 +511,7 @@ pylith::faults::KinSrcPoroAuxiliaryFactory::addBodyForce(void) {
 
     // ** TO DO **
     // Is this step correct?
-    this->setSubfieldQuery(fieldName);
+    // this->setSubfieldQuery(fieldName);
 
     PYLITH_METHOD_END;
 } // addBodyForce
@@ -544,6 +548,7 @@ pylith::faults::KinSrcPoroAuxiliaryFactory::addSource(void) {
 
     PYLITH_METHOD_END;
 } // addSource
+
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Add slip rate subfield to auxiliary field.
@@ -605,9 +610,9 @@ pylith::faults::KinSrcPoroAuxiliaryFactory::addTimeHistoryValue(void) {
 // ---------------------------------------------------------------------------------------------------------------------
 void
 pylith::faults::KinSrcPoroAuxiliaryFactory::updateTimeHistoryValue(pylith::topology::Field* auxiliaryField,
-                                                               const PylithReal t,
-                                                               const PylithReal timeScale,
-                                                               spatialdata::spatialdb::TimeHistory* const dbTimeHistory) {
+                                                                   const PylithReal t,
+                                                                   const PylithReal timeScale,
+                                                                   spatialdata::spatialdb::TimeHistory* const dbTimeHistory) {
     PYLITH_METHOD_BEGIN;
     pythia::journal::debug_t debug("kinsrcporoauxiliaryfactory");
     debug << pythia::journal::at(__HERE__)
