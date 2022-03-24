@@ -382,13 +382,13 @@ pylith::fekernels::FaultCohesiveKinPoro::f0u_pos(const PylithInt dim,
     for (PylithInt i = 0; i < spaceDim; ++i) {
     // DEBUG LINEs
     std::cout << "f0[fOffP + " << i <<"] = " << f0[fOffP + i] << "\n";
-        
+
         f0[fOffP + i] += +lagrange[i];
         // DEBUG LINES
         if (f0[fOffP + i] != f0[fOffP + i]) {
             PetscPrintf(MPI_COMM_WORLD,"f0u_pos \n");
         }
-        std::cout << "In f0u_pos added: " << +lagrange[i] << "\n";        
+        std::cout << "In f0u_pos added: " << +lagrange[i] << "\n";
     } // for
 
     // DEBUG LINES
@@ -451,11 +451,11 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_neg(const PylithInt dim,
 
     f0[fOffN] += permeabilityNormal / fluidViscosity *
                  ((pressureN - pressureFault) / thickness);
-    
+
     // DEBUG LINES
     if (f0[fOffN] != f0[fOffN]) {
         PetscPrintf(MPI_COMM_WORLD,"f0p_neg \n");
-    }                 
+    }
     // f0[fOffP] += permeabilityNormal / fluidViscosity *
     //             ((pressureP - pressureFault) / thickness);
 
@@ -502,11 +502,11 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_pos(const PylithInt dim,
     const PylithInt i_thickness = 0;
     const PylithInt i_permeability_normal = numA - 1;
     const PylithInt i_fluid_viscosity = 2;
-    const PylithInt sOffPressureN = _FaultCohesiveKinPoro::pressure_sOff_quasistatic(sOff, numS);
-    const PylithInt sOffPressureP = sOffPressureN + 1;
-    const PylithInt sOffPressureFault = _FaultCohesiveKinPoro::fault_pressure_sOff(sOff, numS);
-    const PylithInt fOffN = 0;
-    const PylithInt fOffP = fOffN + 1;
+    const PylithInt i_pressure = 1;
+    const PylithInt i_presfault = 4;
+    const PylithInt sOffPressureP = sOff[i_pressure];
+    const PylithInt sOffPressureFault = sOff[i_presfault];
+    const PylithInt fOffP = 0;
 
     const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
     // const PylithScalar thickness = a[aOff[i_thickness]];
@@ -520,7 +520,7 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_pos(const PylithInt dim,
     //             ((pressureN - pressureFault) / thickness);
     // DEBUG LINEs
     std::cout << "f0[fOffP] = " << f0[fOffP] << "\n";
-        
+
     f0[fOffP] += permeabilityNormal / fluidViscosity *
                  ((pressureP - pressureFault) / thickness);
 
@@ -742,7 +742,7 @@ pylith::fekernels::FaultCohesiveKinPoro::f0l_u(const PylithInt dim,
     } // case 3
     default:
         assert(0);
-    } // switch    
+    } // switch
 
     // DEBUG LINES
     for (PylithInt i = 0; i < spaceDim; ++i) {
@@ -1072,7 +1072,7 @@ pylith::fekernels::FaultCohesiveKinPoro::f1p_fault(const PylithInt dim,
             f1[fOffp_fault + 2] += tempConst * ((tanDir1[2] * tanDir1[0] + tanDir2[2] * tanDir2[0])  * (pressureN_x[0] + 2. * pressureFault_x[0] + pressureP_x[0])
                                                 + (tanDir1[2] * tanDir1[1] + tanDir2[2] * tanDir2[1])  * (pressureN_x[1] + 2. * pressureFault_x[1] + pressureP_x[1])
                                                 + (tanDir1[2] * tanDir1[2] + tanDir2[2] * tanDir2[2])  * (pressureN_x[2] + 2. * pressureFault_x[2] + pressureP_x[2]));
-            
+
             break;
         } // case 3
 
@@ -1319,10 +1319,10 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp_f(const PylithInt dim,
             Jf3[0 * ncols + 2] += tempConst * (tanDir1[0] * tanDir1[2] + tanDir2[0] * tanDir2[2]);
             Jf3[1 * ncols + 0] += tempConst * (tanDir1[1] * tanDir1[0] + tanDir2[1] * tanDir2[0]);
             Jf3[1 * ncols + 1] += tempConst * (tanDir1[1] * tanDir1[1] + tanDir2[1] * tanDir2[1]);
-            Jf3[1 * ncols + 2] += tempConst * (tanDir1[1] * tanDir1[2] + tanDir2[1] * tanDir2[2]); 
+            Jf3[1 * ncols + 2] += tempConst * (tanDir1[1] * tanDir1[2] + tanDir2[1] * tanDir2[2]);
             Jf3[2 * ncols + 0] += tempConst * (tanDir1[2] * tanDir1[0] + tanDir2[2] * tanDir2[0]);
             Jf3[2 * ncols + 1] += tempConst * (tanDir1[2] * tanDir1[1] + tanDir2[2] * tanDir2[1]);
-            Jf3[2 * ncols + 2] += tempConst * (tanDir1[2] * tanDir1[2] + tanDir2[2] * tanDir2[2]); 
+            Jf3[2 * ncols + 2] += tempConst * (tanDir1[2] * tanDir1[2] + tanDir2[2] * tanDir2[2]);
             break;
         } // case 3
 
@@ -1532,20 +1532,20 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp(const PylithInt dim,
             Jf3[0 * ncols + 2] += tempConst * (tanDir1[0] * tanDir1[2] + tanDir2[0] * tanDir2[2]);
             Jf3[1 * ncols + 0] += tempConst * (tanDir1[1] * tanDir1[0] + tanDir2[1] * tanDir2[0]);
             Jf3[1 * ncols + 1] += tempConst * (tanDir1[1] * tanDir1[1] + tanDir2[1] * tanDir2[1]);
-            Jf3[1 * ncols + 2] += tempConst * (tanDir1[1] * tanDir1[2] + tanDir2[1] * tanDir2[2]); 
+            Jf3[1 * ncols + 2] += tempConst * (tanDir1[1] * tanDir1[2] + tanDir2[1] * tanDir2[2]);
             Jf3[2 * ncols + 0] += tempConst * (tanDir1[2] * tanDir1[0] + tanDir2[2] * tanDir2[0]);
             Jf3[2 * ncols + 1] += tempConst * (tanDir1[2] * tanDir1[1] + tanDir2[2] * tanDir2[1]);
-            Jf3[2 * ncols + 2] += tempConst * (tanDir1[2] * tanDir1[2] + tanDir2[2] * tanDir2[2]); 
+            Jf3[2 * ncols + 2] += tempConst * (tanDir1[2] * tanDir1[2] + tanDir2[2] * tanDir2[2]);
 
             Jf3[0 * ncols + gOffP + 0] += tempConst * (tanDir1[0] * tanDir1[0] + tanDir2[0] * tanDir2[0]);
             Jf3[0 * ncols + gOffP + 1] += tempConst * (tanDir1[0] * tanDir1[1] + tanDir2[0] * tanDir2[1]);
             Jf3[0 * ncols + gOffP + 2] += tempConst * (tanDir1[0] * tanDir1[2] + tanDir2[0] * tanDir2[2]);
             Jf3[1 * ncols + gOffP + 0] += tempConst * (tanDir1[1] * tanDir1[0] + tanDir2[1] * tanDir2[0]);
             Jf3[1 * ncols + gOffP + 1] += tempConst * (tanDir1[1] * tanDir1[1] + tanDir2[1] * tanDir2[1]);
-            Jf3[1 * ncols + gOffP + 2] += tempConst * (tanDir1[1] * tanDir1[2] + tanDir2[1] * tanDir2[2]); 
+            Jf3[1 * ncols + gOffP + 2] += tempConst * (tanDir1[1] * tanDir1[2] + tanDir2[1] * tanDir2[2]);
             Jf3[2 * ncols + gOffP + 0] += tempConst * (tanDir1[2] * tanDir1[0] + tanDir2[2] * tanDir2[0]);
             Jf3[2 * ncols + gOffP + 1] += tempConst * (tanDir1[2] * tanDir1[1] + tanDir2[2] * tanDir2[1]);
-            Jf3[2 * ncols + gOffP + 2] += tempConst * (tanDir1[2] * tanDir1[2] + tanDir2[2] * tanDir2[2]); 
+            Jf3[2 * ncols + gOffP + 2] += tempConst * (tanDir1[2] * tanDir1[2] + tanDir2[2] * tanDir2[2]);
             break;
         } // case 3
         default:
