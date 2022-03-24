@@ -332,6 +332,10 @@ pylith::fekernels::FaultCohesiveKinPoro::f0u_neg(const PylithInt dim,
 
     for (PylithInt i = 0; i < spaceDim; ++i) {
         f0[fOffN + i] += -lagrange[i];
+        // DEBUG LINES
+        if (f0[fOffN + i] != f0[fOffN + i]) {
+            PetscPrintf(MPI_COMM_WORLD,"f0u_neg \n");
+        }
     } // for
       // DEBUG LINES
       // std::cout << "Kernel f0u_neg computed!" << "\n";
@@ -376,7 +380,15 @@ pylith::fekernels::FaultCohesiveKinPoro::f0u_pos(const PylithInt dim,
     const PylithScalar *lagrange = &s[sOffLagrange];
 
     for (PylithInt i = 0; i < spaceDim; ++i) {
+    // DEBUG LINEs
+    std::cout << "f0[fOffP + " << i <<"] = " << f0[fOffP + i] << "\n";
+        
         f0[fOffP + i] += +lagrange[i];
+        // DEBUG LINES
+        if (f0[fOffP + i] != f0[fOffP + i]) {
+            PetscPrintf(MPI_COMM_WORLD,"f0u_pos \n");
+        }
+        std::cout << "In f0u_pos added: " << +lagrange[i] << "\n";        
     } // for
 
     // DEBUG LINES
@@ -439,9 +451,14 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_neg(const PylithInt dim,
 
     f0[fOffN] += permeabilityNormal / fluidViscosity *
                  ((pressureN - pressureFault) / thickness);
+    
+    // DEBUG LINES
+    if (f0[fOffN] != f0[fOffN]) {
+        PetscPrintf(MPI_COMM_WORLD,"f0p_neg \n");
+    }                 
     // f0[fOffP] += permeabilityNormal / fluidViscosity *
     //             ((pressureP - pressureFault) / thickness);
-    // DEBUG LINEs
+
     // std::cout << "In f0p_neg added: " << permeabilityNormal / fluidViscosity *
     // ((pressureN - pressureFault) / thickness) << "\n";
 } // f0p_neg
@@ -501,12 +518,18 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_pos(const PylithInt dim,
 
     // f0[fOffN] += permeabilityNormal / fluidViscosity *
     //             ((pressureN - pressureFault) / thickness);
+    // DEBUG LINEs
+    std::cout << "f0[fOffP] = " << f0[fOffP] << "\n";
+        
     f0[fOffP] += permeabilityNormal / fluidViscosity *
                  ((pressureP - pressureFault) / thickness);
 
+    if (f0[fOffP] != f0[fOffP]) {
+        PetscPrintf(MPI_COMM_WORLD,"f0p_pos \n");
+    }
     // DEBUG LINEs
-    // std::cout << "In f0p_pos added: " << permeabilityNormal / fluidViscosity *
-    // ((pressureP - pressureFault) / thickness) << "\n";
+    std::cout << "In f0p_pos added: " << permeabilityNormal / fluidViscosity *
+    ((pressureP - pressureFault) / thickness) << "\n";
 } // f0p_pos
 
 
@@ -719,8 +742,14 @@ pylith::fekernels::FaultCohesiveKinPoro::f0l_u(const PylithInt dim,
     } // case 3
     default:
         assert(0);
-    } // switch
-      // DEBUG LINES
+    } // switch    
+
+    // DEBUG LINES
+    for (PylithInt i = 0; i < spaceDim; ++i) {
+        if (f0[fOffLagrange + i] != f0[fOffLagrange + i]) {
+            PetscPrintf(MPI_COMM_WORLD,"f0l_u \n");
+        }
+    }
       // std::cout << "Kernel f0l_u computed!" << "\n";
 } // f0l_u
 
@@ -920,7 +949,8 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_fault(const PylithInt dim,
     const PylithInt sOffLagrange = _FaultCohesiveKinPoro::lagrange_sOff(sOff, numS);
     const PylithScalar *faultLagrange_t = &s_t[sOffLagrange];
     PylithScalar nDotLagrange_t = 0.;
-    for (PylithInt i = 0; i < spaceDim; ++i) {
+    for (PylithInt i = 0; i < spaceDim; ++i) {    // DEBUG LINES
+
         nDotLagrange_t -= n[i] * faultLagrange_t[i];
     }
 
@@ -928,6 +958,9 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_fault(const PylithInt dim,
                                    betaSigma * nDotLagrange_t) - permeabilityNormal / fluidViscosity * (pressureP - 2. * pressureFault + pressureN) / (thickness*thickness);
 
     // DEBUG LINEs
+    if (f0[fOffp_fault] != f0[fOffp_fault]) {
+        PetscPrintf(MPI_COMM_WORLD,"f0p_fault \n");
+    }
     // std::cout << "In f0p_fault added: " << porosity * (betaP * (pressureN_t + 2. * pressureFault_t + pressureP_t) /
     // 4. +
     //                                                    betaSigma * nDotLagrange_t) +
@@ -1045,6 +1078,14 @@ pylith::fekernels::FaultCohesiveKinPoro::f1p_fault(const PylithInt dim,
 
         default:
             assert(0);
+
+    // DEBUG LINEs
+    for (PylithInt i = 0; i < spaceDim; ++i) {
+        if (f1[fOffp_fault + i] != f1[fOffp_fault + i]) {
+            PetscPrintf(MPI_COMM_WORLD,"f1p_fault \n");
+        }
+    }
+
     }
     /**
     const PylithScalar tanDir[2] = {-n[1], n[0]};
