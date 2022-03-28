@@ -423,6 +423,7 @@ pylith::feassemble::IntegratorDomain::_updateStateVars(const PylithReal t,
         kernelsStateVars[iKernel] = _kernelsUpdateStateVars[iKernel].f;
     } // for
 
+    PetscPointFunc subfieldKernels[1];
     PetscErrorCode err = 0;
     PetscDM stateVarsDM = _updateState->stateVarsDM();
     PetscDMLabel dmLabel = NULL;
@@ -468,12 +469,8 @@ pylith::feassemble::IntegratorDomain::_computeDerivedField(const PylithReal t,
     assert(_auxiliaryField);
     PetscDMLabel dmLabel = NULL;
     PetscInt labelValue = 0;
-    const PetscInt part = 0;
     err = DMSetAuxiliaryVec(derivedDM, dmLabel, labelValue, part, _auxiliaryField->getLocalVector());PYLITH_CHECK_ERROR(err);
     err = DMProjectFieldLocal(derivedDM, t, solution.getLocalVector(), kernelsArray, INSERT_VALUES, _derivedField->getLocalVector());PYLITH_CHECK_ERROR(err);
-    delete[] kernelsArray;kernelsArray = NULL;
-
-    pythia::journal::debug_t debug(GenericComponent::getName());
     if (debug.state()) {
         PYLITH_JOURNAL_DEBUG("Viewing derived field.");
         _derivedField->view("Derived field");
