@@ -374,21 +374,23 @@ pylith::fekernels::FaultCohesiveKinPoro::f0u_pos(const PylithInt dim,
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
 
-    const PylithInt fOffN = 0;
-    const PylithInt fOffP = fOffN + spaceDim;
-    const PylithInt sOffLagrange = pylith::fekernels::_FaultCohesiveKinPoro::lagrange_sOff(sOff, numS);
+    // Index for solution fields
+    const PylithInt i_lagrange = 3;
+
+    const PylithInt fOffP = 0;
+    const PylithInt sOffLagrange = sOff[i_lagrange];
     const PylithScalar *lagrange = &s[sOffLagrange];
 
     for (PylithInt i = 0; i < spaceDim; ++i) {
     // DEBUG LINEs
-    std::cout << "f0[fOffP + " << i <<"] = " << f0[fOffP + i] << "\n";
+    // std::cout << "f0[fOffP + " << i <<"] = " << f0[fOffP + i] << "\n";
 
         f0[fOffP + i] += +lagrange[i];
         // DEBUG LINES
         if (f0[fOffP + i] != f0[fOffP + i]) {
             PetscPrintf(MPI_COMM_WORLD,"f0u_pos \n");
         }
-        std::cout << "In f0u_pos added: " << +lagrange[i] << "\n";
+        // std::cout << "In f0u_pos added: " << +lagrange[i] << "\n";
     } // for
 
     // DEBUG LINES
@@ -432,22 +434,24 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_neg(const PylithInt dim,
     assert(numA >= 9);
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
+
+    // Index for solution fields
+    const PylithInt i_pressure = 1;
+    const PylithInt i_fault_pressure = 4;
+
+    // Index for auxiliary fields
     const PylithInt i_thickness = 0;
     const PylithInt i_permeability_normal = numA - 1;
     const PylithInt i_fluid_viscosity = 2;
-    const PylithInt sOffPressureN = _FaultCohesiveKinPoro::pressure_sOff_quasistatic(sOff, numS);
-    // const PylithInt sOffPressureP = sOffPressureN + 1;
-    const PylithInt sOffPressureFault = _FaultCohesiveKinPoro::fault_pressure_sOff(sOff, numS);
+
     const PylithInt fOffN = 0;
-    const PylithInt fOffP = fOffN + 1;
 
     const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
     // const PylithScalar thickness = a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeability_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
-    const PylithScalar pressureN = s[sOffPressureN];
-    // const PylithScalar pressureP = s[sOffPressureP];
-    const PylithScalar pressureFault = s[sOffPressureFault];
+    const PylithScalar pressureN = s[sOff[i_pressure]];
+    const PylithScalar pressureFault = s[sOff[i_fault_pressure]];
 
     f0[fOffN] += permeabilityNormal / fluidViscosity *
                  ((pressureN - pressureFault) / thickness);
@@ -499,27 +503,30 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_pos(const PylithInt dim,
     assert(numA >= 9);
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
+
+    // Index for solution fields
+    const PylithInt i_pressure = 1;
+    const PylithInt i_fault_pressure = 4;
+
+    // Index for auxiliary fields
     const PylithInt i_thickness = 0;
     const PylithInt i_permeability_normal = numA - 1;
     const PylithInt i_fluid_viscosity = 2;
-    const PylithInt i_pressure = 1;
-    const PylithInt i_presfault = 4;
-    const PylithInt sOffPressureP = sOff[i_pressure];
-    const PylithInt sOffPressureFault = sOff[i_presfault];
+
     const PylithInt fOffP = 0;
 
     const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
     // const PylithScalar thickness = a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeability_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
-    // const PylithScalar pressureN = s[sOffPressureN];
-    const PylithScalar pressureP = s[sOffPressureP];
-    const PylithScalar pressureFault = s[sOffPressureFault];
+
+    const PylithScalar pressureP = s[sOff[i_pressure]];
+    const PylithScalar pressureFault = s[sOff[i_fault_pressure]];
 
     // f0[fOffN] += permeabilityNormal / fluidViscosity *
     //             ((pressureN - pressureFault) / thickness);
     // DEBUG LINEs
-    std::cout << "f0[fOffP] = " << f0[fOffP] << "\n";
+    // std::cout << "f0[fOffP] = " << f0[fOffP] << "\n";
 
     f0[fOffP] += permeabilityNormal / fluidViscosity *
                  ((pressureP - pressureFault) / thickness);
@@ -528,8 +535,8 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_pos(const PylithInt dim,
         PetscPrintf(MPI_COMM_WORLD,"f0p_pos \n");
     }
     // DEBUG LINEs
-    std::cout << "In f0p_pos added: " << permeabilityNormal / fluidViscosity *
-    ((pressureP - pressureFault) / thickness) << "\n";
+    // std::cout << "In f0p_pos added: " << permeabilityNormal / fluidViscosity *
+    // ((pressureP - pressureFault) / thickness) << "\n";
 } // f0p_pos
 
 
@@ -567,24 +574,26 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_body_neg(const PylithInt dim,
     assert(numA >= 9);
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
+
+    // Index for solution fields
+    const PylithInt i_pressure = 1;
+    const PylithInt i_fault_pressure = 4;
+
+    // Index for auxilisolution fields
     const PylithInt i_thickness = 0;
     const PylithInt i_permeability_normal = numA - 1;
     const PylithInt i_fluid_viscosity = 2;
     const PylithInt i_body_force = 4;
-    const PylithInt sOffPressureN = _FaultCohesiveKinPoro::pressure_sOff_quasistatic(sOff, numS);
-    // const PylithInt sOffPressureP = sOffPressureN + 1;
-    const PylithInt sOffPressureFault = _FaultCohesiveKinPoro::fault_pressure_sOff(sOff, numS);
+    
     const PylithInt fOffN = 0;
-    // const PylithInt fOffP = fOffN + 1;
-
+    
     const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
     // const PylithScalar thickness = a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeability_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
     const PylithScalar *bodyForce = &a[aOff[i_body_force]];
-    const PylithScalar pressureN = s[sOffPressureN];
-    // const PylithScalar pressureP = s[sOffPressureP];
-    const PylithScalar pressureFault = s[sOffPressureFault];
+    const PylithScalar pressureN = s[sOff[i_pressure]];
+    const PylithScalar pressureFault = s[sOff[i_fault_pressure]];
 
     PylithScalar nDotBodyForce = 0.;
     for (PylithInt i = 0; i < spaceDim; ++i) {
@@ -637,24 +646,26 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_body_pos(const PylithInt dim,
     assert(numA >= 9);
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
+
+    // Index for solution fields
+    const PylithInt i_pressure = 1;
+    const PylithInt i_fault_pressure = 4;
+
+    // Index for auxiliary fields
     const PylithInt i_thickness = 0;
     const PylithInt i_permeability_normal = numA - 1;
     const PylithInt i_fluid_viscosity = 2;
     const PylithInt i_body_force = 4;
-    const PylithInt sOffPressureN = _FaultCohesiveKinPoro::pressure_sOff_quasistatic(sOff, numS);
-    const PylithInt sOffPressureP = sOffPressureN + 1;
-    const PylithInt sOffPressureFault = _FaultCohesiveKinPoro::fault_pressure_sOff(sOff, numS);
-    const PylithInt fOffN = 0;
-    const PylithInt fOffP = fOffN + 1;
+
+    const PylithInt fOffP = 0;
 
     const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
     // const PylithScalar thickness = a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeability_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
     const PylithScalar *bodyForce = &a[aOff[i_body_force]];
-    // const PylithScalar pressureN = s[sOffPressureN];
-    const PylithScalar pressureP = s[sOffPressureP];
-    const PylithScalar pressureFault = s[sOffPressureFault];
+    const PylithScalar pressureP = s[sOff[i_pressure]];
+    const PylithScalar pressureFault = s[sOff[i_fault_pressure]];
 
     PylithScalar nDotBodyForce = 0.;
     for (PylithInt i = 0; i < spaceDim; ++i) {
@@ -874,6 +885,11 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_fault(const PylithInt dim,
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
     const PylithInt i_disp_x = 0;
 
+    // Index for solution fields
+    const PylithInt i_pressure = 1;
+    const PylithInt i_lagrange = 3;
+    const PylithInt i_fault_pressure = 4;
+
     // Index for auxiliary fields
     const PylithInt i_thickness = 0;
     const PylithInt i_porosity = 1;
@@ -892,10 +908,9 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_fault(const PylithInt dim,
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
 
     // Pressure and pressure_t
-    const PylithInt sOffpressureN = _FaultCohesiveKinPoro::pressure_sOff_quasistatic(sOff, numS);
+    const PylithInt sOffpressureN = sOff[i_pressure];
     const PylithInt sOffpressureP = sOffpressureN + 1;
-    // const PylithInt sOffLagrange = _FaultCohesiveKinPoro::lagrange_sOff(sOff, numS);
-    const PylithInt sOffpressureFault = _FaultCohesiveKinPoro::fault_pressure_sOff(sOff, numS);
+    const PylithInt sOffpressureFault = sOff[i_fault_pressure];
 
     const PylithScalar pressureN = s[sOffpressureN];
     const PylithScalar pressureP = s[sOffpressureP];
@@ -946,7 +961,7 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_fault(const PylithInt dim,
      *  const PylithScalar stress_nnP = (bulkModulusP - 2. * shearModulusP / 3.) * traceStrainP + 2. * shearModulusP *
      * strain_nnP;
      */
-    const PylithInt sOffLagrange = _FaultCohesiveKinPoro::lagrange_sOff(sOff, numS);
+    const PylithInt sOffLagrange = sOff[i_lagrange];
     const PylithScalar *faultLagrange_t = &s_t[sOffLagrange];
     PylithScalar nDotLagrange_t = 0.;
     for (PylithInt i = 0; i < spaceDim; ++i) {    // DEBUG LINES
@@ -1027,6 +1042,10 @@ pylith::fekernels::FaultCohesiveKinPoro::f1p_fault(const PylithInt dim,
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
 
+    // Index for solution fields
+    const PylithInt i_pressure = 1;
+    const PylithInt i_fault_pressure = 4;
+
     // Index for auxiliary fields
     const PylithInt i_permeabilility_tangential = 4;
     const PylithInt i_fluid_viscosity = 6;
@@ -1035,9 +1054,9 @@ pylith::fekernels::FaultCohesiveKinPoro::f1p_fault(const PylithInt dim,
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
 
     // Pressure_x
-    const PylithInt sOffPressureN = _FaultCohesiveKinPoro::pressure_sOff_quasistatic(sOff, numS);
+    const PylithInt sOffPressureN = sOff[i_pressure];
     const PylithInt sOffPressureP = sOffPressureN + 1;
-    const PylithInt sOffPressureFault = _FaultCohesiveKinPoro::fault_pressure_sOff(sOff, numS);
+    const PylithInt sOffPressureFault = sOff[i_fault_pressure];
 
     const PylithScalar *pressureN_x = &s_x[sOff_x[sOffPressureN]];
     const PylithScalar *pressureP_x = &s_x[sOff_x[sOffPressureP]];
