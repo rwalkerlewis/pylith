@@ -113,6 +113,7 @@ pylith::mmstests::TestFaultKinPoro::_initialize(void) {
     const char* ruptureNames[1] = { "rupture" };
     pylith::faults::KinSrcPoro* ruptures[1] = { _data->kinsrcporo };
     _fault->setEqRuptures(ruptureNames, numRuptures, ruptures, numRuptures);
+    _fault->auxFieldDB(_data->faultAuxDB);
     _data->kinsrcporo->auxFieldDB(_data->faultAuxDB);
     for (int i = 0; i < _data->faultNumAuxSubfields; ++i) {
         const pylith::topology::FieldBase::Discretization& info = _data->faultAuxDiscretizations[i];
@@ -126,8 +127,8 @@ pylith::mmstests::TestFaultKinPoro::_initialize(void) {
     _problem->setNormalizer(*_data->normalizer);
     _problem->setGravityField(_data->gravityField);
     _problem->setMaterials(&_materials[0], _materials.size());
-    pylith::faults::FaultCohesive* interfaces[1] = { _fault };
-    _problem->setInterfaces(interfaces, 1);
+    pylith::faults::FaultCohesive* ics[1] = { _fault };
+    _problem->setInterfaces(ics, 1);
     _problem->setBoundaryConditions(&_bcs[0], _bcs.size());
     _problem->setStartTime(_data->startTime);
     _problem->setEndTime(_data->endTime);
