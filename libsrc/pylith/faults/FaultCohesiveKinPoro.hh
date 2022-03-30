@@ -144,6 +144,12 @@ public:
     void updateAuxiliaryField(pylith::topology::Field* auxiliaryField,
                               const double t);
 
+    /** Set the spatial database for filling auxiliary subfields.
+     *
+     * @param[in] value Pointer to database.
+     */
+    void auxFieldDB(spatialdata::spatialdb::SpatialDB* value);
+
     // PROTECTED METHODS ///////////////////////////////////////////////////////////////////////////////////////////////
 protected:
 

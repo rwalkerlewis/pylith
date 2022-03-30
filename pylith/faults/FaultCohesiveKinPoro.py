@@ -48,7 +48,8 @@ class FaultCohesiveKinPoro(FaultCohesive, ModuleFaultCohesiveKinPoro):
     eqRuptures.meta['tip'] = "Kinematic earthquake sources information."
 
     from pylith.utils.NullComponent import NullComponent
-    auxiliaryFieldDB = pythia.pyre.inventory.facility("db_auxiliary_field", family="spatial_database", factory=NullComponent)
+    auxFieldDB = pythia.pyre.inventory.facility("db_auxiliary_field", family="spatial_database", factory=NullComponent)
+    auxFieldDB.meta['tip'] = "Database for fault thickness, porosity, beta_p, beta_sigma, permeability, fluid viscosity, and slip."
 
     #from pylith.meshio.OutputFaultKin import OutputFaultKin
     #outputManager = pythia.pyre.inventory.facility("output", family="output_manager", factory=OutputFaultKin)
@@ -76,6 +77,7 @@ class FaultCohesiveKinPoro(FaultCohesive, ModuleFaultCohesiveKinPoro):
         ModuleFaultCohesiveKinPoro.setEqRuptures(
             self, self.eqRuptures.inventory.facilityNames(), self.eqRuptures.components())
 
+        ModuleFaultCohesiveKinPoro.auxFieldDB(self, self.auxFieldDB)
         return
 
     def verifyConfiguration(self):

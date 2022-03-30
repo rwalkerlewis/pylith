@@ -528,7 +528,7 @@ pylith::faults::FaultCohesiveKinPoro::updateAuxiliaryField(pylith::topology::Fie
     // this->_updatePermeablityTangential(auxiliaryField, t); // 4
     // this->_updatePermeablityNormal(auxiliaryField, t); // 5
     // this->_updateFluidViscosity(auxiliaryField, t); // 6
-    
+
     switch (_formulation) {
     case QUASISTATIC:
         this->_updateSlip(auxiliaryField, t);
@@ -546,6 +546,18 @@ pylith::faults::FaultCohesiveKinPoro::updateAuxiliaryField(pylith::topology::Fie
     PYLITH_METHOD_END;
 } // updateAuxiliaryField
 
+// ----------------------------------------------------------------------
+// Set database for auxiliary fields.
+void
+pylith::faults::FaultCohesiveKinPoro::auxFieldDB(spatialdata::spatialdb::SpatialDB* value) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_COMPONENT_DEBUG("auxFieldDB(value="<<typeid(value).name()<<")");
+
+    assert(_auxiliaryFactory);
+    _auxiliaryFactory->setQueryDB(value);
+
+    PYLITH_METHOD_END;
+} // auxFieldDB
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Get auxiliary factory associated with physics.
