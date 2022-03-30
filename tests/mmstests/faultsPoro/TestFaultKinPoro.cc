@@ -113,7 +113,6 @@ pylith::mmstests::TestFaultKinPoro::_initialize(void) {
     const char* ruptureNames[1] = { "rupture" };
     pylith::faults::KinSrcPoro* ruptures[1] = { _data->kinsrcporo };
     _fault->setEqRuptures(ruptureNames, numRuptures, ruptures, numRuptures);
-   // _fault->setAuxiliaryFieldDB(_data->faultAuxDB);
     _data->kinsrcporo->auxFieldDB(_data->faultAuxDB);
     for (int i = 0; i < _data->faultNumAuxSubfields; ++i) {
         const pylith::topology::FieldBase::Discretization& info = _data->faultAuxDiscretizations[i];
