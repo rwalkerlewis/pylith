@@ -327,7 +327,7 @@ pylith::fekernels::FaultCohesiveKinPoro::f0u_neg(const PylithInt dim,
 
     const PylithInt fOffN = 0;
     const PylithInt fOffP = fOffN + spaceDim;
-    const PylithInt sOffLagrange = pylith::fekernels::_FaultCohesiveKinPoro::lagrange_sOff(sOff, numS);
+    const PylithInt sOffLagrange = sOff[numS - 2];
     const PylithScalar *lagrange = &s[sOffLagrange];
 
     for (PylithInt i = 0; i < spaceDim; ++i) {
@@ -337,8 +337,6 @@ pylith::fekernels::FaultCohesiveKinPoro::f0u_neg(const PylithInt dim,
             PetscPrintf(MPI_COMM_WORLD,"f0u_neg \n");
         }
     } // for
-      // DEBUG LINES
-      // std::cout << "Kernel f0u_neg computed!" << "\n";
 } // f0u_neg
 
 
@@ -382,19 +380,12 @@ pylith::fekernels::FaultCohesiveKinPoro::f0u_pos(const PylithInt dim,
     const PylithScalar *lagrange = &s[sOffLagrange];
 
     for (PylithInt i = 0; i < spaceDim; ++i) {
-    // DEBUG LINEs
-    // std::cout << "f0[fOffP + " << i <<"] = " << f0[fOffP + i] << "\n";
-
         f0[fOffP + i] += +lagrange[i];
         // DEBUG LINES
         if (f0[fOffP + i] != f0[fOffP + i]) {
             PetscPrintf(MPI_COMM_WORLD,"f0u_pos \n");
         }
-        // std::cout << "In f0u_pos added: " << +lagrange[i] << "\n";
     } // for
-
-    // DEBUG LINES
-    // std::cout << "Kernel f0u_pos computed!" << "\n";
 } // f0u_pos
 
 
@@ -437,7 +428,7 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_neg(const PylithInt dim,
 
     // Index for solution fields
     const PylithInt i_pressure = 1;
-    const PylithInt i_fault_pressure = 4;
+    const PylithInt i_fault_pressure = numS - 1;
 
     // Index for auxiliary fields
     const PylithInt i_thickness = 0;
@@ -453,9 +444,9 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_neg(const PylithInt dim,
     const PylithScalar pressureN = s[sOff[i_pressure]];
     const PylithScalar pressureFault = s[sOff[i_fault_pressure]];
 
-    f0[fOffN] += permeabilityNormal / fluidViscosity *
-                 ((pressureN - pressureFault) / thickness);
-
+    // f0[fOffN] += permeabilityNormal / fluidViscosity *
+    //              ((pressureN - pressureFault) / thickness);
+    f0[fOffN] += 0.0;
     // DEBUG LINES
     if (f0[fOffN] != f0[fOffN]) {
         PetscPrintf(MPI_COMM_WORLD,"f0p_neg \n");
@@ -528,9 +519,9 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_pos(const PylithInt dim,
     // DEBUG LINEs
     // std::cout << "f0[fOffP] = " << f0[fOffP] << "\n";
 
-    f0[fOffP] += permeabilityNormal / fluidViscosity *
-                 ((pressureP - pressureFault) / thickness);
-
+    // f0[fOffP] += permeabilityNormal / fluidViscosity *
+    //              ((pressureP - pressureFault) / thickness);
+    f0[fOffP] += 0.0;
     if (f0[fOffP] != f0[fOffP]) {
         PetscPrintf(MPI_COMM_WORLD,"f0p_pos \n");
     }
@@ -584,9 +575,9 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_body_neg(const PylithInt dim,
     const PylithInt i_permeability_normal = numA - 1;
     const PylithInt i_fluid_viscosity = 2;
     const PylithInt i_body_force = 4;
-    
+
     const PylithInt fOffN = 0;
-    
+
     const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
     // const PylithScalar thickness = a[aOff[i_thickness]];
     const PylithScalar permeabilityNormal = a[aOff[i_permeability_normal]];
@@ -761,7 +752,7 @@ pylith::fekernels::FaultCohesiveKinPoro::f0l_u(const PylithInt dim,
             PetscPrintf(MPI_COMM_WORLD,"f0l_u \n");
         }
     }
-      // std::cout << "Kernel f0l_u computed!" << "\n";
+    // std::cout << "Kernel f0l_u computed!" << "\n";
 } // f0l_u
 
 
@@ -849,25 +840,25 @@ pylith::fekernels::FaultCohesiveKinPoro::f0l_v(const PylithInt dim,
 //             - \kappa_{fz} / \mu * (p^+ - 2p_f + p^-) / h^2 - source
 // FAULT COHESIVE Face
 void
-pylith::fekernels::FaultCohesiveKinPoro::f0p_fault(const PylithInt dim,
-                                                   const PylithInt numS,
-                                                   const PylithInt numA,
-                                                   const PylithInt sOff[],
-                                                   const PylithInt sOff_x[],
-                                                   const PylithScalar s[],
-                                                   const PylithScalar s_t[],
-                                                   const PylithScalar s_x[],
-                                                   const PylithInt aOff[],
-                                                   const PylithInt aOff_x[],
-                                                   const PylithScalar a[],
-                                                   const PylithScalar a_t[],
-                                                   const PylithScalar a_x[],
-                                                   const PylithReal t,
-                                                   const PylithScalar x[],
-                                                   const PylithReal n[],
-                                                   const PylithInt numConstants,
-                                                   const PylithScalar constants[],
-                                                   PylithScalar f0[]) {
+pylith::fekernels::FaultCohesiveKinPoro::f0p_f(const PylithInt dim,
+                                               const PylithInt numS,
+                                               const PylithInt numA,
+                                               const PylithInt sOff[],
+                                               const PylithInt sOff_x[],
+                                               const PylithScalar s[],
+                                               const PylithScalar s_t[],
+                                               const PylithScalar s_x[],
+                                               const PylithInt aOff[],
+                                               const PylithInt aOff_x[],
+                                               const PylithScalar a[],
+                                               const PylithScalar a_t[],
+                                               const PylithScalar a_x[],
+                                               const PylithReal t,
+                                               const PylithScalar x[],
+                                               const PylithReal n[],
+                                               const PylithInt numConstants,
+                                               const PylithScalar constants[],
+                                               PylithScalar f0[]) {
     assert(sOff);
     assert(aOff);
     assert(sOff_x);
@@ -907,15 +898,15 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_fault(const PylithInt dim,
     const PylithScalar permeabilityNormal = a[aOff[i_permeabilility_normal]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
 
-    // Pressure and pressure_t
     const PylithInt sOffpressureN = sOff[i_pressure];
     const PylithInt sOffpressureP = sOffpressureN + 1;
+    const PylithInt sOffLagrange = sOff[i_lagrange];
     const PylithInt sOffpressureFault = sOff[i_fault_pressure];
 
     const PylithScalar pressureN = s[sOffpressureN];
     const PylithScalar pressureP = s[sOffpressureP];
     const PylithScalar pressureFault = s[sOffpressureFault];
-    // const PylithScalar *faultLagrange_t = &s_t[sOffLagrange];
+    const PylithScalar *faultLagrange_t = &s_t[sOffLagrange];
     const PylithScalar pressureN_t = s_t[sOffpressureN];
     const PylithScalar pressureP_t = s_t[sOffpressureP];
     const PylithScalar pressureFault_t = s_t[sOffpressureFault];
@@ -961,75 +952,52 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_fault(const PylithInt dim,
      *  const PylithScalar stress_nnP = (bulkModulusP - 2. * shearModulusP / 3.) * traceStrainP + 2. * shearModulusP *
      * strain_nnP;
      */
-    const PylithInt sOffLagrange = sOff[i_lagrange];
-    const PylithScalar *faultLagrange_t = &s_t[sOffLagrange];
-    PylithScalar nDotLagrange_t = 0.;
-    for (PylithInt i = 0; i < spaceDim; ++i) {    // DEBUG LINES
 
+    PylithScalar nDotLagrange_t = 0.0;
+    for (PylithInt i = 0; i < spaceDim; ++i) { // DEBUG LINES
         nDotLagrange_t -= n[i] * faultLagrange_t[i];
     }
 
     f0[fOffp_fault] += porosity * (betaP * (pressureN_t + 2. * pressureFault_t + pressureP_t) / 4. +
                                    betaSigma * nDotLagrange_t) - permeabilityNormal / fluidViscosity * (pressureP - 2. * pressureFault + pressureN) / (thickness*thickness);
+    // Flux Boundary Conditions
+    f0[fOffp_fault] += permeabilityNormal / fluidViscosity *
+                       ((pressureP - pressureFault) / thickness);
+
+    f0[fOffp_fault] += permeabilityNormal / fluidViscosity *
+                       ((pressureN - pressureFault) / thickness);
 
     // DEBUG LINEs
     if (f0[fOffp_fault] != f0[fOffp_fault]) {
         PetscPrintf(MPI_COMM_WORLD,"f0p_fault \n");
     }
-    // std::cout << "In f0p_fault added: " << porosity * (betaP * (pressureN_t + 2. * pressureFault_t + pressureP_t) /
-    // 4. +
-    //                                                    betaSigma * nDotLagrange_t) +
-    //     permeabilityTangential / fluidViscosity - permeabilityNormal / fluidViscosity * (pressureP - 2. *
-    // pressureFault + pressureN) / (thickness*thickness) << "\n";
-
-    // std::cout << "porosity = " << porosity << "\n";
-    // std::cout << "betaP = " << betaP << "\n";
-    // std::cout << "pressureN_t = " << pressureN_t << "\n";
-    // std::cout << "pressureP_t = " << pressureP_t << "\n";
-    // std::cout << "nDotLagrange_t = " << nDotLagrange_t << "\n";
-    // std::cout << "Thickness = " << thickness << "\n";
-    // std::cout << "fluidViscosity = " << fluidViscosity << "\n";
-    // std::cout << "numA = " << numA << "\n";
-    // std::cout << "aOff = [";
-    // for (int i = 0; i < numA + 1; i++) {
-    //     std::cout << aOff[i] << " ";
-    // }
-    // std::cout << "]" << "\n";
-    // std::cout << "a = [";
-    // for (int i = 0; i < numA; i++) {
-    //     std::cout << a[aOff[i]] << " ";
-    // }
-    // std::cout << "]" << "\n";
-
-    // // DEBUG LINES
-    // std::cout << "Kernel f0p_fault computed!" << "\n";
-} // f0p_fault
+} // f0p_f
 
 
 // ----------------------------------------------------------------------
 // f1 function for p_fault constraint equation:
-// f1p_fault = \kappa_{fx} / (4\mu) \vnabla (p^+ + 2 p^f + p^-)
+// f1p_f = \kappa_{fx} / (4\mu) \vnabla (p^+ + 2 p^f + p^-)
 // FAULT COHESIVE Face
 void
-pylith::fekernels::FaultCohesiveKinPoro::f1p_fault(const PylithInt dim,
-                                                   const PylithInt numS,
-                                                   const PylithInt numA,
-                                                   const PylithInt sOff[],
-                                                   const PylithInt sOff_x[],
-                                                   const PylithScalar s[],
-                                                   const PylithScalar s_t[],
-                                                   const PylithScalar s_x[],
-                                                   const PylithInt aOff[],
-                                                   const PylithInt aOff_x[],
-                                                   const PylithScalar a[],
-                                                   const PylithScalar a_t[],
-                                                   const PylithScalar a_x[],
-                                                   const PylithReal t,
-                                                   const PylithScalar x[],
-                                                   const PylithReal n[],
-                                                   const PylithInt numConstants,
-                                                   const PylithScalar constants[],
-                                                   PylithScalar f1[]) {
+pylith::fekernels::FaultCohesiveKinPoro::f1p_f(const PylithInt dim,
+                                               const PylithInt numS,
+                                               const PylithInt numA,
+                                               const PylithInt sOff[],
+                                               const PylithInt sOff_x[],
+                                               const PylithScalar s[],
+                                               const PylithScalar s_t[],
+                                               const PylithScalar s_x[],
+                                               const PylithInt aOff[],
+                                               const PylithInt aOff_x[],
+                                               const PylithScalar a[],
+                                               const PylithScalar a_t[],
+                                               const PylithScalar a_x[],
+                                               const PylithReal t,
+                                               const PylithScalar x[],
+                                               const PylithReal n[],
+                                               const PylithInt numConstants,
+                                               const PylithScalar constants[],
+                                               PylithScalar f1[]) {
     assert(aOff);
     assert(sOff_x);
     assert(s);
@@ -1066,55 +1034,55 @@ pylith::fekernels::FaultCohesiveKinPoro::f1p_fault(const PylithInt dim,
 
     // Do transformation for gradient
     switch (spaceDim) {
-        case 2: {
-            const PylithInt _spaceDim = 2;
-            const PylithScalar tanDir[2] = {-n[1], n[0]};
-            f1[fOffp_fault] += tempConst * tanDir[0] * tanDir[0] * (pressureN_x[0] + 2. * pressureFault_x[0] + pressureP_x[0])
-                               + tempConst * tanDir[0] * tanDir[1] * (pressureN_x[1] + 2. * pressureFault_x[1] + pressureP_x[1]);
-            f1[fOffp_fault + 1] += tempConst * tanDir[1] * tanDir[0] * (pressureN_x[0] + 2. * pressureFault_x[0] + pressureP_x[0])
-                                   + tempConst * tanDir[1] * tanDir[1] * (pressureN_x[1] + 2. * pressureFault_x[1] + pressureP_x[1]);
-            break;
-        } // case 2
+    case 2: {
+        const PylithInt _spaceDim = 2;
+        const PylithScalar tanDir[2] = {-n[1], n[0]};
+        f1[fOffp_fault] += tempConst * tanDir[0] * tanDir[0] * (pressureN_x[0] + 2. * pressureFault_x[0] + pressureP_x[0])
+                           + tempConst * tanDir[0] * tanDir[1] * (pressureN_x[1] + 2. * pressureFault_x[1] + pressureP_x[1]);
+        f1[fOffp_fault + 1] += tempConst * tanDir[1] * tanDir[0] * (pressureN_x[0] + 2. * pressureFault_x[0] + pressureP_x[0])
+                               + tempConst * tanDir[1] * tanDir[1] * (pressureN_x[1] + 2. * pressureFault_x[1] + pressureP_x[1]);
+        break;
+    } // case 2
 
-        case 3: {
-            const PylithInt _spaceDim = 3;
-            const PylithScalar *refDir1 = &constants[0];
-            const PylithScalar *refDir2 = &constants[3];
-            PylithScalar tanDir1[3], tanDir2[3];
-            pylith::fekernels::_FaultCohesiveKinPoro::tangential_directions(_spaceDim, refDir1, refDir2, n, tanDir1, tanDir2);
-            f1[fOffp_fault] += tempConst * ((tanDir1[0] * tanDir1[0] + tanDir2[0] * tanDir2[0])  * (pressureN_x[0] + 2. * pressureFault_x[0] + pressureP_x[0])
-                                            + (tanDir1[0] * tanDir1[1] + tanDir2[0] * tanDir2[1])  * (pressureN_x[1] + 2. * pressureFault_x[1] + pressureP_x[1])
-                                            + (tanDir1[0] * tanDir1[2] + tanDir2[0] * tanDir2[2])  * (pressureN_x[2] + 2. * pressureFault_x[2] + pressureP_x[2]));
-            f1[fOffp_fault + 1] += tempConst * ((tanDir1[1] * tanDir1[0] + tanDir2[1] * tanDir2[0])  * (pressureN_x[0] + 2. * pressureFault_x[0] + pressureP_x[0])
-                                                + (tanDir1[1] * tanDir1[1] + tanDir2[1] * tanDir2[1])  * (pressureN_x[1] + 2. * pressureFault_x[1] + pressureP_x[1])
-                                                + (tanDir1[1] * tanDir1[2] + tanDir2[1] * tanDir2[2])  * (pressureN_x[2] + 2. * pressureFault_x[2] + pressureP_x[2]));
-            f1[fOffp_fault + 2] += tempConst * ((tanDir1[2] * tanDir1[0] + tanDir2[2] * tanDir2[0])  * (pressureN_x[0] + 2. * pressureFault_x[0] + pressureP_x[0])
-                                                + (tanDir1[2] * tanDir1[1] + tanDir2[2] * tanDir2[1])  * (pressureN_x[1] + 2. * pressureFault_x[1] + pressureP_x[1])
-                                                + (tanDir1[2] * tanDir1[2] + tanDir2[2] * tanDir2[2])  * (pressureN_x[2] + 2. * pressureFault_x[2] + pressureP_x[2]));
+    case 3: {
+        const PylithInt _spaceDim = 3;
+        const PylithScalar *refDir1 = &constants[0];
+        const PylithScalar *refDir2 = &constants[3];
+        PylithScalar tanDir1[3], tanDir2[3];
+        pylith::fekernels::_FaultCohesiveKinPoro::tangential_directions(_spaceDim, refDir1, refDir2, n, tanDir1, tanDir2);
+        f1[fOffp_fault] += tempConst * ((tanDir1[0] * tanDir1[0] + tanDir2[0] * tanDir2[0])  * (pressureN_x[0] + 2. * pressureFault_x[0] + pressureP_x[0])
+                                        + (tanDir1[0] * tanDir1[1] + tanDir2[0] * tanDir2[1])  * (pressureN_x[1] + 2. * pressureFault_x[1] + pressureP_x[1])
+                                        + (tanDir1[0] * tanDir1[2] + tanDir2[0] * tanDir2[2])  * (pressureN_x[2] + 2. * pressureFault_x[2] + pressureP_x[2]));
+        f1[fOffp_fault + 1] += tempConst * ((tanDir1[1] * tanDir1[0] + tanDir2[1] * tanDir2[0])  * (pressureN_x[0] + 2. * pressureFault_x[0] + pressureP_x[0])
+                                            + (tanDir1[1] * tanDir1[1] + tanDir2[1] * tanDir2[1])  * (pressureN_x[1] + 2. * pressureFault_x[1] + pressureP_x[1])
+                                            + (tanDir1[1] * tanDir1[2] + tanDir2[1] * tanDir2[2])  * (pressureN_x[2] + 2. * pressureFault_x[2] + pressureP_x[2]));
+        f1[fOffp_fault + 2] += tempConst * ((tanDir1[2] * tanDir1[0] + tanDir2[2] * tanDir2[0])  * (pressureN_x[0] + 2. * pressureFault_x[0] + pressureP_x[0])
+                                            + (tanDir1[2] * tanDir1[1] + tanDir2[2] * tanDir2[1])  * (pressureN_x[1] + 2. * pressureFault_x[1] + pressureP_x[1])
+                                            + (tanDir1[2] * tanDir1[2] + tanDir2[2] * tanDir2[2])  * (pressureN_x[2] + 2. * pressureFault_x[2] + pressureP_x[2]));
 
-            break;
-        } // case 3
+        break;
+    } // case 3
 
-        default:
-            assert(0);
+    default:
+        assert(0);
 
-    // DEBUG LINEs
-    for (PylithInt i = 0; i < spaceDim; ++i) {
-        if (f1[fOffp_fault + i] != f1[fOffp_fault + i]) {
-            PetscPrintf(MPI_COMM_WORLD,"f1p_fault \n");
+        // DEBUG LINEs
+        for (PylithInt i = 0; i < spaceDim; ++i) {
+            if (f1[fOffp_fault + i] != f1[fOffp_fault + i]) {
+                PetscPrintf(MPI_COMM_WORLD,"f1p_fault \n");
+            }
         }
-    }
 
     }
     /**
-    const PylithScalar tanDir[2] = {-n[1], n[0]};
-    for (PylithInt i = 0; i < spaceDim; ++i) {
-        f1[fOffp_fault + i] += permeabilityTangential / fluidViscosity / 4. *
-                               (pressureN_x[i] + 2. * pressureFault_x[i] + pressureP_x[i]);
-    }
-    */
+     * const PylithScalar tanDir[2] = {-n[1], n[0]};
+     * for (PylithInt i = 0; i < spaceDim; ++i) {
+     *  f1[fOffp_fault + i] += permeabilityTangential / fluidViscosity / 4. *
+     *                         (pressureN_x[i] + 2. * pressureFault_x[i] + pressureP_x[i]);
+     * }
+     */
 
-} // f1p_fault
+} // f1p_f
 
 
 // ----------------------------------------------------------------------
@@ -1155,12 +1123,10 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0ul_neg(const PylithInt dim,
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
 
     const PylithInt gOffN = 0;
-    // const PylithInt gOffP = gOffN + spaceDim;
     const PylithInt ncols = spaceDim;
 
     for (PylithInt i = 0; i < spaceDim; ++i) {
         Jf0[(gOffN + i) * ncols + i] += -1.0;
-        // Jf0[(gOffP + i) * ncols + i] += +1.0;
     } // for
 } // Jf0ul_neg
 
@@ -1202,188 +1168,41 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0ul_pos(const PylithInt dim,
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
 
-    const PylithInt gOffN = 0;
-    const PylithInt gOffP = gOffN + spaceDim;
     const PylithInt ncols = spaceDim;
 
     for (PylithInt i = 0; i < spaceDim; ++i) {
-        // Jf0[(gOffN + i) * ncols + i] += -1.0;
-        Jf0[(gOffP + i) * ncols + i] += +1.0;
+        Jf0[i * ncols + i] += +1.0;
     } // for
 } // Jf0ul_pos
 
 
 // ----------------------------------------------------------------------
-/* Jf0p_fp_f function for integration of the displacement equation:
- * 2 \kappa_{fz} / (\mu h^2) + 2 \phi_f \beta^p t_shift
- * Solution fields = [disp(dim), ..., lagrange(dim), fault_pressure(1)]
- * Auxiliary fields
+/* Jf0 function for integration of the slip constraint equation.
+ *
+ * Solution fields = [disp(dim), ..., lagrange(dim)]
+ * Auxiliary fields = None
  */
 void
-pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fp_f(const PylithInt dim,
-                                                   const PylithInt numS,
-                                                   const PylithInt numA,
-                                                   const PylithInt sOff[],
-                                                   const PylithInt sOff_x[],
-                                                   const PylithScalar s[],
-                                                   const PylithScalar s_t[],
-                                                   const PylithScalar s_x[],
-                                                   const PylithInt aOff[],
-                                                   const PylithInt aOff_x[],
-                                                   const PylithScalar a[],
-                                                   const PylithScalar a_t[],
-                                                   const PylithScalar a_x[],
-                                                   const PylithReal t,
-                                                   const PylithReal s_tshift,
-                                                   const PylithScalar x[],
-                                                   const PylithReal n[],
-                                                   const PylithInt numConstants,
-                                                   const PylithScalar constants[],
-                                                   PylithScalar Jf0[]) {
-    // Check data fields
-    assert(numS >= 5);
-    assert(numA >= 6);
-    assert(Jf0);
-    assert(sOff);
-    assert(aOff);
-    assert(n);
-    const PylithInt gOff = 0;
-
-    // Index for auxiliary fields
-    const PylithInt i_thickness = 0;
-    const PylithInt i_porosity = 1;
-    const PylithInt i_beta_p = 2;
-    const PylithInt i_permeabilility_normal = 5;
-    const PylithInt i_fluid_viscosity = 6;
-
-    const PylithScalar thickness = a[aOff[i_thickness]];
-    const PylithScalar porosity = a[aOff[i_porosity]];
-    const PylithScalar betaP = a[aOff[i_beta_p]];
-    const PylithScalar permeabilityNormal = a[aOff[i_permeabilility_normal]];
-    const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
-
-    Jf0[gOff] += 2. * permeabilityNormal / (fluidViscosity * thickness * thickness) + 2. * porosity * betaP *
-                 s_tshift;
-
-} // Jf0p_fp_f
-
-
-// ----------------------------------------------------------------------
-/* Jf3p_fp_f function for integration of the displacement equation:
- * \kappa_{fx} / (2 \mu) \te{I}
- * Solution fields = [disp(dim), ..., lagrange(dim), fault_pressure(1)]
- * Auxiliary fields
- */
-void
-pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp_f(const PylithInt dim,
-                                                   const PylithInt numS,
-                                                   const PylithInt numA,
-                                                   const PylithInt sOff[],
-                                                   const PylithInt sOff_x[],
-                                                   const PylithScalar s[],
-                                                   const PylithScalar s_t[],
-                                                   const PylithScalar s_x[],
-                                                   const PylithInt aOff[],
-                                                   const PylithInt aOff_x[],
-                                                   const PylithScalar a[],
-                                                   const PylithScalar a_t[],
-                                                   const PylithScalar a_x[],
-                                                   const PylithReal t,
-                                                   const PylithReal s_tshift,
-                                                   const PylithScalar x[],
-                                                   const PylithReal n[],
-                                                   const PylithInt numConstants,
-                                                   const PylithScalar constants[],
-                                                   PylithScalar Jf3[]) {
-    // Check data fields
-    assert(numS >= 5);
-    assert(numA >= 6);
-    assert(Jf3);
-    assert(sOff);
-    assert(aOff);
-    assert(n);
-    const PylithInt gOff = 0;
-
-    const PylithInt spaceDim = dim + 1;
-
-    // Index for auxiliary fields
-    const PylithInt i_permeabilility_tangential = 4;
-    const PylithInt i_fluid_viscosity = 6;
-
-    const PylithScalar permeabilityTangential = a[aOff[i_permeabilility_tangential]];
-    const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
-
-    const PylithInt ncols = spaceDim;
-    const PylithScalar tempConst = permeabilityTangential / fluidViscosity / 2.;
-    // Do transformation for gradient
-    switch (spaceDim) {
-        case 2: {
-            const PylithInt _spaceDim = 2;
-            const PylithScalar tanDir[2] = {-n[1], n[0]};
-            Jf3[0 * ncols + 0] += tempConst * tanDir[0] * tanDir[0];
-            Jf3[0 * ncols + 1] += tempConst * tanDir[0] * tanDir[1];
-            Jf3[1 * ncols + 0] += tempConst * tanDir[1] * tanDir[0];
-            Jf3[1 * ncols + 0] += tempConst * tanDir[1] * tanDir[1];
-            break;
-        } // case 2
-
-        case 3: {
-            const PylithInt _spaceDim = 3;
-            const PylithScalar *refDir1 = &constants[0];
-            const PylithScalar *refDir2 = &constants[3];
-            PylithScalar tanDir1[3], tanDir2[3];
-            pylith::fekernels::_FaultCohesiveKinPoro::tangential_directions(_spaceDim, refDir1, refDir2, n, tanDir1, tanDir2);
-            Jf3[0 * ncols + 0] += tempConst * (tanDir1[0] * tanDir1[0] + tanDir2[0] * tanDir2[0]);
-            Jf3[0 * ncols + 1] += tempConst * (tanDir1[0] * tanDir1[1] + tanDir2[0] * tanDir2[1]);
-            Jf3[0 * ncols + 2] += tempConst * (tanDir1[0] * tanDir1[2] + tanDir2[0] * tanDir2[2]);
-            Jf3[1 * ncols + 0] += tempConst * (tanDir1[1] * tanDir1[0] + tanDir2[1] * tanDir2[0]);
-            Jf3[1 * ncols + 1] += tempConst * (tanDir1[1] * tanDir1[1] + tanDir2[1] * tanDir2[1]);
-            Jf3[1 * ncols + 2] += tempConst * (tanDir1[1] * tanDir1[2] + tanDir2[1] * tanDir2[2]);
-            Jf3[2 * ncols + 0] += tempConst * (tanDir1[2] * tanDir1[0] + tanDir2[2] * tanDir2[0]);
-            Jf3[2 * ncols + 1] += tempConst * (tanDir1[2] * tanDir1[1] + tanDir2[2] * tanDir2[1]);
-            Jf3[2 * ncols + 2] += tempConst * (tanDir1[2] * tanDir1[2] + tanDir2[2] * tanDir2[2]);
-            break;
-        } // case 3
-
-        default:
-            assert(0);
-    }
-    /**
-    for (PylithInt i = 0; i < spaceDim; ++i) {
-        Jf3[i * ncols + i] += permeabilityTangential / (2. * fluidViscosity);
-    }
-    */
-} // Jf3p_fp_f
-
-
-// ----------------------------------------------------------------------
-/* Jf0p_fl function for integration of the displacement equation.
- * s_tshift \phi_f \beta^\sigma \ve{n}
- * Solution fields = [disp(dim), ..., lagrange(dim), fault_pressure(1)]
- * Auxiliary fields
- */
-void
-pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fl(const PylithInt dim,
-                                                 const PylithInt numS,
-                                                 const PylithInt numA,
-                                                 const PylithInt sOff[],
-                                                 const PylithInt sOff_x[],
-                                                 const PylithScalar s[],
-                                                 const PylithScalar s_t[],
-                                                 const PylithScalar s_x[],
-                                                 const PylithInt aOff[],
-                                                 const PylithInt aOff_x[],
-                                                 const PylithScalar a[],
-                                                 const PylithScalar a_t[],
-                                                 const PylithScalar a_x[],
-                                                 const PylithReal t,
-                                                 const PylithReal s_tshift,
-                                                 const PylithScalar x[],
-                                                 const PylithReal n[],
-                                                 const PylithInt numConstants,
-                                                 const PylithScalar constants[],
-                                                 PylithScalar Jf0[]) {
-    // Check data fields
+pylith::fekernels::FaultCohesiveKinPoro::Jf0lu(const PylithInt dim,
+                                               const PylithInt numS,
+                                               const PylithInt numA,
+                                               const PylithInt sOff[],
+                                               const PylithInt sOff_x[],
+                                               const PylithScalar s[],
+                                               const PylithScalar s_t[],
+                                               const PylithScalar s_x[],
+                                               const PylithInt aOff[],
+                                               const PylithInt aOff_x[],
+                                               const PylithScalar a[],
+                                               const PylithScalar a_t[],
+                                               const PylithScalar a_x[],
+                                               const PylithReal t,
+                                               const PylithReal s_tshift,
+                                               const PylithScalar x[],
+                                               const PylithReal n[],
+                                               const PylithInt numConstants,
+                                               const PylithScalar constants[],
+                                               PylithScalar Jf0[]) {
     assert(numS >= 5);
     assert(numA >= 6);
     assert(Jf0);
@@ -1391,20 +1210,17 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fl(const PylithInt dim,
     assert(aOff);
     assert(n);
 
-    const PylithInt spaceDim = dim + 1;
+    const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
 
-    // Index for auxiliary fields
-    const PylithInt i_porosity = 1;
-    const PylithInt i_beta_sigma = 3;
-
-    // ** TO DO **
-    const PylithScalar porosity = a[aOff[i_porosity]];
-    const PylithScalar betaSigma = a[aOff[i_beta_sigma]];
+    const PylithInt gOffN = 0;
+    const PylithInt gOffP = gOffN + spaceDim;
+    const PylithInt ncols = 2 * spaceDim;
 
     for (PylithInt i = 0; i < spaceDim; ++i) {
-        Jf0[i] += -betaSigma * porosity * s_tshift * n[i];
-    }
-} // Jf0p_fl
+        Jf0[i * ncols + gOffN + i] += -1.0;
+        Jf0[i * ncols + gOffP + i] += +1.0;
+    } // for
+} // Jf0lu
 
 
 // ----------------------------------------------------------------------
@@ -1460,8 +1276,9 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fp(const PylithInt dim,
     const PylithInt gOffP = gOffN + 1;
 
     Jf0[gOffN] += (s_tshift * porosity * betaP) / 4. - permeabilityNormal / (fluidViscosity * thickness * thickness);
+    Jf0[gOffN] += permeabilityNormal / (fluidViscosity * thickness);
     Jf0[gOffP] += (s_tshift * porosity * betaP) / 4. - permeabilityNormal / (fluidViscosity * thickness * thickness);
-
+    Jf0[gOffP] += permeabilityNormal / (fluidViscosity * thickness);
 } // Jf0p_fp
 
 
@@ -1515,309 +1332,98 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp(const PylithInt dim,
     const PylithScalar tempConst = permeabilityTangential / fluidViscosity / 4.;
     // Do transformation for gradient
     switch (spaceDim) {
-        case 2: {
-            const PylithInt _spaceDim = 2;
-            const PylithScalar tanDir[2] = {-n[1], n[0]};
-            Jf3[0 * ncols + 0] += tempConst * tanDir[0] * tanDir[0];
-            Jf3[0 * ncols + 1] += tempConst * tanDir[0] * tanDir[1];
-            Jf3[1 * ncols + 0] += tempConst * tanDir[1] * tanDir[0];
-            Jf3[1 * ncols + 0] += tempConst * tanDir[1] * tanDir[1];
+    case 2: {
+        const PylithInt _spaceDim = 2;
+        const PylithScalar tanDir[2] = {-n[1], n[0]};
+        Jf3[0 * ncols + 0] += tempConst * tanDir[0] * tanDir[0];
+        Jf3[0 * ncols + 1] += tempConst * tanDir[0] * tanDir[1];
+        Jf3[1 * ncols + 0] += tempConst * tanDir[1] * tanDir[0];
+        Jf3[1 * ncols + 0] += tempConst * tanDir[1] * tanDir[1];
 
-            Jf3[0 * ncols + 0] += tempConst * tanDir[0] * tanDir[0];
-            Jf3[0 * ncols + 1] += tempConst * tanDir[0] * tanDir[1];
-            Jf3[1 * ncols + 0] += tempConst * tanDir[1] * tanDir[0];
-            Jf3[1 * ncols + 0] += tempConst * tanDir[1] * tanDir[1];
+        Jf3[0 * ncols + 0] += tempConst * tanDir[0] * tanDir[0];
+        Jf3[0 * ncols + 1] += tempConst * tanDir[0] * tanDir[1];
+        Jf3[1 * ncols + 0] += tempConst * tanDir[1] * tanDir[0];
+        Jf3[1 * ncols + 0] += tempConst * tanDir[1] * tanDir[1];
 
-            Jf3[0 * ncols + gOffP + 0] += tempConst * tanDir[0] * tanDir[0];
-            Jf3[0 * ncols + gOffP + 1] += tempConst * tanDir[0] * tanDir[1];
-            Jf3[1 * ncols + gOffP + 0] += tempConst * tanDir[1] * tanDir[0];
-            Jf3[1 * ncols + gOffP + 0] += tempConst * tanDir[1] * tanDir[1];
+        Jf3[0 * ncols + gOffP + 0] += tempConst * tanDir[0] * tanDir[0];
+        Jf3[0 * ncols + gOffP + 1] += tempConst * tanDir[0] * tanDir[1];
+        Jf3[1 * ncols + gOffP + 0] += tempConst * tanDir[1] * tanDir[0];
+        Jf3[1 * ncols + gOffP + 0] += tempConst * tanDir[1] * tanDir[1];
 
-            Jf3[0 * ncols + gOffP + 0] += tempConst * tanDir[0] * tanDir[0];
-            Jf3[0 * ncols + gOffP + 1] += tempConst * tanDir[0] * tanDir[1];
-            Jf3[1 * ncols + gOffP + 0] += tempConst * tanDir[1] * tanDir[0];
-            Jf3[1 * ncols + gOffP + 0] += tempConst * tanDir[1] * tanDir[1];
-            break;
-        } // case 2
+        Jf3[0 * ncols + gOffP + 0] += tempConst * tanDir[0] * tanDir[0];
+        Jf3[0 * ncols + gOffP + 1] += tempConst * tanDir[0] * tanDir[1];
+        Jf3[1 * ncols + gOffP + 0] += tempConst * tanDir[1] * tanDir[0];
+        Jf3[1 * ncols + gOffP + 0] += tempConst * tanDir[1] * tanDir[1];
+        break;
+    } // case 2
 
-        case 3: {
-            const PylithInt _spaceDim = 3;
-            const PylithScalar *refDir1 = &constants[0];
-            const PylithScalar *refDir2 = &constants[3];
-            PylithScalar tanDir1[3], tanDir2[3];
-            pylith::fekernels::_FaultCohesiveKinPoro::tangential_directions(_spaceDim, refDir1, refDir2, n, tanDir1, tanDir2);
-            Jf3[0 * ncols + 0] += tempConst * (tanDir1[0] * tanDir1[0] + tanDir2[0] * tanDir2[0]);
-            Jf3[0 * ncols + 1] += tempConst * (tanDir1[0] * tanDir1[1] + tanDir2[0] * tanDir2[1]);
-            Jf3[0 * ncols + 2] += tempConst * (tanDir1[0] * tanDir1[2] + tanDir2[0] * tanDir2[2]);
-            Jf3[1 * ncols + 0] += tempConst * (tanDir1[1] * tanDir1[0] + tanDir2[1] * tanDir2[0]);
-            Jf3[1 * ncols + 1] += tempConst * (tanDir1[1] * tanDir1[1] + tanDir2[1] * tanDir2[1]);
-            Jf3[1 * ncols + 2] += tempConst * (tanDir1[1] * tanDir1[2] + tanDir2[1] * tanDir2[2]);
-            Jf3[2 * ncols + 0] += tempConst * (tanDir1[2] * tanDir1[0] + tanDir2[2] * tanDir2[0]);
-            Jf3[2 * ncols + 1] += tempConst * (tanDir1[2] * tanDir1[1] + tanDir2[2] * tanDir2[1]);
-            Jf3[2 * ncols + 2] += tempConst * (tanDir1[2] * tanDir1[2] + tanDir2[2] * tanDir2[2]);
+    case 3: {
+        const PylithInt _spaceDim = 3;
+        const PylithScalar *refDir1 = &constants[0];
+        const PylithScalar *refDir2 = &constants[3];
+        PylithScalar tanDir1[3], tanDir2[3];
+        pylith::fekernels::_FaultCohesiveKinPoro::tangential_directions(_spaceDim, refDir1, refDir2, n, tanDir1, tanDir2);
+        Jf3[0 * ncols + 0] += tempConst * (tanDir1[0] * tanDir1[0] + tanDir2[0] * tanDir2[0]);
+        Jf3[0 * ncols + 1] += tempConst * (tanDir1[0] * tanDir1[1] + tanDir2[0] * tanDir2[1]);
+        Jf3[0 * ncols + 2] += tempConst * (tanDir1[0] * tanDir1[2] + tanDir2[0] * tanDir2[2]);
+        Jf3[1 * ncols + 0] += tempConst * (tanDir1[1] * tanDir1[0] + tanDir2[1] * tanDir2[0]);
+        Jf3[1 * ncols + 1] += tempConst * (tanDir1[1] * tanDir1[1] + tanDir2[1] * tanDir2[1]);
+        Jf3[1 * ncols + 2] += tempConst * (tanDir1[1] * tanDir1[2] + tanDir2[1] * tanDir2[2]);
+        Jf3[2 * ncols + 0] += tempConst * (tanDir1[2] * tanDir1[0] + tanDir2[2] * tanDir2[0]);
+        Jf3[2 * ncols + 1] += tempConst * (tanDir1[2] * tanDir1[1] + tanDir2[2] * tanDir2[1]);
+        Jf3[2 * ncols + 2] += tempConst * (tanDir1[2] * tanDir1[2] + tanDir2[2] * tanDir2[2]);
 
-            Jf3[0 * ncols + gOffP + 0] += tempConst * (tanDir1[0] * tanDir1[0] + tanDir2[0] * tanDir2[0]);
-            Jf3[0 * ncols + gOffP + 1] += tempConst * (tanDir1[0] * tanDir1[1] + tanDir2[0] * tanDir2[1]);
-            Jf3[0 * ncols + gOffP + 2] += tempConst * (tanDir1[0] * tanDir1[2] + tanDir2[0] * tanDir2[2]);
-            Jf3[1 * ncols + gOffP + 0] += tempConst * (tanDir1[1] * tanDir1[0] + tanDir2[1] * tanDir2[0]);
-            Jf3[1 * ncols + gOffP + 1] += tempConst * (tanDir1[1] * tanDir1[1] + tanDir2[1] * tanDir2[1]);
-            Jf3[1 * ncols + gOffP + 2] += tempConst * (tanDir1[1] * tanDir1[2] + tanDir2[1] * tanDir2[2]);
-            Jf3[2 * ncols + gOffP + 0] += tempConst * (tanDir1[2] * tanDir1[0] + tanDir2[2] * tanDir2[0]);
-            Jf3[2 * ncols + gOffP + 1] += tempConst * (tanDir1[2] * tanDir1[1] + tanDir2[2] * tanDir2[1]);
-            Jf3[2 * ncols + gOffP + 2] += tempConst * (tanDir1[2] * tanDir1[2] + tanDir2[2] * tanDir2[2]);
-            break;
-        } // case 3
-        default:
-            assert(0);
+        Jf3[0 * ncols + gOffP + 0] += tempConst * (tanDir1[0] * tanDir1[0] + tanDir2[0] * tanDir2[0]);
+        Jf3[0 * ncols + gOffP + 1] += tempConst * (tanDir1[0] * tanDir1[1] + tanDir2[0] * tanDir2[1]);
+        Jf3[0 * ncols + gOffP + 2] += tempConst * (tanDir1[0] * tanDir1[2] + tanDir2[0] * tanDir2[2]);
+        Jf3[1 * ncols + gOffP + 0] += tempConst * (tanDir1[1] * tanDir1[0] + tanDir2[1] * tanDir2[0]);
+        Jf3[1 * ncols + gOffP + 1] += tempConst * (tanDir1[1] * tanDir1[1] + tanDir2[1] * tanDir2[1]);
+        Jf3[1 * ncols + gOffP + 2] += tempConst * (tanDir1[1] * tanDir1[2] + tanDir2[1] * tanDir2[2]);
+        Jf3[2 * ncols + gOffP + 0] += tempConst * (tanDir1[2] * tanDir1[0] + tanDir2[2] * tanDir2[0]);
+        Jf3[2 * ncols + gOffP + 1] += tempConst * (tanDir1[2] * tanDir1[1] + tanDir2[2] * tanDir2[1]);
+        Jf3[2 * ncols + gOffP + 2] += tempConst * (tanDir1[2] * tanDir1[2] + tanDir2[2] * tanDir2[2]);
+        break;
+    } // case 3
+    default:
+        assert(0);
     }
     /**
-    for (PylithInt i = 0; i < spaceDim; ++i) {
-        Jf3[i * ncols + gOffN + i] += permeabilityTangential / (4. * fluidViscosity);
-        Jf3[i * ncols + gOffP + i] += permeabilityTangential / (4. * fluidViscosity);
-    }
-    */
-}; // Jf3p_fp
+     * for (PylithInt i = 0; i < spaceDim; ++i) {
+     *  Jf3[i * ncols + gOffN + i] += permeabilityTangential / (4. * fluidViscosity);
+     *  Jf3[i * ncols + gOffP + i] += permeabilityTangential / (4. * fluidViscosity);
+     * }
+     */
+} // Jf3p_fp
 
 
 // ----------------------------------------------------------------------
-/* Jf0pp function for integration of the slip constraint equation.
- *
- * Solution fields = [disp(dim), ..., lagrange(dim)]
- * Auxiliary fields = None
- * NEGATIVE Fault Face
+/* Jf0p_fl function for integration of the displacement equation.
+ * s_tshift \phi_f \beta^\sigma \ve{n}
+ * Solution fields = [disp(dim), ..., lagrange(dim), fault_pressure(1)]
+ * Auxiliary fields
  */
 void
-pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_neg(const PylithInt dim,
-                                                   const PylithInt numS,
-                                                   const PylithInt numA,
-                                                   const PylithInt sOff[],
-                                                   const PylithInt sOff_x[],
-                                                   const PylithScalar s[],
-                                                   const PylithScalar s_t[],
-                                                   const PylithScalar s_x[],
-                                                   const PylithInt aOff[],
-                                                   const PylithInt aOff_x[],
-                                                   const PylithScalar a[],
-                                                   const PylithScalar a_t[],
-                                                   const PylithScalar a_x[],
-                                                   const PylithReal t,
-                                                   const PylithReal s_tshift,
-                                                   const PylithScalar x[],
-                                                   const PylithReal n[],
-                                                   const PylithInt numConstants,
-                                                   const PylithScalar constants[],
-                                                   PylithScalar Jf0[]) {
-    assert(numS >= 5);
-    assert(numA >= 9);
-    assert(Jf0);
-    assert(sOff);
-    assert(aOff);
-    assert(n);
-
-    // Index for auxiliary fields
-    const PylithInt i_thickness = 0;
-    const PylithInt i_permeabilility_normal = numA - 1;
-    const PylithInt i_fluid_viscosity = 2;
-
-    // const PylithScalar thickness = a[aOff[i_thickness]];
-    const PylithScalar thickness = 1.0;
-    const PylithScalar permeabilityNormal = a[aOff[i_permeabilility_normal]];
-    const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
-
-    const PylithInt gOffN = 0;
-    // const PylithInt gOffP = gOffN + 3;
-
-    Jf0[gOffN] += permeabilityNormal / (thickness * fluidViscosity);
-    // Jf0[gOffP] += permeabilityNormal / thickness / fluidViscosity;
-
-} // Jf0pp_neg
-
-
-// ----------------------------------------------------------------------
-/* Jf0pp function for integration of the slip constraint equation.
- */
-void
-pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_pos(const PylithInt dim,
-                                                   const PylithInt numS,
-                                                   const PylithInt numA,
-                                                   const PylithInt sOff[],
-                                                   const PylithInt sOff_x[],
-                                                   const PylithScalar s[],
-                                                   const PylithScalar s_t[],
-                                                   const PylithScalar s_x[],
-                                                   const PylithInt aOff[],
-                                                   const PylithInt aOff_x[],
-                                                   const PylithScalar a[],
-                                                   const PylithScalar a_t[],
-                                                   const PylithScalar a_x[],
-                                                   const PylithReal t,
-                                                   const PylithReal s_tshift,
-                                                   const PylithScalar x[],
-                                                   const PylithReal n[],
-                                                   const PylithInt numConstants,
-                                                   const PylithScalar constants[],
-                                                   PylithScalar Jf0[]) {
-    assert(numS >= 5);
-    assert(numA >= 9);
-    assert(Jf0);
-    assert(sOff);
-    assert(aOff);
-    assert(n);
-
-    // Index for auxiliary fields
-    const PylithInt i_thickness = 0;
-    const PylithInt i_permeabilility_normal = numA - 1;
-    const PylithInt i_fluid_viscosity = 2;
-
-    const PylithScalar thickness = 1.0;
-    // const PylithScalar thickness = a[aOff[i_thickness]];
-    const PylithScalar permeabilityNormal = a[aOff[i_permeabilility_normal]];
-    const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
-
-    const PylithInt gOffN = 0;
-    const PylithInt gOffP = gOffN + 3;
-
-    // Jf0[gOffN] += permeabilityNormal / thickness / fluidViscosity;
-    Jf0[gOffP] += permeabilityNormal / (thickness * fluidViscosity);
-
-} // Jf0pp_pos
-
-
-// ----------------------------------------------------------------------
-/* Jf0pp_f function for integration of the slip constraint equation.
- * [-\kappa_cz / \mu / h, -\kappa_cz / \mu / h]
- * Solution fields = [disp(dim), ..., lagrange(dim)]
- * Auxiliary fields = None
- * NEGATIVE Fault face
- */
-void
-pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_f_neg(const PylithInt dim,
-                                                     const PylithInt numS,
-                                                     const PylithInt numA,
-                                                     const PylithInt sOff[],
-                                                     const PylithInt sOff_x[],
-                                                     const PylithScalar s[],
-                                                     const PylithScalar s_t[],
-                                                     const PylithScalar s_x[],
-                                                     const PylithInt aOff[],
-                                                     const PylithInt aOff_x[],
-                                                     const PylithScalar a[],
-                                                     const PylithScalar a_t[],
-                                                     const PylithScalar a_x[],
-                                                     const PylithReal t,
-                                                     const PylithReal s_tshift,
-                                                     const PylithScalar x[],
-                                                     const PylithReal n[],
-                                                     const PylithInt numConstants,
-                                                     const PylithScalar constants[],
-                                                     PylithScalar Jf0[]) {
-    assert(numS >= 5);
-    assert(numA >= 9);
-    assert(Jf0);
-    assert(sOff);
-    assert(aOff);
-    assert(n);
-
-    // Index for auxiliary fields
-    const PylithInt i_thickness = 0;
-    const PylithInt i_permeabilility_normal = numA - 1;
-    const PylithInt i_fluid_viscosity = 2;
-
-    const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
-    // const PylithScalar thickness = a[aOff[i_thickness]];
-    const PylithScalar permeabilityNormal = a[aOff[i_permeabilility_normal]];
-    const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
-
-    const PylithInt gOffN = 0;
-    // const PylithInt gOffP = gOffN + 1;
-
-    Jf0[gOffN] += -permeabilityNormal / (thickness * fluidViscosity);
-    // Jf0[gOffP] += -permeabilityNormal / thickness / fluidViscosity;
-
-} // Jf0pp_f_neg
-
-
-// ----------------------------------------------------------------------
-/* Jf0pp_f function for integration of the slip constraint equation.
- * [-\kappa_cz / \mu / h, -\kappa_cz / \mu / h]
- * Solution fields = [disp(dim), ..., lagrange(dim)]
- * Auxiliary fields = None
- * POSITIVE Fault face
- */
-void
-pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_f_pos(const PylithInt dim,
-                                                     const PylithInt numS,
-                                                     const PylithInt numA,
-                                                     const PylithInt sOff[],
-                                                     const PylithInt sOff_x[],
-                                                     const PylithScalar s[],
-                                                     const PylithScalar s_t[],
-                                                     const PylithScalar s_x[],
-                                                     const PylithInt aOff[],
-                                                     const PylithInt aOff_x[],
-                                                     const PylithScalar a[],
-                                                     const PylithScalar a_t[],
-                                                     const PylithScalar a_x[],
-                                                     const PylithReal t,
-                                                     const PylithReal s_tshift,
-                                                     const PylithScalar x[],
-                                                     const PylithReal n[],
-                                                     const PylithInt numConstants,
-                                                     const PylithScalar constants[],
-                                                     PylithScalar Jf0[]) {
-    assert(numS >= 5);
-    assert(numA >= 9);
-    assert(Jf0);
-    assert(sOff);
-    assert(aOff);
-    assert(n);
-
-    // Index for auxiliary fields
-    const PylithInt i_thickness = 0;
-    const PylithInt i_permeabilility_normal = numA - 1;
-    const PylithInt i_fluid_viscosity = 2;
-
-    const PylithScalar thickness = 1.0; // a[aOff[i_thickness]];
-    // const PylithScalar thickness = a[aOff[i_thickness]];
-    const PylithScalar permeabilityNormal = a[aOff[i_permeabilility_normal]];
-    const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
-
-    const PylithInt gOffN = 0;
-    const PylithInt gOffP = gOffN + 1;
-
-    // Jf0[gOffN] += -permeabilityNormal / thickness / fluidViscosity;
-    Jf0[gOffP] += -permeabilityNormal / (thickness * fluidViscosity);
-
-} // Jf0pp_f_pos
-
-
-// ----------------------------------------------------------------------
-/* Jf0 function for integration of the slip constraint equation.
- *
- * Solution fields = [disp(dim), ..., lagrange(dim)]
- * Auxiliary fields = None
- */
-void
-pylith::fekernels::FaultCohesiveKinPoro::Jf0lu(const PylithInt dim,
-                                               const PylithInt numS,
-                                               const PylithInt numA,
-                                               const PylithInt sOff[],
-                                               const PylithInt sOff_x[],
-                                               const PylithScalar s[],
-                                               const PylithScalar s_t[],
-                                               const PylithScalar s_x[],
-                                               const PylithInt aOff[],
-                                               const PylithInt aOff_x[],
-                                               const PylithScalar a[],
-                                               const PylithScalar a_t[],
-                                               const PylithScalar a_x[],
-                                               const PylithReal t,
-                                               const PylithReal s_tshift,
-                                               const PylithScalar x[],
-                                               const PylithReal n[],
-                                               const PylithInt numConstants,
-                                               const PylithScalar constants[],
-                                               PylithScalar Jf0[]) {
+pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fl(const PylithInt dim,
+                                                 const PylithInt numS,
+                                                 const PylithInt numA,
+                                                 const PylithInt sOff[],
+                                                 const PylithInt sOff_x[],
+                                                 const PylithScalar s[],
+                                                 const PylithScalar s_t[],
+                                                 const PylithScalar s_x[],
+                                                 const PylithInt aOff[],
+                                                 const PylithInt aOff_x[],
+                                                 const PylithScalar a[],
+                                                 const PylithScalar a_t[],
+                                                 const PylithScalar a_x[],
+                                                 const PylithReal t,
+                                                 const PylithReal s_tshift,
+                                                 const PylithScalar x[],
+                                                 const PylithReal n[],
+                                                 const PylithInt numConstants,
+                                                 const PylithScalar constants[],
+                                                 PylithScalar Jf0[]) {
+    // Check data fields
     assert(numS >= 5);
     assert(numA >= 6);
     assert(Jf0);
@@ -1825,17 +1431,166 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0lu(const PylithInt dim,
     assert(aOff);
     assert(n);
 
-    const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
+    const PylithInt spaceDim = dim + 1;
 
-    const PylithInt gOffN = 0;
-    const PylithInt gOffP = gOffN + spaceDim;
-    const PylithInt ncols = 2 * spaceDim;
+    // Index for auxiliary fields
+    const PylithInt i_porosity = 1;
+    const PylithInt i_beta_sigma = 3;
+
+    // ** TO DO **
+    const PylithScalar porosity = a[aOff[i_porosity]];
+    const PylithScalar betaSigma = a[aOff[i_beta_sigma]];
 
     for (PylithInt i = 0; i < spaceDim; ++i) {
-        Jf0[i * ncols + gOffN + i] += -1.0;
-        Jf0[i * ncols + gOffP + i] += +1.0;
-    } // for
-} // Jf0lu
+        Jf0[i] += -betaSigma * porosity * s_tshift * n[i];
+    }
+} // Jf0p_fl
+
+
+// ----------------------------------------------------------------------
+/* Jf0p_fp_f function for integration of the displacement equation:
+ * 2 \kappa_{fz} / (\mu h^2) + 2 \phi_f \beta^p t_shift
+ * Solution fields = [disp(dim), ..., lagrange(dim), fault_pressure(1)]
+ * Auxiliary fields
+ */
+void
+pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fp_f(const PylithInt dim,
+                                                   const PylithInt numS,
+                                                   const PylithInt numA,
+                                                   const PylithInt sOff[],
+                                                   const PylithInt sOff_x[],
+                                                   const PylithScalar s[],
+                                                   const PylithScalar s_t[],
+                                                   const PylithScalar s_x[],
+                                                   const PylithInt aOff[],
+                                                   const PylithInt aOff_x[],
+                                                   const PylithScalar a[],
+                                                   const PylithScalar a_t[],
+                                                   const PylithScalar a_x[],
+                                                   const PylithReal t,
+                                                   const PylithReal s_tshift,
+                                                   const PylithScalar x[],
+                                                   const PylithReal n[],
+                                                   const PylithInt numConstants,
+                                                   const PylithScalar constants[],
+                                                   PylithScalar Jf0[]) {
+    // Check data fields
+    assert(numS >= 5);
+    assert(numA >= 6);
+    assert(Jf0);
+    assert(sOff);
+    assert(aOff);
+    assert(n);
+    const PylithInt gOff = 0;
+
+    // Index for auxiliary fields
+    const PylithInt i_thickness = 0;
+    const PylithInt i_porosity = 1;
+    const PylithInt i_beta_p = 2;
+    const PylithInt i_permeabilility_normal = 5;
+    const PylithInt i_fluid_viscosity = 6;
+
+    const PylithScalar thickness = a[aOff[i_thickness]];
+    const PylithScalar porosity = a[aOff[i_porosity]];
+    const PylithScalar betaP = a[aOff[i_beta_p]];
+    const PylithScalar permeabilityNormal = a[aOff[i_permeabilility_normal]];
+    const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
+
+    Jf0[gOff] += 2. * permeabilityNormal / (fluidViscosity * thickness * thickness) + 2. * porosity * betaP *
+                 s_tshift;
+
+    // Flux Boundary
+    Jf0[gOff] -= permeabilityNormal / (fluidViscosity * thickness);
+    Jf0[gOff] -= permeabilityNormal / (fluidViscosity * thickness);
+} // Jf0p_fp_f
+
+
+// ----------------------------------------------------------------------
+/* Jf3p_fp_f function for integration of the displacement equation:
+ * \kappa_{fx} / (2 \mu) \te{I}
+ * Solution fields = [disp(dim), ..., lagrange(dim), fault_pressure(1)]
+ * Auxiliary fields
+ */
+void
+pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp_f(const PylithInt dim,
+                                                   const PylithInt numS,
+                                                   const PylithInt numA,
+                                                   const PylithInt sOff[],
+                                                   const PylithInt sOff_x[],
+                                                   const PylithScalar s[],
+                                                   const PylithScalar s_t[],
+                                                   const PylithScalar s_x[],
+                                                   const PylithInt aOff[],
+                                                   const PylithInt aOff_x[],
+                                                   const PylithScalar a[],
+                                                   const PylithScalar a_t[],
+                                                   const PylithScalar a_x[],
+                                                   const PylithReal t,
+                                                   const PylithReal s_tshift,
+                                                   const PylithScalar x[],
+                                                   const PylithReal n[],
+                                                   const PylithInt numConstants,
+                                                   const PylithScalar constants[],
+                                                   PylithScalar Jf3[]) {
+    // Check data fields
+    assert(numS >= 5);
+    assert(numA >= 6);
+    assert(Jf3);
+    assert(sOff);
+    assert(aOff);
+    assert(n);
+    const PylithInt gOff = 0;
+
+    const PylithInt spaceDim = dim + 1;
+
+    // Index for auxiliary fields
+    const PylithInt i_permeabilility_tangential = 4;
+    const PylithInt i_fluid_viscosity = 6;
+
+    const PylithScalar permeabilityTangential = a[aOff[i_permeabilility_tangential]];
+    const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
+
+    const PylithInt ncols = spaceDim;
+    const PylithScalar tempConst = permeabilityTangential / fluidViscosity / 2.;
+    // Do transformation for gradient
+    switch (spaceDim) {
+    case 2: {
+        const PylithInt _spaceDim = 2;
+        const PylithScalar tanDir[2] = {-n[1], n[0]};
+        Jf3[0 * ncols + 0] += tempConst * tanDir[0] * tanDir[0];
+        Jf3[0 * ncols + 1] += tempConst * tanDir[0] * tanDir[1];
+        Jf3[1 * ncols + 0] += tempConst * tanDir[1] * tanDir[0];
+        Jf3[1 * ncols + 0] += tempConst * tanDir[1] * tanDir[1];
+        break;
+    } // case 2
+
+    case 3: {
+        const PylithInt _spaceDim = 3;
+        const PylithScalar *refDir1 = &constants[0];
+        const PylithScalar *refDir2 = &constants[3];
+        PylithScalar tanDir1[3], tanDir2[3];
+        pylith::fekernels::_FaultCohesiveKinPoro::tangential_directions(_spaceDim, refDir1, refDir2, n, tanDir1, tanDir2);
+        Jf3[0 * ncols + 0] += tempConst * (tanDir1[0] * tanDir1[0] + tanDir2[0] * tanDir2[0]);
+        Jf3[0 * ncols + 1] += tempConst * (tanDir1[0] * tanDir1[1] + tanDir2[0] * tanDir2[1]);
+        Jf3[0 * ncols + 2] += tempConst * (tanDir1[0] * tanDir1[2] + tanDir2[0] * tanDir2[2]);
+        Jf3[1 * ncols + 0] += tempConst * (tanDir1[1] * tanDir1[0] + tanDir2[1] * tanDir2[0]);
+        Jf3[1 * ncols + 1] += tempConst * (tanDir1[1] * tanDir1[1] + tanDir2[1] * tanDir2[1]);
+        Jf3[1 * ncols + 2] += tempConst * (tanDir1[1] * tanDir1[2] + tanDir2[1] * tanDir2[2]);
+        Jf3[2 * ncols + 0] += tempConst * (tanDir1[2] * tanDir1[0] + tanDir2[2] * tanDir2[0]);
+        Jf3[2 * ncols + 1] += tempConst * (tanDir1[2] * tanDir1[1] + tanDir2[2] * tanDir2[1]);
+        Jf3[2 * ncols + 2] += tempConst * (tanDir1[2] * tanDir1[2] + tanDir2[2] * tanDir2[2]);
+        break;
+    } // case 3
+
+    default:
+        assert(0);
+    }
+    /**
+     * for (PylithInt i = 0; i < spaceDim; ++i) {
+     *  Jf3[i * ncols + i] += permeabilityTangential / (2. * fluidViscosity);
+     * }
+     */
+} // Jf3p_fp_f
 
 
 // End of file

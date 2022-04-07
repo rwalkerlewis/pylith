@@ -546,6 +546,7 @@ pylith::faults::FaultCohesiveKinPoro::updateAuxiliaryField(pylith::topology::Fie
     PYLITH_METHOD_END;
 } // updateAuxiliaryField
 
+
 // ----------------------------------------------------------------------
 // Set database for auxiliary fields.
 void
@@ -558,6 +559,7 @@ pylith::faults::FaultCohesiveKinPoro::auxFieldDB(spatialdata::spatialdb::Spatial
 
     PYLITH_METHOD_END;
 } // auxFieldDB
+
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Get auxiliary factory associated with physics.
@@ -793,8 +795,8 @@ pylith::faults::FaultCohesiveKinPoro::_setKernelsResidual(pylith::feassemble::In
         // const PetscBdPointFunc f1e_pos = NULL;
 
         // Poroelastic equation for the fault pressure constraint.
-        const PetscBdPointFunc f0p_fault = pylith::fekernels::FaultCohesiveKinPoro::f0p_fault;
-        const PetscBdPointFunc f1p_fault = NULL;
+        const PetscBdPointFunc f0p_f = pylith::fekernels::FaultCohesiveKinPoro::f0p_f;
+        const PetscBdPointFunc f1p_f = NULL;
 
         // Fault slip constraint equation.
         const PetscBdPointFunc f0l = pylith::fekernels::FaultCohesiveKinPoro::f0l_u;
@@ -812,7 +814,7 @@ pylith::faults::FaultCohesiveKinPoro::_setKernelsResidual(pylith::feassemble::In
         kernels[4] = ResidualKernels("lagrange_multiplier_fault", integrator_t::RESIDUAL_LHS, integrator_t::FAULT_FACE,
                                      f0l, f1l);
         kernels[5] = ResidualKernels("fault_pressure", integrator_t::RESIDUAL_LHS, integrator_t::FAULT_FACE,
-                                     f0p_fault, f1p_fault);
+                                     f0p_f, f1p_f);
         break;
     } // QUASISTATIC
 
@@ -844,9 +846,13 @@ pylith::faults::FaultCohesiveKinPoro::_setKernelsJacobian(pylith::feassemble::In
     // Ten non-trivial kernels,
     // Jful_neg, Jful_pos, Jfp_fp_f, Jfp_fl, Jfp_fp;
     // Jfpp_neg, Jfpp_pos, Jfpp_f_neg, Jfpp_f_pos, Jflu;
+    //
+    // Kernels are only those pertaining to the fault.
+
     std::vector<JacobianKernels> kernels;
     switch (_formulation) {
     case QUASISTATIC: {
+        // Displacement
         const PetscBdPointJac Jf0ul_neg = pylith::fekernels::FaultCohesiveKinPoro::Jf0ul_neg;
         const PetscBdPointJac Jf1ul_neg = NULL;
         const PetscBdPointJac Jf2ul_neg = NULL;
@@ -857,51 +863,56 @@ pylith::faults::FaultCohesiveKinPoro::_setKernelsJacobian(pylith::feassemble::In
         const PetscBdPointJac Jf2ul_pos = NULL;
         const PetscBdPointJac Jf3ul_pos = NULL;
 
-        const PetscBdPointJac Jf0p_fp_f = pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fp_f;
-        const PetscBdPointJac Jf1p_fp_f = NULL;
-        const PetscBdPointJac Jf2p_fp_f = NULL;
-        const PetscBdPointJac Jf3p_fp_f = pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp_f;
+        // Pressure
+        const PetscBdPointJac Jf0pp_neg = NULL;
+        const PetscBdPointJac Jf1pp_neg = NULL;
+        const PetscBdPointJac Jf2pp_neg = NULL;
+        const PetscBdPointJac Jf3pp_neg = NULL;
+
+        const PetscBdPointJac Jf0pp_pos = NULL;
+        const PetscBdPointJac Jf1pp_pos = NULL;
+        const PetscBdPointJac Jf2pp_pos = NULL;
+        const PetscBdPointJac Jf3pp_pos = NULL;
+
+        const PetscBdPointJac Jf0pp_f_neg = NULL;
+        const PetscBdPointJac Jf1pp_f_neg = NULL;
+        const PetscBdPointJac Jf2pp_f_neg = NULL;
+        const PetscBdPointJac Jf3pp_f_neg = NULL;
+
+        const PetscBdPointJac Jf0pp_f_pos = NULL;
+        const PetscBdPointJac Jf1pp_f_pos = NULL;
+        const PetscBdPointJac Jf2pp_f_pos = NULL;
+        const PetscBdPointJac Jf3pp_f_pos = NULL;
+
+        // Trace Strain
+
+        // Lagrange Multipliers
+        const PetscBdPointJac Jf0lu = pylith::fekernels::FaultCohesiveKinPoro::Jf0lu;
+        const PetscBdPointJac Jf1lu = NULL;
+        const PetscBdPointJac Jf2lu = NULL;
+        const PetscBdPointJac Jf3lu = NULL;
+
+        // Fault Pressure
+        const PetscBdPointJac Jf0p_fp = pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fp;
+        const PetscBdPointJac Jf1p_fp = NULL;
+        const PetscBdPointJac Jf2p_fp = NULL;
+        const PetscBdPointJac Jf3p_fp = pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp;
 
         const PetscBdPointJac Jf0p_fl = pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fl;
         const PetscBdPointJac Jf1p_fl = NULL;
         const PetscBdPointJac Jf2p_fl = NULL;
         const PetscBdPointJac Jf3p_fl = NULL;
 
-        const PetscBdPointJac Jf0p_fp = pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fp;
-        const PetscBdPointJac Jf1p_fp = NULL;
-        const PetscBdPointJac Jf2p_fp = NULL;
-        const PetscBdPointJac Jf3p_fp = pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp;
-
-        const PetscBdPointJac Jf0pp_neg = pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_neg;
-        const PetscBdPointJac Jf1pp_neg = NULL;
-        const PetscBdPointJac Jf2pp_neg = NULL;
-        const PetscBdPointJac Jf3pp_neg = NULL;
-
-        const PetscBdPointJac Jf0pp_pos = pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_pos;
-        const PetscBdPointJac Jf1pp_pos = NULL;
-        const PetscBdPointJac Jf2pp_pos = NULL;
-        const PetscBdPointJac Jf3pp_pos = NULL;
-
-        const PetscBdPointJac Jf0pp_f_neg = pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_f_neg;
-        const PetscBdPointJac Jf1pp_f_neg = NULL;
-        const PetscBdPointJac Jf2pp_f_neg = NULL;
-        const PetscBdPointJac Jf3pp_f_neg = NULL;
-
-        const PetscBdPointJac Jf0pp_f_pos = pylith::fekernels::FaultCohesiveKinPoro::Jf0pp_f_pos;
-        const PetscBdPointJac Jf1pp_f_pos = NULL;
-        const PetscBdPointJac Jf2pp_f_pos = NULL;
-        const PetscBdPointJac Jf3pp_f_pos = NULL;
-
-        const PetscBdPointJac Jf0lu = pylith::fekernels::FaultCohesiveKinPoro::Jf0lu;
-        const PetscBdPointJac Jf1lu = NULL;
-        const PetscBdPointJac Jf2lu = NULL;
-        const PetscBdPointJac Jf3lu = NULL;
+        const PetscBdPointJac Jf0p_fp_f = pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fp_f;
+        const PetscBdPointJac Jf1p_fp_f = NULL;
+        const PetscBdPointJac Jf2p_fp_f = NULL;
+        const PetscBdPointJac Jf3p_fp_f = pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp_f;
 
         kernels.resize(10);
         const char *nameDisplacement = "displacement";
-        const char *nameLagrangeMultiplier = "lagrange_multiplier_fault";
         const char *namePressure = "pressure";
         const char *nameTraceStrain = "trace_strain";
+        const char *nameLagrangeMultiplier = "lagrange_multiplier_fault";
         const char *nameFaultPressure = "fault_pressure";
 
         kernels[0] = JacobianKernels(nameDisplacement, nameLagrangeMultiplier, integrator_t::JACOBIAN_LHS,
