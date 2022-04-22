@@ -1,0 +1,52 @@
+${Units('si')}
+
+undo on
+reset
+
+## Domain
+#{length = 20*km}
+#{depth  = 20*km}
+#{pay = 0.1*km}
+
+## Magma Intrusion
+#{major = 5*km}
+#{minor  = 1*km}
+
+## Magma conduit
+#{c_length = 1*km}
+#{c_depth = 6*km}
+
+Create Surface rectangle width {length} height {depth} ZPLANE
+surface {Id("surface")} move x {length/2} y {depth/-2} z 0
+surface {Id("surface")} name "domain"
+
+Create Surface Ellipse major radius {major} minor radius {minor} on surface domain
+surface {Id("surface")} move x {length/2} y {-depth*(2/3)} z 0
+surface {Id("surface")} name "mirror_intrusion"
+
+Create Surface rectangle width {c_length} height {c_depth} on surface domain
+surface {Id("surface")} move x {length/2} y {-depth + c_depth/2} z 0
+surface {Id("surface")} name "mirror_conduit"
+
+## Combine conduit and intrusion
+unite surface mirror_conduit mirror_intrusion
+surface {Id("surface")} rename "intrusion"
+
+## Merge with domain
+subtract surface intrusion from surface domain keep_tool
+imprint all
+merge all
+
+## Identify curves of interest
+curve 8 name "crossflow"
+curve 10 name "west_conduit"
+curve 11 name "intrusion_interface"
+curve 12 name "east_conduit"
+
+
+
+#surface intrusion domain scheme map
+#
+#
+#
+#
