@@ -25,6 +25,7 @@ autom4te.cache
 /build
 /dist
 output/
+output/*
 examples/3d/subduction/mesh/geometry_surfs.jou
 examples/3d/subduction/mesh/*.exo
 examples/3d/subduction/mesh/*.sat
