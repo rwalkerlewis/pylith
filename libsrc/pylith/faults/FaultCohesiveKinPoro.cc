@@ -97,7 +97,7 @@ public:
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Default constructor.
-pylith::faults::FaultCohesiveKinPoro::FaultCohesiveKinPoro(void) : _auxiliaryFactory(new pylith::faults::AuxiliaryFactoryKinematic),
+pylith::faults::FaultCohesiveKinPoro::FaultCohesiveKinPoro(void) : _auxiliaryFactory(new pylith::faults::AuxiliaryFactoryKinematicPoro),
     _slipVecRupture(NULL),
     _slipVecTotal(NULL) {
     pylith::utils::PyreComponent::setName(_FaultCohesiveKinPoro::pyreComponent);
@@ -132,7 +132,7 @@ pylith::faults::FaultCohesiveKinPoro::deallocate(void) {
 void
 pylith::faults::FaultCohesiveKinPoro::setEqRuptures(const char *const *names,
                                                     const int numNames,
-                                                    KinSrc **ruptures,
+                                                    KinSrcPoro **ruptures,
                                                     const int numRuptures) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("setEqRuptures(names=" << names << ", numNames=" << numNames << ", ruptures=" << ruptures << ", numRuptures=" << numRuptures << ")");
@@ -223,18 +223,17 @@ pylith::faults::FaultCohesiveKinPoro::verifyConfiguration(const pylith::topology
     PYLITH_METHOD_END;
 } // verifyConfiguration
 
-
-// ---------------------------------------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 // Create integrator and set kernels.
-pylith::feassemble::Integrator *
-pylith::faults::FaultCohesiveKinPoro::createIntegrator(const pylith::topology::Field &solution) {
+pylith::feassemble::Integrator*
+pylith::faults::FaultCohesiveKinPoro::createIntegrator(const pylith::topology::Field& solution) {
     PYLITH_METHOD_BEGIN;
-    PYLITH_COMPONENT_DEBUG("createIntegrator(solution=" << solution.getLabel() << ")");
+    PYLITH_COMPONENT_DEBUG("createIntegrator(solution="<<solution.getLabel()<<")");
 
-    pylith::feassemble::IntegratorInterface *integrator = new pylith::feassemble::IntegratorInterface(this);
-    assert(integrator);
-    integrator->setLabelValue(getInterfaceId());
-    integrator->setSurfaceMarkerLabel(getSurfaceMarkerLabel());
+    pylith::feassemble::IntegratorInterface* integrator = new pylith::feassemble::IntegratorInterface(this);assert(integrator);
+    integrator->setLabelName(getCohesiveLabelName());
+    integrator->setLabelValue(getCohesiveLabelValue());
+    integrator->setSurfaceLabelName(getSurfaceLabelName());
 
     pylith::feassemble::InterfacePatches* patches =
         pylith::feassemble::InterfacePatches::createMaterialPairs(this, solution.getDM());
@@ -256,7 +255,8 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
 
     std::vector<pylith::feassemble::Constraint*> constraintArray;
 
-    if (0 == strlen(getBuriedEdgesMarkerLabel())) {
+    if (0 == strlen(getBuriedEdgesLabelName())) {
+        std::vector<pylith::feassemble::Constraint*> constraintArray;
         PYLITH_METHOD_RETURN(constraintArray);
     } // if
 
@@ -277,12 +277,12 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
     const PetscInt *points = NULL;
     PetscInt n;
     std::ostringstream labelstream;
-    labelstream << getBuriedEdgesMarkerLabel() << "_cohesive";
+    labelstream << getBuriedEdgesLabelName() << "_cohesive";
     std::string labelname = labelstream.str();
     PetscErrorCode err;
 
     err = DMCreateLabel(dm, labelname.c_str());PYLITH_CHECK_ERROR(err);
-    err = DMGetLabel(dm, getBuriedEdgesMarkerLabel(), &buriedLabel);PYLITH_CHECK_ERROR(err);
+    err = DMGetLabel(dm, getBuriedEdgesLabelName(), &buriedLabel);PYLITH_CHECK_ERROR(err);
     err = DMGetLabel(dm, labelname.c_str(), &buriedCohesiveLabel);PYLITH_CHECK_ERROR(err);
     err = DMLabelGetStratumIS(buriedLabel, 1, &pointIS);PYLITH_CHECK_ERROR(err);
     err = ISGetLocalSize(pointIS, &n);PYLITH_CHECK_ERROR(err);
@@ -318,7 +318,7 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
     } // for
 
     pylith::feassemble::ConstraintSimple *constraintLagrange = new pylith::feassemble::ConstraintSimple(this);assert(constraintLagrange);
-    constraintLagrange->setMarkerLabel(labelname.c_str());
+    constraintLagrange->setLabelName(labelname.c_str());
     err = PetscObjectViewFromOptions((PetscObject)buriedLabel, NULL, "-buried_edge_label_view");
     err = PetscObjectViewFromOptions((PetscObject)buriedCohesiveLabel, NULL, "-buried_cohesive_edge_label_view");
     constraintLagrange->setConstrainedDOF(&constrainedDOFLagrange[0], constrainedDOFLagrange.size());
@@ -341,12 +341,12 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
     const PetscInt *pointsFaultPressure = NULL;
     PetscInt nFaultPressure;
     std::ostringstream labelstreamFaultPressure;
-    labelstreamFaultPressure << getBuriedEdgesMarkerLabel() << "_cohesive";
+    labelstreamFaultPressure << getBuriedEdgesLabelName() << "_cohesive";
     std::string labelnameFaultPressure = labelstreamFaultPressure.str();
     // PetscErrorCode err;
 
     err = DMCreateLabel(dm, labelnameFaultPressure.c_str());PYLITH_CHECK_ERROR(err);
-    err = DMGetLabel(dm, getBuriedEdgesMarkerLabel(), &buriedLabelFaultPressure);PYLITH_CHECK_ERROR(err);
+    err = DMGetLabel(dm, getBuriedEdgesLabelName(), &buriedLabelFaultPressure);PYLITH_CHECK_ERROR(err);
     err = DMGetLabel(dm, labelnameFaultPressure.c_str(), &buriedCohesiveLabelFaultPressure);PYLITH_CHECK_ERROR(err);
     err = DMLabelGetStratumIS(buriedLabelFaultPressure, 1, &pointISFaultPressure);PYLITH_CHECK_ERROR(err);
     err = ISGetLocalSize(pointISFaultPressure, &nFaultPressure);PYLITH_CHECK_ERROR(err);
@@ -382,7 +382,7 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
     } // for
 
     pylith::feassemble::ConstraintSimple *constraintFaultPressure = new pylith::feassemble::ConstraintSimple(this);assert(constraintFaultPressure);
-    constraintFaultPressure->setMarkerLabel(labelnameFaultPressure.c_str());
+    constraintFaultPressure->setLabelName(labelnameFaultPressure.c_str());
     err = PetscObjectViewFromOptions((PetscObject)buriedLabelFaultPressure, NULL, "-buried_edge_label_view");
     err = PetscObjectViewFromOptions((PetscObject)buriedCohesiveLabelFaultPressure, NULL, "-buried_cohesive_edge_label_view");
     constraintFaultPressure->setConstrainedDOF(&constrainedDOFFaultPressure[0], constrainedDOFFaultPressure.size());
@@ -486,7 +486,7 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
     assert(auxiliaryField);
     const srcs_type::const_iterator rupturesEnd = _ruptures.end();
     for (srcs_type::iterator r_iter = _ruptures.begin(); r_iter != rupturesEnd; ++r_iter) {
-        KinSrc *src = r_iter->second;
+        KinSrcPoro *src = r_iter->second;
         assert(src);
         src->initialize(*auxiliaryField, *_normalizer, solution.getMesh().getCoordSys());
     } // for
@@ -588,7 +588,7 @@ pylith::faults::FaultCohesiveKinPoro::_updateSlip(pylith::topology::Field *auxil
         err = VecSet(_slipVecRupture, 0.0);
         PYLITH_CHECK_ERROR(err);
 
-        KinSrc *src = r_iter->second;
+        KinSrcPoro *src = r_iter->second;
         assert(src);
         src->updateSlip(_slipVecRupture, auxiliaryField, t, _normalizer->getTimeScale());
         err = VecAYPX(_slipVecTotal, 1.0, _slipVecRupture);
@@ -644,7 +644,7 @@ pylith::faults::FaultCohesiveKinPoro::_updateSlipRate(pylith::topology::Field *a
         err = VecSet(_slipVecRupture, 0.0);
         PYLITH_CHECK_ERROR(err);
 
-        KinSrc *src = r_iter->second;
+        KinSrcPoro *src = r_iter->second;
         assert(src);
         src->updateSlipRate(_slipVecRupture, auxiliaryField, t, _normalizer->getTimeScale());
         err = VecAYPX(_slipVecTotal, 1.0, _slipVecRupture);
@@ -698,7 +698,7 @@ pylith::faults::FaultCohesiveKinPoro::_updateSlipAcceleration(pylith::topology::
     for (srcs_type::iterator r_iter = _ruptures.begin(); r_iter != rupturesEnd; ++r_iter) {
         err = VecSet(_slipVecRupture, 0.0);PYLITH_CHECK_ERROR(err);
 
-        KinSrc* src = r_iter->second;assert(src);
+        KinSrcPoro* src = r_iter->second;assert(src);
         src->updateSlipAcc(_slipVecRupture, auxiliaryField, t, _normalizer->getTimeScale());
         err = VecAYPX(_slipVecTotal, 1.0, _slipVecRupture);
     } // for

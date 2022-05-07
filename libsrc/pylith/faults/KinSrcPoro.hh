@@ -206,8 +206,7 @@ protected:
     PetscPointFunc _porosityFnKernel; ///< Kernel for porosity function.
     PetscPointFunc _beta_pFnKernel; ///< Kernel for slip time function.
     PetscPointFunc _beta_sigmaFnKernel; ///< Kernel for slip time function.
-    PetscPointFunc _permeability_tangentialFnKernel; ///< Kernel for slip time function.
-    PetscPointFunc _permeability_normalFnKernel; ///< Kernel for slip time function.
+    PetscPointFunc _fault_permeabilityFnKernel; ///< Kernel for slip time function.
     PetscPointFunc _fluid_viscosityFnKernel; ///< Kernel for slip time function.
 
     // Original slip function kernels inherited from KinSrc

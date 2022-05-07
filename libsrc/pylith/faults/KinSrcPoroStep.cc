@@ -172,7 +172,7 @@ pylith::faults::KinSrcPoroStep::fault_permeabilityFn(const PylithInt dim,
                                                      const PylithInt numConstants,
                                                      const PylithScalar constants[],
                                                      PylithScalar permeability_normal[]) {
-    for (PylithInt i = 0; i < dim*(dim;++i)) {
+    for (PylithInt i = 0; i < dim*dim; ++i) {
         permeability_normal[i] += 0.0;
     }
 

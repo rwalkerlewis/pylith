@@ -40,8 +40,7 @@ pylith::faults::KinSrcPoro::KinSrcPoro(void) :
     _porosityFnKernel(NULL),
     _beta_pFnKernel(NULL),
     _beta_sigmaFnKernel(NULL),
-    _permeability_tangentialFnKernel(NULL),
-    _permeability_normalFnKernel(NULL),
+    _fault_permeabilityFnKernel(NULL),
     _fluid_viscosityFnKernel(NULL),
     _slipFnKernel(NULL),
     _slipRateFnKernel(NULL),
@@ -167,15 +166,14 @@ pylith::faults::KinSrcPoro::updateSlip(PetscVec slipLocalVec,
 
     _setFEConstants(*faultAuxiliaryField); // Constants are attached to the auxiliary field for the slip vector.
 
-    PetscPointFunc subfieldKernels[8];
+    PetscPointFunc subfieldKernels[7];
     subfieldKernels[0] = _thicknessFnKernel; // 0
     subfieldKernels[1] = _porosityFnKernel; // 1
     subfieldKernels[2] = _beta_pFnKernel; // 2
     subfieldKernels[3] = _beta_sigmaFnKernel; // 3
-    subfieldKernels[4] = _permeability_tangentialFnKernel; // 4
-    subfieldKernels[5] = _permeability_normalFnKernel; // 5
-    subfieldKernels[6] = _fluid_viscosityFnKernel; // 6
-    subfieldKernels[7] = _slipFnKernel; // numA - 1
+    subfieldKernels[4] = _fault_permeabilityFnKernel; // 4
+    subfieldKernels[5] = _fluid_viscosityFnKernel; // 6
+    subfieldKernels[6] = _slipFnKernel; // numA - 1
 
     // Create local vector for slip for this source.
     PetscErrorCode err = 0;
@@ -215,14 +213,13 @@ pylith::faults::KinSrcPoro::updateSlipRate(PetscVec slipRateLocalVec,
 
     _setFEConstants(*faultAuxiliaryField); // Constants are attached to the auxiliary field for the slip rate vector.
 
-    PetscPointFunc subfieldKernels[8];
+    PetscPointFunc subfieldKernels[7];
     subfieldKernels[0] = _thicknessFnKernel; // 0
     subfieldKernels[1] = _porosityFnKernel; // 1
     subfieldKernels[2] = _beta_pFnKernel; // 2
     subfieldKernels[3] = _beta_sigmaFnKernel; // 3
-    subfieldKernels[4] = _permeability_tangentialFnKernel; // 4
-    subfieldKernels[5] = _permeability_normalFnKernel; // 5
-    subfieldKernels[6] = _fluid_viscosityFnKernel; // 6
+    subfieldKernels[4] = _fault_permeabilityFnKernel; // 4
+    subfieldKernels[5] = _fluid_viscosityFnKernel; // 6
     subfieldKernels[7] = _slipRateFnKernel; // numA - 1 
 
     // Create local vector for slip for this source.
@@ -259,15 +256,14 @@ pylith::faults::KinSrcPoro::updateSlipAcc(PetscVec slipAccLocalVec,
 
     _setFEConstants(*faultAuxiliaryField); // Constants are attached to the auxiliary field for the slip rate vector.
 
-    PetscPointFunc subfieldKernels[8];
+    PetscPointFunc subfieldKernels[7];
     subfieldKernels[0] = _thicknessFnKernel; // 0
     subfieldKernels[1] = _porosityFnKernel; // 1
     subfieldKernels[2] = _beta_pFnKernel; // 2
     subfieldKernels[3] = _beta_sigmaFnKernel; // 3
-    subfieldKernels[4] = _permeability_tangentialFnKernel; // 4
-    subfieldKernels[5] = _permeability_normalFnKernel; // 5
-    subfieldKernels[6] = _fluid_viscosityFnKernel; // 6
-    subfieldKernels[7] = _slipAccFnKernel; // numA - 1
+    subfieldKernels[4] = _fault_permeabilityFnKernel; // 4
+    subfieldKernels[5] = _fluid_viscosityFnKernel; // 5
+    subfieldKernels[6] = _slipAccFnKernel; // numA - 1
 
     // Create local vector for slip for this source.
     PetscErrorCode err = 0;

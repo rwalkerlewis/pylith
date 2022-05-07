@@ -441,7 +441,7 @@ pylith::faults::AuxiliaryFactoryKinematicPoro::addBetaSigma(void) {
 // ----------------------------------------------------------------------------
 // Add fault permeability subfield to auxiliary fields.
 void
-pylith::faults::AuxiliaryFactoryKinematic::addFaultPermeability(void) { // faultPermeablity
+pylith::faults::AuxiliaryFactoryKinematicPoro::addFaultPermeability(void) { // faultPermeablity
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addFaultPermeability(void)");
 
