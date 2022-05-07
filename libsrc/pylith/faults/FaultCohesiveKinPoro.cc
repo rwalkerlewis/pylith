@@ -20,8 +20,8 @@
 
 #include "FaultCohesiveKinPoro.hh" // implementation of object methods
 
-#include "pylith/faults/KinSrc.hh" // USES KinSrc
-#include "pylith/faults/AuxiliaryFactoryKinematic.hh" // USES AuxiliaryFactoryKinematic
+#include "pylith/faults/KinSrcPoro.hh" // USES KinSrcPoro
+#include "pylith/faults/AuxiliaryFactoryKinematicPoro.hh" // USES AuxiliaryFactoryKinematicPoro
 #include "pylith/feassemble/IntegratorInterface.hh" // USES IntegratorInterface
 #include "pylith/feassemble/InterfacePatches.hh" // USES InterfacePatches
 #include "pylith/feassemble/ConstraintSimple.hh" // USES ConstraintSimple
@@ -242,12 +242,6 @@ pylith::faults::FaultCohesiveKinPoro::createIntegrator(const pylith::topology::F
 
     _setKernelsResidual(integrator, solution);
     _setKernelsJacobian(integrator, solution);
-
-    // _FaultCohesiveKinPoro::setKernelsLHSResidual(integrator, *this, solution, _useBodyForce, _useSource,
-    // _formulation);
-    // _FaultCohesiveKinPoro::setKernelsLHSJacobian(integrator, *this, solution, _formulation);
-    // No state variables.
-    // _FaultCohesiveKinPoro::setKernelsDerivedFields(integrator, *this, solution);
 
     PYLITH_METHOD_RETURN(integrator);
 } // createIntegrator
@@ -807,17 +801,17 @@ pylith::faults::FaultCohesiveKinPoro::_setKernelsResidual(pylith::feassemble::In
         const PetscBdPointFunc f1l = NULL;
 
         kernels.resize(6);
-        kernels[0] = ResidualKernels("displacement", integrator_t::RESIDUAL_LHS, integrator_t::NEGATIVE_FACE,
+        kernels[0] = ResidualKernels("displacement", integrator_t::LHS, integrator_t::NEGATIVE_FACE,
                                      f0u_neg, f1u_neg);
-        kernels[1] = ResidualKernels("displacement", integrator_t::RESIDUAL_LHS, integrator_t::POSITIVE_FACE,
+        kernels[1] = ResidualKernels("displacement", integrator_t::LHS, integrator_t::POSITIVE_FACE,
                                      f0u_pos, f1u_pos);
-        kernels[2] = ResidualKernels("pressure", integrator_t::RESIDUAL_LHS, integrator_t::NEGATIVE_FACE,
+        kernels[2] = ResidualKernels("pressure", integrator_t::LHS, integrator_t::NEGATIVE_FACE,
                                      f0p_neg, f1p_neg);
-        kernels[3] = ResidualKernels("pressure", integrator_t::RESIDUAL_LHS, integrator_t::POSITIVE_FACE,
+        kernels[3] = ResidualKernels("pressure", integrator_t::LHS, integrator_t::POSITIVE_FACE,
                                      f0p_pos, f1p_pos);
-        kernels[4] = ResidualKernels("lagrange_multiplier_fault", integrator_t::RESIDUAL_LHS, integrator_t::FAULT_FACE,
+        kernels[4] = ResidualKernels("lagrange_multiplier_fault", integrator_t::LHS, integrator_t::FAULT_FACE,
                                      f0l, f1l);
-        kernels[5] = ResidualKernels("fault_pressure", integrator_t::RESIDUAL_LHS, integrator_t::FAULT_FACE,
+        kernels[5] = ResidualKernels("fault_pressure", integrator_t::LHS, integrator_t::FAULT_FACE,
                                      f0p_fault, f1p_fault);
         break;
     } // QUASISTATIC
@@ -897,17 +891,17 @@ pylith::faults::FaultCohesiveKinPoro::_setKernelsJacobian(pylith::feassemble::In
         const char *nameTraceStrain = "trace_strain";
         const char *nameFaultPressure = "fault_pressure";
 
-        kernels[0] = JacobianKernels(nameDisplacement, nameLagrangeMultiplier, integrator_t::JACOBIAN_LHS,
+        kernels[0] = JacobianKernels(nameDisplacement, nameLagrangeMultiplier, integrator_t::LHS,
                                      integrator_t::NEGATIVE_FACE, Jf0ul_neg, Jf1ul_neg, Jf2ul_neg, Jf3ul_neg);
-        kernels[1] = JacobianKernels(nameDisplacement, nameLagrangeMultiplier, integrator_t::JACOBIAN_LHS,
+        kernels[1] = JacobianKernels(nameDisplacement, nameLagrangeMultiplier, integrator_t::LHS,
                                      integrator_t::POSITIVE_FACE, Jf0ul_pos, Jf1ul_pos, Jf2ul_pos, Jf3ul_pos);
-        kernels[2] = JacobianKernels(nameLagrangeMultiplier, nameDisplacement, integrator_t::JACOBIAN_LHS,
+        kernels[2] = JacobianKernels(nameLagrangeMultiplier, nameDisplacement, integrator_t::LHS,
                                      integrator_t::FAULT_FACE, Jf0lu, Jf1lu, Jf2lu, Jf3lu);
-        kernels[3] = JacobianKernels(nameFaultPressure, namePressure, integrator_t::JACOBIAN_LHS,
+        kernels[3] = JacobianKernels(nameFaultPressure, namePressure, integrator_t::LHS,
                                      integrator_t::FAULT_FACE, Jf0p_fp, Jf1p_fp, Jf2p_fp, Jf3p_fp);
-        kernels[4] = JacobianKernels(nameFaultPressure, nameLagrangeMultiplier, integrator_t::JACOBIAN_LHS,
+        kernels[4] = JacobianKernels(nameFaultPressure, nameLagrangeMultiplier, integrator_t::LHS,
                                      integrator_t::FAULT_FACE, Jf0p_fl, Jf1p_fl, Jf2p_fl, Jf3p_fl);
-        kernels[5] = JacobianKernels(nameFaultPressure, nameFaultPressure, integrator_t::JACOBIAN_LHS,
+        kernels[5] = JacobianKernels(nameFaultPressure, nameFaultPressure, integrator_t::LHS,
                                      integrator_t::FAULT_FACE, Jf0p_fp_f, Jf1p_fp_f, Jf2p_fp_f, Jf3p_fp_f);
 
         break;

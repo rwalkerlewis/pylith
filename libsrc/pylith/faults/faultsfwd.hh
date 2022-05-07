@@ -27,15 +27,14 @@
 #if !defined(pylith_faults_faultsfwd_hh)
 #define pylith_faults_faultsfwd_hh
 
-namespace pylith
-{
-    namespace faults
-    {
+namespace pylith {
+    namespace faults {
         class FaultCohesive;
         class FaultCohesiveKin;
         class FaultCohesiveImpulses;
         class FaultCohesiveKinPoro;
         class AuxiliaryFactoryKinematic;
+        class AuxiliaryFactoryKinematicPoro;
 
         class KinSrc;
         class KinSrcConstRate;
@@ -45,6 +44,15 @@ namespace pylith
         class KinSrcLiuCos;
         class KinSrcTimeHistory;
         class KinSrcAuxiliaryFactory;
+
+        class KinSrcPoro;
+        class KinSrcPoroConstRate;
+        class KinSrcPoroStep;
+        class KinSrcPoroRamp;
+        class KinSrcPoroBrune;
+        class KinSrcPoroLiuCos;
+        class KinSrcPoroTimeHistory;
+        class KinSrcPoroAuxiliaryFactory;
 
         class TopologyOps;
     } // faults

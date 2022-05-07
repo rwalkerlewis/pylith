@@ -18,7 +18,7 @@
 
 #include <portinfo>
 
-#include "AuxiliaryFactoryKinematic.hh" // implementation of object methods
+#include "AuxiliaryFactoryKinematicPoro.hh" // implementation of object methods
 
 #include "pylith/topology/Field.hh" // USES Field
 #include "pylith/topology/FieldQuery.hh" // HOLDSA FieldQuery
@@ -33,20 +33,20 @@
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Default constructor.
-pylith::faults::AuxiliaryFactoryKinematic::AuxiliaryFactoryKinematic(void) {
-    GenericComponent::setName("auxiliaryfactorykinematic");
+pylith::faults::AuxiliaryFactoryKinematicPoro::AuxiliaryFactoryKinematicPoro(void) {
+    GenericComponent::setName("auxiliaryfactorykinematicporo");
 } // constructor
 
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Destructor.
-pylith::faults::AuxiliaryFactoryKinematic::~AuxiliaryFactoryKinematic(void) {}
+pylith::faults::AuxiliaryFactoryKinematicPoro::~AuxiliaryFactoryKinematicPoro(void) {}
 
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Add fault strike direction subfield to auxiliary fields.
 void
-pylith::faults::AuxiliaryFactoryKinematic::addStrikeDir(void) {
+pylith::faults::AuxiliaryFactoryKinematicPoro::addStrikeDir(void) {
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addStrikeDir(void)");
 
@@ -75,7 +75,7 @@ pylith::faults::AuxiliaryFactoryKinematic::addStrikeDir(void) {
 // ---------------------------------------------------------------------------------------------------------------------
 // Add fault up-dip direction subfield to auxiliary fields.
 void
-pylith::faults::AuxiliaryFactoryKinematic::addUpDipDir(void) {
+pylith::faults::AuxiliaryFactoryKinematicPoro::addUpDipDir(void) {
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addUpDipDir(void)");
 
@@ -104,7 +104,7 @@ pylith::faults::AuxiliaryFactoryKinematic::addUpDipDir(void) {
 // ---------------------------------------------------------------------------------------------------------------------
 // Add fault normal direction subfield to auxiliary fields.
 void
-pylith::faults::AuxiliaryFactoryKinematic::addNormalDir(void) {
+pylith::faults::AuxiliaryFactoryKinematicPoro::addNormalDir(void) {
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addNormalDir(void)");
 
@@ -133,7 +133,7 @@ pylith::faults::AuxiliaryFactoryKinematic::addNormalDir(void) {
 // ---------------------------------------------------------------------------------------------------------------------
 // Add fault slip subfield to auxiliary fields.
 void
-pylith::faults::AuxiliaryFactoryKinematic::addSlip(void) {
+pylith::faults::AuxiliaryFactoryKinematicPoro::addSlip(void) {
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addSlip(void)");
 
@@ -164,7 +164,7 @@ pylith::faults::AuxiliaryFactoryKinematic::addSlip(void) {
 // ---------------------------------------------------------------------------------------------------------------------
 // Add fault slip rate subfield to auxiliary fields.
 void
-pylith::faults::AuxiliaryFactoryKinematic::addSlipRate(void) {
+pylith::faults::AuxiliaryFactoryKinematicPoro::addSlipRate(void) {
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addSlipRate(void)");
 
@@ -195,7 +195,7 @@ pylith::faults::AuxiliaryFactoryKinematic::addSlipRate(void) {
 // ---------------------------------------------------------------------------------------------------------------------
 // Add fault slip acceleration subfield to auxiliary fields.
 void
-pylith::faults::AuxiliaryFactoryKinematic::addSlipAcceleration(void) {
+pylith::faults::AuxiliaryFactoryKinematicPoro::addSlipAcceleration(void) {
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addSlipAcceleration(void)");
 
@@ -230,7 +230,7 @@ pylith::faults::AuxiliaryFactoryKinematic::addSlipAcceleration(void) {
 // --------------------------------------------------------------------
 // Add undrained bulk modulus subfield to auxiliary fields.
 void
-pylith::faults::AuxiliaryFactoryKinematic::addUndrainedBulkModulus(void) { // UndrainedBulkModulus
+pylith::faults::AuxiliaryFactoryKinematicPoro::addUndrainedBulkModulus(void) { // UndrainedBulkModulus
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addUndrainedBulkModulus(void)");
 
@@ -257,7 +257,7 @@ pylith::faults::AuxiliaryFactoryKinematic::addUndrainedBulkModulus(void) { // Un
 // ---------------------------------------------------------------------------------------------------------------------
 // Add shear modulus subfield to auxiliary fields.
 void
-pylith::faults::AuxiliaryFactoryKinematic::addShearModulus(void) {
+pylith::faults::AuxiliaryFactoryKinematicPoro::addShearModulus(void) {
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addShearModulus(void)");
 
@@ -284,7 +284,7 @@ pylith::faults::AuxiliaryFactoryKinematic::addShearModulus(void) {
 // ---------------------------------------------------------------------
 // Add Skempton coefficient subfield to auxiliary fields.
 void
-pylith::faults::AuxiliaryFactoryKinematic::addSkemptonCoefficient(void) { // skemptonCoefficient
+pylith::faults::AuxiliaryFactoryKinematicPoro::addSkemptonCoefficient(void) { // skemptonCoefficient
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addSkemptonCoefficient(void)");
 
@@ -316,7 +316,7 @@ pylith::faults::AuxiliaryFactoryKinematic::addSkemptonCoefficient(void) { // ske
 // ---------------------------------------------------------------------
 // Add layer thickness to auxiliary fields.
 void
-pylith::faults::AuxiliaryFactoryKinematic::addThickness(void) {
+pylith::faults::AuxiliaryFactoryKinematicPoro::addThickness(void) {
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addThickness(void)");
 
@@ -346,7 +346,7 @@ pylith::faults::AuxiliaryFactoryKinematic::addThickness(void) {
 // ---------------------------------------------------------------------
 // Add layer porosity to auxiliary fields.
 void
-pylith::faults::AuxiliaryFactoryKinematic::addPorosity(void) {
+pylith::faults::AuxiliaryFactoryKinematicPoro::addPorosity(void) {
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addPorosity(void)");
 
@@ -377,7 +377,7 @@ pylith::faults::AuxiliaryFactoryKinematic::addPorosity(void) {
 // ---------------------------------------------------------------------
 // Add beta p to auxiliary fields.
 void
-pylith::faults::AuxiliaryFactoryKinematic::addBetaP(void) {
+pylith::faults::AuxiliaryFactoryKinematicPoro::addBetaP(void) {
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addBetaP(void)");
 
@@ -407,9 +407,10 @@ pylith::faults::AuxiliaryFactoryKinematic::addBetaP(void) {
 } // addBetaP
 
 
+// ---------------------------------------------------------------------
 // Add beta_sigma to auxiliary fields.
 void
-pylith::faults::AuxiliaryFactoryKinematic::addBetaSigma(void) {
+pylith::faults::AuxiliaryFactoryKinematicPoro::addBetaSigma(void) {
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addBetaSigma(void)");
 
@@ -437,20 +438,56 @@ pylith::faults::AuxiliaryFactoryKinematic::addBetaSigma(void) {
 } // addBetaSigma
 
 
+// ----------------------------------------------------------------------------
+// Add fault permeability subfield to auxiliary fields.
+void
+pylith::faults::AuxiliaryFactoryKinematic::addFaultPermeability(void) { // faultPermeablity
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addFaultPermeability(void)");
+
+    const char* subfieldName = "fault_permeability";
+    const char* componentNames[6] = {
+        "fault_permeability_xx",
+        "fault_permeability_yy",
+        "fault_permeability_zz",
+        "fault_permeability_xy",
+        "fault_permeability_yz",
+        "fault_permeability_xz"
+    };
+    const int tensorSize = (3 == _spaceDim) ? 6 : (2 == _spaceDim) ? 4 : 1;
+    const PylithReal lengthScale = _normalizer->getLengthScale();
+    const PylithReal permeabilityScale = lengthScale*lengthScale;
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::OTHER;
+    description.numComponents = tensorSize;
+    description.componentNames.resize(tensorSize);
+    for (int i = 0; i < tensorSize; ++i) {
+        description.componentNames[i] = componentNames[i];
+    } // for
+    description.scale = permeabilityScale;
+    description.validator = NULL;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addFaultPermeability
+
+
 // ---------------------------------------------------------------------
 // Add fluid viscosity to auxiliary fields.
 void
-pylith::faults::AuxiliaryFactoryKinematic::addFluidViscosity(void) {
+pylith::faults::AuxiliaryFactoryKinematicPoro::addFluidViscosity(void) {
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addFluidViscosity(void)");
 
     const char* subfieldName = "fluid_viscosity";
-
-    // ** TO DO **
-    // Please verify this following line
-    // viscosity scale should be pa s
-    const PylithReal fluidViscosityScale = _normalizer->getPressureScale()
-                                           * _normalizer->getTimeScale();
+    const PylithReal pressureScale = _normalizer->getPressureScale();
+    const PylithReal timeScale = _normalizer->getTimeScale();
+    const PylithReal viscosityScale = pressureScale * timeScale;
 
     pylith::topology::Field::Description description;
     description.label = subfieldName;
@@ -459,7 +496,7 @@ pylith::faults::AuxiliaryFactoryKinematic::addFluidViscosity(void) {
     description.numComponents = 1;
     description.componentNames.resize(1);
     description.componentNames[0] = subfieldName;
-    description.scale = fluidViscosityScale;
+    description.scale = viscosityScale;
     description.validator = pylith::topology::FieldQuery::validatorPositive;
 
     _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
@@ -473,9 +510,133 @@ pylith::faults::AuxiliaryFactoryKinematic::addFluidViscosity(void) {
 
 
 // ---------------------------------------------------------------------
+// Add negative side bulk modulus to auxiliary fields.
+void
+pylith::faults::AuxiliaryFactoryKinematicPoro::addBulkModulusNegative(void) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addBulkModulusNegative(void)");
+
+    const char* subfieldName = "bulk_modulus_negative";
+
+    const PylithReal bulkModulusScale = _normalizer->getPressureScale();
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = subfieldName;
+    description.scale = bulkModulusScale;
+    description.validator = pylith::topology::FieldQuery::validatorPositive;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+
+    // ** TO DO **
+    // Is this step correct?
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addBulkModulusNegative
+
+
+// ---------------------------------------------------------------------
+// Add positive side bulk modulus to auxiliary fields.
+void
+pylith::faults::AuxiliaryFactoryKinematicPoro::addBulkModulusPositive(void) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addBulkModulusPositive(void)");
+
+    const char* subfieldName = "bulk_modulus_positive";
+
+    const PylithReal bulkModulusScale = _normalizer->getPressureScale();
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = subfieldName;
+    description.scale = bulkModulusScale;
+    description.validator = pylith::topology::FieldQuery::validatorPositive;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+
+    // ** TO DO **
+    // Is this step correct?
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addBulkModulusPositive
+
+
+// ---------------------------------------------------------------------
+// Add negative side shear modulus to auxiliary fields.
+void
+pylith::faults::AuxiliaryFactoryKinematicPoro::addShearModulusNegative(void) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addShearModulusNegative(void)");
+
+    const char* subfieldName = "shear_modulus_negative";
+
+    const PylithReal shearModulusScale = _normalizer->getPressureScale();
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = subfieldName;
+    description.scale = shearModulusScale;
+    description.validator = pylith::topology::FieldQuery::validatorPositive;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+
+    // ** TO DO **
+    // Is this step correct?
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addShearModulusNegative
+
+
+// ---------------------------------------------------------------------
+// Add positive side shear modulus to auxiliary fields.
+void
+pylith::faults::AuxiliaryFactoryKinematicPoro::addShearModulusPositive(void) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addShearModulusPositive(void)");
+
+    const char* subfieldName = "shear_modulus_positive";
+
+    const PylithReal shearModulusScale = _normalizer->getPressureScale();
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = subfieldName;
+    description.scale = shearModulusScale;
+    description.validator = pylith::topology::FieldQuery::validatorPositive;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+
+    // ** TO DO **
+    // Is this step correct?
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addShearModulusPositive
+
+
+// ---------------------------------------------------------------------
 // Add body force subfield to auxiliary fields.
 void
-pylith::faults::AuxiliaryFactoryKinematic::addBodyForce(void) {
+pylith::faults::AuxiliaryFactoryKinematicPoro::addBodyForce(void) {
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addBodyForce(void)");
 
@@ -513,7 +674,7 @@ pylith::faults::AuxiliaryFactoryKinematic::addBodyForce(void) {
 // ---------------------------------------------------------------------
 // Add source to auxiliary fields.
 void
-pylith::faults::AuxiliaryFactoryKinematic::addSource(void) {
+pylith::faults::AuxiliaryFactoryKinematicPoro::addSource(void) {
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addSource(void)");
 
@@ -541,6 +702,35 @@ pylith::faults::AuxiliaryFactoryKinematic::addSource(void) {
 
     PYLITH_METHOD_END;
 } // addSource
+
+
+// ----------------------------------------------------------------------
+// Add constant pressure source subfield to auxiliary fields.
+void
+pylith::faults::AuxiliaryFactoryKinematicPoro::addConstantPressureSource(void) { // constantPressureSource
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addConstantPressureSource(void)");
+
+    const char *subfieldName = "constant_pressure_source";
+    const PylithReal pressureScale = _normalizer->getPressureScale();
+    const PylithReal constantPressureSourceScale = pressureScale;
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = subfieldName;
+    description.scale = constantPressureSourceScale;
+    description.validator = pylith::topology::FieldQuery::validatorNonnegative;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+
+} // addConstantPressureSource
 
 
 // End of file

@@ -16,28 +16,28 @@
 // ----------------------------------------------------------------------
 //
 
-/** @file libsrc/faults/AuxiliaryFactoryKinematic.hh
+/** @file libsrc/faults/AuxiliaryFactoryKinematicPoro.hh
  *
  * @brief C++ helper class for setting up auxiliary subfields for faults.
  */
 
-#if !defined(pylith_faults_auxiliaryfactorykinematic_hh)
-#define pylith_faults_auxiliaryfactorykinematic_hh
+#if !defined(pylith_faults_auxiliaryfactorykinematicporo_hh)
+#define pylith_faults_auxiliaryfactorykinematicporo_hh
 
 #include "faultsfwd.hh" // forward declarations
 #include "pylith/feassemble/AuxiliaryFactory.hh" // ISA AuxiliaryFactory
 
-class pylith::faults::AuxiliaryFactoryKinematic : public pylith::feassemble::AuxiliaryFactory {
+class pylith::faults::AuxiliaryFactoryKinematicPoro : public pylith::feassemble::AuxiliaryFactory {
     friend class TestAuxiliaryFactoryKinematic; // unit testing
 
     // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
 
     /// Default constructor.
-    AuxiliaryFactoryKinematic(void);
+    AuxiliaryFactoryKinematicPoro(void);
 
     /// Destructor.
-    ~AuxiliaryFactoryKinematic(void);
+    ~AuxiliaryFactoryKinematicPoro(void);
 
     /// Add fault strike direction subfield to auxiliary field.
     void addStrikeDir(void);
@@ -80,8 +80,23 @@ public:
     /// Add betaSigma to auxiliary field.
     void addBetaSigma(void);
 
+    /// Add fault permeability to auxiliary field.
+    void addFaultPermeability(void);
+
     /// Add fluid viscosity to auxiliary field.
     void addFluidViscosity(void);
+
+    /// Add negative side bulk modulus to auxiliary field.
+    void addBulkModulusNegative(void);
+
+    /// Add positive side bulk modulus to auxiliary field.
+    void addBulkModulusPositive(void);
+
+    /// Add negative side shear modulus to auxiliary field.
+    void addShearModulusNegative(void);
+
+    /// Add positive side shear modulus to auxiliary field.
+    void addShearModulusPositive(void);
 
     /// Add body force subfield to auxiliary fields.
     void addBodyForce(void);
@@ -89,14 +104,17 @@ public:
     /// Add reference source subfield to auxiliary fields.
     void addSource(void);
 
+    /// Add constant pressure sourcesubfield to auxiliary fields.
+    void addConstantPressureSource(void);
+
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
 
-    AuxiliaryFactoryKinematic(const AuxiliaryFactoryKinematic &); ///< Not implemented.
-    const AuxiliaryFactoryKinematic& operator=(const AuxiliaryFactoryKinematic&); ///< Not implemented
+    AuxiliaryFactoryKinematicPoro(const AuxiliaryFactoryKinematicPoro &); ///< Not implemented.
+    const AuxiliaryFactoryKinematicPoro& operator=(const AuxiliaryFactoryKinematicPoro&); ///< Not implemented
 
-}; // class AuxiliaryFactoryKinematic
+}; // class AuxiliaryFactoryKinematicPoro
 
-#endif // pylith_faults_auxiliaryfactorykinematic_hh
+#endif // pylith_faults_auxiliaryfactorykinematicporo_hh
 
 // End of file
