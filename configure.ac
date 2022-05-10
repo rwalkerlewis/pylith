@@ -274,6 +274,7 @@ AC_CONFIG_FILES([Makefile
 		examples/strikeslip-2d/Makefile
 		examples/subduction-2d/Makefile
 		examples/subduction-3d/Makefile
+		examples/poro_fault_ss-2d/Makefile
 		examples/troubleshooting-2d/Makefile
 		examples/meshing-cubit/Makefile
 		examples/meshing-cubit/surface-nurbs/Makefile

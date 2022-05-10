@@ -15,20 +15,27 @@
 #
 # ----------------------------------------------------------------------
 
+dist_noinst_PYTHON = \
+	generate_gmsh.py
+
+
 dist_noinst_DATA = \
-	README.md
+	README.md \
+	mesh_tri.msh \
+	geometry.jou \
+	mesh_tri.jou \
+	mesh_quad.jou \
+	gradient.jou \
+	createbc.jou \
+	mesh_tri.exo \
+	mesh_quad.exo \
+	pylithapp.cfg \
+	step01_slip.cfg \
+	step02_slip_velbc.cfg \
+	step03_multislip_velbc.cfg \
+	disprate_bc_xneg.spatialdb \
+	disprate_bc_xpos.spatialdb \
+	viz/plot_dispwarp.py
 
-SUBDIRS = \
-	barwaves-2d \
-	box-2d \
-	box-3d \
-	meshing-cubit \
-	reverse-2d \
-	strikeslip-2d \
-	subduction-2d \
-	subduction-3d \
-	troubleshooting-2d \
-	poro_fault_ss-2d
 
-
-# End of file 
+# End of file

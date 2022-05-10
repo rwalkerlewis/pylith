@@ -30,8 +30,8 @@ def eqsrcFactory(name):
     """Factory for earthquake source items.
     """
     from pythia.pyre.inventory import facility
-    from .KinSrcStep import KinSrcStep
-    return facility(name, family="eq_kinematic_src", factory=KinSrcStep)
+    from .KinSrcPoroStep import KinSrcPoroStep
+    return facility(name, family="eq_kinematic_src", factory=KinSrcPoroStep)
 
 
 class FaultCohesiveKinPoro(FaultCohesive, ModuleFaultCohesiveKinPoro):
@@ -43,16 +43,13 @@ class FaultCohesiveKinPoro(FaultCohesive, ModuleFaultCohesiveKinPoro):
 
     import pythia.pyre.inventory
 
-    from .SingleRupture import SingleRupture
-    eqRuptures = pythia.pyre.inventory.facilityArray("eq_ruptures", itemFactory=eqsrcFactory, factory=SingleRupture)
+    from .SingleRupturePoro import SingleRupturePoro
+    eqRuptures = pythia.pyre.inventory.facilityArray("eq_ruptures", itemFactory=eqsrcFactory, factory=SingleRupturePoro)
     eqRuptures.meta['tip'] = "Kinematic earthquake sources information."
 
     from pylith.utils.NullComponent import NullComponent
-    auxiliaryFieldDB = pythia.pyre.inventory.facility("db_auxiliary_field", family="spatial_database", factory=NullComponent)
-
-    #from pylith.meshio.OutputFaultKin import OutputFaultKin
-    #outputManager = pythia.pyre.inventory.facility("output", family="output_manager", factory=OutputFaultKin)
-    #output.meta['tip'] = "Output manager associated with fault information."
+    auxFieldDB = pythia.pyre.inventory.facility("db_auxiliary_field", family="spatial_database", factory=NullComponent)
+    auxFieldDB.meta['tip'] = "Database for fault thickness, porosity, beta_p, beta_sigma, permeability, fluid viscosity, and slip."
 
     def __init__(self, name="faultcohesivekinporo"):
         """Initialize configuration.
@@ -66,15 +63,17 @@ class FaultCohesiveKinPoro(FaultCohesive, ModuleFaultCohesiveKinPoro):
         from pylith.mpi.Communicator import mpi_comm_world
         comm = mpi_comm_world()
         if 0 == comm.rank:
-            self._info.log("Pre-initializing fault '%s'." % self.label)
+            self._info.log("Pre-initializing fault '%s'." % self.labelName)
 
         FaultCohesive.preinitialize(self, problem)
 
         for eqsrc in self.eqRuptures.components():
             eqsrc.preinitialize()
+        print(self.eqRuptures.components())
         ModuleFaultCohesiveKinPoro.setEqRuptures(
             self, self.eqRuptures.inventory.facilityNames(), self.eqRuptures.components())
 
+        ModuleFaultCohesiveKinPoro.auxFieldDB(self, self.auxFieldDB)
         return
 
     def verifyConfiguration(self):
@@ -94,8 +93,6 @@ class FaultCohesiveKinPoro(FaultCohesive, ModuleFaultCohesiveKinPoro):
         for eqsrc in self.eqRuptures.components():
             eqsrc.finalize()
         FaultCohesive.finalize(self)
-        # self.output.close()
-        # self.output.finalize()
         return
 
     def _configure(self):
