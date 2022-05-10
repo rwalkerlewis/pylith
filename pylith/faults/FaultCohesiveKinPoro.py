@@ -45,7 +45,7 @@ class FaultCohesiveKinPoro(FaultCohesive, ModuleFaultCohesiveKinPoro):
 
     from .SingleRupturePoro import SingleRupturePoro
     eqRuptures = pythia.pyre.inventory.facilityArray("eq_ruptures", itemFactory=eqsrcFactory, factory=SingleRupturePoro)
-    eqRuptures.meta['tip'] = "Kinematic earthquake sources information."
+    eqRuptures.meta['tip'] = "Kinematic poroelastic earthquake sources information."
 
     from pylith.utils.NullComponent import NullComponent
     auxFieldDB = pythia.pyre.inventory.facility("db_auxiliary_field", family="spatial_database", factory=NullComponent)
@@ -69,7 +69,6 @@ class FaultCohesiveKinPoro(FaultCohesive, ModuleFaultCohesiveKinPoro):
 
         for eqsrc in self.eqRuptures.components():
             eqsrc.preinitialize()
-        print(self.eqRuptures.components())
         ModuleFaultCohesiveKinPoro.setEqRuptures(
             self, self.eqRuptures.inventory.facilityNames(), self.eqRuptures.components())
 
