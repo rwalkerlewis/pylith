@@ -12,22 +12,14 @@
 # See COPYING for license information.
 #
 # ----------------------------------------------------------------------
-#
-# @file pylith/faults/FaultCohesiveKinPoro.py
-#
-# @brief Python object for a poroelastic fault surface with kinematic
-# (prescribed) slip, fluid diffusion implemented with cohesive elements.
-#
-# Factory: fault
 
 from .FaultCohesive import FaultCohesive
 from .faults import FaultCohesiveKinPoro as ModuleFaultCohesiveKinPoro
 
-# ITEM FACTORIES ///////////////////////////////////////////////////////
-
 
 def eqsrcFactory(name):
-    """Factory for earthquake source items.
+    """
+    Factory for earthquake source items.
     """
     from pythia.pyre.inventory import facility
     from .KinSrcPoroStep import KinSrcPoroStep
@@ -40,6 +32,16 @@ class FaultCohesiveKinPoro(FaultCohesive, ModuleFaultCohesiveKinPoro):
 
     FACTORY: fault
     """
+    DOC_CONFIG = {
+        """
+        @file pylith/faults/FaultCohesiveKinPoro.py
+        
+        @brief Python object for a poroelastic fault surface with kinematic
+        (prescribed) slip, fluid diffusion implemented with cohesive elements.
+        
+        Factory: fault
+        """
+    }  
 
     import pythia.pyre.inventory
 

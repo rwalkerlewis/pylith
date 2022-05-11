@@ -84,18 +84,6 @@ public:
      */
     bool useSource(void) const;
 
-    /** Include constant pressure source?
-     *
-     * @param[in] value Flag indicating to include constant pressure source term.
-     */
-    void useConstantPressureSource(const bool value);
-
-    /** Include constant pressure source?
-     *
-     * @returns True if including constant pressure source term, false otherwise.
-     */
-    bool useConstantPressureSource(void) const;
-
     /** Verify configuration is acceptable.
      *
      * @param[in] solution Solution field.

@@ -130,9 +130,9 @@ pylith::faults::FaultCohesiveKinPoro::deallocate(void) {
 // ---------------------------------------------------------------------------------------------------------------------
 // Set kinematic earthquake ruptures.
 void
-pylith::faults::FaultCohesiveKinPoro::setEqRuptures(const char *const *names,
+pylith::faults::FaultCohesiveKinPoro::setEqRuptures(const char* const * names,
                                                     const int numNames,
-                                                    KinSrcPoro **ruptures,
+                                                    KinSrcPoro** ruptures,
                                                     const int numRuptures) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("setEqRuptures(names=" << names << ", numNames=" << numNames << ", ruptures=" << ruptures << ", numRuptures=" << numRuptures << ")");

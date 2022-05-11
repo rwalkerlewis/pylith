@@ -47,7 +47,7 @@ public:
                 (const char* const* names,
                  const int numNames)
             };
-            void setEqRuptures(const char* const* names,
+            void setEqRuptures(const char* const * names,
                                const int numNames,
                                pylith::faults::KinSrc** ruptures,
                                const int numRuptures);
