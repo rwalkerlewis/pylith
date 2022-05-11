@@ -13,8 +13,8 @@
 #
 # ----------------------------------------------------------------------
 
-from .FaultCohesive import FaultCohesive
-from .faults import FaultCohesiveKinPoro as ModuleFaultCohesiveKinPoro
+from .FaultCohesivePoro import FaultCohesivePoro
+from .faults import FaultCohesivePoroKin as ModuleFaultCohesivePoroKin
 
 
 def eqsrcFactory(name):
@@ -26,7 +26,7 @@ def eqsrcFactory(name):
     return facility(name, family="eq_kinematic_src", factory=KinSrcPoroStep)
 
 
-class FaultCohesiveKinPoro(FaultCohesive, ModuleFaultCohesiveKinPoro):
+class FaultCohesivePoroKin(FaultCohesivePoro, ModuleFaultCohesivePoroKin):
     """Python object for a fault surface with kinematic (prescribed) slip and fluid diffusion
     implemented with cohesive elements.
 
@@ -34,7 +34,7 @@ class FaultCohesiveKinPoro(FaultCohesive, ModuleFaultCohesiveKinPoro):
     """
     DOC_CONFIG = {
         """
-        @file pylith/faults/FaultCohesiveKinPoro.py
+        @file pylith/faults/FaultCohesivePoroKin.py
         
         @brief Python object for a poroelastic fault surface with kinematic
         (prescribed) slip, fluid diffusion implemented with cohesive elements.
@@ -53,10 +53,10 @@ class FaultCohesiveKinPoro(FaultCohesive, ModuleFaultCohesiveKinPoro):
     auxFieldDB = pythia.pyre.inventory.facility("db_auxiliary_field", family="spatial_database", factory=NullComponent)
     auxFieldDB.meta['tip'] = "Database for fault thickness, porosity, beta_p, beta_sigma, permeability, fluid viscosity, and slip."
 
-    def __init__(self, name="faultcohesivekinporo"):
+    def __init__(self, name="faultcohesiveporokin"):
         """Initialize configuration.
         """
-        FaultCohesive.__init__(self, name)
+        FaultCohesivePoro.__init__(self, name)
         return
 
     def preinitialize(self, problem):
@@ -67,21 +67,21 @@ class FaultCohesiveKinPoro(FaultCohesive, ModuleFaultCohesiveKinPoro):
         if 0 == comm.rank:
             self._info.log("Pre-initializing fault '%s'." % self.labelName)
 
-        FaultCohesive.preinitialize(self, problem)
+        FaultCohesivePoro.preinitialize(self, problem)
 
         for eqsrc in self.eqRuptures.components():
             eqsrc.preinitialize()
-        ModuleFaultCohesiveKinPoro.setEqRuptures(
+        ModuleFaultCohesivePoroKin.setEqRuptures(
             self, self.eqRuptures.inventory.facilityNames(), self.eqRuptures.components())
 
-        ModuleFaultCohesiveKinPoro.auxFieldDB(self, self.auxFieldDB)
+        ModuleFaultCohesivePoroKin.auxFieldDB(self, self.auxFieldDB)
         return
 
     def verifyConfiguration(self):
         """Verify compatibility of configuration.
         """
-        FaultCohesive.verifyConfiguration(self)
-        ModuleFaultCohesiveKinPoro.verifyConfiguration(self, self.mesh())
+        FaultCohesivePoro.verifyConfiguration(self)
+        ModuleFaultCohesivePoroKin.verifyConfiguration(self, self.mesh())
 
         for eqsrc in self.eqRuptures.components():
             eqsrc.verifyConfiguration()
@@ -93,28 +93,28 @@ class FaultCohesiveKinPoro(FaultCohesive, ModuleFaultCohesiveKinPoro):
         """
         for eqsrc in self.eqRuptures.components():
             eqsrc.finalize()
-        FaultCohesive.finalize(self)
+        FaultCohesivePoro.finalize(self)
         return
 
     def _configure(self):
         """Setup members using inventory.
         """
-        FaultCohesive._configure(self)
+        FaultCohesivePoro._configure(self)
         return
 
     def _createModuleObj(self):
-        """Create handle to C++ FaultCohesiveKinPoro.
+        """Create handle to C++ FaultCohesivePoroKin.
         """
-        ModuleFaultCohesiveKinPoro.__init__(self)
+        ModuleFaultCohesivePoroKin.__init__(self)
         return
 
 
 # Factories
 
 def fault():
-    """Factory associated with FaultCohesiveKinPoro.
+    """Factory associated with FaultCohesivePoroKin.
     """
-    return FaultCohesiveKinPoro()
+    return FaultCohesivePoroKin()
 
 
 # End of file

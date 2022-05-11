@@ -23,7 +23,8 @@ subpkginclude_HEADERS = \
 	FaultCohesive.hh \
 	FaultCohesiveKin.hh \
 	FaultCohesiveImpulses.hh \
-	FaultCohesiveKinPoro.hh \
+	FaultCohesivePoro.hh \
+	FaultCohesivePoroKin.hh \
 	AuxiliaryFactoryKinematic.hh \
 	AuxiliaryFactoryKinematicPoro.hh \
 	KinSrc.hh \

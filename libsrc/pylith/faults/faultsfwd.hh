@@ -32,8 +32,10 @@ namespace pylith {
         class FaultCohesive;
         class FaultCohesiveKin;
         class FaultCohesiveImpulses;
-        class FaultCohesiveKinPoro;
         class AuxiliaryFactoryKinematic;
+
+        class FaultCohesivePoro;
+        class FaultCohesivePoroKin;        
         class AuxiliaryFactoryKinematicPoro;
 
         class KinSrc;
