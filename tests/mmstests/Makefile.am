@@ -18,8 +18,6 @@
 SUBDIRS = \
 	linearelasticity \
 	incompressibleelasticity \
-	faults \
-	faultsTrivial
-
+	faults 
 
 # End of file 
