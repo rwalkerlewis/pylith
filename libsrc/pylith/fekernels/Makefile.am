@@ -39,7 +39,7 @@ subpkginclude_HEADERS = \
 	IsotropicLinearPoroelasticity.hh \
 	Poroelasticity.hh \
 	WellboreSource.hh \
-	RickerWavelet.hh \ 
+	RickerWavelet.hh \
 	GaussianWavelet.hh
 
 noinst_HEADERS =
