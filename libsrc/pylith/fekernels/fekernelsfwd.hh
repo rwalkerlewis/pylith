@@ -27,8 +27,10 @@
 #if !defined(pylith_fekernels_fekernelsfwd_hh)
 #define pylith_fekernels_fekernelsfwd_hh
 
-namespace pylith {
-    namespace fekernels {
+namespace pylith
+{
+    namespace fekernels
+    {
         class Solution;
         class DispVel;
 
@@ -72,7 +74,7 @@ namespace pylith {
         class AbsorbingDampers;
 
         class FaultCohesiveKin;
-        class FaultCohesivePoroKin;
+        class FaultCohesiveKinPoro;
 
         class BoundaryDirections;
 

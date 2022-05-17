@@ -16,31 +16,31 @@
 // ----------------------------------------------------------------------
 //
 
-/** @file libsrc/faults/FaultCohesivePoroKin.hh
+/** @file libsrc/faults/FaultCohesiveKinPoro.hh
  *
  * @brief C++ implementation for a fault surface with kinematic
  * (prescribed) slip implemented with cohesive elements.
  */
 
-#if !defined(pylith_faults_faultcohesiveporokin_hh)
-#define pylith_faults_faultcohesiveporokin_hh
+#if !defined(pylith_faults_faultcohesivekinporo_hh)
+#define pylith_faults_faultcohesivekinporo_hh
 
-#include "FaultCohesivePoro.hh" // ISA FaultCohesivePoro
+#include "FaultCohesive.hh" // ISA FaultCohesive
 
 #include <string> // HASA std::string
-#include <map> // HASA std::map
+#include <map>    // HASA std::map
 
-class pylith::faults::FaultCohesivePoroKin : public pylith::faults::FaultCohesivePoro {
-    friend class TestFaultCohesivePoroKin; // unit testing
+class pylith::faults::FaultCohesiveKinPoro : public pylith::faults::FaultCohesive
+{
+    friend class TestFaultCohesiveKinPoro; // unit testing
 
     // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
-
     /// Default constructor.
-    FaultCohesivePoroKin(void);
+    FaultCohesiveKinPoro(void);
 
     /// Destructor.
-    ~FaultCohesivePoroKin(void);
+    ~FaultCohesiveKinPoro(void);
 
     /// Deallocate PETSc and local data structures.
     void deallocate(void);
@@ -52,16 +52,16 @@ public:
      * @param ruptures Array of kinematic earthquake ruptures.
      * @param numRuptures Number of earthquake ruptures.
      */
-    void setEqRuptures(const char* const* names,
+    void setEqRuptures(const char *const *names,
                        const int numNames,
-                       KinSrcPoro** ruptures,
+                       KinSrcPoro **ruptures,
                        const int numRuptures);
 
     /** Verify configuration is acceptable.
      *
      * @param[in] solution Solution field.
      */
-    void verifyConfiguration(const pylith::topology::Field& solution) const;
+    void verifyConfiguration(const pylith::topology::Field &solution) const;
 
     /** Create auxiliary field.
      *
@@ -70,32 +70,38 @@ public:
      *
      * @returns Auxiliary field if applicable, otherwise NULL.
      */
-    pylith::topology::Field* createAuxiliaryField(const pylith::topology::Field& solution,
-                                                  const pylith::topology::Mesh& domainMesh);
+    pylith::topology::Field *createAuxiliaryField(const pylith::topology::Field &solution,
+                                                  const pylith::topology::Mesh &domainMesh);
 
     /** Update auxiliary subfields at beginning of time step.
      *
      * @param[out] auxiliaryField Auxiliary field.
      * @param[in] t Current time.
      */
-    void updateAuxiliaryField(pylith::topology::Field* auxiliaryField,
+    void updateAuxiliaryField(pylith::topology::Field *auxiliaryField,
                               const double t);
+
+    /** Create constraint and set kernels.
+     *
+     * @param[in] solution Solution field.
+     * @returns Constraint if applicable, otherwise NULL.
+     */
+    std::vector<pylith::feassemble::Constraint *> createConstraints(const pylith::topology::Field &solution);
 
     // PROTECTED METHODS //////////////////////////////////////////////////////////////////////////
 protected:
-
     /** Get auxiliary factory associated with physics.
      *
      * @return Auxiliary factory for physics object.
      */
-    pylith::feassemble::AuxiliaryFactory* _getAuxiliaryFactory(void);
+    pylith::feassemble::AuxiliaryFactory *_getAuxiliaryFactory(void);
 
     /** Update slip subfield in auxiliary field at beginning of time step.
      *
      * @param[out] auxiliaryField Auxiliary field.
      * @param[in] t Current time.
      */
-    void _updateSlip(pylith::topology::Field* auxiliaryField,
+    void _updateSlip(pylith::topology::Field *auxiliaryField,
                      const double t);
 
     /** Update slip rate subfield in auxiliary field at beginning of time step.
@@ -103,7 +109,7 @@ protected:
      * @param[out] auxiliaryField Auxiliary field.
      * @param[in] t Current time.
      */
-    void _updateSlipRate(pylith::topology::Field* auxiliaryField,
+    void _updateSlipRate(pylith::topology::Field *auxiliaryField,
                          const double t);
 
     /** Update slip acceleration subfield in auxiliary field at beginning of time step.
@@ -111,7 +117,7 @@ protected:
      * @param[out] auxiliaryField Auxiliary field.
      * @param[in] t Current time.
      */
-    void _updateSlipAcceleration(pylith::topology::Field* auxiliaryField,
+    void _updateSlipAcceleration(pylith::topology::Field *auxiliaryField,
                                  const double t);
 
     /** Set kernels for residual.
@@ -119,38 +125,35 @@ protected:
      * @param[out] integrator Integrator for material.
      * @param[in] solution Solution field.
      */
-    void _setKernelsResidual(pylith::feassemble::IntegratorInterface* integrator,
-                             const pylith::topology::Field& solution) const;
+    void _setKernelsResidual(pylith::feassemble::IntegratorInterface *integrator,
+                             const pylith::topology::Field &solution) const;
 
     /** Set kernels for Jacobian.
      *
      * @param[out] integrator Integrator for material.
      * @param[in] solution Solution field.
      */
-    void _setKernelsJacobian(pylith::feassemble::IntegratorInterface* integrator,
-                             const pylith::topology::Field& solution) const;
+    void _setKernelsJacobian(pylith::feassemble::IntegratorInterface *integrator,
+                             const pylith::topology::Field &solution) const;
 
     // PROTECTED TYPEDEFS /////////////////////////////////////////////////////////////////////////
 protected:
-
-    typedef std::map<std::string, KinSrcPoro*> srcs_type;
+    typedef std::map<std::string, KinSrcPoro *> srcs_type;
 
     // PROTECTED MEMBERS //////////////////////////////////////////////////////////////////////////
 protected:
-
-    pylith::faults::AuxiliaryFactoryKinematicPoro* _auxiliaryFactory; ///< Factory for auxiliary subfields.
-    srcs_type _ruptures; ///< Array of kinematic earthquake ruptures.
-    PetscVec _slipVecRupture; ///< PETSc local Vec to hold slip for one kinematic rupture.
-    PetscVec _slipVecTotal; ///< PETSc local Vec to hold slip for all kinematic ruptures.
+    pylith::faults::AuxiliaryFactoryKinematicPoro *_auxiliaryFactory; ///< Factory for auxiliary subfields.
+    srcs_type _ruptures;                                              ///< Array of kinematic earthquake ruptures.
+    PetscVec _slipVecRupture;                                         ///< PETSc local Vec to hold slip for one kinematic rupture.
+    PetscVec _slipVecTotal;                                           ///< PETSc local Vec to hold slip for all kinematic ruptures.
 
     // NOT IMPLEMENTED ////////////////////////////////////////////////////////////////////////////
 private:
+    FaultCohesiveKinPoro(const FaultCohesiveKinPoro &);                  ///< Not implemented
+    const FaultCohesiveKinPoro &operator=(const FaultCohesiveKinPoro &); ///< Not implemented.
 
-    FaultCohesivePoroKin(const FaultCohesivePoroKin&); ///< Not implemented
-    const FaultCohesivePoroKin& operator=(const FaultCohesivePoroKin&); ///< Not implemented.
+}; // class FaultCohesiveKinPoro
 
-}; // class FaultCohesivePoroKin
-
-#endif // pylith_faults_faultcohesiveporokin_hh
+#endif // pylith_faults_faultcohesivekinporo_hh
 
 // End of file

@@ -25,7 +25,7 @@ subpkginclude_HEADERS = \
 	DispVel.hh \
 	Elasticity.hh \
 	FaultCohesiveKin.hh \
-	FaultCohesivePoroKin.hh \
+	FaultCohesiveKinPoro.hh \
 	fekernelsfwd.hh \
 	IncompressibleElasticity.hh \
 	IsotropicLinearElasticity.hh \

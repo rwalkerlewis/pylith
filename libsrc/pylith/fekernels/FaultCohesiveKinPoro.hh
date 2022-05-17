@@ -16,7 +16,7 @@
  * ----------------------------------------------------------------------
  */
 
-/** @file libsrc/fekernels/FaultCohesivePoroKin.hh
+/** @file libsrc/fekernels/FaultCohesiveKinPoro.hh
  *
  * Kernels for poroelastic faults 3D fluid diffusion and prescribed slip.
  *
@@ -54,18 +54,18 @@
  * ======================================================================
  */
 
-#if !defined(pylith_fekernels_faultcohesiveporokin_hh)
-#define pylith_fekernels_faultcohesiveporokin_hh
+#if !defined(pylith_fekernels_faultcohesivekinporo_hh)
+#define pylith_fekernels_faultcohesivekinporo_hh
 
 // Include directives ---------------------------------------------------
 #include "fekernelsfwd.hh" // forward declarations
 
 #include "pylith/utils/types.hh"
 
-class pylith::fekernels::FaultCohesivePoroKin {
+class pylith::fekernels::FaultCohesiveKinPoro
+{
     // PUBLIC MEMBERS ///////////////////////////////////////////////////////
 public:
-
     /** Kernel interface.
      *
      * @param[in] dim Spatial dimension.
@@ -645,8 +645,8 @@ public:
                           const PylithScalar constants[],
                           PylithScalar Jf3[]);
 
-}; // FaultCohesivePoroKin
+}; // FaultCohesiveKinPoro
 
-#endif // pylith_fekernels_faultcohesiveporokin_hh
+#endif // pylith_fekernels_faultcohesivekinporo_hh
 
 /* End of file */

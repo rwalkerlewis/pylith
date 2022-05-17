@@ -31,12 +31,12 @@
 
 #include <string> // HASA std::string
 
-class pylith::faults::FaultCohesive : public pylith::problems::Physics {
+class pylith::faults::FaultCohesive : public pylith::problems::Physics
+{
     friend class TestFaultCohesive; // unit testing
 
     // PUBLIC METHODS /////////////////////////////////////////////////////////////////////////////
 public:
-
     /// Default constructor.
     FaultCohesive(void);
 
@@ -44,20 +44,19 @@ public:
     virtual ~FaultCohesive(void);
 
     /// Deallocate PETSc and local data structures.
-    virtual
-    void deallocate(void);
+    virtual void deallocate(void);
 
     /** Set name of label identifying cohesive cells.
      *
      * @param[in] value Name of label.
      */
-    void setCohesiveLabelName(const char* value);
+    void setCohesiveLabelName(const char *value);
 
     /** Get name of label identifying cohesive cells.
      *
      * @returns Name of label.
      */
-    const char* getCohesiveLabelName(void) const;
+    const char *getCohesiveLabelName(void) const;
 
     /** Set value of label identifying cohesive cells.
      *
@@ -75,13 +74,13 @@ public:
      *
      * @param[in] value Name of label of surface (from mesh generator).
      */
-    void setSurfaceLabelName(const char* value);
+    void setSurfaceLabelName(const char *value);
 
     /** Get name of label marking surface of interface.
      *
      * @returns Name of label of surface (from mesh generator).
      */
-    const char* getSurfaceLabelName(void) const;
+    const char *getSurfaceLabelName(void) const;
 
     /** Set value of label marking surface of interface.
      *
@@ -99,13 +98,13 @@ public:
      *
      * @param[in] value Name of label of buried surface edge (from mesh generator).
      */
-    void setBuriedEdgesLabelName(const char* value);
+    void setBuriedEdgesLabelName(const char *value);
 
     /** Get name of label marking buried edges of interface surface.
      *
      * @returns Name of label of buried surface edge (from mesh generator).
      */
-    const char* getBuriedEdgesLabelName(void) const;
+    const char *getBuriedEdgesLabelName(void) const;
 
     /** Set value of label marking buried edges of interface surface.
      *
@@ -135,21 +134,21 @@ public:
      *
      * @param mesh[in] PETSc mesh.
      */
-    void adjustTopology(pylith::topology::Mesh* const mesh);
+    void adjustTopology(pylith::topology::Mesh *const mesh);
 
     /** Create integrator and set kernels.
      *
      * @param[in] solution Solution field.
      * @returns Integrator if applicable, otherwise NULL.
      */
-    pylith::feassemble::Integrator* createIntegrator(const pylith::topology::Field& solution);
+    pylith::feassemble::Integrator *createIntegrator(const pylith::topology::Field &solution);
 
     /** Create constraint and set kernels.
      *
      * @param[in] solution Solution field.
      * @returns Constraint if applicable, otherwise NULL.
      */
-    std::vector<pylith::feassemble::Constraint*> createConstraints(const pylith::topology::Field& solution);
+    virtual std::vector<pylith::feassemble::Constraint *> createConstraints(const pylith::topology::Field &solution);
 
     /** Create derived field.
      *
@@ -158,17 +157,16 @@ public:
      *
      * @returns Derived field if applicable, otherwise NULL.
      */
-    pylith::topology::Field* createDerivedField(const pylith::topology::Field& solution,
-                                                const pylith::topology::Mesh& domainMesh);
+    pylith::topology::Field *createDerivedField(const pylith::topology::Field &solution,
+                                                const pylith::topology::Mesh &domainMesh);
 
     // PROTECTED METHODS //////////////////////////////////////////////////////////////////////////
 protected:
-
     /** Create single integratin patch for entire fault.
      *
      * @param[inout] integrator Integrator for fault interface.
      */
-    void _createIntegrationPatch(pylith::feassemble::IntegratorInterface* integrator);
+    void _createIntegrationPatch(pylith::feassemble::IntegratorInterface *integrator);
 
     /** Create integration patches associated with cohesive cells that have the same pairs of materials on the
      * two sides of the fault.
@@ -176,7 +174,7 @@ protected:
      * @param[inout] integrator Integrator for fault interface.
      * @param[in] dmSoln PETSc DM associated with solution.
      */
-    void _createIntegrationPatches(pylith::feassemble::IntegratorInterface* integrator,
+    void _createIntegrationPatches(pylith::feassemble::IntegratorInterface *integrator,
                                    const PetscDM dmSoln);
 
     /** Update kernel constants.
@@ -190,37 +188,33 @@ protected:
      * @param[out] integrator Integrator for material.
      * @param[in] solution Solution field.
      */
-    virtual
-    void _setKernelsResidual(pylith::feassemble::IntegratorInterface* integrator,
-                             const pylith::topology::Field& solution) const = 0;
+    virtual void _setKernelsResidual(pylith::feassemble::IntegratorInterface *integrator,
+                                     const pylith::topology::Field &solution) const = 0;
 
     /** Set kernels for Jacobian.
      *
      * @param[out] integrator Integrator for material.
      * @param[in] solution Solution field.
      */
-    virtual
-    void _setKernelsJacobian(pylith::feassemble::IntegratorInterface* integrator,
-                             const pylith::topology::Field& solution) const = 0;
+    virtual void _setKernelsJacobian(pylith::feassemble::IntegratorInterface *integrator,
+                                     const pylith::topology::Field &solution) const = 0;
 
     // PROTECTED MEMBERS //////////////////////////////////////////////////////////////////////////
 protected:
-
     PylithReal _refDir1[3]; ///< First choice reference direction used to compute boundary tangential directions.
     PylithReal _refDir2[3]; ///< Second choice reference direction used to compute boundary tangential directions.
 
     // PRIVATE METHODS ////////////////////////////////////////////////////////////////////////////
 private:
-
-    inline
-    static
-    PetscErrorCode _zero(PetscInt dim,
-                         PetscReal t,
-                         const PetscReal x[],
-                         PetscInt Nc,
-                         PetscScalar *u,
-                         void *ctx) {
-        for (int c = 0; c < Nc; ++c) {
+    inline static PetscErrorCode _zero(PetscInt dim,
+                                       PetscReal t,
+                                       const PetscReal x[],
+                                       PetscInt Nc,
+                                       PetscScalar *u,
+                                       void *ctx)
+    {
+        for (int c = 0; c < Nc; ++c)
+        {
             u[c] = 0.0;
         } // for
         return 0;
@@ -228,19 +222,17 @@ private:
 
     // PRIVATE MEMBERS ////////////////////////////////////////////////////////////////////////////
 private:
-
-    std::string _cohesiveLabelName; ///< Name of label for cohesive cells.
-    std::string _surfaceLabelName; ///< Name of label identifying points associated with fault.
+    std::string _cohesiveLabelName;    ///< Name of label for cohesive cells.
+    std::string _surfaceLabelName;     ///< Name of label identifying points associated with fault.
     std::string _buriedEdgesLabelName; ///< Name of label identifying buried edges of fault.
-    int _cohesiveLabelValue; ///< Value of label for cohesive cells.
-    int _surfaceLabelValue; ///< Value of label identifying points associated with fault.
-    int _buriedEdgesLabelValue; ///< Value of label identifying buried edges of fault.
+    int _cohesiveLabelValue;           ///< Value of label for cohesive cells.
+    int _surfaceLabelValue;            ///< Value of label identifying points associated with fault.
+    int _buriedEdgesLabelValue;        ///< Value of label identifying buried edges of fault.
 
     // NOT IMPLEMENTED ////////////////////////////////////////////////////////////////////////////
 private:
-
-    FaultCohesive(const FaultCohesive&); ///< Not implemented
-    const FaultCohesive& operator=(const FaultCohesive&); ///< Not implemented
+    FaultCohesive(const FaultCohesive &);                  ///< Not implemented
+    const FaultCohesive &operator=(const FaultCohesive &); ///< Not implemented
 
 }; // class FaultCohesive
 
