@@ -16,22 +16,22 @@
 // ----------------------------------------------------------------------
 //
 
-/** @file modulesrc/faults/FaultCohesivePoroKin.i
+/** @file modulesrc/faults/FaultCohesiveKinPoro.i
  *
- * @brief Python interface to C++ FaultCohesivePoroKin object.
+ * @brief Python interface to C++ FaultCohesiveKinPoro object.
  */
 
 namespace pylith {
     namespace faults {
-        class FaultCohesivePoroKin: public pylith::faults::FaultCohesive {
+        class FaultCohesiveKinPoro: public pylith::faults::FaultCohesive {
             // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////
 public:
 
             /// Default constructor.
-            FaultCohesivePoroKin(void);
+            FaultCohesiveKinPoro(void);
 
             /// Destructor.
-            virtual ~FaultCohesivePoroKin(void);
+            virtual ~FaultCohesiveKinPoro(void);
 
             /// Deallocate PETSc and local data structures.
             void deallocate(void);
@@ -103,7 +103,7 @@ protected:
             void _setKernelsJacobian(pylith::feassemble::IntegratorInterface* integrator,
                                      const pylith::topology::Field& solution) const;
 
-        }; // class FaultCohesivePoroKin
+        }; // class FaultCohesiveKinPoro
 
     } // faults
 } // pylith

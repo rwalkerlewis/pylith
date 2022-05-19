@@ -429,9 +429,9 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
                         break;
                     }
                 } // for
-            }     // if
-        }         // for
-    }             // for
+            } // if
+        } // for
+    } // for
 
     pylith::feassemble::ConstraintSimple *constraintLagrange = new pylith::feassemble::ConstraintSimple(this);
     assert(constraintLagrange);
@@ -512,9 +512,9 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
                         break;
                     }
                 } // for
-            }     // if
-        }         // for
-    }             // for
+            } // if
+        } // for
+    } // for
 
     pylith::feassemble::ConstraintSimple *constraintFaultPressure = new pylith::feassemble::ConstraintSimple(this);
     assert(constraintFaultPressure);
@@ -645,7 +645,7 @@ void pylith::faults::FaultCohesiveKinPoro::_updateSlipRate(pylith::topology::Fie
         {
             auxiliaryArray[slipRateOff + iDof] = slipRateArray[iSlipRate];
         } // for
-    }     // for
+    } // for
     err = VecRestoreArrayRead(_slipVecTotal, &slipRateArray);
     PYLITH_CHECK_ERROR(err);
 
@@ -748,42 +748,42 @@ void pylith::faults::FaultCohesiveKinPoro::_setKernelsResidual(pylith::feassembl
         // const PetscBdPointFunc f1e = NULL;
 
         // Pressure constraint and Fault_pressure constraint
-        PetscBdPointFunc f0p_neg = NULL;
-        PetscBdPointFunc f0p_pos = NULL;
-        PetscBdPointFunc f0p_fault = NULL;
-        PetscBdPointFunc f1p_neg = NULL;
-        PetscBdPointFunc f1p_pos = NULL;
-        PetscBdPointFunc f1p_fault = NULL;
+        PetscBdPointFunc f0p_neg =   pylith::fekernels::FaultCohesiveKinPoro::f0p_neg;
+        PetscBdPointFunc f0p_pos =   pylith::fekernels::FaultCohesiveKinPoro::f0p_pos;
+        PetscBdPointFunc f0p_fault = pylith::fekernels::FaultCohesiveKinPoro::f0p_fault;
+        PetscBdPointFunc f1p_neg =   NULL;
+        PetscBdPointFunc f1p_pos =   NULL;
+        PetscBdPointFunc f1p_fault = pylith::fekernels::FaultCohesiveKinPoro::f1p_fault;
 
-        const int bitBodyForce = _useBodyForce ? 0x1 : 0x0;
-        const int bitSource = _useSource ? 0x2 : 0x0;
-        const int bitUse = bitBodyForce | bitSource;
+        // const int bitBodyForce = _useBodyForce ? 0x1 : 0x0;
+        // const int bitSource = _useSource ? 0x2 : 0x0;
+        // const int bitUse = bitBodyForce | bitSource;
 
-        switch (bitUse)
-        {
-        case 0x0:
-            f0p_neg = pylith::fekernels::FaultCohesiveKinPoro::f0p_neg;
-            f0p_pos = pylith::fekernels::FaultCohesiveKinPoro::f0p_pos;
-            f0p_fault = pylith::fekernels::FaultCohesiveKinPoro::f0p_fault;
-            break;
-        case 0x1:
-            f0p_neg = pylith::fekernels::FaultCohesiveKinPoro::f0p_body_neg;
-            f0p_pos = pylith::fekernels::FaultCohesiveKinPoro::f0p_body_pos;
-            f0p_fault = pylith::fekernels::FaultCohesiveKinPoro::f0p_fault_body;
-            break;
-        case 0x2:
-            f0p_neg = pylith::fekernels::FaultCohesiveKinPoro::f0p_neg;
-            f0p_pos = pylith::fekernels::FaultCohesiveKinPoro::f0p_pos;
-            f0p_fault = pylith::fekernels::FaultCohesiveKinPoro::f0p_fault_source;
-            break;
-        case 0x3:
-            f0p_neg = pylith::fekernels::FaultCohesiveKinPoro::f0p_body_neg;
-            f0p_pos = pylith::fekernels::FaultCohesiveKinPoro::f0p_body_pos;
-            f0p_fault = pylith::fekernels::FaultCohesiveKinPoro::f0p_fault_body_source;
-            break;
-        default:
-            PYLITH_JOURNAL_LOGICERROR("Unknown case (bitUse=" << bitUse << ") for f0p f0p_fault residual kernels.");
-        } // switch
+        // switch (bitUse)
+        // {
+        // case 0x0:
+        //     f0p_neg = pylith::fekernels::FaultCohesiveKinPoro::f0p_neg;
+        //     f0p_pos = pylith::fekernels::FaultCohesiveKinPoro::f0p_pos;
+        //     f0p_fault = pylith::fekernels::FaultCohesiveKinPoro::f0p_fault;
+        //     break;
+        // case 0x1:
+        //     f0p_neg = pylith::fekernels::FaultCohesiveKinPoro::f0p_body_neg;
+        //     f0p_pos = pylith::fekernels::FaultCohesiveKinPoro::f0p_body_pos;
+        //     f0p_fault = pylith::fekernels::FaultCohesiveKinPoro::f0p_fault_body;
+        //     break;
+        // case 0x2:
+        //     f0p_neg = pylith::fekernels::FaultCohesiveKinPoro::f0p_neg;
+        //     f0p_pos = pylith::fekernels::FaultCohesiveKinPoro::f0p_pos;
+        //     f0p_fault = pylith::fekernels::FaultCohesiveKinPoro::f0p_fault_source;
+        //     break;
+        // case 0x3:
+        //     f0p_neg = pylith::fekernels::FaultCohesiveKinPoro::f0p_body_neg;
+        //     f0p_pos = pylith::fekernels::FaultCohesiveKinPoro::f0p_body_pos;
+        //     f0p_fault = pylith::fekernels::FaultCohesiveKinPoro::f0p_fault_body_source;
+        //     break;
+        // default:
+        //     PYLITH_JOURNAL_LOGICERROR("Unknown case (bitUse=" << bitUse << ") for f0p f0p_fault residual kernels.");
+        // } // switch
 
         // Fault slip constraint equation.
         const PetscBdPointFunc f0l = pylith::fekernels::FaultCohesiveKinPoro::f0l_u;
