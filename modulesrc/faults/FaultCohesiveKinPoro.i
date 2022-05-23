@@ -49,7 +49,7 @@ public:
             };
             void setEqRuptures(const char* const * names,
                                const int numNames,
-                               pylith::faults::KinSrc** ruptures,
+                               pylith::faults::KinSrcPoro** ruptures,
                                const int numRuptures);
 
             %clear(const char* const* names, const int numNames);
