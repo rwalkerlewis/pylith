@@ -33,15 +33,38 @@ class FaultCohesiveKinPoro(FaultCohesive, ModuleFaultCohesiveKinPoro):
     FACTORY: fault
     """
     DOC_CONFIG = {
-        """
-        @file pylith/faults/FaultCohesiveKinPoro.py
-        
-        @brief Python object for a poroelastic fault surface with kinematic
-        (prescribed) slip, fluid diffusion implemented with cohesive elements.
-        
-        Factory: fault
-        """
-    }  
+        "cfg": """
+            # Specify prescribed slip on a fault via two earthquakes in a 2D domain.
+            [pylithapp.problem.interfaces.fault]
+            label = fault
+            edge = fault_edge
+
+            observers.observer.data_fields = [slip]
+
+            # Two earthquakes with different slip time functions.
+            eq_ruptures = [quake10, quake50]
+            quake10 = pylith.faults.KinSrcPoroBrune
+            quake50 = pylith.faults.KinSrcPoroLiuCosine
+
+            # Rupture parameters for the first earthquake.
+            [pylithapp.problem.interfaces.fault.eq_ruptures.quake10]
+            origin_time = 10*year
+
+            db_auxiliary_field = spatialdata.spatialdb.UniformDB
+            db_auxiliary_field.description = Fault rupture auxiliary field spatial database
+            db_auxiliary_field.values = [initiation_time, final_slip_left_lateral, final_slip_opening]
+            db_auxiliary_field.data = [0.0*s, -2.0*m, 0.0*m]
+
+            # Rupture parameters for the second earthquake.
+            [pylithapp.problem.interfaces.fault.eq_ruptures.quake50]
+            origin_time = 50*year
+            
+            db_auxiliary_field = spatialdata.spatialdb.UniformDB
+            db_auxiliary_field.description = Fault rupture auxiliary field spatial database
+            db_auxiliary_field.values = [initiation_time, final_slip_left_lateral, final_slip_opening]
+            db_auxiliary_field.data = [0.0*s, -1.0*m, 0.0*m]
+            """
+    }
 
     import pythia.pyre.inventory
 
@@ -74,7 +97,7 @@ class FaultCohesiveKinPoro(FaultCohesive, ModuleFaultCohesiveKinPoro):
         ModuleFaultCohesiveKinPoro.setEqRuptures(
             self, self.eqRuptures.inventory.facilityNames(), self.eqRuptures.components())
 
-        ModuleFaultCohesiveKinPoro.auxFieldDB(self, self.auxFieldDB)
+        # ModuleFaultCohesiveKinPoro.auxFieldDB(self, self.auxFieldDB)
         return
 
     def verifyConfiguration(self):

@@ -421,7 +421,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_neg(const PylithInt dim,
 
     assert(numS >= 5);
     assert(a);
-    assert(numA >= 9);
+    assert(numA >= 5);
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
     const PylithInt i_fault_permeability = 4;
@@ -475,7 +475,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_pos(const PylithInt dim,
 
     assert(numS >= 5);
     assert(a);
-    assert(numA >= 9);
+    assert(numA >= 5);
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
     const PylithInt i_fault_permeability = 4;
@@ -529,7 +529,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_body_neg(const PylithInt dim,
 
     assert(numS >= 5);
     assert(a);
-    assert(numA >= 9);
+    assert(numA >= 5);
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
     const PylithInt i_fault_permeability = 4;
@@ -591,7 +591,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_body_pos(const PylithInt dim,
 
     assert(numS >= 5);
     assert(a);
-    assert(numA >= 9);
+    assert(numA >= 5);
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
     const PylithInt i_fault_permeability = 4;
@@ -653,7 +653,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0l_u(const PylithInt dim,
     assert(f0);
 
     assert(numS >= 5);
-    assert(numA >= 6);
+    assert(numA >= 5);
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
     const PylithInt i_slip = numA - 1;
@@ -815,7 +815,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_fault(const PylithInt dim,
     assert(f0);
 
     assert(numS >= 5);
-    assert(numA >= 9);
+    assert(numA >= 5);
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
     const PylithInt i_disp_x = 0;
@@ -853,10 +853,10 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_fault(const PylithInt dim,
 
     // ** TO DO **
     // Pull out drained bulk modulus and shear modulus from the surrounding bulks
-    const PylithScalar bulkModulusN = a[aOff[i_bulk_modulus_negative]];
-    const PylithScalar bulkModulusP = a[aOff[i_bulk_modulus_positive]];
-    const PylithScalar shearModulusN = a[aOff[i_shear_modulus_negative]];
-    const PylithScalar shearModulusP = a[aOff[i_shear_modulus_positive]];
+    // const PylithScalar bulkModulusN = a[aOff[i_bulk_modulus_negative]];
+    // const PylithScalar bulkModulusP = a[aOff[i_bulk_modulus_positive]];
+    // const PylithScalar shearModulusN = a[aOff[i_shear_modulus_negative]];
+    // const PylithScalar shearModulusP = a[aOff[i_shear_modulus_positive]];
 
     // Strain components
     const PylithInt sOffDispN_x = sOff_x[i_disp_x];
@@ -942,7 +942,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_fault_body(const PylithInt dim
     assert(f0);
 
     assert(numS >= 5);
-    assert(numA >= 9);
+    assert(numA >= 5);
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
     const PylithInt i_disp_x = 0;
@@ -953,10 +953,6 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_fault_body(const PylithInt dim
     const PylithInt i_beta_sigma = 3;
     const PylithInt i_fault_permeabilility = 4;
     const PylithInt i_fluid_viscosity = 5;
-    const PylithInt i_bulk_modulus_negative = 6;
-    const PylithInt i_shear_modulus_negative = 7;
-    const PylithInt i_bulk_modulus_positive = 8;
-    const PylithInt i_shear_modulus_positive = 9;
     const PylithInt i_body_force = numA - 3;
 
     const PylithScalar porosity = a[aOff[i_porosity]];
@@ -997,10 +993,10 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_fault_body(const PylithInt dim
 
     // ** TO DO **
     // Pull out drained bulk modulus and shear modulus from the surrounding bulks
-    const PylithScalar bulkModulusN = a[aOff[i_bulk_modulus_negative]];
-    const PylithScalar bulkModulusP = a[aOff[i_bulk_modulus_positive]];
-    const PylithScalar shearModulusN = a[aOff[i_shear_modulus_negative]];
-    const PylithScalar shearModulusP = a[aOff[i_shear_modulus_positive]];
+    // const PylithScalar bulkModulusN = a[aOff[i_bulk_modulus_negative]];
+    // const PylithScalar bulkModulusP = a[aOff[i_bulk_modulus_positive]];
+    // const PylithScalar shearModulusN = a[aOff[i_shear_modulus_negative]];
+    // const PylithScalar shearModulusP = a[aOff[i_shear_modulus_positive]];
 
     // Strain components
     const PylithInt sOffDispN_x = sOff_x[i_disp_x];
@@ -1087,7 +1083,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_fault_source(const PylithInt d
     assert(f0);
 
     assert(numS >= 5);
-    assert(numA >= 9);
+    assert(numA >= 5);
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
     const PylithInt i_disp_x = 0;
@@ -1098,10 +1094,6 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_fault_source(const PylithInt d
     const PylithInt i_beta_sigma = 3;
     const PylithInt i_fault_permeability = 4;
     const PylithInt i_fluid_viscosity = 5;
-    const PylithInt i_bulk_modulus_negative = 6;
-    const PylithInt i_shear_modulus_negative = 7;
-    const PylithInt i_bulk_modulus_positive = 8;
-    const PylithInt i_shear_modulus_positive = 9;
     const PylithInt i_body_force = numA - 3;
     const PylithInt i_source = numA - 2;
 
@@ -1127,10 +1119,10 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_fault_source(const PylithInt d
 
     // ** TO DO **
     // Pull out drained bulk modulus and shear modulus from the surrounding bulks
-    const PylithScalar bulkModulusN = a[aOff[i_bulk_modulus_negative]];
-    const PylithScalar bulkModulusP = a[aOff[i_bulk_modulus_positive]];
-    const PylithScalar shearModulusN = a[aOff[i_shear_modulus_negative]];
-    const PylithScalar shearModulusP = a[aOff[i_shear_modulus_positive]];
+    // const PylithScalar bulkModulusN = a[aOff[i_bulk_modulus_negative]];
+    // const PylithScalar bulkModulusP = a[aOff[i_bulk_modulus_positive]];
+    // const PylithScalar shearModulusN = a[aOff[i_shear_modulus_negative]];
+    // const PylithScalar shearModulusP = a[aOff[i_shear_modulus_positive]];
 
     // Strain components
     const PylithInt sOffDispN_x = sOff_x[i_disp_x];
@@ -1218,7 +1210,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_fault_body_source(const Pylith
     assert(f0);
 
     assert(numS >= 5);
-    assert(numA >= 9);
+    assert(numA >= 5);
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
     const PylithInt i_disp_x = 0;
@@ -1354,7 +1346,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::f1p_fault(const PylithInt dim,
     assert(f1);
 
     assert(numS >= 5);
-    assert(numA >= 9);
+    assert(numA >= 5);
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
 
@@ -1468,7 +1460,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::f1p_fault_body(const PylithInt dim
     assert(f1);
 
     assert(numS >= 5);
-    assert(numA >= 9);
+    assert(numA >= 5);
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
 
@@ -1581,7 +1573,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::Jf0ul_neg(const PylithInt dim,
                                                         PylithScalar Jf0[])
 {
     assert(numS >= 5);
-    assert(numA >= 10);
+    assert(numA >= 5);
     assert(Jf0);
     assert(sOff);
     assert(aOff);
@@ -1628,7 +1620,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::Jf0ul_pos(const PylithInt dim,
                                                         PylithScalar Jf0[])
 {
     assert(numS >= 5);
-    assert(numA >= 10);
+    assert(numA >= 5);
     assert(Jf0);
     assert(sOff);
     assert(aOff);
@@ -1742,7 +1734,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fp(const PylithInt dim,
                                                       PylithScalar Jf0[])
 {
     assert(numS >= 5);
-    assert(numA >= 10);
+    assert(numA >= 5);
     assert(Jf0);
     assert(sOff);
     assert(aOff);
@@ -1795,7 +1787,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp(const PylithInt dim,
                                                       PylithScalar Jf3[])
 {
     assert(numS >= 5);
-    assert(numA >= 6);
+    assert(numA >= 5);
     assert(Jf3);
     assert(sOff);
     assert(aOff);
@@ -1939,7 +1931,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fl(const PylithInt dim,
 {
     // Check data fields
     assert(numS >= 5);
-    assert(numA >= 10);
+    assert(numA >= 5);
     assert(Jf0);
     assert(sOff);
     assert(aOff);
@@ -1990,7 +1982,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fp_f(const PylithInt dim,
 {
     // Check data fields
     assert(numS >= 5);
-    assert(numA >= 10);
+    assert(numA >= 5);
     assert(Jf0);
     assert(sOff);
     assert(aOff);
@@ -2039,7 +2031,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp_f(const PylithInt dim,
 {
     // Check data fields
     assert(numS >= 5);
-    assert(numA >= 10);
+    assert(numA >= 5);
     assert(Jf3);
     assert(sOff);
     assert(aOff);
