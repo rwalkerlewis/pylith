@@ -14,21 +14,23 @@
 # See LICENSE.md for license information.
 #
 # ----------------------------------------------------------------------
+#
 
 dist_noinst_DATA = \
-	README.md
-
-SUBDIRS = \
-	barwaves-2d \
-	barwaves_poro-2d \
-	box-2d \
-	box-3d \
-	meshing-cubit \
-	reverse-2d \
-	strikeslip-2d \
-	subduction-2d \
-	subduction-3d \
-	troubleshooting-2d
-
+	README.md \
+	geometry.jou \
+	bc.jou \
+	tri_200m.jou \
+	tri_200m.exo \
+	quad_200m.jou \
+	quad_200m.exo \
+	pylithapp.cfg \
+	step01_pwave_reflected.cfg \
+	step02_swave_reflected.cfg \
+	step03_swave_absorbed.cfg \
+	impulse.timedb \
+	shearwave_slip.spatialdb \
+	shearwave_risetime.spatialdb \
+	shearwave_sliptime.spatialdb
 
 # End of file 
