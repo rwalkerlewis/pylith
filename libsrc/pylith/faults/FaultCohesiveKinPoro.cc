@@ -310,6 +310,9 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
     err = DMCreateLocalVector(auxiliaryField->getDM(), &_slipVecTotal);
     PYLITH_CHECK_ERROR(err);
 
+    assert(_auxiliaryFactory);
+    _auxiliaryFactory->setValuesFromDB();
+
     PYLITH_METHOD_RETURN(auxiliaryField);
 } // createAuxiliaryField
 
@@ -429,9 +432,9 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
                         break;
                     }
                 } // for
-            } // if
-        } // for
-    } // for
+            }     // if
+        }         // for
+    }             // for
 
     pylith::feassemble::ConstraintSimple *constraintLagrange = new pylith::feassemble::ConstraintSimple(this);
     assert(constraintLagrange);
@@ -512,9 +515,9 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
                         break;
                     }
                 } // for
-            } // if
-        } // for
-    } // for
+            }     // if
+        }         // for
+    }             // for
 
     pylith::feassemble::ConstraintSimple *constraintFaultPressure = new pylith::feassemble::ConstraintSimple(this);
     assert(constraintFaultPressure);
@@ -645,7 +648,7 @@ void pylith::faults::FaultCohesiveKinPoro::_updateSlipRate(pylith::topology::Fie
         {
             auxiliaryArray[slipRateOff + iDof] = slipRateArray[iSlipRate];
         } // for
-    } // for
+    }     // for
     err = VecRestoreArrayRead(_slipVecTotal, &slipRateArray);
     PYLITH_CHECK_ERROR(err);
 
@@ -748,11 +751,11 @@ void pylith::faults::FaultCohesiveKinPoro::_setKernelsResidual(pylith::feassembl
         // const PetscBdPointFunc f1e = NULL;
 
         // Pressure constraint and Fault_pressure constraint
-        PetscBdPointFunc f0p_neg =   pylith::fekernels::FaultCohesiveKinPoro::f0p_neg;
-        PetscBdPointFunc f0p_pos =   pylith::fekernels::FaultCohesiveKinPoro::f0p_pos;
+        PetscBdPointFunc f0p_neg = pylith::fekernels::FaultCohesiveKinPoro::f0p_neg;
+        PetscBdPointFunc f0p_pos = pylith::fekernels::FaultCohesiveKinPoro::f0p_pos;
         PetscBdPointFunc f0p_fault = pylith::fekernels::FaultCohesiveKinPoro::f0p_fault;
-        PetscBdPointFunc f1p_neg =   NULL;
-        PetscBdPointFunc f1p_pos =   NULL;
+        PetscBdPointFunc f1p_neg = NULL;
+        PetscBdPointFunc f1p_pos = NULL;
         PetscBdPointFunc f1p_fault = pylith::fekernels::FaultCohesiveKinPoro::f1p_fault;
 
         // const int bitBodyForce = _useBodyForce ? 0x1 : 0x0;
