@@ -1353,7 +1353,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::f1p_fault(const PylithInt dim,
     // Index for auxiliary fields
     const PylithInt i_fault_permeability = 4;
     const PylithInt i_fluid_viscosity = 5;
-    const PylithInt i_body_force = numA - 3;
+    // const PylithInt i_body_force = numA - 3;
 
     const PylithScalar *vectorPermeability = &a[aOff[i_fault_permeability]];
     PylithScalar tensorPermeability[spaceDim * spaceDim];
@@ -1384,7 +1384,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::f1p_fault(const PylithInt dim,
     } // switch
 
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
-    const PylithScalar *bodyForce = &a[aOff[i_body_force]];
+    // const PylithScalar *bodyForce = &a[aOff[i_body_force]];
 
     // Pressure_x
     const PylithInt sOffPressureN = _FaultCohesiveKinPoro::pressure_sOff_quasistatic(sOff, numS);
