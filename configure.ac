@@ -269,6 +269,7 @@ AC_CONFIG_FILES([Makefile
 		release-notes/Makefile
 		examples/Makefile
 		examples/barwaves-2d/Makefile
+		examples/barwaves_poro-2d/Makefile
 		examples/box-2d/Makefile
 		examples/box-3d/Makefile
 		examples/reverse-2d/Makefile
