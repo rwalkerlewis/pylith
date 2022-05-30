@@ -903,7 +903,6 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_fault(const PylithInt dim,
      *  const PylithScalar stress_nnP = (bulkModulusP - 2. * shearModulusP / 3.) * traceStrainP + 2. * shearModulusP *
      * strain_nnP;
      */
-    const PylithInt sOffLagrange = _FaultCohesiveKinPoro::lagrange_sOff(sOff, numS);
     const PylithScalar *faultLagrange_t = &s_t[sOffLagrange];
     PylithScalar nDotLagrange_t = 0.;
     for (PylithInt i = 0; i < spaceDim; ++i)
@@ -1042,7 +1041,6 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_fault_body(const PylithInt dim
      *  const PylithScalar stress_nnP = (bulkModulusP - 2. * shearModulusP / 3.) * traceStrainP + 2. * shearModulusP *
      * strain_nnP;
      */
-    const PylithInt sOffLagrange = _FaultCohesiveKinPoro::lagrange_sOff(sOff, numS);
     const PylithScalar *faultLagrange_t = &s_t[sOffLagrange];
     PylithScalar nDotLagrange_t = 0.;
     for (PylithInt i = 0; i < spaceDim; ++i)
@@ -1174,7 +1172,6 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_fault_source(const PylithInt d
      *  const PylithScalar stress_nnP = (bulkModulusP - 2. * shearModulusP / 3.) * traceStrainP + 2. * shearModulusP *
      * strain_nnP;
      */
-    const PylithInt sOffLagrange = _FaultCohesiveKinPoro::lagrange_sOff(sOff, numS);
     const PylithScalar *faultLagrange_t = &s_t[sOffLagrange];
     PylithScalar nDotLagrange_t = 0.;
     for (PylithInt i = 0; i < spaceDim; ++i)
@@ -1323,7 +1320,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_fault_body_source(const Pylith
      *  const PylithScalar stress_nnP = (bulkModulusP - 2. * shearModulusP / 3.) * traceStrainP + 2. * shearModulusP *
      * strain_nnP;
      */
-    const PylithInt sOffLagrange = _FaultCohesiveKinPoro::lagrange_sOff(sOff, numS);
+
     const PylithScalar *faultLagrange_t = &s_t[sOffLagrange];
     PylithScalar nDotLagrange_t = 0.;
     for (PylithInt i = 0; i < spaceDim; ++i)

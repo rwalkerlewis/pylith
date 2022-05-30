@@ -615,127 +615,150 @@ void pylith::problems::Problem::_setupSolution(void)
 
     PYLITH_METHOD_END;
 } // _setupSolution
-/**
-// ** TO DO **
-// Verify the implementation of the following function, especially about the dimensions, 
-// since lagrange_fault_multiplier is of dim spaceDim while fault_pressure is of dimension 1.
-// ---------------------------------------------------------------------------------------------------------------------
-// Setup field so fault pressure subfield is limited to degrees of freedom associated with the cohesive cells.
-void
-pylith::problems::Problem::_setupFaultPressure(void) {
-    PYLITH_METHOD_BEGIN;
-    PYLITH_COMPONENT_DEBUG("Problem::_setupFaultPressure()");
 
-    assert(_solution->hasSubfield("fault_pressure"));
+// // ** TO DO **
+// // Verify the implementation of the following function, especially about the dimensions,
+// // since lagrange_fault_multiplier is of dim spaceDim while fault_pressure is of dimension 1.
+// // ---------------------------------------------------------------------------------------------------------------------
+// // Setup field so fault pressure subfield is limited to degrees of freedom associated with the cohesive cells.
+// void pylith::problems::Problem::_setupFaultPressure(void)
+// {
+//     PYLITH_METHOD_BEGIN;
+//     PYLITH_COMPONENT_DEBUG("Problem::_setupFaultPressure()");
 
-    PetscDMLabel cohesiveLabel = NULL;
-    PylithInt dim = 0;
-    PylithInt pStart = 0;
-    PylithInt pEnd = 0;
-    PylithInt pMax = 0;
-    PetscErrorCode err;
+//     assert(solution->hasSubfield("fault_pressure"));
 
-    PetscDM dmSoln = _solution->getDM();assert(dmSoln);
-    err = DMGetDimension(dmSoln, &dim);PYLITH_CHECK_ERROR(err);
-    err = DMCreateLabel(dmSoln, "cohesive interface");PYLITH_CHECK_ERROR(err);
-    err = DMGetLabel(dmSoln, "cohesive interface", &cohesiveLabel);PYLITH_CHECK_ERROR(err);
-    for (PylithInt iDim = 0; iDim <= dim; ++iDim) {
-        err = DMPlexGetHeightStratum(dmSoln, iDim, &pStart, &pEnd);PYLITH_CHECK_ERROR(err);
-        err = DMPlexGetSimplexOrBoxCells(dmSoln, iDim, NULL, &pMax);PYLITH_CHECK_ERROR(err);
-        for (PylithInt p = pMax; p < pEnd; ++p) {
-            err = DMLabelSetValue(cohesiveLabel, p, 1);PYLITH_CHECK_ERROR(err);
-        } // for
-    } // for
+//     PetscDMLabel cohesiveLabel = NULL;
+//     PylithInt dim = 0;
+//     PylithInt pStart = 0;
+//     PylithInt pEnd = 0;
+//     PylithInt pMax = 0;
+//     PetscErrorCode err;
 
-    // Reset discretization (FE), now using label.
-    const pylith::topology::Field::SubfieldInfo& faultPressureInfo = _solution->getSubfieldInfo("fault_pressure");
-    PetscFE fe = NULL;
-    err = DMGetField(dmSoln, faultPressureInfo.index, NULL, (PetscObject*)&fe);PYLITH_CHECK_ERROR(err);assert(fe);
-    err = PetscObjectReference((PetscObject)fe);PYLITH_CHECK_ERROR(err);
-    err = DMSetField(dmSoln, faultPressureInfo.index, cohesiveLabel, (PetscObject)fe);PYLITH_CHECK_ERROR(err);
+//     PetscDM dmSoln = solution->getDM();
+//     assert(dmSoln);
+//     err = DMGetDimension(dmSoln, &dim);
+//     PYLITH_CHECK_ERROR(err);
+//     err = DMCreateLabel(dmSoln, "cohesive interface");
+//     PYLITH_CHECK_ERROR(err);
+//     err = DMGetLabel(dmSoln, "cohesive interface", &cohesiveLabel);
+//     PYLITH_CHECK_ERROR(err);
+//     for (PylithInt iDim = 0; iDim <= dim; ++iDim)
+//     {
+//         err = DMPlexGetHeightStratum(dmSoln, iDim, &pStart, &pEnd);
+//         PYLITH_CHECK_ERROR(err);
+//         err = DMPlexGetSimplexOrBoxCells(dmSoln, iDim, NULL, &pMax);
+//         PYLITH_CHECK_ERROR(err);
+//         for (PylithInt p = pMax; p < pEnd; ++p)
+//         {
+//             err = DMLabelSetValue(cohesiveLabel, p, 1);
+//             PYLITH_CHECK_ERROR(err);
+//         } // for
+//     }     // for
 
-    err = PetscFEDestroy(&fe);PYLITH_CHECK_ERROR(err);
+//     // Reset discretization (FE), now using label.
+//     const pylith::topology::Field::SubfieldInfo &faultPressureInfo = solution->getSubfieldInfo("fault_pressure");
+//     PetscFE fe = NULL;
+//     err = DMGetField(dmSoln, faultPressureInfo.index, NULL, (PetscObject *)&fe);
+//     PYLITH_CHECK_ERROR(err);
+//     assert(fe);
+//     err = PetscObjectReference((PetscObject)fe);
+//     PYLITH_CHECK_ERROR(err);
+//     err = DMSetField(dmSoln, faultPressureInfo.index, cohesiveLabel, (PetscObject)fe);
+//     PYLITH_CHECK_ERROR(err);
 
-    PYLITH_METHOD_END;
-} // _setupFaultPressure
+//     err = PetscFEDestroy(&fe);
+//     PYLITH_CHECK_ERROR(err);
+
+//     PYLITH_METHOD_END;
+// } // _setupFaultPressure
 
 // ------------------------------------------------------------------------------------------------
 // Create null space for solution subfield.
-void
-pylith::problems::_Problem::createNullSpace(const pylith::topology::Field* solution,
-                                            const char* subfieldName) {
+void pylith::problems::_Problem::createNullSpace(const pylith::topology::Field *solution,
+                                                 const char *subfieldName)
+{
     PYLITH_METHOD_BEGIN;
     assert(solution);
 
     const int spaceDim = solution->getSpaceDim();
-    const PetscInt m = (spaceDim * (spaceDim + 1)) / 2;assert(m > 0 && m <= 6);
+    const PetscInt m = (spaceDim * (spaceDim + 1)) / 2;
+    assert(m > 0 && m <= 6);
 
     PetscErrorCode err = 0;
     PetscInt numDofUnconstrained = 0;
     err = PetscSectionGetConstrainedStorageSize(solution->getLocalSection(), &numDofUnconstrained);
-    if (m > numDofUnconstrained) {
+    if (m > numDofUnconstrained)
+    {
         PYLITH_METHOD_END;
     } // if
 
     const PetscDM dmSoln = solution->getDM();
     const pylith::topology::Field::SubfieldInfo info = solution->getSubfieldInfo(subfieldName);
     MatNullSpace nullSpace = NULL;
-    err = DMPlexCreateRigidBody(dmSoln, info.index, &nullSpace);PYLITH_CHECK_ERROR(err);
+    err = DMPlexCreateRigidBody(dmSoln, info.index, &nullSpace);
+    PYLITH_CHECK_ERROR(err);
 
     PetscObject field = NULL;
-    err = DMGetField(dmSoln, info.index, NULL, &field);PYLITH_CHECK_ERROR(err);
-    err = PetscObjectCompose(field, "nearnullspace", (PetscObject) nullSpace);PYLITH_CHECK_ERROR(err);
-    err = MatNullSpaceDestroy(&nullSpace);PYLITH_CHECK_ERROR(err);
+    err = DMGetField(dmSoln, info.index, NULL, &field);
+    PYLITH_CHECK_ERROR(err);
+    err = PetscObjectCompose(field, "nearnullspace", (PetscObject)nullSpace);
+    PYLITH_CHECK_ERROR(err);
+    err = MatNullSpaceDestroy(&nullSpace);
+    PYLITH_CHECK_ERROR(err);
 
     PYLITH_METHOD_END;
 } // createNullSpace
 
-
 // ------------------------------------------------------------------------------------------------
 // Set data needed to integrate domain faces on interior interface.
-void
-pylith::problems::_Problem::setInterfaceData(const pylith::topology::Field* solution,
-                                             std::vector<pylith::feassemble::Integrator*>& integrators) {
+void pylith::problems::_Problem::setInterfaceData(const pylith::topology::Field *solution,
+                                                  std::vector<pylith::feassemble::Integrator *> &integrators)
+{
     PYLITH_METHOD_BEGIN;
 
-    const std::vector<pylith::feassemble::IntegratorDomain*>& integratorsDomain =
+    const std::vector<pylith::feassemble::IntegratorDomain *> &integratorsDomain =
         subset<pylith::feassemble::IntegratorDomain>(integrators);
-    const std::vector<pylith::feassemble::IntegratorInterface*>& integratorsInterface =
+    const std::vector<pylith::feassemble::IntegratorInterface *> &integratorsInterface =
         subset<pylith::feassemble::IntegratorInterface>(integrators);
 
-    for (size_t i = 0; i < integratorsDomain.size(); ++i) {
+    for (size_t i = 0; i < integratorsDomain.size(); ++i)
+    {
         integratorsDomain[i]->setInterfaceData(solution, integratorsInterface);
     } // for
 
     PYLITH_METHOD_END;
 } // setInterfaceData
 
-
 // ------------------------------------------------------------------------------------------------
 // Get subset of integrators matching template type T.
-template<class T>
-std::vector<T*>
-pylith::problems::_Problem::subset(const std::vector<pylith::feassemble::Integrator*>& integrators) {
+template <class T>
+std::vector<T *>
+pylith::problems::_Problem::subset(const std::vector<pylith::feassemble::Integrator *> &integrators)
+{
     // Count number of matches
     size_t numFound = 0;
-    for (size_t i = 0; i < integrators.size(); ++i) {
-        if (dynamic_cast<T*>(integrators[i])) {
+    for (size_t i = 0; i < integrators.size(); ++i)
+    {
+        if (dynamic_cast<T *>(integrators[i]))
+        {
             numFound++;
         } // if/else
-    } // for
+    }     // for
 
     // Collect matches
-    std::vector<T*> matches(numFound);
+    std::vector<T *> matches(numFound);
     size_t index = 0;
-    for (size_t i = 0; i < integrators.size(); ++i) {
-        T* integrator = dynamic_cast<T*>(integrators[i]);
-        if (integrator) {
+    for (size_t i = 0; i < integrators.size(); ++i)
+    {
+        T *integrator = dynamic_cast<T *>(integrators[i]);
+        if (integrator)
+        {
             matches[index++] = integrator;
         } // if/else
-    } // for
+    }     // for
 
     return matches;
 } // subset
-
 
 // End of file
