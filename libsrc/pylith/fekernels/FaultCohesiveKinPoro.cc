@@ -37,11 +37,7 @@
  * beta_sigma(1),                      3
  * permeability_tangential(1),         4
  * permeability_normal(1),             5
- * fluid_viscosity(1),                 6
- * bulk_modulus_negative(1),           7
- * shear_modulus_negative(1),          8
- * bulk_modulus_positive(1),           9
- * shear_modulus_positive(1),          10
+ * fluid_viscosity(1),                 6+
  * body_force(dim),                    numA - 3
  * source (1),                         numA - 2
  * slip(dim)                           numA - 1
@@ -341,16 +337,17 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0u_neg(const PylithInt dim,
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
 
     // Index for solution fields
-    const PylithInt i_lagrange = 3;
-
     const PylithInt fOffN = 0;
-    const PylithInt fOffP = fOffN + spaceDim;
     const PylithInt sOffLagrange = sOff[numS - 2];
     const PylithScalar *lagrange = &s[sOffLagrange];
 
     for (PylithInt i = 0; i < spaceDim; ++i)
     {
         f0[fOffN + i] += -lagrange[i];
+        if (f0[fOffN + i] != f0[fOffN + i])
+        {
+            PetscPrintf(PETSC_COMM_WORLD, "Error in f0u_neg \n");
+        }
     } // for
 } // f0u_neg
 
@@ -385,16 +382,18 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0u_pos(const PylithInt dim,
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
 
     // Index for solution fields
-    const PylithInt i_lagrange = 3;
 
-    const PylithInt fOffN = 0;
-    const PylithInt fOffP = fOffN + spaceDim;
-    const PylithInt sOffLagrange = pylith::fekernels::_FaultCohesiveKinPoro::lagrange_sOff(sOff, numS);
+    const PylithInt fOffP = 0;
+    const PylithInt sOffLagrange = sOff[numS - 2];
     const PylithScalar *lagrange = &s[sOffLagrange];
 
     for (PylithInt i = 0; i < spaceDim; ++i)
     {
         f0[fOffP + i] += +lagrange[i];
+        if (f0[fOffP + i] != f0[fOffP + i])
+        {
+            PetscPrintf(PETSC_COMM_WORLD, "Error in f0u_pos \n");
+        }
     } // for
 } // f0u_pos
 
@@ -440,7 +439,6 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_neg(const PylithInt dim,
     const PylithInt sOffPressureN = sOff[i_pressure];
     const PylithInt sOffPressureFault = sOff[i_fault_pressure];
     const PylithInt fOffN = 0;
-    const PylithInt fOffP = fOffN + 1;
 
     const PylithScalar *faultPermeability = &a[aOff[i_fault_permeability]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
@@ -449,7 +447,10 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_neg(const PylithInt dim,
     const PylithScalar pressureFault = s[sOffPressureFault];
 
     f0[fOffN] += 0.0;
-
+    if (f0[fOffN] != f0[fOffN])
+    {
+        PetscPrintf(PETSC_COMM_WORLD, "Error in f0p_neg \n");
+    }
     // f0[fOffN] += permeabilityNormal / fluidViscosity *
     //              ((pressureN - pressureFault) / thickness);
     // f0[fOffP] += permeabilityNormal / fluidViscosity *
@@ -497,8 +498,8 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_pos(const PylithInt dim,
     const PylithInt i_fluid_viscosity = 5;
     const PylithInt sOffPressureP = sOff[i_pressure];
     const PylithInt sOffPressureFault = sOff[i_fault_pressure];
-    const PylithInt fOffN = 0;
-    const PylithInt fOffP = fOffN + 1;
+
+    const PylithInt fOffP = 0;
 
     const PylithScalar *faultPermeability = &a[aOff[i_fault_permeability]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
@@ -507,7 +508,10 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_pos(const PylithInt dim,
     const PylithScalar pressureFault = s[sOffPressureFault];
 
     f0[fOffP] += 0.0;
-
+    if (f0[fOffP] != f0[fOffP])
+    {
+        PetscPrintf(PETSC_COMM_WORLD, "Error in f0p_pos \n");
+    }
     // f0[fOffN] += permeabilityNormal / fluidViscosity *
     //             ((pressureN - pressureFault) / thickness);
     // f0[fOffP] += permeabilityNormal / fluidViscosity *
@@ -556,7 +560,6 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_body_neg(const PylithInt dim,
     const PylithInt i_body_force = numA - 3;
 
     const PylithInt fOffN = 0;
-    // const PylithInt fOffP = fOffN + 1;
 
     const PylithScalar *faultPermeability = &a[aOff[i_fault_permeability]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
@@ -571,6 +574,11 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_body_neg(const PylithInt dim,
     }
 
     f0[fOffN] += 0.0;
+
+    if (f0[fOffN] != f0[fOffN])
+    {
+        PetscPrintf(PETSC_COMM_WORLD, "Error in f0p_body_neg \n");
+    }
 
     // f0[fOffN] += permeabilityNormal / fluidViscosity *
     //              ((pressureN - pressureFault) / thickness + nDotBodyForce);
@@ -618,8 +626,8 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_body_pos(const PylithInt dim,
     const PylithInt i_fault_permeability = 4;
     const PylithInt i_fluid_viscosity = 5;
     const PylithInt i_body_force = numA - 3;
-    const PylithInt fOffN = 0;
-    const PylithInt fOffP = fOffN + 1;
+
+    const PylithInt fOffP = 0;
 
     const PylithScalar *faultPermeability = &a[aOff[i_fault_permeability]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
@@ -634,6 +642,11 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_body_pos(const PylithInt dim,
     }
 
     f0[fOffP] += 0.0;
+
+    if (f0[fOffP] != f0[fOffP])
+    {
+        PetscPrintf(PETSC_COMM_WORLD, "Error in f0p_body_pos \n");
+    }
 
     // f0[fOffN] += permeabilityNormal / fluidViscosity *
     //             ((pressureN - pressureFault) / thickness + nDotBodyForce);
@@ -695,6 +708,10 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0l_u(const PylithInt dim,
         {
             const PylithScalar slipXY = n[i] * slip[0] + tanDir[i] * slip[1];
             f0[fOffLagrange + i] += dispP[i] - dispN[i] - slipXY;
+            if (f0[fOffLagrange + i] != f0[fOffLagrange + i])
+            {
+                PetscPrintf(PETSC_COMM_WORLD, "Error in f0l_u \n");
+            }
         } // for
         break;
     } // case 2
@@ -710,6 +727,10 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0l_u(const PylithInt dim,
         {
             const PylithScalar slipXYZ = n[i] * slip[0] + tanDir1[i] * slip[1] + tanDir2[i] * slip[2];
             f0[fOffLagrange + i] += dispP[i] - dispN[i] - slipXYZ;
+            if (f0[fOffLagrange + i] != f0[fOffLagrange + i])
+            {
+                PetscPrintf(PETSC_COMM_WORLD, "Error in f0l_u \n");
+            }
         } // for
         break;
     } // case 3
@@ -771,6 +792,10 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0l_v(const PylithInt dim,
         {
             const PylithScalar slipRateXY = n[i] * slipRate[0] + tanDir[i] * slipRate[1];
             f0[fOffLagrange + i] += velP[i] - velN[i] - slipRateXY;
+            if (f0[fOffLagrange + i] != f0[fOffLagrange + i])
+            {
+                PetscPrintf(PETSC_COMM_WORLD, "Error in f0l_v \n");
+            }
         } // for
         break;
     } // case 2
@@ -786,6 +811,10 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0l_v(const PylithInt dim,
         {
             const PylithScalar slipRateXYZ = n[i] * slipRate[0] + tanDir1[i] * slipRate[1] + tanDir2[i] * slipRate[2];
             f0[fOffLagrange + i] += velP[i] - velN[i] - slipRateXYZ;
+            if (f0[fOffLagrange + i] != f0[fOffLagrange + i])
+            {
+                PetscPrintf(PETSC_COMM_WORLD, "Error in f0l_v \n");
+            }
         } // for
         break;
     } // case 3
@@ -912,6 +941,11 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_fault(const PylithInt dim,
 
     f0[fOffp_fault] += porosity * (betaP * (pressureP_t + 2. * pressureFault_t + pressureN_t) / 4. +
                                    betaSigma * nDotLagrange_t);
+    if (f0[fOffp_fault] != f0[fOffp_fault])
+    {
+        PetscPrintf(PETSC_COMM_WORLD, "Error in f0p_fault \n");
+    }
+
 } // f0p_fault
 
 // ----------------------------------------------------------------------
@@ -1050,6 +1084,10 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_fault_body(const PylithInt dim
 
     f0[fOffp_fault] += porosity * (betaP * (pressureP_t + 2. * pressureFault_t + pressureN_t) / 4. +
                                    betaSigma * nDotLagrange_t);
+    if (f0[fOffp_fault] != f0[fOffp_fault])
+    {
+        PetscPrintf(PETSC_COMM_WORLD, "Error in f0p_fault_body \n");
+    }
 
 } // f0p_fault_body
 
@@ -1182,6 +1220,10 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_fault_source(const PylithInt d
     f0[fOffp_fault] += porosity * (betaP * (pressureN_t + 2. * pressureFault_t + pressureP_t) / 4. +
                                    betaSigma * nDotLagrange_t) -
                        source;
+    if (f0[fOffp_fault] != f0[fOffp_fault])
+    {
+        PetscPrintf(PETSC_COMM_WORLD, "Error in f0p_fault_source \n");
+    }
 
 } // f0p_fault_source
 
@@ -1331,6 +1373,10 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_fault_body_source(const Pylith
     f0[fOffp_fault] += porosity * (betaP * (pressureN_t + 2. * pressureFault_t + pressureP_t) / 4. +
                                    betaSigma * nDotLagrange_t) -
                        source;
+    if (f0[fOffp_fault] != f0[fOffp_fault])
+    {
+        PetscPrintf(PETSC_COMM_WORLD, "Error in f0p_fault_body_source \n");
+    }
 
 } // f0p_fault_body_source
 
@@ -1376,7 +1422,6 @@ void pylith::fekernels::FaultCohesiveKinPoro::f1p_fault(const PylithInt dim,
     // Index for auxiliary fields
     const PylithInt i_fault_permeability = 4;
     const PylithInt i_fluid_viscosity = 5;
-    // const PylithInt i_body_force = numA - 3;
 
     const PylithScalar *vectorPermeability = &a[aOff[i_fault_permeability]];
     PylithScalar tensorPermeability[spaceDim * spaceDim];
@@ -1407,7 +1452,6 @@ void pylith::fekernels::FaultCohesiveKinPoro::f1p_fault(const PylithInt dim,
     } // switch
 
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
-    // const PylithScalar *bodyForce = &a[aOff[i_body_force]];
 
     // Pressure_x
     const PylithInt sOffPressureN = sOff[i_pressure];
@@ -1445,6 +1489,13 @@ void pylith::fekernels::FaultCohesiveKinPoro::f1p_fault(const PylithInt dim,
     } // case 3
     default:
         assert(0);
+    }
+    for (PylithInt i = 0; i < dim; ++i)
+    {
+        if (f1[fOffp_fault + i] != f1[fOffp_fault + i])
+        {
+            PetscPrintf(PETSC_COMM_WORLD, "Error in f1p_fault \n");
+        }
     }
 } // f1p_fault
 
@@ -1565,6 +1616,13 @@ void pylith::fekernels::FaultCohesiveKinPoro::f1p_fault_body(const PylithInt dim
     } // case 3
     default:
         assert(0);
+    }
+    for (PylithInt i = 0; i < spaceDim; ++i)
+    {
+        if (f1[fOffp_fault + i] != f1[fOffp_fault + i])
+        {
+            PetscPrintf(PETSC_COMM_WORLD, "Error in f1p_fault \n");
+        }
     }
 } // f1p_fault_body
 
