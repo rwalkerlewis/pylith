@@ -24,8 +24,8 @@ dist_check_SCRIPTS = test_pylith.py
 dist_noinst_PYTHON = \
 	generate_gmsh.py \
 	meshes.py \
-	TestTwoBlocks.py \
-	twoblocks_soln.py
+	TestThreeBlocks.py \
+	threeblocks_soln.py
 
 dist_noinst_DATA = \
 	mesh_tri.msh \
@@ -37,14 +37,12 @@ dist_noinst_DATA = \
 	mesh_quad.jou \
 	mesh_quad.exo \
 	pylithapp.cfg \
-	twoblocks.cfg \
-	twoblocks_quad.cfg \
-	twoblocks_tri.cfg \
-	twoblocks_cubit_quad.cfg \
-	twoblocks_cubit_tri.cfg \
-	twoblocks_ic.cfg \
-	twoblocks_ic_quad.cfg \
-	twoblocks_ic_tri.cfg
+	output_points.txt \
+	threeblocks.cfg \
+	threeblocks_quad.cfg \
+	threeblocks_tri.cfg \
+	threeblocks_cubit_quad.cfg \
+	threeblocks_cubit_tri.cfg
 
 
 noinst_TMP =

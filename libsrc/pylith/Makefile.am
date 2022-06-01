@@ -70,6 +70,7 @@ libpylith_la_SOURCES = \
 	feassemble/IntegratorDomain.cc \
 	feassemble/IntegratorBoundary.cc \
 	feassemble/IntegratorInterface.cc \
+	feassemble/IntegrationData.cc \
 	feassemble/InterfacePatches.cc \
 	feassemble/UpdateStateVars.cc \
 	feassemble/Constraint.cc \
@@ -154,7 +155,6 @@ libpylith_la_SOURCES = \
 	problems/Physics.cc \
 	problems/ObserverPhysics.cc \
 	problems/ObserversPhysics.cc \
-	problems/IntegrationData.cc \
 	problems/InitialCondition.cc \
 	problems/InitialConditionDomain.cc \
 	problems/InitialConditionPatch.cc \
@@ -174,6 +174,7 @@ libpylith_la_SOURCES = \
 	utils/EventLogger.cc \
 	utils/PyreComponent.cc \
 	utils/GenericComponent.cc \
+	utils/PetscOptions.cc \
 	utils/PylithVersion.cc \
 	utils/PetscVersion.cc \
 	utils/DependenciesVersion.cc \

@@ -18,6 +18,7 @@ from .problems import Problem as ModuleProblem
 from .problems import Physics
 from pylith.utils.NullComponent import NullComponent
 from .ProblemDefaults import ProblemDefaults
+from pylith.utils.PetscDefaults import PetscDefaults
 
 
 def materialFactory(name):
@@ -76,6 +77,9 @@ class Problem(PetscComponent, ModuleProblem):
     solverChoice = pythia.pyre.inventory.str("solver", default="linear",
                                       validator=pythia.pyre.inventory.choice(["linear", "nonlinear"]))
     solverChoice.meta['tip'] = "Type of solver to use ['linear', 'nonlinear']."
+
+    petscDefaults = pythia.pyre.inventory.facility("petsc_defaults", family="petsc_defaults", factory=PetscDefaults)
+    petscDefaults.meta['tip'] = "Flags controlling which default PETSc options to use."
 
     from .Solution import Solution
     solution = pythia.pyre.inventory.facility("solution", family="solution", factory=Solution)
@@ -140,6 +144,7 @@ class Problem(PetscComponent, ModuleProblem):
             ModuleProblem.setSolverType(self, ModuleProblem.NONLINEAR)
         else:
             raise ValueError("Unknown solver choice '%s'." % self.solverChoice)
+        ModuleProblem.setPetscDefaults(self, self.petscDefaults.flags());
         ModuleProblem.setNormalizer(self, self.normalizer)
         if not isinstance(self.gravityField, NullComponent):
             ModuleProblem.setGravityField(self, self.gravityField)
@@ -192,7 +197,7 @@ class Problem(PetscComponent, ModuleProblem):
         from pylith.mpi.Communicator import mpi_comm_world
         comm = mpi_comm_world()
         if 0 == comm.rank:
-            self._info.log("Initializing {} problem.".format(self.formulation))
+            self._info.log(f"Initializing {self.name} problem with {self.formulation} formulation.")
 
         ModuleProblem.initialize(self)
 

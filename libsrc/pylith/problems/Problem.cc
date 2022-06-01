@@ -20,7 +20,7 @@
 
 #include "Problem.hh" // implementation of class methods
 
-#include "pylith/problems/IntegrationData.hh" // HOLDSA IntegrationData
+#include "pylith/feassemble/IntegrationData.hh" // HOLDSA IntegrationData
 #include "pylith/topology/Mesh.hh" // USES Mesh
 #include "pylith/topology/Field.hh" // HASA Field
 #include "pylith/topology/FieldOps.hh" // USES FieldOps
@@ -30,6 +30,8 @@
 #include "pylith/bc/BoundaryCondition.hh" // USES BoundaryCondition
 #include "pylith/sources/Source.hh" // USES Source
 #include "pylith/feassemble/Integrator.hh" // USES Integrator
+#include "pylith/feassemble/IntegratorDomain.hh" // USES IntegratorDomain
+#include "pylith/feassemble/IntegratorInterface.hh" // USES IntegratorInterface
 #include "pylith/feassemble/Constraint.hh" // USES Constraint
 #include "pylith/problems/ObserversSoln.hh" // USES ObserversSoln
 #include "pylith/topology/MeshOps.hh" // USES MeshOps
@@ -45,14 +47,50 @@
 #include <typeinfo> // USES typeid()
 
 // ------------------------------------------------------------------------------------------------
+namespace pylith {
+    namespace problems {
+        class _Problem {
+public:
+
+            /** Create null space for solution subfield.
+             *
+             * @param[inout] solution Solution field.
+             * @param[in] subfieldName Name of solution subfield with null space.
+             */
+            static
+            void createNullSpace(const pylith::topology::Field* solution,
+                                 const char* subfieldName);
+
+            /** Set data needed to integrate domain faces on interior interface.
+             *
+             * @param[inout] solution Solution field.
+             * @param[in] integrators Array of integrators for problem.
+             */
+            static
+            void setInterfaceData(const pylith::topology::Field* solution,
+                                  std::vector<pylith::feassemble::Integrator*>& integrators);
+
+            /** Get subset of integrators matching template type T.
+             *
+             * @param[in] Array of integrators for problem
+             * @returns Array of integrators of type T.
+             */
+            template<class T> static std::vector<T*> subset(const std::vector<pylith::feassemble::Integrator*>& integrators);
+
+        };
+    }
+}
+
+// ------------------------------------------------------------------------------------------------
 // Constructor
 pylith::problems::Problem::Problem() :
-    _integrationData(new pylith::problems::IntegrationData),
+    _integrationData(new pylith::feassemble::IntegrationData),
     _normalizer(NULL),
     _gravityField(NULL),
     _observers(new pylith::problems::ObserversSoln),
     _formulation(pylith::problems::Physics::QUASISTATIC),
-    _solverType(LINEAR) {}
+    _solverType(LINEAR),
+    _petscDefaults(pylith::utils::PetscDefaults::SOLVER | pylith::utils::PetscDefaults::TESTING) {}
 
 
 // ------------------------------------------------------------------------------------------------
@@ -129,6 +167,14 @@ pylith::problems::Problem::getSolverType(void) const {
 
 
 // ------------------------------------------------------------------------------------------------
+// Specify whether to set defaults for PETSc solver appropriate for problem.
+void
+pylith::problems::Problem::setPetscDefaults(const int flags) {
+    _petscDefaults = flags;
+} // setPetscDefaults
+
+
+// ------------------------------------------------------------------------------------------------
 // Set manager of scales used to nondimensionalize problem.
 void
 pylith::problems::Problem::setNormalizer(const spatialdata::units::Nondimensional& dim) {
@@ -201,8 +247,8 @@ pylith::problems::Problem::getSolution(void) const {
 
     assert(_integrationData);
     pylith::topology::Field* solution = NULL;
-    if (_integrationData->hasField(IntegrationData::solution)) {
-        solution = _integrationData->getField(IntegrationData::solution);
+    if (_integrationData->hasField(pylith::feassemble::IntegrationData::solution)) {
+        solution = _integrationData->getField(pylith::feassemble::IntegrationData::solution);
     } // if
 
     PYLITH_METHOD_RETURN(solution);
@@ -413,6 +459,9 @@ pylith::problems::Problem::initialize(void) {
     solution->createGlobalVector();
     solution->createOutputVector();
 
+    _Problem::createNullSpace(solution, "displacement");
+    _Problem::setInterfaceData(solution, _integrators);
+
     pythia::journal::debug_t debug(PyreComponent::getName());
     if (debug.state()) {
         PYLITH_COMPONENT_DEBUG("Displaying solution field layout");
@@ -592,6 +641,85 @@ pylith::problems::Problem::_setupSolution(void) {
 
     PYLITH_METHOD_END;
 } // _setupSolution
+
+
+// ------------------------------------------------------------------------------------------------
+// Create null space for solution subfield.
+void
+pylith::problems::_Problem::createNullSpace(const pylith::topology::Field* solution,
+                                            const char* subfieldName) {
+    PYLITH_METHOD_BEGIN;
+    assert(solution);
+
+    const int spaceDim = solution->getSpaceDim();
+    const PetscInt m = (spaceDim * (spaceDim + 1)) / 2;assert(m > 0 && m <= 6);
+
+    PetscErrorCode err = 0;
+    PetscInt numDofUnconstrained = 0;
+    err = PetscSectionGetConstrainedStorageSize(solution->getLocalSection(), &numDofUnconstrained);
+    if (m > numDofUnconstrained) {
+        PYLITH_METHOD_END;
+    } // if
+
+    const PetscDM dmSoln = solution->getDM();
+    const pylith::topology::Field::SubfieldInfo info = solution->getSubfieldInfo(subfieldName);
+    MatNullSpace nullSpace = NULL;
+    err = DMPlexCreateRigidBody(dmSoln, info.index, &nullSpace);PYLITH_CHECK_ERROR(err);
+
+    PetscObject field = NULL;
+    err = DMGetField(dmSoln, info.index, NULL, &field);PYLITH_CHECK_ERROR(err);
+    err = PetscObjectCompose(field, "nearnullspace", (PetscObject) nullSpace);PYLITH_CHECK_ERROR(err);
+    err = MatNullSpaceDestroy(&nullSpace);PYLITH_CHECK_ERROR(err);
+
+    PYLITH_METHOD_END;
+} // createNullSpace
+
+
+// ------------------------------------------------------------------------------------------------
+// Set data needed to integrate domain faces on interior interface.
+void
+pylith::problems::_Problem::setInterfaceData(const pylith::topology::Field* solution,
+                                             std::vector<pylith::feassemble::Integrator*>& integrators) {
+    PYLITH_METHOD_BEGIN;
+
+    const std::vector<pylith::feassemble::IntegratorDomain*>& integratorsDomain =
+        subset<pylith::feassemble::IntegratorDomain>(integrators);
+    const std::vector<pylith::feassemble::IntegratorInterface*>& integratorsInterface =
+        subset<pylith::feassemble::IntegratorInterface>(integrators);
+
+    for (size_t i = 0; i < integratorsDomain.size(); ++i) {
+        integratorsDomain[i]->setInterfaceData(solution, integratorsInterface);
+    } // for
+
+    PYLITH_METHOD_END;
+} // setInterfaceData
+
+
+// ------------------------------------------------------------------------------------------------
+// Get subset of integrators matching template type T.
+template<class T>
+std::vector<T*>
+pylith::problems::_Problem::subset(const std::vector<pylith::feassemble::Integrator*>& integrators) {
+    // Count number of matches
+    size_t numFound = 0;
+    for (size_t i = 0; i < integrators.size(); ++i) {
+        if (dynamic_cast<T*>(integrators[i])) {
+            numFound++;
+        } // if/else
+    } // for
+
+    // Collect matches
+    std::vector<T*> matches(numFound);
+    size_t index = 0;
+    for (size_t i = 0; i < integrators.size(); ++i) {
+        T* integrator = dynamic_cast<T*>(integrators[i]);
+        if (integrator) {
+            matches[index++] = integrator;
+        } // if/else
+    } // for
+
+    return matches;
+} // subset
 
 
 // End of file
