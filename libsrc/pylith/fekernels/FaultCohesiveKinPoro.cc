@@ -1458,9 +1458,9 @@ void pylith::fekernels::FaultCohesiveKinPoro::f1p_fault(const PylithInt dim,
     const PylithInt sOffPressureP = sOffPressureN + 1;
     const PylithInt sOffPressureFault = sOff[i_fault_pressure];
 
-    const PylithScalar *pressureN_x = &s_x[sOff_x[sOffPressureN]];
-    const PylithScalar *pressureP_x = &s_x[sOff_x[sOffPressureP]];
-    const PylithScalar *pressureFault_x = &s_x[sOff_x[sOffPressureFault]];
+    const PylithScalar *pressureN_x = &s_x[sOff_x[i_pressure]];
+    const PylithScalar *pressureP_x = &s_x[sOff_x[i_pressure] + spaceDim];
+    const PylithScalar *pressureFault_x = &s_x[sOff_x[i_fault_pressure]];
     const PylithInt fOffp_fault = 0;
 
     // Do transformation for gradient
@@ -1768,7 +1768,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::Jf0lu(const PylithInt dim,
                                                     PylithScalar Jf0[])
 {
     assert(numS >= 5);
-    assert(numA >= 10);
+    assert(numA >= 5);
     assert(Jf0);
     assert(sOff);
     assert(aOff);
