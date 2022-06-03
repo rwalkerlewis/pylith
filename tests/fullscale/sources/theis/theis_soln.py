@@ -208,9 +208,8 @@ class AnalyticalSoln(object):
                 elif (i+1 %2) != 0:
                     w += (u**(i+1)) / (i+1 * numpy.math.factorial(i+1))		
 
-            pressure[t_track, :, 0] = P_0 + (q * mu_f)/(4.0 * numpy.pi * k)
+            pressure[t_track, :, 0] = P_0 + (q * mu_f)/(4.0 * numpy.pi * k) * w
             t_track += 1
-
         return pressure
 
     # Series functions
