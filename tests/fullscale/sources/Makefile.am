@@ -9,21 +9,14 @@
 # This code was developed as part of the Computational Infrastructure
 # for Geodynamics (http://geodynamics.org).
 #
-# Copyright (c) 2010-2022 University of California, Davis
+# Copyright (c) 2010-2021 University of California, Davis
 #
 # See LICENSE.md for license information.
 #
 # ----------------------------------------------------------------------
 
 SUBDIRS = \
-	cornercases \
-	linearelasticity \
-	incompressibleelasticity \
-	viscoelasticity \
-	poroelasticity \
-	petsc \
-	eqinfo \
-	sources
+	theis
 
 
-# End of file
+# End of file 

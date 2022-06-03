@@ -33,6 +33,7 @@ __all__ = ['apps',
            'topology',
            'utils',
            'tests',
+           'sources',
            ]
 
 

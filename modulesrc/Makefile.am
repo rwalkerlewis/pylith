@@ -27,7 +27,8 @@ SUBDIRS = \
 	mpi \
 	problems \
 	topology \
-	utils
+	utils \
+	sources
 
 #	friction 
 

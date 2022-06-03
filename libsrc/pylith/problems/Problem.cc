@@ -28,6 +28,7 @@
 #include "pylith/materials/Material.hh" // USES Material
 #include "pylith/faults/FaultCohesive.hh" // USES FaultCohesive
 #include "pylith/bc/BoundaryCondition.hh" // USES BoundaryCondition
+#include "pylith/sources/Source.hh" // USES Source
 #include "pylith/feassemble/Integrator.hh" // USES Integrator
 #include "pylith/feassemble/IntegratorDomain.hh" // USES IntegratorDomain
 #include "pylith/feassemble/IntegratorInterface.hh" // USES IntegratorInterface
@@ -293,6 +294,25 @@ pylith::problems::Problem::setBoundaryConditions(pylith::bc::BoundaryCondition* 
 
 
 // ------------------------------------------------------------------------------------------------
+// Set sources.
+void
+pylith::problems::Problem::setSources(pylith::sources::Source* sources[],
+                                      const int numSources) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_COMPONENT_DEBUG("Problem::setSources("<<sources<<", numSources="<<numSources<<")");
+
+    assert( (!sources && 0 == numSources) || (sources && 0 < numSources) );
+
+    _sources.resize(numSources);
+    for (int i = 0; i < numSources; ++i) {
+        _sources[i] = sources[i];
+    } // for
+
+    PYLITH_METHOD_END;
+} // setSources
+
+
+// ---------------------------------------------------------------------------------------------------------------------
 // Set materials.
 void
 pylith::problems::Problem::setInterfaces(pylith::faults::FaultCohesive* interfaces[],
@@ -342,6 +362,13 @@ pylith::problems::Problem::preinitialize(const pylith::topology::Mesh& mesh) {
         _bc[i]->setFormulation(_formulation);
     } // for
 
+    const size_t numSources = _sources.size();
+    for (size_t i = 0; i < numSources; ++i) {
+        assert(_sources[i]);
+        _sources[i]->setNormalizer(*_normalizer);
+        _sources[i]->setFormulation(_formulation);
+    } // for
+
     PYLITH_METHOD_END;
 } // preinitialize
 
@@ -369,6 +396,13 @@ pylith::problems::Problem::verifyConfiguration(void) const {
     for (size_t i = 0; i < numInterfaces; ++i) {
         assert(_interfaces[i]);
         _interfaces[i]->verifyConfiguration(*solution);
+    } // for
+
+    // Check to make sure sources are compatible with the solution.
+    const size_t numSources = _sources.size();
+    for (size_t i = 0; i < numSources; ++i) {
+        assert(_sources[i]);
+        _sources[i]->verifyConfiguration(*solution);
     } // for
 
     // Check to make sure boundary conditions are compatible with the solution.
@@ -478,7 +512,7 @@ pylith::problems::Problem::_checkMaterialLabels(void) const {
 
 
 // ------------------------------------------------------------------------------------------------
-// Create array of integrators from materials, interfaces, and boundary conditions.
+// Create array of integrators from materials, interfaces, sources, and boundary conditions.
 void
 pylith::problems::Problem::_createIntegrators(void) {
     PYLITH_METHOD_BEGIN;
@@ -486,9 +520,10 @@ pylith::problems::Problem::_createIntegrators(void) {
 
     const size_t numMaterials = _materials.size();
     const size_t numInterfaces = _interfaces.size();
+    const size_t numSources = _sources.size();
     const size_t numBC = _bc.size();
 
-    const size_t maxSize = numMaterials + numInterfaces + numBC;
+    const size_t maxSize = numMaterials + numInterfaces + numSources + numBC;
     _integrators.resize(maxSize);
     size_t count = 0;
 
@@ -510,6 +545,13 @@ pylith::problems::Problem::_createIntegrators(void) {
         if (integrator) { _integrators[count++] = integrator;}
     } // for
 
+    for (size_t i = 0; i < numSources; ++i) {
+        assert(_sources[i]);
+        pylith::feassemble::Integrator* integrator = _sources[i]->createIntegrator(*solution);
+        assert(count < maxSize);
+        if (integrator) { _integrators[count++] = integrator;}
+    } // for
+
     // Check to make sure boundary conditions are compatible with the solution.
     for (size_t i = 0; i < numBC; ++i) {
         assert(_bc[i]);
@@ -525,7 +567,7 @@ pylith::problems::Problem::_createIntegrators(void) {
 
 
 // ------------------------------------------------------------------------------------------------
-// Create array of constraints from materials, interfaces, and boundary conditions.
+// Create array of constraints from materials, interfaces, sources, and boundary conditions.
 void
 pylith::problems::Problem::_createConstraints(void) {
     PYLITH_METHOD_BEGIN;
@@ -533,6 +575,7 @@ pylith::problems::Problem::_createConstraints(void) {
 
     const size_t numMaterials = _materials.size();
     const size_t numInterfaces = _interfaces.size();
+    const size_t numSources = _sources.size();
     const size_t numBC = _bc.size();
 
     assert(_integrationData);
@@ -553,6 +596,12 @@ pylith::problems::Problem::_createConstraints(void) {
         std::vector<pylith::feassemble::Constraint*> constraints = _interfaces[i]->createConstraints(*solution);
         _constraints.insert(_constraints.end(), constraints.begin(), constraints.end());
 
+    } // for
+
+    for (size_t i = 0; i < numSources; ++i) {
+        assert(_sources[i]);
+        std::vector<pylith::feassemble::Constraint*> constraints = _sources[i]->createConstraints(*solution);
+        _constraints.insert(_constraints.end(), constraints.begin(), constraints.end());
     } // for
 
     for (size_t i = 0; i < numBC; ++i) {
