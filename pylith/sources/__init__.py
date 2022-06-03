@@ -1,29 +1,28 @@
-# -*- Makefile -*-
-#
 # ----------------------------------------------------------------------
 #
 # Brad T. Aagaard, U.S. Geological Survey
 # Charles A. Williams, GNS Science
-# Matthew G. Knepley, University at Buffalo
+# Matthew G. Knepley, University of Chicago
 #
 # This code was developed as part of the Computational Infrastructure
 # for Geodynamics (http://geodynamics.org).
 #
-# Copyright (c) 2010-2021 University of California, Davis
+# Copyright (c) 2010-2017 University of California, Davis
 #
-# See LICENSE.md for license information.
+# See COPYING for license information.
 #
 # ----------------------------------------------------------------------
+#
 
-SUBDIRS = \
-	cornercases \
-	linearelasticity \
-	incompressibleelasticity \
-	viscoelasticity \
-	poroelasticity \
-	petsc \
-	eqinfo \
-	sources
+# @file pylith/sources/__init__"
+
+# @brief Python PyLith sources module initialization
+
+__all__ = [
+    "Source",
+    "AuxSubfieldsWellboreSource",
+    "WellboreSource"
+]
 
 
 # End of file

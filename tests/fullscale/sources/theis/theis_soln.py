@@ -1,0 +1,274 @@
+# ----------------------------------------------------------------------
+#
+# Brad T. Aagaard, U.S. Geological Survey
+# Charles A. Williams, GNS Science
+# Matthew G. Knepley, University at Buffalo
+#
+# This code was developed as part of the Computational Infrastructure
+# for Geodynamics (http://geodynamics.org).
+#
+# Copyright (c) 2010-2021 University of California, Davis
+#
+# See LICENSE.md for license information.
+#
+# ----------------------------------------------------------------------
+#
+# @file tests/fullscale/poroelasticity/sources/theis/theis_soln.py
+#
+# @brief Analytical solution to Theis's problem.
+#   0 m <= x <= 100 m
+#   0 m <= y <= 1 m
+#
+#          Uy=0
+#       ---------------------
+#       |                   |
+# Ux=0  |      P0=10.0 Pa   | Ux=0
+#       ---------------------
+#       ^       Uy=0
+#       |
+#      P=0.0 Pa
+#
+#
+#
+
+
+import numpy
+
+# Physical properties
+rho_s = 2500  # kg / m**3
+rho_f = 1000  # kg / m**3
+mu_f = 0.001  # Pa*s
+G = 6e9  # Pa
+K_sg = 20e9  # Pa
+K_fl = 2e9  # Pa
+K_d = 10e9  # Pa
+# K_u = 2.6941176470588233 # Pa
+alpha = 1.0 # -
+phi = 0.05  # -
+k = 1e-14  # m**2
+grav = 9.80665 # m/s**2
+M = (K_fl/phi) + (K_sg/(alpha-phi))
+
+ymax = 1.0  # m
+ymin = 0.0  # m
+xmax = 100.0  # m
+xmin = 0.0  # m
+P_0 = 0.0  # Pa
+
+# Hydrology parameters
+K = (k*grav*rho_f) / mu_f # m / s
+b = 1.0 # m
+S_s = (rho_f*grav) / K_fl # 1 / m
+T = K*b # m**2 / s
+Q = 0.02 # m**3 / s
+
+
+
+# Time steps
+ts = 0.001  # sec
+nts = 10
+tsteps = numpy.arange(0.0, ts * nts, ts)  + ts # sec
+
+# ----------------------------------------------------------------------
+
+
+class AnalyticalSoln(object):
+    """Analytical solution to Theis's problem
+    """
+    SPACE_DIM = 2
+    TENSOR_SIZE = 4
+    ITERATIONS = 8
+
+    def __init__(self):
+        self.fields = {
+            "displacement": self.displacement,
+            "pressure": self.pressure,
+            "porosity": self.porosity,
+            "trace_strain": self.trace_strain,
+            "solid_density": self.solid_density,
+            "fluid_density": self.fluid_density,
+            "fluid_viscosity": self.fluid_viscosity,
+            "shear_modulus": self.shear_modulus,
+            "drained_bulk_modulus": self.drained_bulk_modulus,
+            "biot_coefficient": self.biot_coefficient,
+            "biot_modulus": self.biot_modulus,
+            "isotropic_permeability": self.isotropic_permeability,
+            "initial_amplitude": {
+                "x_neg": self.zero_scalar,
+                "x_pos": self.zero_scalar,
+                "y_pos": self.zero_scalar,
+                "y_neg": self.zero_scalar,
+            }
+        }
+        return
+
+    def getField(self, name, mesh_entity, pts):
+        if name in "initial_amplitude":
+            field = self.fields[name][mesh_entity](pts)
+        else:
+            field = self.fields[name](pts)
+        return field
+
+    def zero_scalar(self, locs):
+        (npts, dim) = locs.shape
+        return numpy.zeros((1, npts, 1), dtype=numpy.float64)
+
+    def zero_vector(self, locs):
+        (npts, dim) = locs.shape
+        return numpy.zeros((1, npts, self.SPACE_DIM), dtype=numpy.float64)
+
+    def solid_density(self, locs):
+        """Compute solid_density field at locations.
+        """
+        (npts, dim) = locs.shape
+        solid_density = rho_s * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        return solid_density
+
+    def fluid_density(self, locs):
+        """Compute fluid density field at locations.
+        """
+        (npts, dim) = locs.shape
+        fluid_density = rho_f * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        return fluid_density
+
+    def shear_modulus(self, locs):
+        """Compute shear modulus field at locations.
+        """
+        (npts, dim) = locs.shape
+        shear_modulus = G * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        return shear_modulus
+
+    def porosity(self, locs):
+        """Compute porosity field at locations.
+        """
+        (npts, dim) = locs.shape
+        porosity = phi * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        return porosity
+
+    def fluid_viscosity(self, locs):
+        """Compute fluid_viscosity field at locations.
+        """
+        (npts, dim) = locs.shape
+        fluid_viscosity = mu_f * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        return fluid_viscosity
+
+    def drained_bulk_modulus(self, locs):
+        """Compute undrained bulk modulus field at locations.
+        """
+        (npts, dim) = locs.shape
+        undrained_bulk_modulus = K_d * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        return undrained_bulk_modulus
+
+    def biot_coefficient(self, locs):
+        """Compute biot coefficient field at locations.
+        """
+        (npts, dim) = locs.shape
+        biot_coefficient = alpha * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        return biot_coefficient
+
+    def biot_modulus(self, locs):
+        """Compute biot modulus field at locations.
+        """
+        (npts, dim) = locs.shape
+        biot_modulus = M * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        return biot_modulus
+
+    def isotropic_permeability(self, locs):
+        """Compute isotropic permeability field at locations.
+        """
+        (npts, dim) = locs.shape
+        isotropic_permeability = k * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        return isotropic_permeability
+
+    def displacement(self, locs):
+        """Compute displacement field at locations.
+        """
+        (npts, dim) = locs.shape
+        ntpts = tsteps.shape[0]
+        displacement = numpy.zeros((ntpts, npts, dim), dtype=numpy.float64)
+        return displacement
+
+    def pressure(self, locs):
+        """Compute pressure field at locations.
+        """
+        (npts, dim) = locs.shape
+        ntpts = tsteps.shape[0]
+        pressure = numpy.zeros((ntpts, npts, 1), dtype=numpy.float64)
+        x = locs[:, 0]
+        y = locs[:, 1]
+
+        t_track = 0
+
+        for t in tsteps:
+            u = -(x**2 * mu_f) / (4.0*M*k*t)
+            w = -1*numpy.euler_gamma - numpy.log(u)
+            for i in numpy.arange(self.iterations):
+                if (i+1 % 2) == 0:
+                    w += (u**(i+1)) / (i+1 * numpy.math.factorial(i+1)) * -1
+                elif (i+1 %2) != 0:
+                    w += (u**(i+1)) / (i+1 * numpy.math.factorial(i+1))		
+
+            pressure[t_track, :, 0] = P_0 + (q * mu_f)/(4.0 * numpy.pi * k)
+            t_track += 1
+
+        return pressure
+
+    # Series functions
+
+
+    def strain(self, locs):
+        """Compute strain field at locations.
+        """
+        (npts, dim) = locs.shape
+        ntpts = tsteps.shape[0]
+        e_xx = 0.0
+        e_yy = self.trace_strain(locs)
+        e_zz = 0.0
+        e_xy = 0.0
+
+        strain = numpy.zeros((ntpts, npts, self.TENSOR_SIZE), dtype=numpy.float64)
+        strain[:, :, 0] = exx
+        strain[:, :, 1] = eyy
+        strain[:, :, 2] = ezz
+        strain[:, :, 3] = exy
+        return strain
+
+    def initial_displacement(self, locs):
+        """Compute initial displacement at locations
+        """
+        (npts, dim) = locs.shape
+        displacement = numpy.zeros((1, npts, dim), dtype=numpy.float64)
+        x = locs[:, 0]
+        z = locs[:, 1]
+
+        displacement[0, :, 0] = 0.0  # (F*nu_u*x)/(2.*G*a)
+        displacement[0, :, 1] = 0.0  # -1.*(F*(1.-nu_u)*z)/(2.*G*a)
+
+        return displacement
+
+    def initial_pressure(self, locs):
+        """Compute initial pressure at locations
+        """
+        (npts, dim) = locs.shape
+        pressure = numpy.zeros((1, npts), dtype=numpy.float64)
+        z = locs[:, 1]
+
+        pressure[0, :] = P_0
+
+        return pressure
+
+    def initial_trace_strain(self, locs):
+        """Compute initial trace strain field at locations.
+        """
+        (npts, dim) = locs.shape
+
+        trace_strain = numpy.zeros((1, npts), dtype=numpy.float64)
+        z = locs[:, 1]
+        z_star = z / L
+
+        trace_strain[0, :] = 0
+
+        return trace_strain
+
+
+# End of file

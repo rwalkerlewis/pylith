@@ -16,14 +16,7 @@
 # ----------------------------------------------------------------------
 
 SUBDIRS = \
-	cornercases \
-	linearelasticity \
-	incompressibleelasticity \
-	viscoelasticity \
-	poroelasticity \
-	petsc \
-	eqinfo \
-	sources
+	theis
 
 
-# End of file
+# End of file 

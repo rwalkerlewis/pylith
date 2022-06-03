@@ -52,6 +52,12 @@ def observerFactory(name):
     from pylith.meshio.OutputSolnDomain import OutputSolnDomain
     return facility(name, family="observer", factory=OutputSolnDomain)
 
+def sourceFactory(name):
+    """Factory for source items.
+    """
+    from pythia.pyre.inventory import facility
+    from pylith.sources.WellboreSource import WellboreSource
+    return facility(name, family="source", factory=WellboreSource)
 
 class Problem(PetscComponent, ModuleProblem):
     """
@@ -89,6 +95,9 @@ class Problem(PetscComponent, ModuleProblem):
 
     bc = pythia.pyre.inventory.facilityArray("bc", itemFactory=bcFactory, factory=EmptyBin)
     bc.meta['tip'] = "Boundary conditions."
+
+    sources = pythia.pyre.inventory.facilityArray("sources", itemFactory=sourceFactory, factory=EmptyBin)
+    sources.meta['tip'] = "Sources in problem."    
 
     interfaces = pythia.pyre.inventory.facilityArray("interfaces", itemFactory=faultFactory, factory=EmptyBin)
     interfaces.meta['tip'] = "Interior surfaces with constraints or constitutive models."
