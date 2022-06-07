@@ -16,27 +16,26 @@ from pylith.meshio.gmsh_utils import (VertexGroup, MaterialGroup, GenerateMesh)
 
 class App(GenerateMesh):
     """
-    Block is 100km by 150km.
+    Block is 150km by 100km.
 
-    -50.0 km <= x <= 50.0 km
-    -75.0 km <= y <= 75.0 km
+    -70.0 km <= x <= 75.0 km
+    -50.0 km <= y <= 50.0 km
 
     The fault surface runs along the x-axis through the entire domain.
 
-    p4-----p6-----p3
-    |       |      |
-    |       |      |
-    |       |      |
-    |       |      |
-    |       |      |
-    |       |      |
-    |       |      |
-    |       |      |
-    |       |      |
-    p1-----p5-----p2
+             p1--------------------p4
+             |                      |
+             |                      |
+ fault ----> p5--------------------p6
+             |                      |
+             |                      |
+    y=0 -->  p2--------------------p3
+             ^
+             |
+             x=0
     """
-    DOMAIN_X = 100.0e+3
-    DOMAIN_Y = 150.0e+3
+    DOMAIN_X = 150.0e+3
+    DOMAIN_Y = 100.0e+3
 
     def __init__(self):
         """Constructor.
