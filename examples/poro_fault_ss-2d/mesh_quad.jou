@@ -13,7 +13,7 @@
 # See LICENSE.md for license information.
 #
 # ----------------------------------------------------------------------
-# Create quad mesh at 4 km resolution.
+# Create quad mesh at 5 km resolution.
 
 # ----------------------------------------------------------------------
 # Generate geometry
@@ -25,7 +25,7 @@ playback 'geometry.jou'
 #
 # The "pave" scheme is an unstructured 2-D quad meshing scheme.
 # ----------------------------------------------------------------------
-${dx=4.0*km}
+${dx=5.0*km}
 surface all scheme pave
 playback 'gradient.jou'
 
@@ -53,3 +53,4 @@ export mesh "mesh_quad.exo" dimension 2 overwrite
 
 
 # End of file
+
