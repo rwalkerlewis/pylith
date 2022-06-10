@@ -42,10 +42,10 @@ t0 = 0.0
 u_x = numpy.nan_to_num(yy / -numpy.abs(yy), nan=0.0) *(yy*yy - 1)
 u_y = numpy.nan_to_num(yy / -numpy.abs(yy), nan=0.0) *(yy*yy)
 p = t0*(yy*yy - 1)
-trace_strain = numpy.nan_to_num(yy / numpy.abs(yy), nan=0.0) * 2 * yy
+trace_strain = numpy.nan_to_num(yy / numpy.abs(yy), nan=0.0) * -2 * yy
 L_x = numpy.ones(x.size) * 0
 L_y = numpy.ones(y.size) * t0
-p_f = numpy.ones(x.size) * -4.0 * 0.0 + t0
+p_f = numpy.ones(x.size) * 0.5 * t0
 
 # Two Dimensional Values
 

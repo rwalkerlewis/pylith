@@ -63,8 +63,8 @@ void pylith::fekernels::Poroelasticity::f0u(const PylithInt dim,
     } // for
 
     // Poroelastic Fault MMS Hack
-    f0[0] -= x[1] / abs(x[1]);
-    f0[1] -= 2.0 * x[1] * t - 4.0;
+    f0[0] += x[1] / abs(x[1]);
+    f0[1] += (x[1] / abs(x[1])) + t * x[1];
 
 } // f0u
 

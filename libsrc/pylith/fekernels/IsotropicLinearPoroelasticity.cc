@@ -475,7 +475,7 @@ void pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f0p_implicit(c
     f0[0] += s_t ? (pressure_t / biotModulus) : 0.0;
 
     // Poroelastic MMS Hack
-    f0[0] -= t + 1.0 * x[1] * x[1];
+    f0[0] += 1.9 * t - 0.16 * (x[1] * x[1] - 1.0);
 
 } // f0p_implicit
 
