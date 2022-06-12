@@ -2,7 +2,7 @@
 SimpleDB {
   num-values =      4
   value-names =  displacement_x  displacement_y  pressure  trace_strain
-  value-units =  m  m  Pa  
+  value-units =  m  m  Pa  none
   num-locs =    651
   data-dim =    2
   space-dim =    2

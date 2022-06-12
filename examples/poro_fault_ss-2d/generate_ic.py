@@ -107,7 +107,7 @@ class GenerateDB(object):
                                "data": numpy.ravel(p)}
 
         trace_strainGrid = {"name": "trace_strain",
-                            "units": "",
+                            "units": "none",
                             "data": numpy.ravel(trace_strain)}
 
         data = {"num-x": xx.shape[0],

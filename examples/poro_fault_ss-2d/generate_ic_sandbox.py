@@ -17,7 +17,6 @@
 
 import numpy 
 from netCDF4 import Dataset
-import scipy.ndimage
 import matplotlib.pyplot as plt
 
 # mesh = Dataset('mesh_hex.exo','r')
@@ -38,6 +37,13 @@ x = numpy.linspace(-DOMAIN_X/2,DOMAIN_X/2,nx+1)
 y = numpy.linspace(-DOMAIN_Y/2,DOMAIN_Y/2,ny+1)
 
 xx, yy = numpy.meshgrid(x,y)
+zz = numpy.zeros_like(xx)
+
+grid = numpy.column_stack((
+    xx.flatten(),
+    yy.flatten(),
+    zz.flatten(),
+))
 
 # Initial time
 t0 = 0.0
@@ -47,12 +53,10 @@ t0 = 0.0
 u_x = numpy.nan_to_num(yy / -numpy.abs(yy), nan=0.0) *(yy*yy - 1)
 u_y = numpy.nan_to_num(yy / -numpy.abs(yy), nan=0.0) *(yy*yy)
 p = t0*(yy*yy - 1)
-trace_strain = numpy.nan_to_num(yy / numpy.abs(yy), nan=0.0) * 2 * yy
+trace_strain = numpy.nan_to_num(yy / numpy.abs(yy), nan=0.0) * -2 * yy
 L_x = numpy.ones(x.size) * 0
 L_y = numpy.ones(y.size) * t0
-p_f = numpy.ones(x.size) * -4.0 * 0.0 + t0
-
-# Solution
+p_f = numpy.ones(x.size) * 0.5 * t0
 
 
 # Aux
