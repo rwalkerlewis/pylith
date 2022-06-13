@@ -42,20 +42,20 @@ journal idless on
 # -50.0 km <= x <= 50.0 km
 # -75.0 km <= y <= 75.0 km
 #
-${blockWidth=150*km}
-${blockLength=100*km}
-${blockHeight=10*km}
+${blockWidth=150*m}
+${blockLength=100*m}
+${blockHeight=10*m}
 
-${faultLength=150.0*km}
+${faultLength=150.0*m}
 
 brick x {blockWidth} y {blockLength} z {blockHeight}
 ${idV=Id("volume")}
 
 # surface 1 name "surf_front"
-surface ( at 0 0 5000 ordinal 1 ordered ) name "surf_front"
+surface ( at 0 0 5 ordinal 1 ordered ) name "surf_front"
 
 # surface 2 name "surf_back"
-surface ( at 0 0 -5000 ordinal 1 ordered ) name "surf_back"
+surface ( at 0 0 -5 ordinal 1 ordered ) name "surf_back"
 
 create midsurface volume {idV} surface surf_front surf_back
 ${idS=Id("surface")}
@@ -75,55 +75,56 @@ curve ( at 0 0 0 ordinal 1 ordered ) name "fault_surface"
 # Name surfaces
 # ----------------------------------------------------------------------
 # surface 8 name "surface_xpos"
-surface  ( at 0 25000 0 ordinal 1 ordered )  name "surface_ypos"
+surface  ( at 0 25 0 ordinal 1 ordered )  name "surface_ypos"
 
 # surface 9 name "surface_xneg"
-surface  ( at 0 -25000 0 ordinal 1 ordered )  name "surface_yneg"
+surface  ( at 0 -25 0 ordinal 1 ordered )  name "surface_yneg"
 
 # ----------------------------------------------------------------------
 # Name curves
 # ----------------------------------------------------------------------
 
 # curve 19 name "edge_xpos_ypos"
-curve ( at 75000 25000  0 ordinal 1 ordered ) name "edge_xpos_ypos"
+curve ( at 75 25 0 ordinal 1 ordered ) name "edge_xpos_ypos"
 
 # curve 20 name "edge_xpos_yneg"
-curve ( at 75000 -25000 0 ordinal 1 ordered ) name "edge_xpos_yneg"
+curve ( at 75 -25 0 ordinal 1 ordered ) name "edge_xpos_yneg"
 
 # curve 18 name "edge_xneg_ypos"
-curve ( at -75000 25000 0 ordinal 1 ordered ) name "edge_xneg_ypos"
+curve ( at -75 25 0 ordinal 1 ordered ) name "edge_xneg_ypos"
 
 # curve 21 name "edge_xneg_yneg"
-curve ( at -75000 -25000 0 ordinal 1 ordered ) name "edge_xneg_yneg"
+curve ( at -75 -25 0 ordinal 1 ordered ) name "edge_xneg_yneg"
 
 # curve 14 name "edge_ypos"
-curve ( at 0 50000 0 ordinal 1 ordered ) name "edge_ypos"
+curve ( at 0 50 0 ordinal 1 ordered ) name "edge_ypos"
 
 # curve 16 name "edge_yneg"
-curve ( at 0 -50000 0 ordinal 1 ordered ) name "edge_yneg"
+curve ( at 0 -50 0 ordinal 1 ordered ) name "edge_yneg"
 
 # ----------------------------------------------------------------------
 # Name vertices
 # ----------------------------------------------------------------------
 #
 # vertex 14 name "vertex_fault_xpos"
-vertex ( at 75000 0 0 ordinal 1 ordered ) name "vertex_fault_xpos"
+vertex ( at 75 0 0 ordinal 1 ordered ) name "vertex_fault_xpos"
 
 # vertex 13 name "vertex_fault_xneg"
-vertex ( at -75000 0 0 ordinal 1 ordered ) name "vertex_fault_xneg"
+vertex ( at -75 0 0 ordinal 1 ordered ) name "vertex_fault_xneg"
 
 # vertex 11 name "vertex_xpos_ypos"
-vertex ( at 75000 50000  0 ordinal 1 ordered ) name "vertex_xpos_ypos"
+vertex ( at 75 50  0 ordinal 1 ordered ) name "vertex_xpos_ypos"
 
 # vertex 12 name "vertex_xpos_yneg"
-vertex ( at 75000 -50000 0 ordinal 1 ordered ) name "vertex_xpos_yneg"
+vertex ( at 75 -50 0 ordinal 1 ordered ) name "vertex_xpos_yneg"
 
 # vertex 9 name "vertex_xneg_ypos"
-vertex ( at -75000 50000  0 ordinal 1 ordered ) name "vertex_xneg_ypos"
+vertex ( at -75 50  0 ordinal 1 ordered ) name "vertex_xneg_ypos"
 
 # vertex 10 name "vertex_xneg_yneg"
-vertex ( at -75000 -50000  0 ordinal 1 ordered ) name "vertex_xneg_yneg"
+vertex ( at -75 -50  0 ordinal 1 ordered ) name "vertex_xneg_yneg"
 
 
 # End of file
+
 

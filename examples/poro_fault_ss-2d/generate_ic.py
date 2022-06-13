@@ -18,12 +18,12 @@
 import numpy 
 
 # Dimensions
-DOMAIN_X = 150.0e+3
-DOMAIN_Y = 100.0e+3
+DOMAIN_X = 150.0
+DOMAIN_Y = 100.0
 
 # Discretization
-dx = 5.0e+3
-dy = 5.0e+3 
+dx = 0.5
+dy = 0.5 
 
 nx = numpy.int64(DOMAIN_X / dx)
 ny = numpy.int64(DOMAIN_Y / dy)
