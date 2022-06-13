@@ -25,7 +25,7 @@ playback 'geometry.jou'
 #
 # The "pave" scheme is an unstructured 2-D quad meshing scheme.
 # ----------------------------------------------------------------------
-${dx=5.0*m}
+${dx=0.05*m}
 surface all scheme pave
 playback 'gradient.jou'
 
@@ -53,5 +53,7 @@ export mesh "mesh_quad.exo" dimension 2 overwrite
 
 
 # End of file
+
+
 
 
