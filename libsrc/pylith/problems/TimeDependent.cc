@@ -463,21 +463,14 @@ void pylith::problems::TimeDependent::initialize(void)
 //     PYLITH_METHOD_END;
 // } // solve
 
-static PetscErrorCode quadratic_u(PetscInt dim, PetscReal time, const PetscReal x[], PetscInt Nc, PetscScalar *u, void *ctx)
-{
-    u[0] = x[1] > 0. ? PetscSqr(x[1]) - 1. : 1. - PetscSqr(x[1]);
-    u[1] = x[1] > 0. ? PetscSqr(x[1]) : -PetscSqr(x[1]);
-    return 0;
-}
-
-static PetscErrorCode quadratic_lower_u(PetscInt dim, PetscReal time, const PetscReal x[], PetscInt Nc, PetscScalar *u, void *ctx)
+static PetscErrorCode quadratic_upper_u(PetscInt dim, PetscReal time, const PetscReal x[], PetscInt Nc, PetscScalar *u, void *ctx)
 {
     u[0] = 1. - PetscSqr(x[1]);
     u[1] = -PetscSqr(x[1]);
     return 0;
 }
 
-static PetscErrorCode quadratic_upper_u(PetscInt dim, PetscReal time, const PetscReal x[], PetscInt Nc, PetscScalar *u, void *ctx)
+static PetscErrorCode quadratic_lower_u(PetscInt dim, PetscReal time, const PetscReal x[], PetscInt Nc, PetscScalar *u, void *ctx)
 {
     u[0] = PetscSqr(x[1]) - 1.;
     u[1] = PetscSqr(x[1]);
