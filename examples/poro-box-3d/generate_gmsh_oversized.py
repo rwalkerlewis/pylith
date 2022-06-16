@@ -6,12 +6,17 @@ Points have been projected from longitude/latitude into a local
 transverse Mercator projection. PyLith uses the Proj.4 library
 for geographic projections. The proj parameters are:
 
-+proj=tmerc +datum=WGS84 +lon_0=142.0 +lat_0=38.0 +k=0.9996
++proj=tmerc +datum=WGS84 +lon_0=-96.8334643 +lat_0=36.000713 
 
-so that the local origin is at a longitude of 142.0 degrees (WGS84)
-and a latitude of 38.0 degrees (WGS84).
+so that the local origin is at a longitude of -96.8334643 degrees (WGS84)
+and a latitude of 36.000713 degrees (WGS84).
 
-Run `generate_gmsh.py --help` to see the command line options.
+The location is that of the Ethridge, Payne 07 former disposal well,
+now set for monitoring of the Arbuckle disposal formation.
+
+This script generates an oversized column useful for demonstration purposes.
+
+Run `generate_gmsh_oversized.py --help` to see the command line options.
 """
 import gmsh
 from pylith.meshio.gmsh_utils import (VertexGroup, MaterialGroup, GenerateMesh, group_exclude)
@@ -20,10 +25,10 @@ class App(GenerateMesh):
     """
     Application for generating the mesh.
     """
-    DOMAIN_X = 500.0e+3
-    DOMAIN_Y = 500.0e+3
-    DOMAIN_Z = 250.0e+3
-    DX = 50.0e+3
+    DOMAIN_X = 10.0 # m
+    DOMAIN_Y = 10.0 # m
+    DOMAIN_Z = 100.0 # m
+    DX = 5.0
     
     def __init__(self):
         """Constructor.
@@ -53,7 +58,7 @@ class App(GenerateMesh):
 
         # Get bounding surfaces using bounding boxes. This makes the script completely independent
         # of how the surfaces are numbered, which can change.
-        dx = 100.0
+        dx = 10.0
         bbox = gmsh.model.get_bounding_box(-1, -1)
         get_bbox_entities = gmsh.model.get_entities_in_bounding_box
         self.s_xneg = get_bbox_entities(bbox[0]-dx, bbox[1]-dx, bbox[2]-dx, bbox[0]+dx, bbox[4]+dx, bbox[5]+dx, dim=2)
