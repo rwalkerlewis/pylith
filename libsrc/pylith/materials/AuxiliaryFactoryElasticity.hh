@@ -24,17 +24,17 @@
 #if !defined(pylith_materials_auxiliaryfactoryelasticity_hh)
 #define pylith_materials_auxiliaryfactoryelasticity_hh
 
-#include "materialsfwd.hh" // forward declarations
+#include "materialsfwd.hh"                       // forward declarations
 #include "pylith/feassemble/AuxiliaryFactory.hh" // ISA AuxiliaryFactory
 
 #include "spatialdata/spatialdb/spatialdbfwd.hh" // USES GravityField
 
-class pylith::materials::AuxiliaryFactoryElasticity : public pylith::feassemble::AuxiliaryFactory {
+class pylith::materials::AuxiliaryFactoryElasticity : public pylith::feassemble::AuxiliaryFactory
+{
     friend class TestAuxiliaryFactoryElasticity; // unit testing
 
     // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
-
     /// Default constructor.
     AuxiliaryFactoryElasticity(void);
 
@@ -51,13 +51,12 @@ public:
      *
      * @param[in] gf Gravity field.
      */
-    void addGravityField(spatialdata::spatialdb::GravityField* gf);
+    void addGravityField(spatialdata::spatialdb::GravityField *gf);
 
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
-    AuxiliaryFactoryElasticity(const AuxiliaryFactoryElasticity &); ///< Not implemented.
-    const AuxiliaryFactoryElasticity& operator=(const AuxiliaryFactoryElasticity&); ///< Not implemented
+    AuxiliaryFactoryElasticity(const AuxiliaryFactoryElasticity &);                  ///< Not implemented.
+    const AuxiliaryFactoryElasticity &operator=(const AuxiliaryFactoryElasticity &); ///< Not implemented
 
 }; // class AuxiliaryFactoryElasticity
 

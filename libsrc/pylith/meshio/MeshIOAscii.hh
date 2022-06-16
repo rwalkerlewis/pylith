@@ -32,12 +32,12 @@
 #include <iosfwd> // USES std::istream, std::ostream
 #include <string> // HASA std::string
 
-class pylith::meshio::MeshIOAscii : public MeshIO {
+class pylith::meshio::MeshIOAscii : public MeshIO
+{
     friend class TestMeshIOAscii; // unit testing
 
     // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
-
     /// Constructor
     MeshIOAscii(void);
 
@@ -51,17 +51,16 @@ public:
      *
      * @param filename Name of file
      */
-    void setFilename(const char* name);
+    void setFilename(const char *name);
 
     /** Get filename of ASCII file.
      *
      * @returns Name of file
      */
-    const char* getFilename(void) const;
+    const char *getFilename(void) const;
 
     // PROTECTED METHODS ///////////////////////////////////////////////////////////////////////////////////////////////
 protected:
-
     /// Write mesh
     void _write(void) const;
 
@@ -70,7 +69,6 @@ protected:
 
     // PRIVATE METHODS /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
     /** Read mesh vertices.
      *
      * @param parser Input parser.
@@ -78,16 +76,16 @@ private:
      * @param numVertices Pointer to number of vertices
      * @param spaceDim Pointer to dimension of coordinates vector space
      */
-    void _readVertices(spatialdata::utils::LineParser& parser,
-                       scalar_array* coordinates,
-                       int* numVertices,
-                       int* spaceDim) const;
+    void _readVertices(spatialdata::utils::LineParser &parser,
+                       scalar_array *coordinates,
+                       int *numVertices,
+                       int *spaceDim) const;
 
     /** Write mesh vertices.
      *
      * @param fileout Output stream
      */
-    void _writeVertices(std::ostream& fileout) const;
+    void _writeVertices(std::ostream &fileout) const;
 
     /** Read mesh cells.
      *
@@ -97,11 +95,11 @@ private:
      * @param pNumCells Pointer to number of cells
      * @param pNumCorners Pointer to number of corners
      */
-    void _readCells(spatialdata::utils::LineParser& parser,
-                    int_array* pCells,
-                    int_array* pMaterialIds,
-                    int* numCells,
-                    int* numCorners) const;
+    void _readCells(spatialdata::utils::LineParser &parser,
+                    int_array *pCells,
+                    int_array *pMaterialIds,
+                    int *numCells,
+                    int *numCorners) const;
 
     /** Write mesh cells.
      *
@@ -110,31 +108,30 @@ private:
      * @param numCells Number of cells
      * @param numCorners Number of corners
      */
-    void _writeCells(std::ostream& fileout) const;
+    void _writeCells(std::ostream &fileout) const;
 
     /** Read a point group.
      *
      * @param parser Input parser.
      * @param mesh The mesh
      */
-    void _readGroup(spatialdata::utils::LineParser& parser,
-                    int_array* points,
-                    GroupPtType* type,
-                    std::string* name) const;
+    void _readGroup(spatialdata::utils::LineParser &parser,
+                    int_array *points,
+                    GroupPtType *type,
+                    std::string *name) const;
 
     /** Write a point group.
      *
      * @param fileout Output stream
      * @param name The group name
      */
-    void _writeGroup(std::ostream& fileout,
-                     const char* name) const;
+    void _writeGroup(std::ostream &fileout,
+                     const char *name) const;
 
     // PRIVATE MEMBERS /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
     std::string _filename; ///< Name of file
-    bool _useIndexZero; ///< Flag indicating if indicates start at 0 (T) or 1 (F)
+    bool _useIndexZero;    ///< Flag indicating if indicates start at 0 (T) or 1 (F)
 
 }; // MeshIOAscii
 

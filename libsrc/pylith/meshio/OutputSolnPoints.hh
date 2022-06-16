@@ -33,12 +33,12 @@
 
 #include "spatialdata/geocoords/geocoordsfwd.hh" // USES CoordSys
 
-class pylith::meshio::OutputSolnPoints : public pylith::meshio::OutputSoln {
+class pylith::meshio::OutputSolnPoints : public pylith::meshio::OutputSoln
+{
     friend class TestOutputSolnPoints; // unit testing
 
     // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
-
     /// Constructor.
     OutputSolnPoints(void);
 
@@ -56,15 +56,14 @@ public:
      * @param[in] pointNames Array with point names.
      * @param[in] numPointNames Number of point banes.
      */
-    void setPoints(const PylithReal* pointCoords,
+    void setPoints(const PylithReal *pointCoords,
                    const int numPoints,
                    const int spaceDim,
-                   const char* const* pointNames,
+                   const char *const *pointNames,
                    const int numPointNames);
 
     // PROTECTED MEMBERS ///////////////////////////////////////////////////////////////////////////////////////////////
 protected:
-
     /** Write solution at time step.
      *
      * @param[in] t Current time.
@@ -73,7 +72,7 @@ protected:
      */
     void _writeSolnStep(const PylithReal t,
                         const PylithInt tindex,
-                        const pylith::topology::Field& solution);
+                        const pylith::topology::Field &solution);
 
     /** Get output subfield, creating if necessary.
      *
@@ -81,42 +80,39 @@ protected:
      * @param[in] submesh Submesh associated with output.
      * @param[in] name Name of subfield.
      */
-    OutputSubfield* _getSubfield(const pylith::topology::Field& field,
-                                 const pylith::topology::Mesh& submesh,
-                                 const char* name);
+    OutputSubfield *_getSubfield(const pylith::topology::Field &field,
+                                 const pylith::topology::Mesh &submesh,
+                                 const char *name);
 
     // PRIVATE MEMBERS /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
     /** Setup interpolatior.
      *
      * @param[in] solution Solution field.
      */
-    void _setupInterpolator(const pylith::topology::Field& solution);
+    void _setupInterpolator(const pylith::topology::Field &solution);
 
     /** Interpolate solution field.
      *
      * @param[in] solution Solution field to interpolate.
      */
-    void _interpolateField(const pylith::topology::Field& solution);
+    void _interpolateField(const pylith::topology::Field &solution);
 
     /// Write dataset with names of points to file.
     void _writePointNames(void);
 
     // PRIVATE MEMBERS /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
-    pylith::scalar_array _pointCoords; ///< Array of point coordinates.
-    pylith::string_vector _pointNames; ///< Array of point names.
-    pylith::topology::Mesh* _pointMesh; ///< Mesh for points (no cells).
-    pylith::topology::Field* _pointSoln; ///< Solution field at points.
-    DMInterpolationInfo _interpolator; ///< Field interpolator.
+    pylith::scalar_array _pointCoords;   ///< Array of point coordinates.
+    pylith::string_vector _pointNames;   ///< Array of point names.
+    pylith::topology::Mesh *_pointMesh;  ///< Mesh for points (no cells).
+    pylith::topology::Field *_pointSoln; ///< Solution field at points.
+    DMInterpolationInfo _interpolator;   ///< Field interpolator.
 
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
-    OutputSolnPoints(const OutputSolnPoints&); ///< Not implemented.
-    const OutputSolnPoints& operator=(const OutputSolnPoints&); ///< Not implemented
+    OutputSolnPoints(const OutputSolnPoints &);                  ///< Not implemented.
+    const OutputSolnPoints &operator=(const OutputSolnPoints &); ///< Not implemented
 
 }; // OutputSolnPoints
 

@@ -24,15 +24,15 @@
 #if !defined(pylith_materials_derivedfactoryelasticity_hh)
 #define pylith_materials_derivedfactoryelasticity_hh
 
-#include "materialsfwd.hh" // forward declarations
+#include "materialsfwd.hh"                 // forward declarations
 #include "pylith/topology/FieldFactory.hh" // ISA AuxiliaryFactory
 
-class pylith::materials::DerivedFactoryElasticity : public pylith::topology::FieldFactory {
+class pylith::materials::DerivedFactoryElasticity : public pylith::topology::FieldFactory
+{
     friend class TestDerivedFactoryElasticity; // unit testing
 
     // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
-
     /// Default constructor.
     DerivedFactoryElasticity(void);
 
@@ -50,9 +50,8 @@ public:
 
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
-    DerivedFactoryElasticity(const DerivedFactoryElasticity &); ///< Not implemented.
-    const DerivedFactoryElasticity& operator=(const DerivedFactoryElasticity&); ///< Not implemented
+    DerivedFactoryElasticity(const DerivedFactoryElasticity &);                  ///< Not implemented.
+    const DerivedFactoryElasticity &operator=(const DerivedFactoryElasticity &); ///< Not implemented
 
 }; // class DerivedFactoryElasticity
 

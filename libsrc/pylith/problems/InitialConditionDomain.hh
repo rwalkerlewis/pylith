@@ -28,12 +28,12 @@
 
 #include "spatialdata/spatialdb/spatialdbfwd.hh" // HOLDSA SpatialDB
 
-class pylith::problems::InitialConditionDomain : public pylith::problems::InitialCondition {
+class pylith::problems::InitialConditionDomain : public pylith::problems::InitialCondition
+{
     friend class TestInitialConditionDomain; // unit testing
 
     // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
-
     /// Constructor
     InitialConditionDomain(void);
 
@@ -47,26 +47,24 @@ public:
      *
      * @param[in] db Spatial database holding initial conditions.
      */
-    void setDB(spatialdata::spatialdb::SpatialDB* db);
+    void setDB(spatialdata::spatialdb::SpatialDB *db);
 
     /** Set solution to values for initial condition.
      *
      * @param[out] solution Solution field.
      * @param[in] normalizer Nondimensionalization.
      */
-    void setValues(pylith::topology::Field* solution,
-                   const spatialdata::units::Nondimensional& normalizer);
+    void setValues(pylith::topology::Field *solution,
+                   const spatialdata::units::Nondimensional &normalizer);
 
     // PRIVATE MEMEBRS /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
-    spatialdata::spatialdb::SpatialDB* _db; ///< Spatial database with values for initial condition.
+    spatialdata::spatialdb::SpatialDB *_db; ///< Spatial database with values for initial condition.
 
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
-    InitialConditionDomain(const InitialConditionDomain&); ///< Not implemented
-    const InitialConditionDomain& operator=(const InitialConditionDomain&); ///< Not implemented
+    InitialConditionDomain(const InitialConditionDomain &);                  ///< Not implemented
+    const InitialConditionDomain &operator=(const InitialConditionDomain &); ///< Not implemented
 
 }; // InitialConditionDomain
 

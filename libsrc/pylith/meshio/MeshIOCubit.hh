@@ -29,12 +29,12 @@
 
 #include <string> // HASA std::string
 
-class pylith::meshio::MeshIOCubit : public MeshIO {
+class pylith::meshio::MeshIOCubit : public MeshIO
+{
     friend class TestMeshIOCubit; // unit testing
 
     // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
-
     /// Constructor
     MeshIOCubit(void);
 
@@ -48,13 +48,13 @@ public:
      *
      * @param filename Name of file
      */
-    void setFilename(const char* name);
+    void setFilename(const char *name);
 
     /** Get filename of Cubit file.
      *
      * @returns Name of file
      */
-    const char* getFilename(void) const;
+    const char *getFilename(void) const;
 
     /** Set flag on whether to use nodeset ids or names.
      *
@@ -64,7 +64,6 @@ public:
 
     // PROTECTED METHODS ///////////////////////////////////////////////////////////////////////////////////////////////
 protected:
-
     /// Write mesh
     void _write(void) const;
 
@@ -73,7 +72,6 @@ protected:
 
     // PRIVATE METHODS /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
     /** Read mesh vertices.
      *
      * @param ncfile Cubit Exodus file.
@@ -81,10 +79,10 @@ private:
      * @param numVertices Pointer to number of vertices.
      * @param spaceDim Pointer to dimension of coordinates vector space.
      */
-    void _readVertices(ExodusII& filein,
-                       scalar_array* coordinates,
-                       int* numVertices,
-                       int* spaceDim) const;
+    void _readVertices(ExodusII &filein,
+                       scalar_array *coordinates,
+                       int *numVertices,
+                       int *spaceDim) const;
 
     /** Read mesh cells.
      *
@@ -94,35 +92,35 @@ private:
      * @param pNumCells Pointer to number of cells
      * @param pNumCorners Pointer to number of corners
      */
-    void _readCells(ExodusII& filein,
-                    int_array* pCells,
-                    int_array* pMaterialIds,
-                    int* numCells,
-                    int* numCorners) const;
+    void _readCells(ExodusII &filein,
+                    int_array *pCells,
+                    int_array *pMaterialIds,
+                    int *numCells,
+                    int *numCorners) const;
 
     /** Read point groups.
      *
      * @param ncfile Cubit Exodus file.
      */
-    void _readGroups(ExodusII& filein);
+    void _readGroups(ExodusII &filein);
 
     /** Write mesh dimensions.
      *
      * @param ncfile Cubit Exodus file.
      */
-    void _writeDimensions(ExodusII& ncfile) const;
+    void _writeDimensions(ExodusII &ncfile) const;
 
     /** Write mesh variables.
      *
      * @param ncfile Cubit Exodus file.
      */
-    void _writeVariables(ExodusII& ncfile) const;
+    void _writeVariables(ExodusII &ncfile) const;
 
     /** Write mesh attributes.
      *
      * @param ncfile Cubit Exodus file.
      */
-    void _writeAttributes(ExodusII& ncfile) const;
+    void _writeAttributes(ExodusII &ncfile) const;
 
     /** Reorder vertices in cells to match PyLith conventions.
      *
@@ -131,15 +129,13 @@ private:
      * @param numCorners Number of vertices per cell.
      * @param meshDim Spatial dimension of mesh.
      */
-    static
-    void _orientCells(int_array* const cells,
-                      const int numCells,
-                      const int numCorners,
-                      const int meshDim);
+    static void _orientCells(int_array *const cells,
+                             const int numCells,
+                             const int numCorners,
+                             const int meshDim);
 
     // PRIVATE MEMBERS /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
     std::string _filename; ///< Name of file
     bool _useNodesetNames; ///< True to use node set names instead of ids.
 

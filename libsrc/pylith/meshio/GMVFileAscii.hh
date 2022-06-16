@@ -36,23 +36,22 @@
 class pylith::meshio::GMVFileAscii : public GMVFile
 { // GMVFileAscii
 
-// PUBLIC METHODS ///////////////////////////////////////////////////////
-public :
-
+  // PUBLIC METHODS ///////////////////////////////////////////////////////
+public:
   /** Constructor with name of GMV file.
    *
    * @param filename Name of GMV file
    */
-  GMVFileAscii(const char* name);
+  GMVFileAscii(const char *name);
 
-  /// Default destructor 
+  /// Default destructor
   ~GMVFileAscii(void);
 
   /** Get header.
    *
    * @returns Header that appears in ASCII GMV file
    */
-  static const char* header(void);
+  static const char *header(void);
 
   /** Read ASCII GMV file.
    *
@@ -64,14 +63,14 @@ public :
    * @param numCells Number of cells in mesh.
    * @param numCorners Number of vertices in each cell.
    */
-  void read(scalar_array* coordinates,
-	    int_array* cells,
-	    int_array* materialIds,
-	    int* meshDim,
-	    int* spaceDim,
-	    int* numVertices,
-	    int* numCells,
-	    int* numCorners);
+  void read(scalar_array *coordinates,
+            int_array *cells,
+            int_array *materialIds,
+            int *meshDim,
+            int *spaceDim,
+            int *numVertices,
+            int *numCells,
+            int *numCorners);
 
   /** Write ASCII GMV file.
    *
@@ -84,23 +83,22 @@ public :
    * @param numCells Number of cells in mesh.
    * @param numCorners Number of vertices in each cell.
    */
-  void write(const scalar_array& coordinates,
-	     const int_array& cells,
-	     const int_array& materialIds,
-	     const int meshDim,
-	     const int spaceDim,
-	     const int numVertices,
-	     const int numCells,
-	     const int numCorners);
+  void write(const scalar_array &coordinates,
+             const int_array &cells,
+             const int_array &materialIds,
+             const int meshDim,
+             const int spaceDim,
+             const int numVertices,
+             const int numCells,
+             const int numCorners);
 
-// PRIVATE METHODS //////////////////////////////////////////////////////
- private :
-  
+  // PRIVATE METHODS //////////////////////////////////////////////////////
+private:
   /** Read header.
    *
    * @param fin Input file stream
    */
-  void _readHeader(std::ifstream& fin);
+  void _readHeader(std::ifstream &fin);
 
   /** Read vertices.
    *
@@ -108,10 +106,10 @@ public :
    * @param coordinates Coordinates of vertices.
    * @param numVertices Number of vertices.
    */
-  void _readVertices(std::ifstream& fin,
-		     scalar_array* coordinates,
-		     int* numVertices,
-		     int* spaceDim);
+  void _readVertices(std::ifstream &fin,
+                     scalar_array *coordinates,
+                     int *numVertices,
+                     int *spaceDim);
 
   /** Read cells.
    *
@@ -120,10 +118,10 @@ public :
    * @param numCells Number of cells in mesh.
    * @param numCorners Number of vertices in each cell.
    */
-  void _readCells(std::ifstream& fin,
-		  int_array* cells,
-		  int* numCells,
-		  int* numCorners);
+  void _readCells(std::ifstream &fin,
+                  int_array *cells,
+                  int *numCells,
+                  int *numCorners);
 
   /** Read and discard variables associated with vertices.
    *
@@ -131,9 +129,9 @@ public :
    * @param numVertices Number of vertices in mesh.
    * @param numCells Number of cells in mesh.
    */
-  void _readVariables(std::ifstream& fin,
-		      const int numVertices,
-		      const int numCells);
+  void _readVariables(std::ifstream &fin,
+                      const int numVertices,
+                      const int numCells);
 
   /** Read and discard material flags for vertices.
    *
@@ -141,9 +139,9 @@ public :
    * @param numVertices Number of vertices in mesh.
    * @param numCells Number of cells in mesh.
    */
-  void _readFlags(std::ifstream& fin,
-		  const int numVertices,
-		  const int numCells);
+  void _readFlags(std::ifstream &fin,
+                  const int numVertices,
+                  const int numCells);
 
   /** Read material values for cells.
    *
@@ -152,16 +150,15 @@ public :
    * @param numVertices Number of vertices in mesh.
    * @param numCells Number of cells in mesh.
    */
-  void _readMaterials(std::ifstream& fin,
-		      int_array* materialIds,
-		      const int numVertices,
-		      const int numCells);
+  void _readMaterials(std::ifstream &fin,
+                      int_array *materialIds,
+                      const int numVertices,
+                      const int numCells);
 
-// PRIVATE MEMBERS //////////////////////////////////////////////////////
-private :
-  
+  // PRIVATE MEMBERS //////////////////////////////////////////////////////
+private:
   /** Header in ascii GMV file */
-  static const char* _HEADER;
+  static const char *_HEADER;
 
 }; // GMVFileInAscii
 
@@ -169,5 +166,4 @@ private :
 
 #endif // pylith_meshio_gmvfileascii
 
-
-// End of file 
+// End of file

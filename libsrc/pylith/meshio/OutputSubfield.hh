@@ -32,14 +32,14 @@
 #include "pylith/topology/FieldBase.hh" // HASA Description, Discretization
 
 #include "pylith/topology/topologyfwd.hh" // USES Field
-#include "pylith/utils/petscfwd.h" // HASA PetscVec
+#include "pylith/utils/petscfwd.h"        // HASA PetscVec
 
-class pylith::meshio::OutputSubfield : public pylith::utils::GenericComponent {
+class pylith::meshio::OutputSubfield : public pylith::utils::GenericComponent
+{
     friend class TestOutputSubfield; // unit testing
 
     // PUBLIC METHODS /////////////////////////////////////////////////////////////////////////////
 public:
-
     /** Create OutputSubfield from Field.
      *
      * @param[in] field Field with subfields.
@@ -47,11 +47,10 @@ public:
      * @param[in] name Name of subfield that will be extracted.
      * @param[in] basisOrder Basis order for subfield.
      */
-    static
-    OutputSubfield* create(const pylith::topology::Field& field,
-                           const pylith::topology::Mesh& mesh,
-                           const char* name,
-                           const int basisOrder);
+    static OutputSubfield *create(const pylith::topology::Field &field,
+                                  const pylith::topology::Mesh &mesh,
+                                  const char *name,
+                                  const int basisOrder);
 
     /** Create OutputSubfield from Field.
      *
@@ -61,10 +60,9 @@ public:
      * @param[in] mesh Mesh for subfield.
      * @param[in] name Name of subfield that will be extracted.
      */
-    static
-    OutputSubfield* create(const pylith::topology::Field& field,
-                           const pylith::topology::Mesh& mesh,
-                           const char* name);
+    static OutputSubfield *create(const pylith::topology::Field &field,
+                                  const pylith::topology::Mesh &mesh,
+                                  const char *name);
 
     /// Destructor
     ~OutputSubfield(void);
@@ -76,7 +74,7 @@ public:
      *
      * @returns Description of subfield.
      */
-    const pylith::topology::FieldBase::Description& getDescription(void) const;
+    const pylith::topology::FieldBase::Description &getDescription(void) const;
 
     /** Get basis order of subfield.
      *
@@ -100,7 +98,7 @@ public:
      *
      * @param[in] fieldVector PETSc vector with subfields.
      */
-    void project(const PetscVec& fieldVector);
+    void project(const PetscVec &fieldVector);
 
     /** Extract subfield from field.
      *
@@ -109,30 +107,27 @@ public:
      * @param[in] field Field with all subfields.
      * @param[in] subfieldIndex Index of subfield to extract.
      */
-    void extractSubfield(const pylith::topology::Field& field,
+    void extractSubfield(const pylith::topology::Field &field,
                          const PetscInt subfieldIndex);
 
     // PRIVATE METHODS ////////////////////////////////////////////////////////////////////////////
 private:
-
     // Constructor.
     OutputSubfield(void);
 
     // PROTECTED MEMBERS //////////////////////////////////////////////////////////////////////////
 protected:
-
-    pylith::topology::FieldBase::Description _description; ///< Description of subfield.
+    pylith::topology::FieldBase::Description _description;       ///< Description of subfield.
     pylith::topology::FieldBase::Discretization _discretization; ///< Discretization of subfield.
-    PetscDM _dm; ///< PETSc DM for subfield.
-    PetscVec _vector; ///< PETSc global vector for subfield.
-    PetscPointFunc _fn; ///< PETSc point function for projection.
-    PetscInt _subfieldIndex; ///< Index of subfield in fields.
+    PetscDM _dm;                                                 ///< PETSc DM for subfield.
+    PetscVec _vector;                                            ///< PETSc global vector for subfield.
+    PetscPointFunc _fn;                                          ///< PETSc point function for projection.
+    PetscInt _subfieldIndex;                                     ///< Index of subfield in fields.
 
     // NOT IMPLEMENTED ////////////////////////////////////////////////////////////////////////////
 private:
-
-    OutputSubfield(const OutputSubfield&); ///< Not implemented.
-    const OutputSubfield& operator=(const OutputSubfield&); ///< Not implemented
+    OutputSubfield(const OutputSubfield &);                  ///< Not implemented.
+    const OutputSubfield &operator=(const OutputSubfield &); ///< Not implemented
 
 }; // OutputSubfield
 

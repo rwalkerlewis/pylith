@@ -20,44 +20,43 @@
 
 #include "GMVFileAscii.hh" // implementation of class methods
 
-#include "pylith/utils/array.hh" // USES scalar_array, int_array
-#include "pylith/utils/error.hh" // USES PYLITH_METHOD_BEGIN/END
+#include "pylith/utils/array.hh"    // USES scalar_array, int_array
+#include "pylith/utils/error.hh"    // USES PYLITH_METHOD_BEGIN/END
 #include "pylith/utils/journals.hh" // USES pythia::journal
 
-#include <fstream> // USES std::ifstream
-#include <iomanip> // USES std::setw()
-#include <cstring> // USES strcmp()
-#include <cassert> // USES assert()
-#include <sstream> // USES std::ostringstream
+#include <fstream>   // USES std::ifstream
+#include <iomanip>   // USES std::setw()
+#include <cstring>   // USES strcmp()
+#include <cassert>   // USES assert()
+#include <sstream>   // USES std::ostringstream
 #include <stdexcept> // USES std::exception
 
 // ----------------------------------------------------------------------
-const char* pylith::meshio::GMVFileAscii::_HEADER = "gmvinput ascii";
+const char *pylith::meshio::GMVFileAscii::_HEADER = "gmvinput ascii";
 
 // ----------------------------------------------------------------------
 // Constructor with name of GMV file.
-pylith::meshio::GMVFileAscii::GMVFileAscii(const char* filename) :
-    GMVFile(filename) { // constructor
+pylith::meshio::GMVFileAscii::GMVFileAscii(const char *filename) : GMVFile(filename)
+{ // constructor
 } // constructor
-
 
 // ----------------------------------------------------------------------
 // Default destructor
-pylith::meshio::GMVFileAscii::~GMVFileAscii(void) { // destructor
+pylith::meshio::GMVFileAscii::~GMVFileAscii(void)
+{ // destructor
 } // destructor
-
 
 // ----------------------------------------------------------------------
 // Read ASCII GMV file.
-void
-pylith::meshio::GMVFileAscii::read(scalar_array* coordinates,
-                                   int_array* cells,
-                                   int_array* materialIds,
-                                   int* meshDim,
-                                   int* spaceDim,
-                                   int* numVertices,
-                                   int* numCells,
-                                   int* numCorners) { // read
+void pylith::meshio::GMVFileAscii::read(scalar_array *coordinates,
+                                        int_array *cells,
+                                        int_array *materialIds,
+                                        int *meshDim,
+                                        int *spaceDim,
+                                        int *numVertices,
+                                        int *numCells,
+                                        int *numCorners)
+{ // read
     PYLITH_METHOD_BEGIN;
 
     assert(coordinates);
@@ -74,7 +73,8 @@ pylith::meshio::GMVFileAscii::read(scalar_array* coordinates,
     pythia::journal::info_t info("gmvfile");
 
     std::ifstream fin(_filename.c_str(), std::ios::in);
-    if (!(fin.is_open() && fin.good())) {
+    if (!(fin.is_open() && fin.good()))
+    {
         std::ostringstream msg;
         msg
             << "Could not open ASCII GMV file '" << _filename
@@ -88,16 +88,26 @@ pylith::meshio::GMVFileAscii::read(scalar_array* coordinates,
     _readHeader(fin);
 
     std::string token;
-    while (fin >> token) {
-        if (token == "nodes") {
+    while (fin >> token)
+    {
+        if (token == "nodes")
+        {
             _readVertices(fin, coordinates, numVertices, spaceDim);
-        } else if (token == "cells") {
+        }
+        else if (token == "cells")
+        {
             _readCells(fin, cells, numCells, numCorners);
-        } else if (token == "variable") {
+        }
+        else if (token == "variable")
+        {
             _readVariables(fin, *numVertices, *numCells);
-        } else if (token == "flags") {
+        }
+        else if (token == "flags")
+        {
             _readFlags(fin, *numVertices, *numCells);
-        } else if (token == "material") {
+        }
+        else if (token == "material")
+        {
             _readMaterials(fin, materialIds, *numVertices, *numCells);
         }
     } // while
@@ -109,18 +119,17 @@ pylith::meshio::GMVFileAscii::read(scalar_array* coordinates,
     PYLITH_METHOD_END;
 } // read
 
-
 // ----------------------------------------------------------------------
 // Write ASCII GMV file.
-void
-pylith::meshio::GMVFileAscii::write(const scalar_array& coordinates,
-                                    const int_array& cells,
-                                    const int_array& materialIds,
-                                    const int meshDim,
-                                    const int spaceDim,
-                                    const int numVertices,
-                                    const int numCells,
-                                    const int numCorners) { // write
+void pylith::meshio::GMVFileAscii::write(const scalar_array &coordinates,
+                                         const int_array &cells,
+                                         const int_array &materialIds,
+                                         const int meshDim,
+                                         const int spaceDim,
+                                         const int numVertices,
+                                         const int numCells,
+                                         const int numCorners)
+{ // write
     PYLITH_METHOD_BEGIN;
 
     assert(coordinates.size() == size_t(numVertices * spaceDim));
@@ -137,16 +146,16 @@ pylith::meshio::GMVFileAscii::write(const scalar_array& coordinates,
     PYLITH_METHOD_END;
 } // write
 
-
 // ----------------------------------------------------------------------
-void
-pylith::meshio::GMVFileAscii::_readHeader(std::ifstream& fin) { // _readHeader
+void pylith::meshio::GMVFileAscii::_readHeader(std::ifstream &fin)
+{ // _readHeader
     PYLITH_METHOD_BEGIN;
 
-    const int headerLen = strlen(_HEADER)+1;
+    const int headerLen = strlen(_HEADER) + 1;
     char buffer[headerLen];
     fin.get(buffer, headerLen, '\n');
-    if (strcmp(_HEADER, buffer)) {
+    if (strcmp(_HEADER, buffer))
+    {
         std::ostringstream msg;
         msg
             << "Header in ASCII GMV file '" << buffer
@@ -158,13 +167,12 @@ pylith::meshio::GMVFileAscii::_readHeader(std::ifstream& fin) { // _readHeader
     PYLITH_METHOD_END;
 } // _readHeader
 
-
 // ----------------------------------------------------------------------
-void
-pylith::meshio::GMVFileAscii::_readVertices(std::ifstream& fin,
-                                            scalar_array* coordinates,
-                                            int* numVertices,
-                                            int* spaceDim) { // _readVertices
+void pylith::meshio::GMVFileAscii::_readVertices(std::ifstream &fin,
+                                                 scalar_array *coordinates,
+                                                 int *numVertices,
+                                                 int *spaceDim)
+{ // _readVertices
     PYLITH_METHOD_BEGIN;
 
     assert(coordinates);
@@ -181,9 +189,11 @@ pylith::meshio::GMVFileAscii::_readVertices(std::ifstream& fin,
 
     coordinates->resize(*numVertices * (*spaceDim));
     // NOTE: Order of loops is different than what we usually have
-    for (int iDim = 0; iDim < *spaceDim; ++iDim) {
-        for (int iVertex = 0; iVertex < *numVertices; ++iVertex) {
-            fin >> (*coordinates)[iVertex*(*spaceDim)+iDim];
+    for (int iDim = 0; iDim < *spaceDim; ++iDim)
+    {
+        for (int iVertex = 0; iVertex < *numVertices; ++iVertex)
+        {
+            fin >> (*coordinates)[iVertex * (*spaceDim) + iDim];
         }
     }
 
@@ -193,13 +203,12 @@ pylith::meshio::GMVFileAscii::_readVertices(std::ifstream& fin,
     PYLITH_METHOD_END;
 } // readVertices
 
-
 // ----------------------------------------------------------------------
-void
-pylith::meshio::GMVFileAscii::_readCells(std::ifstream& fin,
-                                         int_array* cells,
-                                         int* numCells,
-                                         int* numCorners) { // readCells
+void pylith::meshio::GMVFileAscii::_readCells(std::ifstream &fin,
+                                              int_array *cells,
+                                              int *numCells,
+                                              int *numCorners)
+{ // readCells
     PYLITH_METHOD_BEGIN;
 
     assert(cells);
@@ -214,13 +223,16 @@ pylith::meshio::GMVFileAscii::_readCells(std::ifstream& fin,
     std::string cellString = "";
     info << pythia::journal::at(__HERE__)
          << "Reading " << numCells << " cells." << pythia::journal::endl;
-    for (int iCell = 0; iCell < *numCells; ++iCell) {
+    for (int iCell = 0; iCell < *numCells; ++iCell)
+    {
         std::string cellStringCur;
         int numCornersCur = 0;
         fin >> cellStringCur;
         fin >> numCornersCur;
-        if (*numCorners) {
-            if (cellStringCur != cellString) {
+        if (*numCorners)
+        {
+            if (cellStringCur != cellString)
+            {
                 std::ostringstream msg;
                 msg
                     << "Mutiple element types not supported. Found element types '"
@@ -229,13 +241,16 @@ pylith::meshio::GMVFileAscii::_readCells(std::ifstream& fin,
                 throw std::runtime_error(msg.str());
             } // if
             assert(*numCorners == numCornersCur);
-        } else {
+        }
+        else
+        {
             cellString = cellStringCur;
             *numCorners = numCornersCur;
             cells->resize((*numCells) * (*numCorners));
         } // if/else
-        for (int iCorner = 0; iCorner < *numCorners; ++iCorner) {
-            fin >> (*cells)[iCell*(*numCorners)+iCorner];
+        for (int iCorner = 0; iCorner < *numCorners; ++iCorner)
+        {
+            fin >> (*cells)[iCell * (*numCorners) + iCorner];
         }
         fin >> std::ws;
     } // for
@@ -248,12 +263,11 @@ pylith::meshio::GMVFileAscii::_readCells(std::ifstream& fin,
     PYLITH_METHOD_END;
 } // readCells
 
-
 // ----------------------------------------------------------------------
-void
-pylith::meshio::GMVFileAscii::_readVariables(std::ifstream& fin,
-                                             const int numVertices,
-                                             const int numCells) { // _readVariables
+void pylith::meshio::GMVFileAscii::_readVariables(std::ifstream &fin,
+                                                  const int numVertices,
+                                                  const int numCells)
+{ // _readVariables
     PYLITH_METHOD_BEGIN;
 
     pythia::journal::info_t info("gmvfile");
@@ -263,19 +277,25 @@ pylith::meshio::GMVFileAscii::_readVariables(std::ifstream& fin,
 
     std::string varName;
     fin >> varName;
-    while ("endvars" != varName && !fin.eof() && fin.good()) {
+    while ("endvars" != varName && !fin.eof() && fin.good())
+    {
         int varType = 0;
         fin >> varType;
-        if (1 == varType) { // variables/attributes associated with vertices
+        if (1 == varType)
+        { // variables/attributes associated with vertices
             const int numVars = 1;
-            scalar_array vals(numVertices*numVars);
-            for (int iVertex = 0; iVertex < numVertices; ++iVertex) {
+            scalar_array vals(numVertices * numVars);
+            for (int iVertex = 0; iVertex < numVertices; ++iVertex)
+            {
                 fin >> vals[iVertex];
             }
-        } else { // variables/attributes associated with cells
+        }
+        else
+        { // variables/attributes associated with cells
             const int numVars = 1;
-            scalar_array vals(numCells*numVars);
-            for (int iCell = 0; iCell < numCells; ++iCell) {
+            scalar_array vals(numCells * numVars);
+            for (int iCell = 0; iCell < numCells; ++iCell)
+            {
                 fin >> vals[iCell];
             }
         } // else
@@ -288,12 +308,11 @@ pylith::meshio::GMVFileAscii::_readVariables(std::ifstream& fin,
     PYLITH_METHOD_END;
 } // _readVariables
 
-
 // ----------------------------------------------------------------------
-void
-pylith::meshio::GMVFileAscii::_readFlags(std::ifstream& fin,
-                                         const int numVertices,
-                                         const int numCells) { // _readFlags
+void pylith::meshio::GMVFileAscii::_readFlags(std::ifstream &fin,
+                                              const int numVertices,
+                                              const int numCells)
+{ // _readFlags
     PYLITH_METHOD_BEGIN;
 
     pythia::journal::info_t info("gmvfile");
@@ -303,22 +322,29 @@ pylith::meshio::GMVFileAscii::_readFlags(std::ifstream& fin,
 
     std::string varName;
     fin >> varName;
-    while ("endflag" != varName && !fin.eof() && fin.good()) {
+    while ("endflag" != varName && !fin.eof() && fin.good())
+    {
         int varType = 0;
         int numFlags = 0;
         fin >> numFlags >> varType;
-        for (int iFlag = 0; iFlag < numFlags; ++iFlag) {
+        for (int iFlag = 0; iFlag < numFlags; ++iFlag)
+        {
             std::string flagName;
             fin >> flagName;
         } // for
-        if (1 == varType) { // flag associated with vertices
+        if (1 == varType)
+        { // flag associated with vertices
             int flag;
-            for (int iVertex = 0; iVertex < numVertices; ++iVertex) {
+            for (int iVertex = 0; iVertex < numVertices; ++iVertex)
+            {
                 fin >> flag;
             }
-        } else { // flag associated with cells
+        }
+        else
+        { // flag associated with cells
             int flag;
-            for (int iCell = 0; iCell < numCells; ++iCell) {
+            for (int iCell = 0; iCell < numCells; ++iCell)
+            {
                 fin >> flag;
             }
         } // else
@@ -331,13 +357,12 @@ pylith::meshio::GMVFileAscii::_readFlags(std::ifstream& fin,
     PYLITH_METHOD_END;
 } // _readFlags
 
-
 // ----------------------------------------------------------------------
-void
-pylith::meshio::GMVFileAscii::_readMaterials(std::ifstream& fin,
-                                             int_array* materialIds,
-                                             const int numVertices,
-                                             const int numCells) { // _readMaterials
+void pylith::meshio::GMVFileAscii::_readMaterials(std::ifstream &fin,
+                                                  int_array *materialIds,
+                                                  const int numVertices,
+                                                  const int numCells)
+{ // _readMaterials
     PYLITH_METHOD_BEGIN;
 
     assert(materialIds);
@@ -351,18 +376,24 @@ pylith::meshio::GMVFileAscii::_readMaterials(std::ifstream& fin,
     fin >> numMaterials >> dataType;
 
     std::string name;
-    for (int iMat = 0; iMat < numMaterials; ++iMat) {
+    for (int iMat = 0; iMat < numMaterials; ++iMat)
+    {
         fin >> name;
     }
 
-    if (0 == dataType) { // material associated with elements
+    if (0 == dataType)
+    { // material associated with elements
         materialIds->resize(numCells);
-        for (int iCell = 0; iCell < numCells; ++iCell) {
+        for (int iCell = 0; iCell < numCells; ++iCell)
+        {
             fin >> (*materialIds)[iCell];
         }
-    } else { // material associated with nodes
+    }
+    else
+    { // material associated with nodes
         int_array materials(numVertices);
-        for (int iVertex = 0; iVertex < numVertices; ++iVertex) {
+        for (int iVertex = 0; iVertex < numVertices; ++iVertex)
+        {
             fin >> materials[iVertex];
         }
     } // else
@@ -372,6 +403,5 @@ pylith::meshio::GMVFileAscii::_readMaterials(std::ifstream& fin,
 
     PYLITH_METHOD_END;
 } // _readMaterials
-
 
 // End of file

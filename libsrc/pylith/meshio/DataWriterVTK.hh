@@ -35,21 +35,21 @@
 #include "DataWriter.hh" // ISA DataWriter
 
 #include "pylith/topology/topologyfwd.hh" // HOLDSA Field
-#include "pylith/utils/petscfwd.h" // HASA PetscDM
+#include "pylith/utils/petscfwd.h"        // HASA PetscDM
 
 // DataWriterVTK --------------------------------------------------------
 /// Object for writing finite-element data to VTK file.
-class pylith::meshio::DataWriterVTK : public DataWriter {
-    friend class TestDataWriterVTKMesh; // unit testing
-    friend class TestDataWriterVTKMaterial; // unit testing
-    friend class TestDataWriterVTKSubmesh; // unit testing
-    friend class TestDataWriterVTKBCMesh; // unit testing
+class pylith::meshio::DataWriterVTK : public DataWriter
+{
+    friend class TestDataWriterVTKMesh;      // unit testing
+    friend class TestDataWriterVTKMaterial;  // unit testing
+    friend class TestDataWriterVTKSubmesh;   // unit testing
+    friend class TestDataWriterVTKBCMesh;    // unit testing
     friend class TestDataWriterVTKFaultMesh; // unit testing
-    friend class TestDataWriterVTKPoints; // unit testing
+    friend class TestDataWriterVTKPoints;    // unit testing
 
     // PUBLIC METHODS ///////////////////////////////////////////////////////
 public:
-
     /// Constructor
     DataWriterVTK(void);
 
@@ -60,7 +60,7 @@ public:
      *
      * @returns Copy of this.
      */
-    DataWriter* clone(void) const;
+    DataWriter *clone(void) const;
 
     /// Deallocate PETSc and local data structures.
     void deallocate(void);
@@ -69,13 +69,13 @@ public:
      *
      * @param[in] filename Name of VTK file.
      */
-    void filename(const char* filename);
+    void filename(const char *filename);
 
     /** Set time format for time stamp in name of VTK file.
      *
      * @param[in] format C style time format for filename.
      */
-    void timeFormat(const char* format);
+    void timeFormat(const char *format);
 
     /** Set value used to normalize time stamp in name of VTK file.
      *
@@ -97,7 +97,7 @@ public:
      * @param[in] mesh Finite-element mesh.
      * @param[in] isInfo True if only writing info values.
      */
-    void open(const topology::Mesh& mesh,
+    void open(const topology::Mesh &mesh,
               const bool isInfo);
 
     /// Close output files.
@@ -109,7 +109,7 @@ public:
      * @param[in] mesh Finite-element mesh.
      */
     void openTimeStep(const PylithScalar t,
-                      const topology::Mesh& mesh);
+                      const topology::Mesh &mesh);
 
     /// Cleanup after writing data for a time step.
     void closeTimeStep(void);
@@ -120,7 +120,7 @@ public:
      * @param[in] subfield Subfield with basis order 1.
      */
     void writeVertexField(const PylithScalar t,
-                          const pylith::meshio::OutputSubfield& field);
+                          const pylith::meshio::OutputSubfield &field);
 
     /** Write field over cells to file.
      *
@@ -128,16 +128,15 @@ public:
      * @param[in] subfield Subfield with basis order 0.
      */
     void writeCellField(const PylithScalar t,
-                        const pylith::meshio::OutputSubfield& subfield);
+                        const pylith::meshio::OutputSubfield &subfield);
 
     // PRIVATE METHODS //////////////////////////////////////////////////////
 private:
-
     /** Copy constructor.
      *
      * @param[in] w Object to copy.
      */
-    DataWriterVTK(const DataWriterVTK& w);
+    DataWriterVTK(const DataWriterVTK &w);
 
     /** Generate filename for VTK file.
      *
@@ -147,25 +146,23 @@ private:
 
     // NOT IMPLEMENTED //////////////////////////////////////////////////////
 private:
-
-    const DataWriterVTK& operator=(const DataWriterVTK&); ///< Not implemented
+    const DataWriterVTK &operator=(const DataWriterVTK &); ///< Not implemented
 
     // PRIVATE MEMBERS //////////////////////////////////////////////////////
 private:
-
     /// Time value (in seconds) used to normalize time stamp.
     PylithScalar _timeConstant;
     int _precision; ///< Precision of floating point values in output.
 
-    std::string _filename; ///< Name of VTK file.
+    std::string _filename;   ///< Name of VTK file.
     std::string _timeFormat; ///< C style time format for time stamp.
 
     PetscViewer _viewer; ///< Output file
-    PetscDM _dm; ///< Handle to PETSc DM for mesh
+    PetscDM _dm;         ///< Handle to PETSc DM for mesh
 
-    bool _isOpenTimeStep; ///< true if called openTimeStep().
+    bool _isOpenTimeStep;    ///< true if called openTimeStep().
     bool _wroteVertexHeader; ///< True if wrote header for vertex data.
-    bool _wroteCellHeader; ///< True if wrote header for cell data
+    bool _wroteCellHeader;   ///< True if wrote header for cell data
 
 }; // DataWriterVTK
 

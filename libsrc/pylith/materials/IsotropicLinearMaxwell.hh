@@ -28,12 +28,12 @@
 
 #include "pylith/materials/RheologyElasticity.hh" // ISA RheologyElasticity
 
-class pylith::materials::IsotropicLinearMaxwell : public pylith::materials::RheologyElasticity {
+class pylith::materials::IsotropicLinearMaxwell : public pylith::materials::RheologyElasticity
+{
     friend class TestIsotropicLinearMaxwell; // unit testing
 
     // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
-
     /// Default constructor.
     IsotropicLinearMaxwell(void);
 
@@ -61,7 +61,7 @@ public:
      *
      * @return Auxiliary factory for physics object.
      */
-    pylith::materials::AuxiliaryFactoryElasticity* getAuxiliaryFactory(void);
+    pylith::materials::AuxiliaryFactoryElasticity *getAuxiliaryFactory(void);
 
     /** Add rheology subfields to auxiliary field.
      *
@@ -75,7 +75,7 @@ public:
      *
      * @return LHS residual kernel for stress.
      */
-    PetscPointFunc getKernelResidualStress(const spatialdata::geocoords::CoordSys* coordsys) const;
+    PetscPointFunc getKernelResidualStress(const spatialdata::geocoords::CoordSys *coordsys) const;
 
     /** Get elastic constants kernel for LHS Jacobian F(t,s,\dot{s}).
      *
@@ -83,7 +83,7 @@ public:
      *
      * @return LHS Jacobian kernel for elastic constants.
      */
-    PetscPointJac getKernelJacobianElasticConstants(const spatialdata::geocoords::CoordSys* coordsys) const;
+    PetscPointJac getKernelJacobianElasticConstants(const spatialdata::geocoords::CoordSys *coordsys) const;
 
     /** Get stress kernel for derived field.
      *
@@ -91,35 +91,33 @@ public:
      *
      * @return Project kernel for computing stress subfield in derived field.
      */
-    PetscPointFunc getKernelDerivedCauchyStress(const spatialdata::geocoords::CoordSys* coordsys) const;
+    PetscPointFunc getKernelDerivedCauchyStress(const spatialdata::geocoords::CoordSys *coordsys) const;
 
     /** Add kernels for updating state variables.
      *
      * @param[inout] kernels Array of kernels for updating state variables.
      * @param[in] coordsys Coordinate system.
      */
-    void addKernelsUpdateStateVars(std::vector<pylith::feassemble::IntegratorDomain::ProjectKernels>* kernels,
-                                   const spatialdata::geocoords::CoordSys* coordsys) const;
+    void addKernelsUpdateStateVars(std::vector<pylith::feassemble::IntegratorDomain::ProjectKernels> *kernels,
+                                   const spatialdata::geocoords::CoordSys *coordsys) const;
 
     /** Update kernel constants.
      *
      * @param[inout] kernelConstants Array of constants used in integration kernels.
      * @param[in] dt Current time step.
      */
-    void updateKernelConstants(pylith::real_array* kernelConstants,
+    void updateKernelConstants(pylith::real_array *kernelConstants,
                                const PylithReal dt) const;
 
     // PRIVATE MEMBERS /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
-    pylith::materials::AuxiliaryFactoryViscoelastic* _auxiliaryFactory; ///< Factory for creating auxiliary subfields.
-    bool _useReferenceState; ///< Flag to use reference stress and strain.
+    pylith::materials::AuxiliaryFactoryViscoelastic *_auxiliaryFactory; ///< Factory for creating auxiliary subfields.
+    bool _useReferenceState;                                            ///< Flag to use reference stress and strain.
 
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
-    IsotropicLinearMaxwell(const IsotropicLinearMaxwell&); ///< Not implemented.
-    const IsotropicLinearMaxwell& operator=(const IsotropicLinearMaxwell&); ///< Not implemented
+    IsotropicLinearMaxwell(const IsotropicLinearMaxwell &);                  ///< Not implemented.
+    const IsotropicLinearMaxwell &operator=(const IsotropicLinearMaxwell &); ///< Not implemented
 
 }; // class IsotropicLinearMaxwell
 

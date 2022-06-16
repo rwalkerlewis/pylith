@@ -32,12 +32,11 @@
  * @warning Do not use this object for parallel I/O.
  */
 class pylith::meshio::HDF5
-{ // HDF5
+{                        // HDF5
   friend class TestHDF5; // Unit testing
 
-// PUBLIC METHODS -------------------------------------------------------
-public :
-
+  // PUBLIC METHODS -------------------------------------------------------
+public:
   /// Default constructor.
   HDF5(void);
 
@@ -46,7 +45,7 @@ public :
    * @param filename Name of HDF5 file
    * @param mode Mode for HDF5 file
    */
-  HDF5(const char* filename,
+  HDF5(const char *filename,
        hid_t mode);
 
   /// Destructor
@@ -57,8 +56,8 @@ public :
    * @param filename Name of HDF5 file
    * @param mode Mode for HDF5 file
    */
-  void open(const char* filename,
-	    hid_t mode);
+  void open(const char *filename,
+            hid_t mode);
 
   /// Close HDF5 file.
   void close(void);
@@ -74,14 +73,14 @@ public :
    * @param name Full name of group.
    * @returns True if group exists, false otherwise.
    */
-  bool hasGroup(const char* name);
+  bool hasGroup(const char *name);
 
   /** Check if HDF5 file has dataset.
    *
    * @param name Full name of dataset.
    * @returns True if dataset exists, false otherwise.
    */
-  bool hasDataset(const char* name);
+  bool hasDataset(const char *name);
 
   /** Get dimensions of dataset.
    *
@@ -90,18 +89,18 @@ public :
    * @param parent Full path of parent dataset for attribute.
    * @param name Name of attribute.
    */
-  void getDatasetDims(hsize_t** dims,
-		      int* ndims,
-		      const char* parent,
-		      const char* name);
+  void getDatasetDims(hsize_t **dims,
+                      int *ndims,
+                      const char *parent,
+                      const char *name);
 
   /** Get names of datasets in group.
    *
    * @param names Names of datasets.
    * @param group Name of parent.
    */
-  void getGroupDatasets(string_vector* names,
-			const char* parent);
+  void getGroupDatasets(string_vector *names,
+                        const char *parent);
 
   /** Create group.
    *
@@ -109,7 +108,7 @@ public :
    *
    * @param name Name of group (with absolute path).
    */
-  void createGroup(const char* name);
+  void createGroup(const char *name);
 
   /** Set scalar attribute.
    *
@@ -118,10 +117,10 @@ public :
    * @param value Attribute value.
    * @param datatype Datatype of scalar.
    */
-  void writeAttribute(const char* parent,
-		      const char* name,
-		      const void* value,
-		      hid_t datatype);
+  void writeAttribute(const char *parent,
+                      const char *name,
+                      const void *value,
+                      hid_t datatype);
 
   /** Set scalar attribute (used with external handle to HDF5 file,
    * such as PetscHDF5Viewer).
@@ -132,12 +131,11 @@ public :
    * @param value Attribute value.
    * @param datatype Datatype of scalar.
    */
-  static
-  void writeAttribute(hid_t h5,
-		      const char* parent,
-		      const char* name,
-		      const void* value,
-		      hid_t datatype);
+  static void writeAttribute(hid_t h5,
+                             const char *parent,
+                             const char *name,
+                             const void *value,
+                             hid_t datatype);
 
   /** Set string attribute.
    *
@@ -145,9 +143,9 @@ public :
    * @param name Name of attribute.
    * @param value String value
    */
-  void writeAttribute(const char* parent,
-		      const char* name,
-		      const char* value);
+  void writeAttribute(const char *parent,
+                      const char *name,
+                      const char *value);
 
   /** Set string attribute (used with external handle to HDF5 file,
    * such as PetscHDF5Viewer).
@@ -157,11 +155,10 @@ public :
    * @param name Name of attribute.
    * @param value String value
    */
-  static
-  void writeAttribute(hid_t h5,
-		      const char* parent,
-		      const char* name,
-		      const char* value);
+  static void writeAttribute(hid_t h5,
+                             const char *parent,
+                             const char *name,
+                             const char *value);
 
   /** Read scalar attribute.
    *
@@ -170,10 +167,10 @@ public :
    * @param datatype Datatype of scalar.
    * @param value Attribute value.
    */
-  void readAttribute(const char* parent,
-		     const char* name,
-		     void* value,
-		     hid_t datatype);
+  void readAttribute(const char *parent,
+                     const char *name,
+                     void *value,
+                     hid_t datatype);
 
   /** Read string attribute.
    *
@@ -181,8 +178,8 @@ public :
    * @param name Name of attribute.
    * @returns value String value
    */
-  std::string readAttribute(const char* parent,
-			    const char* name);
+  std::string readAttribute(const char *parent,
+                            const char *name);
 
   /** Create dataset.
    *
@@ -193,13 +190,13 @@ public :
    * @param ndims Number of dimensions of data.
    * @param datatype Type of data.
    */
-  void createDataset(const char* parent,
-		     const char* name,
-		     const hsize_t* maxDims,
-		     const hsize_t* dimsChunk,
-		     const int ndims,
-		     hid_t datatype);
-  
+  void createDataset(const char *parent,
+                     const char *name,
+                     const hsize_t *maxDims,
+                     const hsize_t *dimsChunk,
+                     const int ndims,
+                     hid_t datatype);
+
   /** Append chunk to dataset.
    *
    * @param parent Full path of parent group for dataset.
@@ -211,14 +208,14 @@ public :
    * @param chunk Index of data chunk.
    * @param datatype Type of data.
    */
-  void writeDatasetChunk(const char* parent,
-			 const char* name,
-			 const void* data,
-			 const hsize_t* dims,
-			 const hsize_t* dimsChunk,
-			 const int ndims,
-			 const int chunk,
-			 hid_t datatype);
+  void writeDatasetChunk(const char *parent,
+                         const char *name,
+                         const void *data,
+                         const hsize_t *dims,
+                         const hsize_t *dimsChunk,
+                         const int ndims,
+                         const int chunk,
+                         hid_t datatype);
 
   /** Read dataset chunk.
    *
@@ -232,13 +229,13 @@ public :
    * @param islice Index of data slice.
    * @param datatype Type of data.
    */
-  void readDatasetChunk(const char* parent,
-			const char* name,
-			char** const data,
-			hsize_t** const dimsChunk,
-			int* const ndims,
-			const int chunk,
-			hid_t datatype);
+  void readDatasetChunk(const char *parent,
+                        const char *name,
+                        char **const data,
+                        hsize_t **const dimsChunk,
+                        int *const ndims,
+                        const int chunk,
+                        hid_t datatype);
 
   /** Create dataset associated with data stored in a raw external
    * binary file.
@@ -250,13 +247,13 @@ public :
    * @param ndims Number of dimensions of data.
    * @param datatype Type of data.
    */
-  void createDatasetRawExternal(const char* parent,
-				const char* name,
-				const char* filename,
-				const hsize_t* maxDims,
-				const int ndims,
-				hid_t datatype);
-  
+  void createDatasetRawExternal(const char *parent,
+                                const char *name,
+                                const char *filename,
+                                const hsize_t *maxDims,
+                                const int ndims,
+                                hid_t datatype);
+
   /** Update the properties of a dataset associated with data stored
    * in a raw external binary file.
    *
@@ -265,12 +262,12 @@ public :
    * @param dims Dimensions of data.
    * @param ndims Number of dimensions of data.
    */
-  void extendDatasetRawExternal(const char* parent,
-				const char* name,
-				const hsize_t* dims,
-				const int ndims);
-  
-  /** Write dataset comprised of an array of strings. 
+  void extendDatasetRawExternal(const char *parent,
+                                const char *name,
+                                const hsize_t *dims,
+                                const int ndims);
+
+  /** Write dataset comprised of an array of strings.
    *
    * Data is written as fixed length strings matching the maximum
    * string length.
@@ -280,10 +277,10 @@ public :
    * @param sarray Array of null terminated C strings.
    * @param nstrings Size of array.
    */
-  void writeDataset(const char* parent,
-		    const char* name,
-		    const char* const* sarray,
-		    const int nstrings);
+  void writeDataset(const char *parent,
+                    const char *name,
+                    const char *const *sarray,
+                    const int nstrings);
 
   /** Write dataset comprised of an array of fixed length strings.
    *
@@ -293,11 +290,11 @@ public :
    * @param nstrings Size of array.
    * @param slen Fixed string length.
    */
-  void writeDataset(const char* parent,
-		    const char* name,
-		    const char* sarray,
-		    const int nstrings,
-		    const int slen);
+  void writeDataset(const char *parent,
+                    const char *name,
+                    const char *sarray,
+                    const int nstrings,
+                    const int slen);
 
   /** Write dataset comprised of an array of fixed length strings (used with
    * external handle to HDF5 file, such as PetscHDF5Viewer).
@@ -309,13 +306,12 @@ public :
    * @param nstrings Size of array.
    * @param slen Fixed string length.
    */
-  static
-  void writeDataset(hid_t h5,
-		    const char* parent,
-		    const char* name,
-		    const char* sarray,
-		    const int nstrings,
-		    const int slen);
+  static void writeDataset(hid_t h5,
+                           const char *parent,
+                           const char *name,
+                           const char *sarray,
+                           const int nstrings,
+                           const int slen);
 
   /** Read dataset comprised of an array of strings.
    *
@@ -323,16 +319,15 @@ public :
    * @param name Name of dataset.
    * @returns Array of string.
    */
-  pylith::string_vector readDataset(const char* parent,
-				    const char* name);
+  pylith::string_vector readDataset(const char *parent,
+                                    const char *name);
 
-// PRIVATE MEMBERS ------------------------------------------------------
-private :
-
+  // PRIVATE MEMBERS ------------------------------------------------------
+private:
   hid_t _file; ///< HDF5 file
 
 }; // HDF5
 
 #endif // pylith_meshio_hdf5_hh
 
-// End of file 
+// End of file

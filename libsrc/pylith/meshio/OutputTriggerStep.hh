@@ -29,12 +29,12 @@
 
 #include "pylith/meshio/OutputTrigger.hh" // ISA OutputTrigger
 
-class pylith::meshio::OutputTriggerStep : public pylith::meshio::OutputTrigger {
+class pylith::meshio::OutputTriggerStep : public pylith::meshio::OutputTrigger
+{
     friend class TestOutputTriggerStep; // unit testing
 
     // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
-
     /// Construlibctor
     OutputTriggerStep(void);
 
@@ -64,16 +64,13 @@ public:
 
     // PRIVATE MEMBERS /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
     PylithInt _numStepsSkip; ///< Number of steps to skip between writes.
-    PylithInt _stepWrote; ///< Step when data was previously written.
+    PylithInt _stepWrote;    ///< Step when data was previously written.
 
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
-    OutputTriggerStep(const OutputTriggerStep&); ///< Not implemented.
-    const OutputTriggerStep& operator=(const OutputTriggerStep&); ///< Not implemented
-
+    OutputTriggerStep(const OutputTriggerStep &);                  ///< Not implemented.
+    const OutputTriggerStep &operator=(const OutputTriggerStep &); ///< Not implemented
 };
 
 // OutputTriggerStep

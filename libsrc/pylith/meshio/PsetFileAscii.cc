@@ -20,37 +20,36 @@
 
 #include "PsetFileAscii.hh" // implementation of class methods
 
-#include "pylith/utils/array.hh" // USES scalar_array, int_array
-#include "pylith/utils/error.hh" // USES PYLITH_METHOD_BEGIN/END
+#include "pylith/utils/array.hh"    // USES scalar_array, int_array
+#include "pylith/utils/error.hh"    // USES PYLITH_METHOD_BEGIN/END
 #include "pylith/utils/journals.hh" // pythia::journal
 
-#include <fstream> // USES std::ifstream
-#include <iomanip> // USES std::setw()
-#include <cstring> // USES strcmp()
-#include <cassert> // USES assert()
-#include <sstream> // USES std::ostringstream
+#include <fstream>   // USES std::ifstream
+#include <iomanip>   // USES std::setw()
+#include <cstring>   // USES strcmp()
+#include <cassert>   // USES assert()
+#include <sstream>   // USES std::ostringstream
 #include <stdexcept> // USES std::exception
 
 // ----------------------------------------------------------------------
-const char* pylith::meshio::PsetFileAscii::_HEADER = "pset ascii";
+const char *pylith::meshio::PsetFileAscii::_HEADER = "pset ascii";
 
 // ----------------------------------------------------------------------
 // Constructor with name of Pset file.
-pylith::meshio::PsetFileAscii::PsetFileAscii(const char* filename) :
-    PsetFile(filename) { // constructor
+pylith::meshio::PsetFileAscii::PsetFileAscii(const char *filename) : PsetFile(filename)
+{ // constructor
 } // constructor
-
 
 // ----------------------------------------------------------------------
 // Default destructor
-pylith::meshio::PsetFileAscii::~PsetFileAscii(void) { // destructor
+pylith::meshio::PsetFileAscii::~PsetFileAscii(void)
+{ // destructor
 } // destructor
-
 
 // ----------------------------------------------------------------------
 // Read ASCII Pset file.
-void
-pylith::meshio::PsetFileAscii::read(std::vector<Pset>* groups) { // read
+void pylith::meshio::PsetFileAscii::read(std::vector<Pset> *groups)
+{ // read
     PYLITH_METHOD_BEGIN;
 
     assert(groups);
@@ -58,7 +57,8 @@ pylith::meshio::PsetFileAscii::read(std::vector<Pset>* groups) { // read
     pythia::journal::info_t info("meshio");
 
     std::ifstream fin(_filename.c_str(), std::ios::in);
-    if (!(fin.is_open() && fin.good())) {
+    if (!(fin.is_open() && fin.good()))
+    {
         std::ostringstream msg;
         msg
             << "Could not open ASCII Pset file '" << _filename
@@ -79,24 +79,25 @@ pylith::meshio::PsetFileAscii::read(std::vector<Pset>* groups) { // read
     // Read groups
     info << pythia::journal::at(__HERE__)
          << "Reading " << numGroups << " point sets from file." << pythia::journal::endl;
-    for (int iGroup = 0; iGroup < numGroups; ++iGroup) {
+    for (int iGroup = 0; iGroup < numGroups; ++iGroup)
+    {
         _readPset(fin, &(*groups)[iGroup]);
     }
 
     PYLITH_METHOD_END;
 } // read
 
-
 // ----------------------------------------------------------------------
 // Write ASCII Pset file.
-void
-pylith::meshio::PsetFileAscii::write(const std::vector<Pset>& groups) { // write
+void pylith::meshio::PsetFileAscii::write(const std::vector<Pset> &groups)
+{ // write
     PYLITH_METHOD_BEGIN;
 
     pythia::journal::info_t info("meshio");
 
     std::ofstream fout(_filename.c_str(), std::ios::out);
-    if (!(fout.is_open() && fout.good())) {
+    if (!(fout.is_open() && fout.good()))
+    {
         std::ostringstream msg;
         msg
             << "Could not open ASCII Pset file '" << _filename
@@ -116,23 +117,24 @@ pylith::meshio::PsetFileAscii::write(const std::vector<Pset>& groups) { // write
     // Write groups
     info << pythia::journal::at(__HERE__)
          << "Writing " << numGroups << " point sets to file." << pythia::journal::endl;
-    for (int iGroup = 0; iGroup < numGroups; ++iGroup) {
+    for (int iGroup = 0; iGroup < numGroups; ++iGroup)
+    {
         _writePset(fout, groups[iGroup]);
     }
 
     PYLITH_METHOD_END;
 } // write
 
-
 // ----------------------------------------------------------------------
-void
-pylith::meshio::PsetFileAscii::_readHeader(std::ifstream& fin) { // _readHeader
+void pylith::meshio::PsetFileAscii::_readHeader(std::ifstream &fin)
+{ // _readHeader
     PYLITH_METHOD_BEGIN;
 
-    const int headerLen = strlen(_HEADER)+1;
+    const int headerLen = strlen(_HEADER) + 1;
     char buffer[headerLen];
     fin.get(buffer, headerLen, '\n');
-    if (strcmp(_HEADER, buffer)) {
+    if (strcmp(_HEADER, buffer))
+    {
         std::ostringstream msg;
         msg
             << "Header in ASCII Pset file '" << buffer
@@ -144,10 +146,9 @@ pylith::meshio::PsetFileAscii::_readHeader(std::ifstream& fin) { // _readHeader
     PYLITH_METHOD_END;
 } // _readHeader
 
-
 // ----------------------------------------------------------------------
-void
-pylith::meshio::PsetFileAscii::_writeHeader(std::ofstream& fout) { // _writeHeader
+void pylith::meshio::PsetFileAscii::_writeHeader(std::ofstream &fout)
+{ // _writeHeader
     PYLITH_METHOD_BEGIN;
 
     fout << _HEADER << std::endl;
@@ -155,11 +156,10 @@ pylith::meshio::PsetFileAscii::_writeHeader(std::ofstream& fout) { // _writeHead
     PYLITH_METHOD_END;
 } // _writeHeader
 
-
 // ----------------------------------------------------------------------
-void
-pylith::meshio::PsetFileAscii::_readPset(std::ifstream& fin,
-                                         Pset* group) { // _readPset
+void pylith::meshio::PsetFileAscii::_readPset(std::ifstream &fin,
+                                              Pset *group)
+{ // _readPset
     PYLITH_METHOD_BEGIN;
 
     assert(group);
@@ -173,7 +173,8 @@ pylith::meshio::PsetFileAscii::_readPset(std::ifstream& fin,
          << " points." << pythia::journal::endl;
 
     group->points.resize(size);
-    for (int i = 0; i < size; ++i) {
+    for (int i = 0; i < size; ++i)
+    {
         fin >> group->points[i];
     }
 
@@ -185,11 +186,10 @@ pylith::meshio::PsetFileAscii::_readPset(std::ifstream& fin,
     PYLITH_METHOD_END;
 } // _readPset
 
-
 // ----------------------------------------------------------------------
-void
-pylith::meshio::PsetFileAscii::_writePset(std::ofstream& fout,
-                                          const Pset& group) { // _writePset
+void pylith::meshio::PsetFileAscii::_writePset(std::ofstream &fout,
+                                               const Pset &group)
+{ // _writePset
     PYLITH_METHOD_BEGIN;
 
     pythia::journal::info_t info("meshio");
@@ -202,19 +202,20 @@ pylith::meshio::PsetFileAscii::_writePset(std::ofstream& fout,
     fout << group.name << " " << group.id << "  " << size << std::endl;
 
     const int numCols = 10;
-    for (int i = 0, iCol = 0; i < size; ++i) {
-        fout << std::setw(8) << 1+group.points[i];
-        if (++iCol == numCols) {
+    for (int i = 0, iCol = 0; i < size; ++i)
+    {
+        fout << std::setw(8) << 1 + group.points[i];
+        if (++iCol == numCols)
+        {
             fout << std::endl;
             iCol = 0;
         } // if
-    } // for
+    }     // for
 
     info << pythia::journal::at(__HERE__)
          << "Done." << pythia::journal::endl;
 
     PYLITH_METHOD_END;
 } // _writePset
-
 
 // End of file

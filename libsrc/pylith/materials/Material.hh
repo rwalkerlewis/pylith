@@ -49,12 +49,12 @@
  *   + displacement, pressure, trace strain, [velocity, Lagrange multipliers]
  */
 
-class pylith::materials::Material : public pylith::problems::Physics {
+class pylith::materials::Material : public pylith::problems::Physics
+{
     friend class TestMaterial; // unit testing
 
     // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
-
     /// Default constructor.
     Material(void);
 
@@ -62,32 +62,31 @@ public:
     virtual ~Material(void);
 
     /// Deallocate PETSc and local data structures.
-    virtual
-    void deallocate(void);
+    virtual void deallocate(void);
 
     /** Set descriptive label for material.
      *
      * @param value Label of material.
      */
-    void setDescription(const char* value);
+    void setDescription(const char *value);
 
     /** Get descruptive label of material.
      *
      * @returns Label of material
      */
-    const char* getDescription(void) const;
+    const char *getDescription(void) const;
 
     /** Set name of label marking material.
      *
      * @param[in] value Name of label for material (from mesh generator).
      */
-    void setLabelName(const char* value);
+    void setLabelName(const char *value);
 
     /** Get name of label marking material.
      *
      * @returns Name of label for material (from mesh generator).
      */
-    const char* getLabelName(void) const;
+    const char *getLabelName(void) const;
 
     /** Set value of label marking material.
      *
@@ -105,33 +104,29 @@ public:
      *
      * @param g Gravity field.
      */
-    void setGravityField(spatialdata::spatialdb::GravityField* const g);
+    void setGravityField(spatialdata::spatialdb::GravityField *const g);
 
     /** Create constraint and set kernels.
      *
      * @param[in] solution Solution field.
      * @returns Constraint if applicable, otherwise NULL.
      */
-    virtual
-    std::vector<pylith::feassemble::Constraint*> createConstraints(const pylith::topology::Field& solution);
+    virtual std::vector<pylith::feassemble::Constraint *> createConstraints(const pylith::topology::Field &solution);
 
     // PROTECTED MEMBERS ///////////////////////////////////////////////////////////////////////////////////////////////
 protected:
-
-    spatialdata::spatialdb::GravityField* _gravityField; ///< Gravity field for gravitational body forces.
+    spatialdata::spatialdb::GravityField *_gravityField; ///< Gravity field for gravitational body forces.
 
     // PRIVATE MEMBERS /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
     std::string _description; ///< Descriptive label for material.
-    std::string _labelName; ///< Name of label in mesh for material.
-    int _labelValue; ///< Value of label in mesh for material.
+    std::string _labelName;   ///< Name of label in mesh for material.
+    int _labelValue;          ///< Value of label in mesh for material.
 
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
-    Material(const Material&); ///< Not implemented.
-    const Material& operator=(const Material&); ///< Not implemented
+    Material(const Material &);                  ///< Not implemented.
+    const Material &operator=(const Material &); ///< Not implemented
 
 }; // Material
 

@@ -25,20 +25,20 @@
 #if !defined(pylith_problems_greensfns_hh)
 #define pylith_problems_greensfns_hh
 
-#include "Problem.hh" // ISA Problem
-#include "pylith/testing/testingfwd.hh" // USES MMSTest
-#include "pylith/faults/faultsfwd.hh" // HOLDSA FaultCohesiveImpulses
+#include "Problem.hh"                         // ISA Problem
+#include "pylith/testing/testingfwd.hh"       // USES MMSTest
+#include "pylith/faults/faultsfwd.hh"         // HOLDSA FaultCohesiveImpulses
 #include "pylith/feassemble/feassemblefwd.hh" // HOLDSA Integrator
 
 #include "pylith/testing/FaultCohesiveStub.hh" // TEMPORARY
 
-class pylith::problems::GreensFns : public pylith::problems::Problem {
-    friend class TestGreensFns; // unit testing
+class pylith::problems::GreensFns : public pylith::problems::Problem
+{
+    friend class TestGreensFns;            // unit testing
     friend class pylith::testing::MMSTest; // Testing with Method of Manufactured Solutions
 
     // PUBLIC MEMBERS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
-
     /// Constructor
     GreensFns(void);
 
@@ -52,13 +52,13 @@ public:
      *
      * @param[in] value Name of label for fault with impulses.
      */
-    void setFaultLabelName(const char* value);
+    void setFaultLabelName(const char *value);
 
     /** Get label name for fault with impulses.
      *
      * @returns Name of label for fault with impulses.
      */
-    const char* getFaultLabelName(void) const;
+    const char *getFaultLabelName(void) const;
 
     /** Set value of label for fault with impulses.
      *
@@ -76,7 +76,7 @@ public:
      *
      * @param[in] monitor Progress monitor for Green's functions simulation.
      */
-    void setProgressMonitor(pylith::problems::ProgressMonitorStep* monitor);
+    void setProgressMonitor(pylith::problems::ProgressMonitorStep *monitor);
 
     /** Get Petsc DM for problem.
      *
@@ -131,11 +131,10 @@ public:
      * @param[out] residualvec PetscVec for residual.
      * @param[in] context User context (GreensFns).
      */
-    static
-    PetscErrorCode computeResidual(PetscSNES snes,
-                                   PetscVec solutionVec,
-                                   PetscVec residualVec,
-                                   void* context);
+    static PetscErrorCode computeResidual(PetscSNES snes,
+                                          PetscVec solutionVec,
+                                          PetscVec residualVec,
+                                          void *context);
 
     /* Callback static method for computing Jacobian.
      *
@@ -145,23 +144,21 @@ public:
      * @param[in] solutionVec PETSc Vec with current trial solution.
      * @param[in] context User context (GreensFns).
      */
-    static
-    PetscErrorCode computeJacobian(PetscSNES snes,
-                                   PetscVec solutionVec,
-                                   PetscMat jacobianMat,
-                                   PetscMat precondMat,
-                                   void* context);
+    static PetscErrorCode computeJacobian(PetscSNES snes,
+                                          PetscVec solutionVec,
+                                          PetscMat jacobianMat,
+                                          PetscMat precondMat,
+                                          void *context);
 
     // PRIVATE MEMBERS ////////////////////////////////////////////////////////////////////////////
 private:
+    std::string _faultLabelName;                           ///< Name of label for fault with impulses.
+    PylithInt _faultLabelValue;                            ///< Value of label for fault with impulses.
+    pylith::faults::FaultCohesiveImpulses *_faultImpulses; ///< Fault interface with Green's functions impulses.
+    pylith::feassemble::Integrator *_integratorImpulses;   ///< Integrator for Green's functions impulses.
 
-    std::string _faultLabelName; ///< Name of label for fault with impulses.
-    PylithInt _faultLabelValue; ///< Value of label for fault with impulses.
-    pylith::faults::FaultCohesiveImpulses* _faultImpulses; ///< Fault interface with Green's functions impulses.
-    pylith::feassemble::Integrator* _integratorImpulses; ///< Integrator for Green's functions impulses.
-
-    PetscSNES _snes; ///< PETSc SNES solver.
-    pylith::problems::ProgressMonitorStep* _monitor; ///< Monitor for simulation progress.
+    PetscSNES _snes;                                 ///< PETSc SNES solver.
+    pylith::problems::ProgressMonitorStep *_monitor; ///< Monitor for simulation progress.
 
 }; // GreensFns
 

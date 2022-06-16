@@ -29,12 +29,12 @@
 
 #include <string> // HASA std::string
 
-class pylith::meshio::MeshIOPetsc : public MeshIO {
+class pylith::meshio::MeshIOPetsc : public MeshIO
+{
     friend class TestMeshIOPetsc; // unit testing
 
     // PUBLIC METHODS /////////////////////////////////////////////////////////////////////////////
 public:
-
     /// Constructor
     MeshIOPetsc(void);
 
@@ -48,29 +48,28 @@ public:
      *
      * @param name Name of file
      */
-    void setFilename(const char* name);
+    void setFilename(const char *name);
 
     /** Get filename of ASCII file.
      *
      * @returns Name of file
      */
-    const char* getFilename(void) const;
+    const char *getFilename(void) const;
 
     /** Set options prefix for this mesh.
      *
      * @param name Options prefix
      */
-    void setPrefix(const char* name);
+    void setPrefix(const char *name);
 
     /** Get options prefix for this mesh.
      *
      * @returns Options prefix
      */
-    const char* getPrefix(void) const;
+    const char *getPrefix(void) const;
 
     // PROTECTED METHODS //////////////////////////////////////////////////////////////////////////
 protected:
-
     /// Write mesh
     void _write(void) const;
 
@@ -79,9 +78,8 @@ protected:
 
     // PRIVATE MEMBERS ////////////////////////////////////////////////////////////////////////////
 private:
-
     std::string _filename; ///< Name of file
-    std::string _prefix; ///< Options prefix for mesh
+    std::string _prefix;   ///< Options prefix for mesh
 
 }; // MeshIOPetsc
 

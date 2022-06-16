@@ -50,19 +50,19 @@
 #include "pylith/utils/petscfwd.h" // HASA PetscVec
 
 #include <string> // USES std::string
-#include <map> // HASA std::map
+#include <map>    // HASA std::map
 
-class pylith::meshio::DataWriterHDF5 : public DataWriter {
-    friend class TestDataWriterHDF5Mesh; // unit testing
-    friend class TestDataWriterHDF5Submesh; // unit testing
-    friend class TestDataWriterHDF5Points; // unit testing
-    friend class TestDataWriterHDF5BCMesh; // unit testing
+class pylith::meshio::DataWriterHDF5 : public DataWriter
+{
+    friend class TestDataWriterHDF5Mesh;      // unit testing
+    friend class TestDataWriterHDF5Submesh;   // unit testing
+    friend class TestDataWriterHDF5Points;    // unit testing
+    friend class TestDataWriterHDF5BCMesh;    // unit testing
     friend class TestDataWriterHDF5FaultMesh; // unit testing
 
     // PUBLIC METHODS
     // //////////////////////////////////////////////////////////////////////////////////////////////////////
 public:
-
     /// Constructor
     DataWriterHDF5(void);
 
@@ -73,7 +73,7 @@ public:
      *
      * @returns Copy of this.
      */
-    DataWriter* clone(void) const;
+    DataWriter *clone(void) const;
 
     /// Deallocate PETSc and local data structures.
     void deallocate(void);
@@ -82,7 +82,7 @@ public:
      *
      * @param[in] filename Name of HDF5 file.
      */
-    void filename(const char* filename);
+    void filename(const char *filename);
 
     /** Generate filename for HDF5 file.
      *
@@ -100,7 +100,7 @@ public:
      * @param[in] mesh Finite-element mesh.
      * @param[in] isInfo True if only writing info values.
      */
-    void open(const topology::Mesh& mesh,
+    void open(const topology::Mesh &mesh,
               const bool isInfo);
 
     /// Close output files.
@@ -112,7 +112,7 @@ public:
      * @param[in] subfield Subfield with basis order 1.
      */
     void writeVertexField(const PylithScalar t,
-                          const pylith::meshio::OutputSubfield& field);
+                          const pylith::meshio::OutputSubfield &field);
 
     /** Write field over cells to file.
      *
@@ -120,7 +120,7 @@ public:
      * @param[in] subfield Subfield with basis order 0.
      */
     void writeCellField(const PylithScalar t,
-                        const pylith::meshio::OutputSubfield& subfield);
+                        const pylith::meshio::OutputSubfield &subfield);
 
     /** Write dataset with names of points to file.
      *
@@ -129,17 +129,16 @@ public:
      *
      * Primarily used with OutputSolnPoints.
      */
-    void writePointNames(const pylith::string_vector& names,
-                         const topology::Mesh& mesh);
+    void writePointNames(const pylith::string_vector &names,
+                         const topology::Mesh &mesh);
 
     // PRIVATE METHODS /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
     /** Copy constructor.
      *
      * @param[in] w Object to copy.
      */
-    DataWriterHDF5(const DataWriterHDF5& w);
+    DataWriterHDF5(const DataWriterHDF5 &w);
 
     /** Write time stamp to file.
      *
@@ -151,18 +150,16 @@ private:
 
     // PRIVATE MEMBERS /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
     std::string _filename; ///< Name of HDF5 file.
-    PetscViewer _viewer; ///< Output file.
-    PetscVec _tstamp; ///< Single value vector holding time stamp.
+    PetscViewer _viewer;   ///< Output file.
+    PetscVec _tstamp;      ///< Single value vector holding time stamp.
 
     std::map<std::string, int> _timesteps; ///< # of time steps written per field.
-    int _tstampIndex; ///< Index of last time stamp written.
+    int _tstampIndex;                      ///< Index of last time stamp written.
 
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
-    const DataWriterHDF5& operator=(const DataWriterHDF5&); ///< Not implemented
+    const DataWriterHDF5 &operator=(const DataWriterHDF5 &); ///< Not implemented
 
 }; // DataWriterHDF5
 

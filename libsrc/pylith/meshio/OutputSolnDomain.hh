@@ -27,15 +27,15 @@
 
 #include "meshiofwd.hh" // forward declarations
 
-#include "OutputSoln.hh" // ISA OutputSoln
+#include "OutputSoln.hh"                  // ISA OutputSoln
 #include "pylith/problems/problemsfwd.hh" // HASA Problem
 
-class pylith::meshio::OutputSolnDomain : public pylith::meshio::OutputSoln {
+class pylith::meshio::OutputSolnDomain : public pylith::meshio::OutputSoln
+{
     friend class TestOutputSolnDomain; // unit testing
 
     // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
-
     /// Constructor.
     OutputSolnDomain(void);
 
@@ -44,7 +44,6 @@ public:
 
     // PROTECTED METHODS ///////////////////////////////////////////////////////////////////////////////////////////////
 protected:
-
     /** Write solution at time step.
      *
      * @param[in] t Current time.
@@ -53,13 +52,12 @@ protected:
      */
     void _writeSolnStep(const PylithReal t,
                         const PylithInt tindex,
-                        const pylith::topology::Field& solution);
+                        const pylith::topology::Field &solution);
 
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
-    OutputSolnDomain(const OutputSolnDomain&); ///< Not implemented.
-    const OutputSolnDomain& operator=(const OutputSolnDomain&); ///< Not implemented
+    OutputSolnDomain(const OutputSolnDomain &);                  ///< Not implemented.
+    const OutputSolnDomain &operator=(const OutputSolnDomain &); ///< Not implemented
 
 }; // OutputSolnDomain
 

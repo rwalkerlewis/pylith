@@ -24,23 +24,23 @@
 #if !defined(pylith_materials_rheologyelasticity_hh)
 #define pylith_materials_rheologyelasticity_hh
 
-#include "materialsfwd.hh" // forward declarations
+#include "materialsfwd.hh"               // forward declarations
 #include "pylith/utils/PyreComponent.hh" // ISA PyreComponent
 
-#include "pylith/topology/topologyfwd.hh" // USES Field
-#include "pylith/utils/arrayfwd.hh" // USES std::vector
+#include "pylith/topology/topologyfwd.hh"        // USES Field
+#include "pylith/utils/arrayfwd.hh"              // USES std::vector
 #include "pylith/feassemble/IntegratorDomain.hh" // USES IntegratorDomain::ProjectKernels
 
 #include "spatialdata/geocoords/geocoordsfwd.hh" // USES Coordsys
 
 #include "petscds.h" // USES PetscPointFunc, PetscPointJac
 
-class pylith::materials::RheologyElasticity : public pylith::utils::PyreComponent {
+class pylith::materials::RheologyElasticity : public pylith::utils::PyreComponent
+{
     friend class TestIsotropicLinearElasticity; // unit testing
 
     // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
-
     /// Default constructor.
     RheologyElasticity(void);
 
@@ -54,12 +54,10 @@ public:
      *
      * @return Auxiliary factory for physics object.
      */
-    virtual
-    pylith::materials::AuxiliaryFactoryElasticity* getAuxiliaryFactory(void) = 0;
+    virtual pylith::materials::AuxiliaryFactoryElasticity *getAuxiliaryFactory(void) = 0;
 
     /// Add rheology subfields to auxiliary field.
-    virtual
-    void addAuxiliarySubfields(void) = 0;
+    virtual void addAuxiliarySubfields(void) = 0;
 
     /** Get stress kernel for RHS residual, G(t,s).
      *
@@ -67,8 +65,7 @@ public:
      *
      * @return RHS residual kernel for stress.
      */
-    virtual
-    PetscPointFunc getKernelResidualStress(const spatialdata::geocoords::CoordSys* coordsys) const = 0;
+    virtual PetscPointFunc getKernelResidualStress(const spatialdata::geocoords::CoordSys *coordsys) const = 0;
 
     /** Get elastic constants kernel for RHS Jacobian G(t,s).
      *
@@ -76,8 +73,7 @@ public:
      *
      * @return RHS Jacobian kernel for elastic constants.
      */
-    virtual
-    PetscPointJac getKernelJacobianElasticConstants(const spatialdata::geocoords::CoordSys* coordsys) const = 0;
+    virtual PetscPointJac getKernelJacobianElasticConstants(const spatialdata::geocoords::CoordSys *coordsys) const = 0;
 
     /** Get triggers for needing to compute the elastic constants for the RHS Jacobian.
      *
@@ -91,26 +87,23 @@ public:
      *
      * @return Project kernel for computing stress subfield in derived field.
      */
-    virtual
-    PetscPointFunc getKernelDerivedCauchyStress(const spatialdata::geocoords::CoordSys* coordsys) const = 0;
+    virtual PetscPointFunc getKernelDerivedCauchyStress(const spatialdata::geocoords::CoordSys *coordsys) const = 0;
 
     /** Add kernels for updating state variables.
      *
      * @param[inout] kernels Array of kernels for updating state variables.
      * @param[in] coordsys Coordinate system.
      */
-    virtual
-    void addKernelsUpdateStateVars(std::vector<pylith::feassemble::IntegratorDomain::ProjectKernels>* kernels,
-                                   const spatialdata::geocoords::CoordSys* coordsys) const;
+    virtual void addKernelsUpdateStateVars(std::vector<pylith::feassemble::IntegratorDomain::ProjectKernels> *kernels,
+                                           const spatialdata::geocoords::CoordSys *coordsys) const;
 
     /** Update kernel constants.
      *
      * @param[inout] kernelConstants Array of constants used in integration kernels.
      * @param[in] dt Current time step.
      */
-    virtual
-    void updateKernelConstants(pylith::real_array* kernelConstants,
-                               const PylithReal dt) const;
+    virtual void updateKernelConstants(pylith::real_array *kernelConstants,
+                                       const PylithReal dt) const;
 
     // PROTECTED MEMBERS ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -118,9 +111,8 @@ public:
 
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
-    RheologyElasticity(const RheologyElasticity&); ///< Not implemented.
-    const RheologyElasticity& operator=(const RheologyElasticity&); /// Not implemented.
+    RheologyElasticity(const RheologyElasticity &);                  ///< Not implemented.
+    const RheologyElasticity &operator=(const RheologyElasticity &); /// Not implemented.
 
 }; // class RheologyElasticity
 

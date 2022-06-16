@@ -27,8 +27,10 @@
 #if !defined(pylith_meshio_meshiofwd_hh)
 #define pylith_meshio_meshiofwd_hh
 
-namespace pylith {
-    namespace meshio {
+namespace pylith
+{
+    namespace meshio
+    {
         class BinaryIO;
 
         class MeshIO;

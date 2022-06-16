@@ -35,72 +35,69 @@
 class pylith::meshio::PsetFileAscii : public PsetFile
 { // PsetFileAscii
 
-// PUBLIC METHODS ///////////////////////////////////////////////////////
-public :
-
+  // PUBLIC METHODS ///////////////////////////////////////////////////////
+public:
   /** Constructor with name of Pset file.
    *
    * @param filename Name of Pset file
    */
-  PsetFileAscii(const char* name);
+  PsetFileAscii(const char *name);
 
-  /// Default destructor 
+  /// Default destructor
   ~PsetFileAscii(void);
 
   /** Get header.
    *
    * @returns Header that appears in ASCII Pset file
    */
-  static const char* header(void);
+  static const char *header(void);
 
   /** Read ASCII Pset file.
    *
    * @param groups Array of point sets.
    */
-  void read(std::vector<Pset>* groups);
+  void read(std::vector<Pset> *groups);
 
   /** Write ASCII Pset file.
    *
    * @param groups Array of point sets.
    */
-  void write(const std::vector<Pset>& groups);
+  void write(const std::vector<Pset> &groups);
 
-// PRIVATE METHODS //////////////////////////////////////////////////////
-private :
-  
+  // PRIVATE METHODS //////////////////////////////////////////////////////
+private:
   /** Read header.
    *
    * @param fin Input file stream
    */
-  void _readHeader(std::ifstream& fin);
+  void _readHeader(std::ifstream &fin);
 
   /** Write header.
    *
    * @param fout Output file stream
    */
-  void _writeHeader(std::ofstream& fout);
+  void _writeHeader(std::ofstream &fout);
 
   /** Read point set.
    *
    * @param fin Input file stream.
    * @param group Point set
    */
-  void _readPset(std::ifstream& fin,
-		 Pset* group);
+  void _readPset(std::ifstream &fin,
+                 Pset *group);
 
   /** Write point set.
    *
    * @param fout Output file stream.
    * @param group Point set
    */
-  void _writePset(std::ofstream& fout,
-		  const Pset& group);
+  void _writePset(std::ofstream &fout,
+                  const Pset &group);
 
-// PRIVATE MEMBERS //////////////////////////////////////////////////////
-private :
-  
+  // PRIVATE MEMBERS //////////////////////////////////////////////////////
+private:
   /** Header in ascii Pset file */
-  static const char* _HEADER;
+  static const char *_HEADER;
 
 }; // PsetFileInAscii
 
@@ -108,5 +105,4 @@ private :
 
 #endif // pylith_meshio_psetfileascii
 
-
-// End of file 
+// End of file

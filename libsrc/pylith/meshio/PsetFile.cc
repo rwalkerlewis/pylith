@@ -24,14 +24,13 @@
 
 #include "pylith/utils/error.hh" // USES PYLITH_METHOD_BEGIN/END
 
-#include <fstream> // uses std::fstream
-#include <sstream> // uses std::ostringstream
-#include <cstring> // uses strcmp()
+#include <fstream>   // uses std::fstream
+#include <sstream>   // uses std::ostringstream
+#include <cstring>   // uses strcmp()
 #include <stdexcept> // USES std::runtime_error
 
 // ----------------------------------------------------------------
-pylith::meshio::PsetFile::PsetFile(const char* filename) :
-  _filename(filename)
+pylith::meshio::PsetFile::PsetFile(const char *filename) : _filename(filename)
 { // constructor
 } // constructor
 
@@ -41,18 +40,18 @@ pylith::meshio::PsetFile::~PsetFile(void)
 } // destructor
 
 // ----------------------------------------------------------------
-bool
-pylith::meshio::PsetFile::isAscii(const char* filename)
+bool pylith::meshio::PsetFile::isAscii(const char *filename)
 { // isAscii
   PYLITH_METHOD_BEGIN;
 
   std::ifstream fin(filename);
-  if (!(fin.is_open() && fin.good())) {
+  if (!(fin.is_open() && fin.good()))
+  {
     std::ostringstream msg;
     msg << "Could not open Pset file '" << filename << "' for reading.";
     throw std::runtime_error(msg.str());
   } // if
-  const int headerLen = strlen(PsetFileAscii::header())+1;
+  const int headerLen = strlen(PsetFileAscii::header()) + 1;
   char buffer[headerLen];
   fin.get(buffer, headerLen, '\n');
   fin.close();
@@ -61,5 +60,4 @@ pylith::meshio::PsetFile::isAscii(const char* filename)
   PYLITH_METHOD_RETURN(result);
 } // isAscii
 
-
-// End of file 
+// End of file

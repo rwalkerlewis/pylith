@@ -25,7 +25,8 @@
 #include "meshiofwd.hh"
 
 /// C++ interface to Python Xdmf object.
-class pylith::meshio::Xdmf {
+class pylith::meshio::Xdmf
+{
     friend class TestXdmf; // Unit testing
 
 public:
@@ -35,13 +36,10 @@ public:
      *
      * @param[in] filenameH5 Name of HDF5 file.
      */
-    static
-    void write(const char* filenameH5);
-
+    static void write(const char *filenameH5);
 
 }; // class Xdmf
 
 #endif // pylith_meshio_xdmf_hh
-
 
 // End of file

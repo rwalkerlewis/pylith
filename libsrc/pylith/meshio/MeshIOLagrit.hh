@@ -29,13 +29,13 @@
 
 #include <string> // HASA std::string
 
-class pylith::meshio::MeshIOLagrit : public MeshIO {
+class pylith::meshio::MeshIOLagrit : public MeshIO
+{
     friend class TestMeshIOLagrit; // unit testing
 
     // PUBLIC METHODS
     // //////////////////////////////////////////////////////////////////////////////////////////////////////
 public:
-
     /// Constructor
     MeshIOLagrit(void);
 
@@ -49,25 +49,25 @@ public:
      *
      * @param filename Name of file
      */
-    void setFilenameGmv(const char* name);
+    void setFilenameGmv(const char *name);
 
     /** Get filename of mesh GMV file.
      *
      * @returns Name of file
      */
-    const char* getFilenameGmv(void) const;
+    const char *getFilenameGmv(void) const;
 
     /** Set filename for PSET mesh file.
      *
      * @param filename Name of file
      */
-    void setFilenamePset(const char* name);
+    void setFilenamePset(const char *name);
 
     /** Get filename of PSET mesh file.
      *
      * @returns Name of file
      */
-    const char* getFilenamePset(void) const;
+    const char *getFilenamePset(void) const;
 
     /** Set flag to write ASCII or binary files.
      *
@@ -121,7 +121,6 @@ public:
     // PROTECTED METHODS
     // ///////////////////////////////////////////////////////////////////////////////////////////////////
 protected:
-
     /// Write mesh
     void _write(void) const;
 
@@ -131,7 +130,6 @@ protected:
     // PRIVATE METHODS
     // /////////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
     /** Reorder vertices in cells from ASCII GMV files to match PyLith
      * conventions.
      *
@@ -140,11 +138,10 @@ private:
      * @param numCorners Number of vertices per cell.
      * @param meshDim Spatial dimension of mesh.
      */
-    static
-    void _orientCellsAscii(int_array* const cells,
-                           const int numCells,
-                           const int numCorners,
-                           const int meshDim);
+    static void _orientCellsAscii(int_array *const cells,
+                                  const int numCells,
+                                  const int numCorners,
+                                  const int meshDim);
 
     /** Reorder vertices in cells from binary GMV files to match PyLith
      * conventions.
@@ -154,21 +151,19 @@ private:
      * @param numCorners Number of vertices per cell.
      * @param meshDim Spatial dimension of mesh.
      */
-    static
-    void _orientCellsBinary(int_array* const cells,
-                            const int numCells,
-                            const int numCorners,
-                            const int meshDim);
+    static void _orientCellsBinary(int_array *const cells,
+                                   const int numCells,
+                                   const int numCorners,
+                                   const int meshDim);
 
     // PRIVATE MEMBERS
     // /////////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
-    std::string _filenameGmv; ///< Name of GMV file.
+    std::string _filenameGmv;  ///< Name of GMV file.
     std::string _filenamePset; ///< Name of PSET file.
-    bool _writeAscii; ///< True if writing ASCII, false if writing binary.
-    bool _flipEndian; ///< True if need to change endian when reading/writing.
-    bool _ioInt32; ///< True if using 64-bit integers in Pset files.
+    bool _writeAscii;          ///< True if writing ASCII, false if writing binary.
+    bool _flipEndian;          ///< True if need to change endian when reading/writing.
+    bool _ioInt32;             ///< True if using 64-bit integers in Pset files.
     bool _isRecordHeader32Bit; ///< True if Fortran record header is 32-bit.
 
 }; // MeshIOLagrit

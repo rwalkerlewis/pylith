@@ -46,20 +46,20 @@
 #include "DataWriter.hh" // ISA DataWriter
 
 #include <string> // USES std::string
-#include <map> // HASA std::map
+#include <map>    // HASA std::map
 
 // DataWriterHDF5Ext ----------------------------------------------------
 /// Object for writing finite-element data to HDF5 file.
-class pylith::meshio::DataWriterHDF5Ext : public DataWriter { // DataWriterHDF5Ext
-    friend class TestDataWriterHDF5ExtMesh; // unit testing
-    friend class TestDataWriterHDF5ExtSubmesh; // unit testing
-    friend class TestDataWriterHDF5ExtPoints; // unit testing
-    friend class TestDataWriterHDF5ExtBCMesh; // unit testing
+class pylith::meshio::DataWriterHDF5Ext : public DataWriter
+{                                                // DataWriterHDF5Ext
+    friend class TestDataWriterHDF5ExtMesh;      // unit testing
+    friend class TestDataWriterHDF5ExtSubmesh;   // unit testing
+    friend class TestDataWriterHDF5ExtPoints;    // unit testing
+    friend class TestDataWriterHDF5ExtBCMesh;    // unit testing
     friend class TestDataWriterHDF5ExtFaultMesh; // unit testing
 
     // PUBLIC METHODS ///////////////////////////////////////////////////////
 public:
-
     /// Constructor
     DataWriterHDF5Ext(void);
 
@@ -70,7 +70,7 @@ public:
      *
      * @returns Copy of this.
      */
-    DataWriter* clone(void) const;
+    DataWriter *clone(void) const;
 
     /// Deallocate PETSc and local data structures.
     void deallocate(void);
@@ -79,7 +79,7 @@ public:
      *
      * @param[in] filename Name of HDF5 file.
      */
-    void filename(const char* filename);
+    void filename(const char *filename);
 
     /** Generate filename for HDF5 file.
      *
@@ -96,7 +96,7 @@ public:
      *
      * @param[in] mesh Finite-element mesh.
      * @param[in] isInfo True if only writing info values. */
-    void open(const topology::Mesh& mesh,
+    void open(const topology::Mesh &mesh,
               const bool isInfo);
 
     /// Close output files.
@@ -108,7 +108,7 @@ public:
      * @param[in] subfield Subfield with basis order 1.
      */
     void writeVertexField(const PylithScalar t,
-                          const pylith::meshio::OutputSubfield& field);
+                          const pylith::meshio::OutputSubfield &field);
 
     /** Write field over cells to file.
      *
@@ -116,7 +116,7 @@ public:
      * @param[in] subfield Subfield with basis order 0.
      */
     void writeCellField(const PylithScalar t,
-                        const pylith::meshio::OutputSubfield& subfield);
+                        const pylith::meshio::OutputSubfield &subfield);
 
     /** Write dataset with names of points to file.
      *
@@ -125,20 +125,19 @@ public:
      *
      * Primarily used with OutputSolnPoints.
      */
-    void writePointNames(const pylith::string_vector& names,
-                         const topology::Mesh& mesh);
+    void writePointNames(const pylith::string_vector &names,
+                         const topology::Mesh &mesh);
 
     // PRIVATE METHODS //////////////////////////////////////////////////////
 private:
-
     /** Copy constructor.
      *
      * @param[in] w Object to copy.
      */
-    DataWriterHDF5Ext(const DataWriterHDF5Ext& w);
+    DataWriterHDF5Ext(const DataWriterHDF5Ext &w);
 
     /// Generate filename for external dataset file.
-    std::string _datasetFilename(const char* field) const;
+    std::string _datasetFilename(const char *field) const;
 
     /** Write time stamp to file.
      *
@@ -148,13 +147,12 @@ private:
 
     // NOT IMPLEMENTED //////////////////////////////////////////////////////
 private:
-
-    const DataWriterHDF5Ext& operator=(const DataWriterHDF5Ext&); ///< Not implemented
+    const DataWriterHDF5Ext &operator=(const DataWriterHDF5Ext &); ///< Not implemented
 
     // PRIVATE STRUCTS //////////////////////////////////////////////////////
 private:
-
-    struct ExternalDataset {
+    struct ExternalDataset
+    {
         PetscViewer viewer;
         PetscInt numTimeSteps;
         PetscInt numPoints;
@@ -164,11 +162,10 @@ private:
 
     // PRIVATE MEMBERS //////////////////////////////////////////////////////
 private:
-
-    std::string _filename; ///< Name of HDF5 file.
-    HDF5* _h5; ///< HDF5 file
+    std::string _filename;  ///< Name of HDF5 file.
+    HDF5 *_h5;              ///< HDF5 file
     dataset_type _datasets; ///< Datasets
-    int _tstampIndex; ///< Index of last time stamp written.
+    int _tstampIndex;       ///< Index of last time stamp written.
 
 }; // DataWriterHDF5Ext
 

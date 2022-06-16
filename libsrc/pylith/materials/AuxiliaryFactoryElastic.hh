@@ -24,15 +24,15 @@
 #if !defined(pylith_materials_auxiliaryfactoryelastic_hh)
 #define pylith_materials_auxiliaryfactoryelastic_hh
 
-#include "materialsfwd.hh" // forward declarations
+#include "materialsfwd.hh"                                // forward declarations
 #include "pylith/materials/AuxiliaryFactoryElasticity.hh" // ISA AuxiliaryFactoryElasticity
 
-class pylith::materials::AuxiliaryFactoryElastic : public pylith::materials::AuxiliaryFactoryElasticity {
+class pylith::materials::AuxiliaryFactoryElastic : public pylith::materials::AuxiliaryFactoryElasticity
+{
     friend class TestAuxiliaryFactoryElastic; // unit testing
 
     // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
-
     /// Default constructor.
     AuxiliaryFactoryElastic(void);
 
@@ -53,9 +53,8 @@ public:
 
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
-    AuxiliaryFactoryElastic(const AuxiliaryFactoryElastic &); ///< Not implemented.
-    const AuxiliaryFactoryElastic& operator=(const AuxiliaryFactoryElastic&); ///< Not implemented
+    AuxiliaryFactoryElastic(const AuxiliaryFactoryElastic &);                  ///< Not implemented.
+    const AuxiliaryFactoryElastic &operator=(const AuxiliaryFactoryElastic &); ///< Not implemented
 
 }; // class AuxiliaryFactoryElastic
 

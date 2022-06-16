@@ -35,14 +35,13 @@
 class pylith::meshio::GMVFile
 { // GMVFile
 
-// PUBLIC METHODS ///////////////////////////////////////////////////////
-public :
-
+  // PUBLIC METHODS ///////////////////////////////////////////////////////
+public:
   /** Constructor with name of GMV file.
    *
    * @param filename Name of GMV file
    */
-  GMVFile(const char* name);
+  GMVFile(const char *name);
 
   /// Default destructor.
   ~GMVFile(void);
@@ -53,17 +52,14 @@ public :
    *
    * @returns True if GMV file is ascii, false otherwise
    */
-  static
-  bool isAscii(const char* filename);
+  static bool isAscii(const char *filename);
 
-// PROTECTED MEMBERS ////////////////////////////////////////////////////
-protected :
-
+  // PROTECTED MEMBERS ////////////////////////////////////////////////////
+protected:
   std::string _filename; ///< Name of GMV file
-  
+
 }; // GMVFile
 
 #endif // pylith_meshio_gmvfile_hh
 
-
-// End of file 
+// End of file

@@ -20,32 +20,34 @@
 
 #include "MeshIOAscii.hh" // implementation of class methods
 
-#include "MeshBuilder.hh" // USES MeshBuilder
+#include "MeshBuilder.hh"          // USES MeshBuilder
 #include "pylith/topology/Mesh.hh" // USES Mesh
 
-#include "pylith/utils/array.hh" // USES scalar_array, int_array, string_vector
+#include "pylith/utils/array.hh"           // USES scalar_array, int_array, string_vector
 #include "spatialdata/utils/LineParser.hh" // USES LineParser
 
-#include "pylith/utils/error.hh" // USES PYLITH_METHOD_*
+#include "pylith/utils/error.hh"    // USES PYLITH_METHOD_*
 #include "pylith/utils/journals.hh" // USES PYLITH_COMPONENT_*
 
-#include <iomanip> // USES setw(), setiosflags(), resetiosflags()
+#include <iomanip>   // USES setw(), setiosflags(), resetiosflags()
 #include <strings.h> // USES strcasecmp()
-#include <cassert> // USES assert()
-#include <fstream> // USES std::ifstream, std::ofstream
+#include <cassert>   // USES assert()
+#include <fstream>   // USES std::ifstream, std::ofstream
 #include <stdexcept> // USES std::runtime_error
-#include <sstream> // USES std::ostringstream
-#include <typeinfo> // USES std::typeid
+#include <sstream>   // USES std::ostringstream
+#include <typeinfo>  // USES std::typeid
 
 // ---------------------------------------------------------------------------------------------------------------------
-namespace pylith {
-    namespace meshio {
-        class _MeshIOAscii {
-public:
-
-            static const char* groupTypeNames[];
+namespace pylith
+{
+    namespace meshio
+    {
+        class _MeshIOAscii
+        {
+        public:
+            static const char *groupTypeNames[];
         }; // _MeshIOAscii
-        const char* _MeshIOAscii::_MeshIOAscii::groupTypeNames[2] = {
+        const char *_MeshIOAscii::_MeshIOAscii::groupTypeNames[2] = {
             "vertices",
             "cells",
         };
@@ -54,24 +56,23 @@ public:
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Constructor
-pylith::meshio::MeshIOAscii::MeshIOAscii(void) :
-    _filename(""),
-    _useIndexZero(true) { // constructor
+pylith::meshio::MeshIOAscii::MeshIOAscii(void) : _filename(""),
+                                                 _useIndexZero(true)
+{ // constructor
     PyreComponent::setName("meshioascii");
 } // constructor
 
-
 // ---------------------------------------------------------------------------------------------------------------------
 // Destructor
-pylith::meshio::MeshIOAscii::~MeshIOAscii(void) { // destructor
+pylith::meshio::MeshIOAscii::~MeshIOAscii(void)
+{ // destructor
     deallocate();
 } // destructor
 
-
 // ---------------------------------------------------------------------------------------------------------------------
 // Deallocate PETSc and local data structures.
-void
-pylith::meshio::MeshIOAscii::deallocate(void) { // deallocate
+void pylith::meshio::MeshIOAscii::deallocate(void)
+{ // deallocate
     PYLITH_METHOD_BEGIN;
 
     MeshIO::deallocate();
@@ -79,11 +80,10 @@ pylith::meshio::MeshIOAscii::deallocate(void) { // deallocate
     PYLITH_METHOD_END;
 } // deallocate
 
-
 // ---------------------------------------------------------------------------------------------------------------------
 // Read mesh.
-void
-pylith::meshio::MeshIOAscii::_read(void) { // _read
+void pylith::meshio::MeshIOAscii::_read(void)
+{ // _read
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_read()");
 
@@ -97,9 +97,11 @@ pylith::meshio::MeshIOAscii::_read(void) { // _read
     int_array cells;
     int_array materialIds;
 
-    if (0 == commRank) {
+    if (0 == commRank)
+    {
         std::ifstream filein(_filename.c_str());
-        if (!filein.is_open() || !filein.good()) {
+        if (!filein.is_open() || !filein.good())
+        {
             std::ostringstream msg;
             msg << "Could not open mesh file '" << _filename
                 << "' for reading.\n";
@@ -115,7 +117,8 @@ pylith::meshio::MeshIOAscii::_read(void) { // _read
 
         buffer.str(parser.next());
         buffer >> token;
-        if (strcasecmp(token.c_str(), "mesh")) {
+        if (strcasecmp(token.c_str(), "mesh"))
+        {
             std::ostringstream msg;
             msg << "Expected 'mesh' token but encountered '" << token << "'\n";
             throw std::runtime_error(msg.str());
@@ -126,48 +129,66 @@ pylith::meshio::MeshIOAscii::_read(void) { // _read
         bool readVertices = false;
         bool builtMesh = false;
 
-        try {
+        try
+        {
             buffer.str(parser.next());
             buffer.clear();
             buffer >> token;
-            while (buffer.good() && token != "}") {
-                if (0 == strcasecmp(token.c_str(), "dimension")) {
+            while (buffer.good() && token != "}")
+            {
+                if (0 == strcasecmp(token.c_str(), "dimension"))
+                {
                     buffer.ignore(maxIgnore, '=');
                     buffer >> meshDim;
                     readDim = true;
-                } else if (0 == strcasecmp(token.c_str(), "use-index-zero")) {
+                }
+                else if (0 == strcasecmp(token.c_str(), "use-index-zero"))
+                {
                     buffer.ignore(maxIgnore, '=');
                     std::string flag = "";
                     buffer >> flag;
-                    if (0 == strcasecmp(flag.c_str(), "true")) {
+                    if (0 == strcasecmp(flag.c_str(), "true"))
+                    {
                         _useIndexZero = true;
-                    } else {
+                    }
+                    else
+                    {
                         _useIndexZero = false;
                     }
-                } else if (0 == strcasecmp(token.c_str(), "vertices")) {
+                }
+                else if (0 == strcasecmp(token.c_str(), "vertices"))
+                {
                     _readVertices(parser, &coordinates, &numVertices, &spaceDim);
                     readVertices = true;
-                } else if (0 == strcasecmp(token.c_str(), "cells")) {
+                }
+                else if (0 == strcasecmp(token.c_str(), "cells"))
+                {
                     _readCells(parser, &cells, &materialIds, &numCells, &numCorners);
                     readCells = true;
-                } else if (0 == strcasecmp(token.c_str(), "group")) {
+                }
+                else if (0 == strcasecmp(token.c_str(), "group"))
+                {
                     std::string name;
                     GroupPtType type;
                     int_array points;
 
-                    if (!builtMesh) {
+                    if (!builtMesh)
+                    {
                         throw std::runtime_error("Both 'vertices' and 'cells' must "
                                                  "precede any groups in mesh file.");
                     }
                     _readGroup(parser, &points, &type, &name);
                     _setGroup(name, type, points);
-                } else {
+                }
+                else
+                {
                     std::ostringstream msg;
                     msg << "Could not parse '" << token << "' into a mesh setting.";
                     throw std::runtime_error(msg.str());
                 } // else
 
-                if (readDim && readCells && readVertices && !builtMesh) {
+                if (readDim && readCells && readVertices && !builtMesh)
+                {
                     // Can now build mesh
                     MeshBuilder::buildMesh(_mesh, &coordinates, numVertices, spaceDim, cells, numCells, numCorners, meshDim);
                     _setMaterials(materialIds);
@@ -178,23 +199,30 @@ pylith::meshio::MeshIOAscii::_read(void) { // _read
                 buffer.clear();
                 buffer >> token;
             } // while
-            if (token != "}") {
+            if (token != "}")
+            {
                 throw std::runtime_error("I/O error occurred while parsing mesh tokens.");
             }
-        } catch (const std::exception& err) {
+        }
+        catch (const std::exception &err)
+        {
             std::ostringstream msg;
             msg << "Error occurred while reading PyLith mesh ASCII file '"
                 << _filename << "'.\n"
                 << err.what();
             throw std::runtime_error(msg.str());
-        } catch (...) {
+        }
+        catch (...)
+        {
             std::ostringstream msg;
             msg << "Unknown I/O error while reading PyLith mesh ASCII file '"
                 << _filename << "'.\n";
             throw std::runtime_error(msg.str());
         } // catch
         filein.close();
-    } else {
+    }
+    else
+    {
         MeshBuilder::buildMesh(_mesh, &coordinates, numVertices, spaceDim, cells, numCells, numCorners, meshDim);
         _setMaterials(materialIds);
     } // if/else
@@ -203,16 +231,16 @@ pylith::meshio::MeshIOAscii::_read(void) { // _read
     PYLITH_METHOD_END;
 } // read
 
-
 // ---------------------------------------------------------------------------------------------------------------------
 // Write mesh to file.
-void
-pylith::meshio::MeshIOAscii::_write(void) const { // write
+void pylith::meshio::MeshIOAscii::_write(void) const
+{ // write
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_write()");
 
     std::ofstream fileout(_filename.c_str());
-    if (!fileout.is_open() || !fileout.good()) {
+    if (!fileout.is_open() || !fileout.good())
+    {
         std::ostringstream msg;
         msg << "Could not open mesh file '" << _filename
             << "' for writing.\n";
@@ -230,7 +258,8 @@ pylith::meshio::MeshIOAscii::_write(void) const { // write
     string_vector groups;
     _getGroupNames(&groups);
     const int numGroups = groups.size();
-    for (int i = 0; i < numGroups; ++i) {
+    for (int i = 0; i < numGroups; ++i)
+    {
         _writeGroup(fileout, groups[i].c_str());
     }
 
@@ -240,16 +269,15 @@ pylith::meshio::MeshIOAscii::_write(void) const { // write
     PYLITH_METHOD_END;
 } // write
 
-
 // ----------------------------------------------------------------------
 // Read mesh vertices.
-void
-pylith::meshio::MeshIOAscii::_readVertices(spatialdata::utils::LineParser& parser,
-                                           scalar_array* coordinates,
-                                           int* numVertices,
-                                           int* numDims) const { // _readVertices
+void pylith::meshio::MeshIOAscii::_readVertices(spatialdata::utils::LineParser &parser,
+                                                scalar_array *coordinates,
+                                                int *numVertices,
+                                                int *numDims) const
+{ // _readVertices
     PYLITH_METHOD_BEGIN;
-    PYLITH_COMPONENT_DEBUG("_readVertices(parser="<<typeid(parser).name()<<", cordinates="<<coordinates<<", numVertices="<<numVertices<<", numDims="<<numDims<<")");
+    PYLITH_COMPONENT_DEBUG("_readVertices(parser=" << typeid(parser).name() << ", cordinates=" << coordinates << ", numVertices=" << numVertices << ", numDims=" << numDims << ")");
 
     assert(coordinates);
     assert(numVertices);
@@ -261,32 +289,43 @@ pylith::meshio::MeshIOAscii::_readVertices(spatialdata::utils::LineParser& parse
     buffer.str(parser.next());
     buffer.clear();
     buffer >> token;
-    while (buffer.good() && token != "}") {
-        if (0 == strcasecmp(token.c_str(), "dimension")) {
+    while (buffer.good() && token != "}")
+    {
+        if (0 == strcasecmp(token.c_str(), "dimension"))
+        {
             buffer.ignore(maxIgnore, '=');
             buffer >> *numDims;
-        } else if (0 == strcasecmp(token.c_str(), "count")) {
+        }
+        else if (0 == strcasecmp(token.c_str(), "count"))
+        {
             buffer.ignore(maxIgnore, '=');
             buffer >> *numVertices;
-        } else if (0 == strcasecmp(token.c_str(), "coordinates")) {
+        }
+        else if (0 == strcasecmp(token.c_str(), "coordinates"))
+        {
             const int size = (*numVertices) * (*numDims);
-            if (0 == size) {
-                const char* msg =
+            if (0 == size)
+            {
+                const char *msg =
                     "Tokens 'dimension' and 'count' must precede 'coordinates'.";
                 throw std::runtime_error(msg);
             } // if
             coordinates->resize(size);
             int label;
-            for (int iVertex = 0, i = 0; iVertex < *numVertices; ++iVertex) {
+            for (int iVertex = 0, i = 0; iVertex < *numVertices; ++iVertex)
+            {
                 buffer.str(parser.next());
                 buffer.clear();
                 buffer >> label;
-                for (int iDim = 0; iDim < *numDims; ++iDim) {
+                for (int iDim = 0; iDim < *numDims; ++iDim)
+                {
                     buffer >> (*coordinates)[i++];
                 }
             } // for
             parser.ignore('}');
-        } else {
+        }
+        else
+        {
             std::ostringstream msg;
             msg << "Could not parse '" << token << "' into a vertices setting.";
             throw std::runtime_error(msg.str());
@@ -295,20 +334,20 @@ pylith::meshio::MeshIOAscii::_readVertices(spatialdata::utils::LineParser& parse
         buffer.clear();
         buffer >> token;
     } // while
-    if (token != "}") {
+    if (token != "}")
+    {
         throw std::runtime_error("I/O error while parsing vertices.");
     }
 
     PYLITH_METHOD_END;
 } // _readVertices
 
-
 // ----------------------------------------------------------------------
 // Write mesh vertices.
-void
-pylith::meshio::MeshIOAscii::_writeVertices(std::ostream& fileout) const { // _writeVertices
+void pylith::meshio::MeshIOAscii::_writeVertices(std::ostream &fileout) const
+{ // _writeVertices
     PYLITH_METHOD_BEGIN;
-    PYLITH_COMPONENT_DEBUG("_writeVertices(fileout="<<typeid(fileout).name()<<")");
+    PYLITH_COMPONENT_DEBUG("_writeVertices(fileout=" << typeid(fileout).name() << ")");
 
     int spaceDim = 0;
     int numVertices = 0;
@@ -323,10 +362,12 @@ pylith::meshio::MeshIOAscii::_writeVertices(std::ostream& fileout) const { // _w
         << std::resetiosflags(std::ios::fixed)
         << std::setiosflags(std::ios::scientific)
         << std::setprecision(6);
-    for (int iVertex = 0, i = 0; iVertex < numVertices; ++iVertex) {
+    for (int iVertex = 0, i = 0; iVertex < numVertices; ++iVertex)
+    {
         fileout << "      ";
         fileout << std::setw(8) << iVertex;
-        for (int iDim = 0; iDim < spaceDim; ++iDim) {
+        for (int iDim = 0; iDim < spaceDim; ++iDim)
+        {
             fileout << std::setw(18) << coordinates[i++];
         }
         fileout << "\n";
@@ -338,17 +379,16 @@ pylith::meshio::MeshIOAscii::_writeVertices(std::ostream& fileout) const { // _w
     PYLITH_METHOD_END;
 } // _writeVertices
 
-
 // ----------------------------------------------------------------------
 // Read mesh cells.
-void
-pylith::meshio::MeshIOAscii::_readCells(spatialdata::utils::LineParser& parser,
-                                        int_array* cells,
-                                        int_array* materialIds,
-                                        int* numCells,
-                                        int* numCorners) const { // _readCells
+void pylith::meshio::MeshIOAscii::_readCells(spatialdata::utils::LineParser &parser,
+                                             int_array *cells,
+                                             int_array *materialIds,
+                                             int *numCells,
+                                             int *numCorners) const
+{ // _readCells
     PYLITH_METHOD_BEGIN;
-    PYLITH_COMPONENT_DEBUG("_readCells(parser="<<typeid(parser).name()<<", cells="<<cells<<", materialIds="<<materialIds<<", numCells="<<numCells<<",numCorners="<<numCorners<<")");
+    PYLITH_COMPONENT_DEBUG("_readCells(parser=" << typeid(parser).name() << ", cells=" << cells << ", materialIds=" << materialIds << ", numCells=" << numCells << ",numCorners=" << numCorners << ")");
 
     assert(cells);
     assert(materialIds);
@@ -361,48 +401,63 @@ pylith::meshio::MeshIOAscii::_readCells(spatialdata::utils::LineParser& parser,
     buffer.str(parser.next());
     buffer.clear();
     buffer >> token;
-    while (buffer.good() && token != "}") {
-        if (0 == strcasecmp(token.c_str(), "num-corners")) {
+    while (buffer.good() && token != "}")
+    {
+        if (0 == strcasecmp(token.c_str(), "num-corners"))
+        {
             buffer.ignore(maxIgnore, '=');
             buffer >> *numCorners;
-        } else if (0 == strcasecmp(token.c_str(), "count")) {
+        }
+        else if (0 == strcasecmp(token.c_str(), "count"))
+        {
             buffer.ignore(maxIgnore, '=');
             buffer >> *numCells;
-        } else if (0 == strcasecmp(token.c_str(), "simplices")) {
+        }
+        else if (0 == strcasecmp(token.c_str(), "simplices"))
+        {
             const int size = (*numCells) * (*numCorners);
-            if (0 == size) {
-                const char* msg =
+            if (0 == size)
+            {
+                const char *msg =
                     "Tokens 'num-corners' and 'count' must precede 'cells'.";
                 throw std::runtime_error(msg);
             } // if
             cells->resize(size);
             int label;
-            for (int iCell = 0, i = 0; iCell < *numCells; ++iCell) {
+            for (int iCell = 0, i = 0; iCell < *numCells; ++iCell)
+            {
                 buffer.str(parser.next());
                 buffer.clear();
                 buffer >> label;
-                for (int iCorner = 0; iCorner < *numCorners; ++iCorner) {
+                for (int iCorner = 0; iCorner < *numCorners; ++iCorner)
+                {
                     buffer >> (*cells)[i++];
                 }
             } // for
-            if (!_useIndexZero) {
+            if (!_useIndexZero)
+            {
                 // if files begins with index 1, then decrement to index 0
                 // for compatibility with PETSc
-                for (int i = 0; i < size; ++i) {
+                for (int i = 0; i < size; ++i)
+                {
                     --(*cells)[i];
                 }
             } // if
             parser.ignore('}');
-        } else if (0 == strcasecmp(token.c_str(), "material-ids")) {
-            if (0 == *numCells) {
-                const char* msg =
+        }
+        else if (0 == strcasecmp(token.c_str(), "material-ids"))
+        {
+            if (0 == *numCells)
+            {
+                const char *msg =
                     "Token 'count' must precede 'material-ids'.";
                 throw std::runtime_error(msg);
             } // if
             const int size = *numCells;
             materialIds->resize(size);
             int label = 0;
-            for (int iCell = 0; iCell < *numCells; ++iCell) {
+            for (int iCell = 0; iCell < *numCells; ++iCell)
+            {
                 buffer.str(parser.next());
                 buffer.clear();
                 buffer >> label;
@@ -412,7 +467,9 @@ pylith::meshio::MeshIOAscii::_readCells(spatialdata::utils::LineParser& parser,
             // Zero index does NOT apply to materialIds.
 
             parser.ignore('}');
-        } else {
+        }
+        else
+        {
             std::ostringstream msg;
             msg << "Could not parse '" << token << "' into an cells setting.";
             throw std::runtime_error(msg.str());
@@ -421,12 +478,14 @@ pylith::meshio::MeshIOAscii::_readCells(spatialdata::utils::LineParser& parser,
         buffer.clear();
         buffer >> token;
     } // while
-    if (token != "}") {
+    if (token != "}")
+    {
         throw std::runtime_error("I/O error while parsing cells.");
     }
 
     // If no materials given, assign each cell material identifier of 0
-    if ((0 == materialIds->size()) && (*numCells > 0)) {
+    if ((0 == materialIds->size()) && (*numCells > 0))
+    {
         const int size = *numCells;
         materialIds->resize(size);
         (*materialIds) = 0;
@@ -435,13 +494,12 @@ pylith::meshio::MeshIOAscii::_readCells(spatialdata::utils::LineParser& parser,
     PYLITH_METHOD_END;
 } // _readCells
 
-
 // ----------------------------------------------------------------------
 // Write mesh cells.
-void
-pylith::meshio::MeshIOAscii::_writeCells(std::ostream& fileout) const { // _writeCells
+void pylith::meshio::MeshIOAscii::_writeCells(std::ostream &fileout) const
+{ // _writeCells
     PYLITH_METHOD_BEGIN;
-    PYLITH_COMPONENT_DEBUG("_writeCells(fileout="<<typeid(fileout).name()<<")");
+    PYLITH_COMPONENT_DEBUG("_writeCells(fileout=" << typeid(fileout).name() << ")");
 
     int meshDim = 0;
     int numCells = 0;
@@ -455,9 +513,11 @@ pylith::meshio::MeshIOAscii::_writeCells(std::ostream& fileout) const { // _writ
         << "    num-corners = " << numCorners << "\n"
         << "    simplices = {\n";
 
-    for (int iCell = 0, i = 0; iCell < numCells; ++iCell) {
+    for (int iCell = 0, i = 0; iCell < numCells; ++iCell)
+    {
         fileout << "      " << std::setw(8) << iCell;
-        for (int iCorner = 0; iCorner < numCorners; ++iCorner) {
+        for (int iCorner = 0; iCorner < numCorners; ++iCorner)
+        {
             fileout << std::setw(8) << cells[i++];
         }
         fileout << "\n";
@@ -469,7 +529,8 @@ pylith::meshio::MeshIOAscii::_writeCells(std::ostream& fileout) const { // _writ
     _getMaterials(&materialIds);
     assert(size_t(numCells) == materialIds.size());
     fileout << "    material-ids = {\n";
-    for (int iCell = 0; iCell < numCells; ++iCell) {
+    for (int iCell = 0; iCell < numCells; ++iCell)
+    {
         fileout << "      " << std::setw(8) << iCell;
         fileout << std::setw(4) << materialIds[iCell] << "\n";
     } // for
@@ -480,16 +541,15 @@ pylith::meshio::MeshIOAscii::_writeCells(std::ostream& fileout) const { // _writ
     PYLITH_METHOD_END;
 } // _writeCells
 
-
 // ----------------------------------------------------------------------
 // Read mesh group.
-void
-pylith::meshio::MeshIOAscii::_readGroup(spatialdata::utils::LineParser& parser,
-                                        int_array* points,
-                                        GroupPtType* type,
-                                        std::string* name) const { // _readGroup
+void pylith::meshio::MeshIOAscii::_readGroup(spatialdata::utils::LineParser &parser,
+                                             int_array *points,
+                                             GroupPtType *type,
+                                             std::string *name) const
+{ // _readGroup
     PYLITH_METHOD_BEGIN;
-    PYLITH_COMPONENT_DEBUG("_readGroup(parser="<<typeid(parser).name()<<", points="<<points<<", type="<<type<<", name="<<name<<")");
+    PYLITH_COMPONENT_DEBUG("_readGroup(parser=" << typeid(parser).name() << ", points=" << points << ", type=" << type << ", name=" << name << ")");
 
     assert(points);
     assert(type);
@@ -502,31 +562,45 @@ pylith::meshio::MeshIOAscii::_readGroup(spatialdata::utils::LineParser& parser,
     buffer.str(parser.next());
     buffer.clear();
     buffer >> token;
-    while (buffer.good() && token != "}") {
-        if (0 == strcasecmp(token.c_str(), "name")) {
+    while (buffer.good() && token != "}")
+    {
+        if (0 == strcasecmp(token.c_str(), "name"))
+        {
             buffer.ignore(maxIgnore, '=');
             buffer >> std::ws;
             char cbuffer[maxIgnore];
             buffer.get(cbuffer, maxIgnore, '\n');
             *name = cbuffer;
-        } else if (0 == strcasecmp(token.c_str(), "type")) {
+        }
+        else if (0 == strcasecmp(token.c_str(), "type"))
+        {
             std::string typeName;
             buffer.ignore(maxIgnore, '=');
             buffer >> typeName;
-            if (typeName == _MeshIOAscii::groupTypeNames[VERTEX]) {
+            if (typeName == _MeshIOAscii::groupTypeNames[VERTEX])
+            {
                 *type = VERTEX;
-            } else if (typeName == _MeshIOAscii::groupTypeNames[CELL]) {
+            }
+            else if (typeName == _MeshIOAscii::groupTypeNames[CELL])
+            {
                 *type = CELL;
-            } else {
+            }
+            else
+            {
                 std::ostringstream msg;
                 msg << "Invalid point type " << typeName << ".";
                 throw std::runtime_error(msg.str());
             } // else
-        } else if (0 == strcasecmp(token.c_str(), "count")) {
+        }
+        else if (0 == strcasecmp(token.c_str(), "count"))
+        {
             buffer.ignore(maxIgnore, '=');
             buffer >> numPoints;
-        } else if (0 == strcasecmp(token.c_str(), "indices")) {
-            if (-1 == numPoints) {
+        }
+        else if (0 == strcasecmp(token.c_str(), "indices"))
+        {
+            if (-1 == numPoints)
+            {
                 std::ostringstream msg;
                 msg << "Tokens 'count' must precede 'indices'.";
                 throw std::runtime_error(msg.str());
@@ -535,16 +609,20 @@ pylith::meshio::MeshIOAscii::_readGroup(spatialdata::utils::LineParser& parser,
             buffer.str(parser.next());
             buffer.clear();
             int i = 0;
-            while (buffer.good() && i < numPoints) {
+            while (buffer.good() && i < numPoints)
+            {
                 buffer >> (*points)[i++];
                 buffer >> std::ws;
-                if (!buffer.good() && (i < numPoints)) {
+                if (!buffer.good() && (i < numPoints))
+                {
                     buffer.str(parser.next());
                     buffer.clear();
                 } // if
-            } // while
+            }     // while
             parser.ignore('}');
-        } else {
+        }
+        else
+        {
             std::ostringstream msg;
             msg << "Could not parse '" << token << "' into a group setting.";
             throw std::runtime_error(msg.str());
@@ -553,27 +631,28 @@ pylith::meshio::MeshIOAscii::_readGroup(spatialdata::utils::LineParser& parser,
         buffer.clear();
         buffer >> token;
     } // while
-    if (token != "}") {
+    if (token != "}")
+    {
         std::ostringstream msg;
         msg << "I/O error while parsing group '" << *name << "'.";
         throw std::runtime_error(msg.str());
     } // if
 
-    if (!_useIndexZero) {
+    if (!_useIndexZero)
+    {
         *points -= 1;
     }
 
     PYLITH_METHOD_END;
 } // _readGroup
 
-
 // ----------------------------------------------------------------------
 // Write mesh group.
-void
-pylith::meshio::MeshIOAscii::_writeGroup(std::ostream& fileout,
-                                         const char* name) const { // _writeGroup
+void pylith::meshio::MeshIOAscii::_writeGroup(std::ostream &fileout,
+                                              const char *name) const
+{ // _writeGroup
     PYLITH_METHOD_BEGIN;
-    PYLITH_COMPONENT_DEBUG("_writeGroup(fileout="<<typeid(fileout).name()<<", name="<<name<<")");
+    PYLITH_COMPONENT_DEBUG("_writeGroup(fileout=" << typeid(fileout).name() << ", name=" << name << ")");
 
     int_array points;
     GroupPtType type;
@@ -588,8 +667,9 @@ pylith::meshio::MeshIOAscii::_writeGroup(std::ostream& fileout,
         << "    type = " << _MeshIOAscii::groupTypeNames[type] << "\n"
         << "    count = " << numPoints << "\n"
         << "    indices = {\n";
-    for (int i = 0; i < numPoints; ++i) {
-        fileout << "      " << points[i]+offset << "\n";
+    for (int i = 0; i < numPoints; ++i)
+    {
+        fileout << "      " << points[i] + offset << "\n";
     }
 
     fileout
@@ -598,6 +678,5 @@ pylith::meshio::MeshIOAscii::_writeGroup(std::ostream& fileout,
 
     PYLITH_METHOD_END;
 } // _writeGroup
-
 
 // End of file

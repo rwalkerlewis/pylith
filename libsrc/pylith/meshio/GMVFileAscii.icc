@@ -22,8 +22,7 @@
 
 // ----------------------------------------------------------------
 // Get header.
-inline
-const char*
+inline const char *
 pylith::meshio::GMVFileAscii::header(void)
 { // header
   return _HEADER;

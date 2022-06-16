@@ -36,12 +36,11 @@
 
 // ExodusII ----------------------------------------------------------
 class pylith::meshio::ExodusII
-{ // ExodusII
+{                            // ExodusII
   friend class TestExodusII; // unit testing
 
-// PUBLIC METHODS ///////////////////////////////////////////////////////
-public :
-
+  // PUBLIC METHODS ///////////////////////////////////////////////////////
+public:
   /// Constructor
   ExodusII(void);
 
@@ -49,7 +48,7 @@ public :
    *
    * @param filename Name of file.
    */
-  ExodusII(const char* filename);
+  ExodusII(const char *filename);
 
   /// Destructor
   ~ExodusII(void);
@@ -61,28 +60,28 @@ public :
    *
    * @param filename Name of file
    */
-  void filename(const char* name);
+  void filename(const char *name);
 
   /** Get filename.
    *
    * @returns Name of file
    */
-  const char* filename(void) const;
+  const char *filename(void) const;
 
   /// Open file.
   void open(void);
 
   /// Close file.
   void close(void);
-    
+
   /** Check if file contains dimension.
    *
    * @param[in] name Name of dimension.
    * @param[out] Id of dimension if found, -1 otherwise.
    * @returns True if file contains dimension, false otherwise.
    */
-  bool hasDim(const char* name,
-	      int* id) const;
+  bool hasDim(const char *name,
+              int *id) const;
 
   /** Check if file contains attribute.
    *
@@ -90,24 +89,24 @@ public :
    * @param[out] Id of attribute if found, -1 otherwise.
    * @returns True if file contains attribute, false otherwise.
    */
-  bool hasAtt(const char* name,
-	      int* id) const;
-  
+  bool hasAtt(const char *name,
+              int *id) const;
+
   /** Check if file contains variable.
    *
    * @param[in] name Name of variable.
    * @param[out] Id of variable if found, -1 otherwise.
    * @returns True if file contains variable, false otherwise.
    */
-  bool hasVar(const char* name,
-	      int* id) const;
+  bool hasVar(const char *name,
+              int *id) const;
 
   /** Get dimension from file.
    *
    * @param name Name of dimension.
    * @returns Value of dimension.
    */
-  int getDim(const char* name) const;
+  int getDim(const char *name) const;
 
   /** Get values for variable as an array of PylithScalars.
    *
@@ -116,10 +115,10 @@ public :
    * @param ndims Number of dimension for variable.
    * @param name Name of variable.
    */
-  void getVar(PylithScalar* values,
-	      int* dims,
-	      int ndims,
-	      const char* name) const;
+  void getVar(PylithScalar *values,
+              int *dims,
+              int ndims,
+              const char *name) const;
 
   /** Get values for variable as an array of ints.
    *
@@ -128,10 +127,10 @@ public :
    * @param ndims Number of dimension for variable.
    * @param name Name of variable.
    */
-  void getVar(int* values,
-	      int* dims,
-	      int ndims,
-	      const char* name) const;
+  void getVar(int *values,
+              int *dims,
+              int ndims,
+              const char *name) const;
 
   /** Get values for variable as an array of strings.
    *
@@ -139,18 +138,17 @@ public :
    * @param dim Number of values.
    * @param name Name of variable.
    */
-  void getVar(string_vector* values,
-	      int dim,
-	      const char* name) const;
+  void getVar(string_vector *values,
+              int dim,
+              const char *name) const;
 
-// PRIVATE MEMBERS //////////////////////////////////////////////////////
-private :
-
+  // PRIVATE MEMBERS //////////////////////////////////////////////////////
+private:
   std::string _filename; ///< Name of file
-  int _file; ///< ExodusII file
+  int _file;             ///< ExodusII file
 
 }; // ExodusII
 
 #endif // pylith_meshio_exodusii_hh
 
-// End of file 
+// End of file

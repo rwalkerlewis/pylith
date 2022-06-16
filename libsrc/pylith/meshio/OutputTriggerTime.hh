@@ -29,12 +29,12 @@
 
 #include "pylith/meshio/OutputTrigger.hh" // ISA OutputTrigger
 
-class pylith::meshio::OutputTriggerTime : public pylith::meshio::OutputTrigger {
+class pylith::meshio::OutputTriggerTime : public pylith::meshio::OutputTrigger
+{
     friend class TestOutputTriggerTime; // unit testing
 
     // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
-
     /// Constructor
     OutputTriggerTime(void);
 
@@ -64,16 +64,13 @@ public:
 
     // PRIVATE MEMBERS /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
-    PylithReal _timeSkip; ///< Elapsed (dimensional) time between writes.
+    PylithReal _timeSkip;        ///< Elapsed (dimensional) time between writes.
     PylithReal _timeNondimWrote; ///< Time (nondimensional) when data was previously writtern.
 
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-
-    OutputTriggerTime(const OutputTriggerTime&); ///< Not implemented.
-    const OutputTriggerTime& operator=(const OutputTriggerTime&); ///< Not implemented
-
+    OutputTriggerTime(const OutputTriggerTime &);                  ///< Not implemented.
+    const OutputTriggerTime &operator=(const OutputTriggerTime &); ///< Not implemented
 };
 
 // OutputTriggerTime

@@ -29,30 +29,29 @@
 #include "meshiofwd.hh" // forward declarations
 
 #include "pylith/utils/array.hh" // HASA int_array
-#include <string> // HASA std::string
+#include <string>                // HASA std::string
 
 // PsetFile -------------------------------------------------------------
 /// C++ base class for input/output of LaGriT Pset files.
 class pylith::meshio::PsetFile
 { // PsetFile
 
-// PUBLIC TYPES /////////////////////////////////////////////////////////
-public :
-
-  struct Pset {
+  // PUBLIC TYPES /////////////////////////////////////////////////////////
+public:
+  struct Pset
+  {
     int_array points; ///< Indices of vertices in group
     std::string name; ///< Name of group
-    int id; ///< Id of group
-  }; // Pset
+    int id;           ///< Id of group
+  };                  // Pset
 
-// PUBLIC METHODS ///////////////////////////////////////////////////////
-public :
-
+  // PUBLIC METHODS ///////////////////////////////////////////////////////
+public:
   /** Constructor with name of Pset file.
    *
    * @param filename Name of Pset file
    */
-  PsetFile(const char* name);
+  PsetFile(const char *name);
 
   /// Default destructor.
   ~PsetFile(void);
@@ -63,17 +62,14 @@ public :
    *
    * @returns True if Pset file is ascii, false otherwise
    */
-  static
-  bool isAscii(const char* filename);
+  static bool isAscii(const char *filename);
 
-// PROTECTED MEMBERS ////////////////////////////////////////////////////
-protected :
-
+  // PROTECTED MEMBERS ////////////////////////////////////////////////////
+protected:
   std::string _filename; ///< Name of Pset file
-  
+
 }; // PsetFile
 
 #endif // pylith_meshio_psetfile_hh
 
-
-// End of file 
+// End of file

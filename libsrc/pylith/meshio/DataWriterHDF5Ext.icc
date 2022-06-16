@@ -21,19 +21,18 @@
 #else
 
 // Make copy of this object.
-inline
-pylith::meshio::DataWriter*
-pylith::meshio::DataWriterHDF5Ext::clone(void) const {
+inline pylith::meshio::DataWriter *
+pylith::meshio::DataWriterHDF5Ext::clone(void) const
+{
   return new DataWriterHDF5Ext(*this);
 }
 
 // Set filename for HDF5 file.
-inline
-void
-pylith::meshio::DataWriterHDF5Ext::filename(const char* filename) {
+inline void
+pylith::meshio::DataWriterHDF5Ext::filename(const char *filename)
+{
   _filename = filename;
 }
-
 
 #endif
 
