@@ -52,20 +52,15 @@ void pylith::fekernels::Poroelasticity::f0u(const PylithInt dim,
                                             const PylithScalar constants[],
                                             PylithScalar f0[])
 {
+    const PetscReal sgny = x[1] / PetscAbsReal(x[1]);
+
     // Incoming solution fields.
 
     // Incoming auxiliary fields.
 
-    for (PylithInt i = 0; i < dim; ++i)
-    {
-        f0[i] += 0.0;
-        // PetscPrintf(PETSC_COMM_WORLD, "f0u[%i]: %f\n",i, f0[i]);
-    } // for
-
-    // Poroelastic Fault MMS Hack
-    f0[0] += x[1] / abs(x[1]);
-    f0[1] += (x[1] / abs(x[1])) + t * x[1];
-
+    // Poroelastic Fault MMS
+    f0[0] += sgny;
+    f0[1] += 4*sgny + t * x[1];
 } // f0u
 
 // ---------------------------------------------------------------------------------------------------------------------
