@@ -305,13 +305,19 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
 
     // Create local PETSc vector to hold current slip.
     PetscErrorCode err = 0;
-    err = DMCreateLocalVector(auxiliaryField->getDM(), &_slipVecRupture);
-    PYLITH_CHECK_ERROR(err);
-    err = DMCreateLocalVector(auxiliaryField->getDM(), &_slipVecTotal);
-    PYLITH_CHECK_ERROR(err);
+    const PetscInt slipIndex = auxiliaryField->getSubfieldInfo("slip").index;
+    DM slipDM;
 
+    err = DMCreateSubDM(auxiliaryField->getDM(), 1, &slipIndex, NULL, &slipDM);
+    PYLITH_CHECK_ERROR(err);
+    err = DMCreateLocalVector(slipDM, &_slipVecRupture);
+    PYLITH_CHECK_ERROR(err);
+    err = DMCreateLocalVector(slipDM, &_slipVecTotal);
+    PYLITH_CHECK_ERROR(err);
     assert(_auxiliaryFactory);
     _auxiliaryFactory->setValuesFromDB();
+    err = DMDestroy(&slipDM);
+    PYLITH_CHECK_ERROR(err);
 
     PYLITH_METHOD_RETURN(auxiliaryField);
 } // createAuxiliaryField
