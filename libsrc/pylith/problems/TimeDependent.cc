@@ -941,6 +941,7 @@ pylith::problems::TimeDependent::computeLHSResidual(PetscTS ts,
     debug << pythia::journal::at(__HERE__)
           << "computeLHSResidual(ts=" << ts << ", t=" << t << ", solutionVec=" << solutionVec << ", solutionDotVec=" << solutionDotVec << ", residualVec=" << residualVec << ", context=" << context << ")" << pythia::journal::endl;
 
+    t = 0;
     // Get current time step.
     PylithReal dt;
     PetscErrorCode err = TSGetTimeStep(ts, &dt);
