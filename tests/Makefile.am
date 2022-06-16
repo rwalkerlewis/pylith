@@ -23,5 +23,4 @@ SUBDIRS = \
 	fullscale \
 	manual
 
-
 # End of file
