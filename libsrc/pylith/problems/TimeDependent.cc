@@ -465,8 +465,22 @@ void pylith::problems::TimeDependent::initialize(void)
 
 static PetscErrorCode quadratic_u(PetscInt dim, PetscReal time, const PetscReal x[], PetscInt Nc, PetscScalar *u, void *ctx)
 {
-    u[0] = (x[1] > 0 ? (x[1] * x[1]) - 1 : 1 - (x[1] * x[1]));
-    u[1] = (x[1] > 0 ? x[1] * x[1] : -(x[1] * x[1]));
+    u[0] = x[1] > 0. ? PetscSqr(x[1]) - 1. : 1. - PetscSqr(x[1]);
+    u[1] = x[1] > 0. ? PetscSqr(x[1]) : -PetscSqr(x[1]);
+    return 0;
+}
+
+static PetscErrorCode quadratic_lower_u(PetscInt dim, PetscReal time, const PetscReal x[], PetscInt Nc, PetscScalar *u, void *ctx)
+{
+    u[0] = 1. - PetscSqr(x[1]);
+    u[1] = -PetscSqr(x[1]);
+    return 0;
+}
+
+static PetscErrorCode quadratic_upper_u(PetscInt dim, PetscReal time, const PetscReal x[], PetscInt Nc, PetscScalar *u, void *ctx)
+{
+    u[0] = PetscSqr(x[1]) - 1.;
+    u[1] = PetscSqr(x[1]);
     return 0;
 }
 
@@ -478,31 +492,75 @@ static PetscErrorCode quad_linear_p(PetscInt dim, PetscReal time, const PetscRea
 
 static PetscErrorCode trace_strain(PetscInt dim, PetscReal time, const PetscReal x[], PetscInt Nc, PetscScalar *u, void *ctx)
 {
-    u[0] = (x[1] > 0 ? -2.0 * x[1] : 2.0 * x[1]);
+    u[0] = -2.0 * PetscAbsReal(x[1]);
+    return 0;
+}
+
+static PetscErrorCode fault_traction(PetscInt dim, PetscReal time, const PetscReal x[], PetscInt Nc, PetscScalar *u, void *ctx)
+{
+    u[0] = 0.;
+    u[1] = time;
+    return 0;
+}
+
+static PetscErrorCode fault_pressure(PetscInt dim, PetscReal time, const PetscReal x[], PetscInt Nc, PetscScalar *u, void *ctx)
+{
+    u[0] = 5.5*time - 0.25*PetscSqr(x[0]);
     return 0;
 }
 
 void pylith::problems::TimeDependent::solve(void)
 {
-    PetscErrorCode (*funcs[3])(PetscInt dim, PetscReal time, const PetscReal x[], PetscInt Nc, PetscScalar u[], void *ctx) = {NULL, NULL, NULL};
-    DM dm;
-    Vec u;
+    PetscErrorCode (*funcs[5])(PetscInt dim, PetscReal time, const PetscReal x[], PetscInt Nc, PetscScalar u[], void *ctx) = {NULL, NULL, NULL};
+    DM       dm;
+    Vec      u;
+    DMLabel  matLabel;
+    PetscInt id;
 
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("solve()");
 
-    funcs[0] = quadratic_u;
+    PetscErrorCode err = TSGetDM(_ts, &dm);PYLITH_CHECK_ERROR(err);
+    err = DMViewFromOptions(dm, NULL, "-matt_view");PYLITH_CHECK_ERROR(err);
+    err = TSGetSolution(_ts, &u);PYLITH_CHECK_ERROR(err);
+
+    //err = DMGetLabel(dm, "material-id", &matLabel);PYLITH_CHECK_ERROR(err);
+    err = DMLabelCreate(PETSC_COMM_SELF, "material", &matLabel);PYLITH_CHECK_ERROR(err);
+    err = DMLabelSetValue(matLabel, 0, 1);PYLITH_CHECK_ERROR(err);
+    err = DMLabelSetValue(matLabel, 1, 1);PYLITH_CHECK_ERROR(err);
+    err = DMPlexLabelComplete(dm, matLabel);PYLITH_CHECK_ERROR(err);
+    funcs[0] = quadratic_lower_u;
     funcs[1] = quad_linear_p;
     funcs[2] = trace_strain;
-    PetscErrorCode err = TSGetDM(_ts, &dm);
-    PYLITH_CHECK_ERROR(err);
-    err = TSGetSolution(_ts, &u);
-    PYLITH_CHECK_ERROR(err);
-    err = DMProjectFunctionLocal(dm, 0.0, funcs, NULL, INSERT_ALL_VALUES, u);
-    PYLITH_CHECK_ERROR(err);
-    err = TSSolve(_ts, NULL);
-    PYLITH_CHECK_ERROR(err);
+    id  = 1;
+    err = DMProjectFunctionLabelLocal(dm, 0.0, matLabel, 1, &id, 0, NULL, funcs, NULL, INSERT_ALL_VALUES, u);PYLITH_CHECK_ERROR(err);
+    err = DMLabelDestroy(&matLabel);PYLITH_CHECK_ERROR(err);
 
+    err = DMLabelCreate(PETSC_COMM_SELF, "material", &matLabel);PYLITH_CHECK_ERROR(err);
+    err = DMLabelSetValue(matLabel, 2, 2);PYLITH_CHECK_ERROR(err);
+    err = DMLabelSetValue(matLabel, 3, 2);PYLITH_CHECK_ERROR(err);
+    err = DMPlexLabelComplete(dm, matLabel);PYLITH_CHECK_ERROR(err);
+    funcs[0] = quadratic_upper_u;
+    funcs[1] = quad_linear_p;
+    funcs[2] = trace_strain;
+    id  = 2;
+    err = DMProjectFunctionLabelLocal(dm, 0.0, matLabel, 1, &id, 0, NULL, funcs, NULL, INSERT_ALL_VALUES, u);PYLITH_CHECK_ERROR(err);
+    err = DMLabelDestroy(&matLabel);PYLITH_CHECK_ERROR(err);
+
+    err = DMLabelCreate(PETSC_COMM_SELF, "material", &matLabel);PYLITH_CHECK_ERROR(err);
+    err = DMLabelSetValue(matLabel, 4, 100);PYLITH_CHECK_ERROR(err);
+    err = DMLabelSetValue(matLabel, 5, 100);PYLITH_CHECK_ERROR(err);
+    err = DMPlexLabelComplete(dm, matLabel);PYLITH_CHECK_ERROR(err);
+    funcs[0] = NULL;
+    funcs[1] = NULL;
+    funcs[2] = NULL;
+    funcs[3] = fault_traction;
+    funcs[4] = fault_pressure;
+    id  = 100;
+    err = DMProjectFunctionLabelLocal(dm, 0.0, matLabel, 1, &id, 0, NULL, funcs, NULL, INSERT_ALL_VALUES, u);PYLITH_CHECK_ERROR(err);
+    err = DMLabelDestroy(&matLabel);PYLITH_CHECK_ERROR(err);
+
+    err = TSSolve(_ts, NULL);PYLITH_CHECK_ERROR(err);
     PYLITH_METHOD_END;
 } // solve
 
