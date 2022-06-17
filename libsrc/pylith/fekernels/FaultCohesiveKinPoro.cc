@@ -703,11 +703,11 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0l_u(const PylithInt dim,
     case 2:
     {
         const PylithInt _spaceDim = 2;
-        const PylithScalar tanDir[2] = {-n[1], n[0]};
+        const PylithScalar tanDir[2] = {n[1], -n[0]};
         for (PylithInt i = 0; i < _spaceDim; ++i)
         {
             const PylithScalar slipXY = n[i] * slip[0] + tanDir[i] * slip[1];
-            f0[fOffLagrange + i] += dispP[i] - dispN[i] + slipXY;
+            f0[fOffLagrange + i] += dispP[i] - dispN[i] - slipXY;
             if (f0[fOffLagrange + i] != f0[fOffLagrange + i])
             {
                 PetscPrintf(PETSC_COMM_WORLD, "Error in f0l_u \n");
@@ -939,8 +939,8 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_fault(const PylithInt dim,
         nDotLagrange_t -= n[i] * faultLagrange_t[i];
     }
 
-    f0[fOffp_fault] += porosity * (betaP * (pressureP_t + 2. * pressureFault_t + pressureN_t) / 4. +
-                                   betaSigma * nDotLagrange_t);
+    //f0[fOffp_fault] += porosity * (betaP * (pressureP_t + 2. * pressureFault_t + pressureN_t) / 4. + betaSigma * nDotLagrange_t);
+    f0[fOffp_fault] += porosity * (betaP * pressureFault_t + betaSigma * nDotLagrange_t);
     if (f0[fOffp_fault] != f0[fOffp_fault])
     {
         PetscPrintf(PETSC_COMM_WORLD, "Error in f0p_fault \n");
@@ -1433,8 +1433,8 @@ void pylith::fekernels::FaultCohesiveKinPoro::f1p_fault(const PylithInt dim,
     case 2:
         tensorPermeability[0] = vectorPermeability[0];
         tensorPermeability[1] = vectorPermeability[3];
-        tensorPermeability[2] = vectorPermeability[1];
-        tensorPermeability[3] = vectorPermeability[3];
+        tensorPermeability[2] = vectorPermeability[3];
+        tensorPermeability[3] = vectorPermeability[1];
         break;
     case 3:
         tensorPermeability[0] = vectorPermeability[0];
@@ -1469,9 +1469,19 @@ void pylith::fekernels::FaultCohesiveKinPoro::f1p_fault(const PylithInt dim,
     case 2:
     {
         const PylithInt _spaceDim = 2;
-        const PylithScalar tanDir[2] = {-n[1], n[0]};
+        const PylithScalar tanDir[2] = {n[1], -n[0]};
+#if 1
+        const PylithScalar dpdx = pressureFault_x[0]*tanDir[0];
+        const PylithScalar dpdy = pressureFault_x[0]*tanDir[1];
+        const PylithScalar bodyForceX = 0.0;//porosity*0.0;
+        const PylithScalar bodyForceY = 0.0;//porosity*0.0;
+
+        f1[fOffp_fault+0] += (tensorPermeability[0]/fluidViscosity) * (dpdx - bodyForceX) + (tensorPermeability[1]/fluidViscosity) * (dpdy - bodyForceY);
+        f1[fOffp_fault+1] += (tensorPermeability[2]/fluidViscosity) * (dpdx - bodyForceX) + (tensorPermeability[3]/fluidViscosity) * (dpdy - bodyForceY);
+#else
         f1[fOffp_fault] += tensorPermeability[0] / (4.0 * fluidViscosity) * tanDir[0] * tanDir[0] * (pressureN_x[0] + 2. * pressureFault_x[0] + pressureP_x[0]) + tensorPermeability[1] / (4.0 * fluidViscosity) * tanDir[0] * tanDir[1] * (pressureN_x[1] + 2. * pressureFault_x[1] + pressureP_x[1]);
         f1[fOffp_fault + 1] += tensorPermeability[2] / (4.0 * fluidViscosity) * tanDir[1] * tanDir[0] * (pressureN_x[0] + 2. * pressureFault_x[0] + pressureP_x[0]) + tensorPermeability[3] / (4.0 * fluidViscosity) * tanDir[1] * tanDir[1] * (pressureN_x[1] + 2. * pressureFault_x[1] + pressureP_x[1]);
+#endif
         break;
     } // case 2
 
