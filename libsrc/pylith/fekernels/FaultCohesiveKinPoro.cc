@@ -707,7 +707,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0l_u(const PylithInt dim,
         for (PylithInt i = 0; i < _spaceDim; ++i)
         {
             const PylithScalar slipXY = n[i] * slip[0] + tanDir[i] * slip[1];
-            f0[fOffLagrange + i] += dispP[i] - dispN[i] - slipXY;
+            f0[fOffLagrange + i] += dispP[i] - dispN[i] + slipXY;
             if (f0[fOffLagrange + i] != f0[fOffLagrange + i])
             {
                 PetscPrintf(PETSC_COMM_WORLD, "Error in f0l_u \n");
