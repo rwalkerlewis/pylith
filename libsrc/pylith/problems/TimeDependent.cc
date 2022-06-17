@@ -498,7 +498,7 @@ static PetscErrorCode fault_traction(PetscInt dim, PetscReal time, const PetscRe
 
 static PetscErrorCode fault_pressure(PetscInt dim, PetscReal time, const PetscReal x[], PetscInt Nc, PetscScalar *u, void *ctx)
 {
-    u[0] = 5.5*time - 0.25*PetscSqr(x[0]);
+    u[0] = 5.5*time + 0.25*PetscSqr(x[0]);
     return 0;
 }
 
