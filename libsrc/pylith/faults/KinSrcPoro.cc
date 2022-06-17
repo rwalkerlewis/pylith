@@ -175,15 +175,28 @@ void pylith::faults::KinSrcPoro::updateSlip(PetscVec slipLocalVec,
     subfieldKernels[5] = _fluid_viscosityFnKernel;    // 6
     subfieldKernels[6] = _slipFnKernel;               // numA - 1
 
+    PetscPointFunc slipSubfieldKernels[1];
+    slipSubfieldKernels[0] = _slipFnKernel; // numA - 1
+
     // Create local vector for slip for this source.
     PetscErrorCode err = 0;
-    PetscDM faultAuxiliaryDM = faultAuxiliaryField->getDM();
+    const char *slipFieldName = faultAuxiliaryField->hasSubfield("slip") ? "slip" : "slip_rate";
+    const PetscInt slipIndex = faultAuxiliaryField->getSubfieldInfo(slipFieldName).index;
+    DM slipDM;
+    err = DMCreateSubDM(faultAuxiliaryField->getDM(), 1, &slipIndex, NULL, &slipDM);
+
+    // PetscDM faultAuxiliaryDM = faultAuxiliaryField->getDM();
     PetscDMLabel dmLabel = NULL;
     PetscInt labelValue = 0;
-    err = DMSetAuxiliaryVec(faultAuxiliaryDM, dmLabel, labelValue, 0.0,
+    // err = DMSetAuxiliaryVec(faultAuxiliaryDM, dmLabel, labelValue, 0.0,
+    //                         _auxiliaryField->getLocalVector());
+    err = DMSetAuxiliaryVec(slipDM, dmLabel, labelValue, 0.0,
                             _auxiliaryField->getLocalVector());
     PYLITH_CHECK_ERROR(err);
-    err = DMProjectFieldLocal(faultAuxiliaryDM, t, slipLocalVec, subfieldKernels, INSERT_VALUES,
+
+    // err = DMProjectFieldLocal(faultAuxiliaryDM, t, slipLocalVec, subfieldKernels, INSERT_VALUES,
+    //                           slipLocalVec);
+    err = DMProjectFieldLocal(slipDM, t, slipLocalVec, slipSubfieldKernels, INSERT_VALUES,
                               slipLocalVec);
     PYLITH_CHECK_ERROR(err);
 
