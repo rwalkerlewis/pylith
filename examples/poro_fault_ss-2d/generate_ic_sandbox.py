@@ -22,12 +22,12 @@ import matplotlib.pyplot as plt
 # mesh = Dataset('mesh_hex.exo','r')
 
 # Dimensions
-DOMAIN_X = 150.0e+3
-DOMAIN_Y = 100.0e+3
+DOMAIN_X = 1.0
+DOMAIN_Y = 1.0
 
 # Discretization
-dx = 5.0e+3
-dy = 5.0e+3 
+dx = 0.005
+dy = 0.005 
 
 nx = numpy.int64(DOMAIN_X / dx)
 ny = numpy.int64(DOMAIN_Y / dy)
@@ -37,13 +37,9 @@ x = numpy.linspace(-DOMAIN_X/2,DOMAIN_X/2,nx+1)
 y = numpy.linspace(-DOMAIN_Y/2,DOMAIN_Y/2,ny+1)
 
 xx, yy = numpy.meshgrid(x,y)
-zz = numpy.zeros_like(xx)
 
-grid = numpy.column_stack((
-    xx.flatten(),
-    yy.flatten(),
-    zz.flatten(),
-))
+xy = numpy.column_stack((xx.flatten(), yy.flatten()))
+
 
 # Initial time
 t0 = 0.0
@@ -71,7 +67,36 @@ fluid_bulk_modulus = 2e9 * numpy.ones(nx*ny) # Pa
 drained_bulk_modulus = 10e9 * numpy.ones(nx*ny) # Pa
 solid_bulk_modulus = 11039657020.4 * numpy.ones(nx*ny) # Pa
 
-# Convert data to array for DB generation
+# Boundary Values
+
+# xneg
+xneg = numpy.column_stack((xx[:,0].flatten(), yy[:,0].flatten()))
+u_x_xneg = u_x[:,0]
+u_y_xneg = u_y[:,0]
+p_xneg = p[:,0]
+trace_strain_xneg = trace_strain[:,0]
+
+# xpos
+xpos = numpy.column_stack((xx[:,-1].flatten(), yy[:,-1].flatten()))
+
+u_x_xpos = u_x[:,-1]
+u_y_xpos = u_y[:,-1]
+p_xpos = p[:,-1]
+trace_strain_xpos = trace_strain[:,-1]
+
+# yneg
+yneg = numpy.column_stack((xx[0,:].flatten(), yy[0,:].flatten()))
+u_x_yneg = u_x[0,:]
+u_y_yneg = u_y[0,:]
+p_yneg = p[0,:]
+trace_strain_yneg = trace_strain[0,:]
+
+# ypos
+ypos = numpy.column_stack((xx[-1,:].flatten(), yy[-1,:].flatten()))
+u_x_ypos = u_x[-1,:]
+u_y_ypos = u_y[-1,:]
+p_ypos = p[-1,:]
+trace_strain_ypos = trace_strain[-1,:]
 
 
 
