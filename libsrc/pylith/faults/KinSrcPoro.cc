@@ -305,6 +305,7 @@ void pylith::faults::KinSrcPoro::_setFEConstants(const pylith::topology::Field &
     assert(prob);
 
     // Pointwise functions have been set in DS
+    // Hardcoding for slip does not work
     const int numConstants = 1;
     PylithScalar constants[numConstants];
     constants[0] = _originTime;

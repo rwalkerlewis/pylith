@@ -228,20 +228,6 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
     _auxiliaryFactory->setSubfieldDiscretization("default", discretization.basisOrder, discretization.quadOrder, -1, isFaultOnly,
                                                  discretization.cellBasis, discretization.feSpace, discretization.isBasisContinuous);
 
-    // // Set default discretization of auxiliary subfields to match lagrange_multiplier_fault subfield in solution.
-    // assert(_auxiliaryFactory);
-    // const pylith::topology::FieldBase::Discretization &discretization1 =
-    // solution.getSubfieldInfo("fault_pressure").fe;
-    // isFaultOnly = false;
-    // _auxiliaryFactory->setSubfieldDiscretization("default", discretization1.basisOrder, discretization1.quadOrder,
-    // -1, isFaultOnly,
-    //                                              discretization1.cellBasis, discretization1.feSpace,
-    // discretization1.isBasisContinuous);
-
-    // ** TO DO **
-    // Set discretization of aux fields to match also
-    // pressure (\Gamma^+ and - sides), trace_strain (\Gamma^+ and - sides), fault_pressure (only \Gamma^f)
-
     assert(_auxiliaryFactory);
     assert(_normalizer);
     _auxiliaryFactory->initialize(auxiliaryField, *_normalizer, solution.getSpaceDim());
@@ -290,10 +276,14 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
     auxiliaryField->allocate();
     auxiliaryField->createOutputVector();
 
-    // We don't populate the auxiliary field via a spatial database, because they will be set from the earthquake
+    // We don't populate the auxiliary field for slip via a spatial database, because they will be set from the earthquake
     // rupture.
 
     // Initialize auxiliary fields for kinematic ruptures.
+    PetscErrorCode err = 0;
+    const char *slipFieldName = auxiliaryField->hasSubfield("slip") ? "slip" : "slip_rate";
+    const PetscInt slipIndex = auxiliaryField->getSubfieldInfo(slipFieldName).index;
+
     assert(auxiliaryField);
     const srcs_type::const_iterator rupturesEnd = _ruptures.end();
     for (srcs_type::iterator r_iter = _ruptures.begin(); r_iter != rupturesEnd; ++r_iter)
@@ -304,11 +294,9 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
     } // for
 
     // Create local PETSc vector to hold current slip.
-    PetscErrorCode err = 0;
-    const PetscInt slipIndex = auxiliaryField->getSubfieldInfo("slip").index;
     DM slipDM;
-
     err = DMCreateSubDM(auxiliaryField->getDM(), 1, &slipIndex, NULL, &slipDM);
+
     PYLITH_CHECK_ERROR(err);
     err = DMCreateLocalVector(slipDM, &_slipVecRupture);
     PYLITH_CHECK_ERROR(err);
