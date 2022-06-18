@@ -16,7 +16,7 @@ now set for monitoring of the Arbuckle disposal formation.
 
 This script generates an oversized column useful for demonstration purposes.
 
-Run `generate_gmsh_oversized.py --help` to see the command line options.
+Run `generate_gmsh_confined_aquifer.py --help` to see the command line options.
 """
 import gmsh
 from pylith.meshio.gmsh_utils import (VertexGroup, MaterialGroup, GenerateMesh, group_exclude)
@@ -27,8 +27,8 @@ class App(GenerateMesh):
     """
     DOMAIN_X = 10.0 # m
     DOMAIN_Y = 10.0 # m
-    DOMAIN_Z = 100.0 # m
-    DX = 5.0
+    DOMAIN_Z = 10.0 # m
+    DX = 2.0
     
     def __init__(self):
         """Constructor.
