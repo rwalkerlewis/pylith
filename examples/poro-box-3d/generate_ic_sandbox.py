@@ -45,6 +45,7 @@ xyz = numpy.column_stack((xxx.flatten(), yyy.flatten(), zzz.flatten()))
 # Earth Tide Values
 
 # Time in decimal days
+t0 = 0.0
 dt = 0.01
 elapsed = 3.0
 tsteps = numpy.int32(elapsed/dt)
@@ -59,69 +60,54 @@ def et_disp_y(y, t):
 def et_disp_z(z, t):
     return z*1E-8*(7*numpy.cos((t-0.5)*2*numpy.pi) + 4*numpy.cos((t-0.8)*2*numpy.pi) + 7*numpy.cos((t+0.1)*4*numpy.pi))
 
+coeff_x = (5*numpy.cos(t*2*numpy.pi) + 2*numpy.cos((t-0.5)*2*numpy.pi) + 1*numpy.cos((t+0.3)*0.5*numpy.pi))
+coeff_y = (7*numpy.cos(t*2*numpy.pi) + 4*numpy.cos((t-0.3)*2*numpy.pi) + 7*numpy.cos((t+0.6)*0.5*numpy.pi))
+coeff_z = (7*numpy.cos((t-0.5)*2*numpy.pi) + 4*numpy.cos((t-0.8)*2*numpy.pi) + 7*numpy.cos((t+0.1)*4*numpy.pi))
+
+tide_coeff = numpy.column_stack((coeff_x, coeff_y, coeff_z))
+time_history = tide_coeff / tide_coeff[0, :]
+
 et_x = et_disp_x(x, t.reshape([t.size, 1]))
 et_y = et_disp_y(y, t.reshape([t.size, 1]))
 et_z = et_disp_z(z, t.reshape([t.size, 1]))
 
+# Boundary Values
 
-# # Initial time
-# t0 = 0.0
+# xneg
+xneg = numpy.column_stack((xxx[:,0,:].flatten(), yyy[:,0,:].flatten(), zzz[:,0,:].flatten()))
+xneg_disp_x = et_disp_x(xneg[:,0], t0)
+xneg_disp_y = et_disp_y(xneg[:,1], t0)
+xneg_disp_z = et_disp_z(xneg[:,2], t0)
 
+# xpos
+xpos = numpy.column_stack((xxx[:,-1,:].flatten(), yyy[:,-1,:].flatten(), zzz[:,-1,:].flatten()))
+xpos_disp_x = et_disp_x(xpos[:,0], t0)
+xpos_disp_y = et_disp_y(xpos[:,1], t0)
+xpos_disp_z = et_disp_z(xpos[:,2], t0)
 
-# # Two Dimensional Values
-# u_x = numpy.nan_to_num(yy / -numpy.abs(yy), nan=0.0) *(yy*yy - 1)
-# u_y = numpy.nan_to_num(yy / -numpy.abs(yy), nan=0.0) *(yy*yy)
-# p = t0*(yy*yy - 1)
-# trace_strain = numpy.nan_to_num(yy / numpy.abs(yy), nan=0.0) * -2 * yy
-# L_x = numpy.ones(x.size) * 0
-# L_y = numpy.ones(y.size) * t0
-# p_f = numpy.ones(x.size) * 0.5 * t0
+# yneg
+yneg = numpy.column_stack((xxx[0,:,:].flatten(), yyy[0,:,:].flatten(), zzz[0,:,:].flatten()))
+yneg_disp_x = et_disp_x(yneg[:,0], t0)
+yneg_disp_y = et_disp_y(yneg[:,1], t0)
+yneg_disp_z = et_disp_z(yneg[:,2], t0)
 
+# ypos
+ypos = numpy.column_stack((xxx[-1,:,:].flatten(), yyy[-1,:,:].flatten(), zzz[1,:,:].flatten()))
+ypos_disp_x = et_disp_x(ypos[:,0], t0)
+ypos_disp_y = et_disp_y(ypos[:,1], t0)
+ypos_disp_z = et_disp_z(ypos[:,2], t0)
 
-# # Aux
-# fluid_density = 1.0 * numpy.ones(nx*ny) # kg / m**3
-# solid_density = 1.0 * numpy.ones(nx*ny) # kg / m**3
-# solid_density = 1.0 * numpy.ones(nx*ny) # kg / m**3
-# porosity = 0.5 * numpy.ones(nx*ny) # kg / m**3
-# biot_coefficient = 1.0 * numpy.ones(nx*ny)
-# fluid_viscosity = 1.0 * numpy.ones(nx*ny) # Pa*s
-# shear_modulus = 0.5 * numpy.ones(nx*ny) # Pa
-# fluid_bulk_modulus = 2e9 * numpy.ones(nx*ny) # Pa
-# drained_bulk_modulus = 10e9 * numpy.ones(nx*ny) # Pa
-# solid_bulk_modulus = 11039657020.4 * numpy.ones(nx*ny) # Pa
+# zneg
+zneg = numpy.column_stack((xxx[:,:,0].flatten(), yyy[:,:,0].flatten(), zzz[:,:,0].flatten()))
+zneg_disp_x = et_disp_x(zneg[:,0], t0)
+zneg_disp_y = et_disp_y(zneg[:,1], t0)
+zneg_disp_z = et_disp_z(zneg[:,2], t0)
 
-# # Boundary Values
-
-# # xneg
-# xneg = numpy.column_stack((xx[:,0].flatten(), yy[:,0].flatten()))
-# u_x_xneg = u_x[:,0]
-# u_y_xneg = u_y[:,0]
-# p_xneg = p[:,0]
-# trace_strain_xneg = trace_strain[:,0]
-
-# # xpos
-# xpos = numpy.column_stack((xx[:,-1].flatten(), yy[:,-1].flatten()))
-
-# u_x_xpos = u_x[:,-1]
-# u_y_xpos = u_y[:,-1]
-# p_xpos = p[:,-1]
-# trace_strain_xpos = trace_strain[:,-1]
-
-# # yneg
-# yneg = numpy.column_stack((xx[0,:].flatten(), yy[0,:].flatten()))
-# u_x_yneg = u_x[0,:]
-# u_y_yneg = u_y[0,:]
-# p_yneg = p[0,:]
-# trace_strain_yneg = trace_strain[0,:]
-
-# # ypos
-# ypos = numpy.column_stack((xx[-1,:].flatten(), yy[-1,:].flatten()))
-# u_x_ypos = u_x[-1,:]
-# u_y_ypos = u_y[-1,:]
-# p_ypos = p[-1,:]
-# trace_strain_ypos = trace_strain[-1,:]
-
-
+# zpos
+zpos = numpy.column_stack((xxx[:,:,-1].flatten(), yyy[:,:,-1].flatten(), zzz[:,:,-1].flatten()))
+zpos_disp_x = et_disp_x(zpos[:,0], t0)
+zpos_disp_y = et_disp_y(zpos[:,1], t0)
+zpos_disp_z = et_disp_z(zpos[:,2], t0)
 
 # End of file
 

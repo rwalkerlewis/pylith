@@ -24,9 +24,9 @@ DOMAIN_Y = 10.0
 DOMAIN_Z = 10.0
 
 # Discretization
-dx = 0.005
-dy = 0.005 
-dz = 0.005
+dx = 0.5
+dy = 0.5 
+dz = 0.5
 
 nx = numpy.int64(DOMAIN_X / dx)
 ny = numpy.int64(DOMAIN_Y / dy)
@@ -35,366 +35,721 @@ nz = numpy.int64(DOMAIN_Z / dz)
 # Grid
 x = numpy.linspace(-DOMAIN_X/2,DOMAIN_X/2,nx+1)
 y = numpy.linspace(-DOMAIN_Y/2,DOMAIN_Y/2,ny+1)
-z = numpy.linspace(-DOMAIN_Z,0,ny+1)
+z = numpy.linspace(-DOMAIN_Z/2,DOMAIN_Z/2,nz+1)
 
-xx, yy, zz = numpy.meshgrid(x,y,z)
-xyz = numpy.column_stack((xx.flatten(), yy.flatten(), zz.flatten()))
+xxx, yyy, zzz = numpy.meshgrid(x,y,z)
+xyz = numpy.column_stack((xxx.flatten(), yyy.flatten(), zzz.flatten()))
 
+# Time in decimal days
+dt = 0.01
+elapsed = 3.0
+tsteps = numpy.int32(elapsed/dt)
+t = numpy.linspace(-dt,elapsed,tsteps+2)
 
-# Initial time
+# Earth Tide Values
+
+# Time in decimal days
 t0 = 0.0
+dt = 0.01
+elapsed = 3.0
+tsteps = numpy.int32(elapsed/dt)
+t = numpy.linspace(-dt,elapsed,tsteps+2)
 
+def et_disp_x(x, t):
+    return x*1E-8*(5*numpy.cos(t*2*numpy.pi) + 2*numpy.cos((t-0.5)*2*numpy.pi) + 1*numpy.cos((t+0.3)*0.5*numpy.pi))
 
-# Two Dimensional Values
-u_x = numpy.nan_to_num(yy / -numpy.abs(yy), nan=0.0) *(yy*yy - 1)
-u_y = numpy.nan_to_num(yy / -numpy.abs(yy), nan=0.0) *(yy*yy)
-# p = t0*(yy*yy - 1)
-p = (yy*yy - 1)
-trace_strain = numpy.nan_to_num(yy / numpy.abs(yy), nan=0.0) * -2 * yy
-L_x = numpy.ones(x.size) * 0
-L_y = numpy.ones(y.size) * t0
-p_f = numpy.ones(x.size) * 0.5 * t0
+def et_disp_y(y, t):
+    return y*1E-8*(7*numpy.cos(t*2*numpy.pi) + 4*numpy.cos((t-0.3)*2*numpy.pi) + 7*numpy.cos((t+0.6)*0.5*numpy.pi))
 
-# Two Dimensional Values
+def et_disp_z(z, t):
+    return z*1E-8*(7*numpy.cos((t-0.5)*2*numpy.pi) + 4*numpy.cos((t-0.8)*2*numpy.pi) + 7*numpy.cos((t+0.1)*4*numpy.pi))
 
-fluid_density = 1.0 * numpy.ones(nx*ny) # kg / m**3
-solid_density = 1.0 * numpy.ones(nx*ny) # kg / m**3
-solid_density = 1.0 * numpy.ones(nx*ny) # kg / m**3
-porosity = 0.5 * numpy.ones(nx*ny) # kg / m**3
-biot_coefficient = 1.0 * numpy.ones(nx*ny)
-fluid_viscosity = 1.0 * numpy.ones(nx*ny) # Pa*s
-shear_modulus = 0.5 * numpy.ones(nx*ny) # Pa
-fluid_bulk_modulus = 2e9 * numpy.ones(nx*ny) # Pa
-drained_bulk_modulus = 10e9 * numpy.ones(nx*ny) # Pa
-solid_bulk_modulus = 11039657020.4 * numpy.ones(nx*ny) # Pa
+coeff_x = (5*numpy.cos(t*2*numpy.pi) + 2*numpy.cos((t-0.5)*2*numpy.pi) + 1*numpy.cos((t+0.3)*0.5*numpy.pi))
+coeff_y = (7*numpy.cos(t*2*numpy.pi) + 4*numpy.cos((t-0.3)*2*numpy.pi) + 7*numpy.cos((t+0.6)*0.5*numpy.pi))
+coeff_z = (7*numpy.cos((t-0.5)*2*numpy.pi) + 4*numpy.cos((t-0.8)*2*numpy.pi) + 7*numpy.cos((t+0.1)*4*numpy.pi))
+
+tide_coeff = numpy.column_stack((coeff_x, coeff_y, coeff_z))
+time_history = tide_coeff / tide_coeff[0, :]
+
+et_x = et_disp_x(x, t.reshape([t.size, 1]))
+et_y = et_disp_y(y, t.reshape([t.size, 1]))
+et_z = et_disp_z(z, t.reshape([t.size, 1]))
 
 # Boundary Values
 
 # xneg
-xneg = numpy.column_stack((xx[:,0].flatten(), yy[:,0].flatten()))
-u_x_xneg = u_x[:,0]
-u_y_xneg = u_y[:,0]
-p_xneg = p[:,0]
-trace_strain_xneg = trace_strain[:,0]
+xneg = numpy.column_stack((xxx[:,0,:].flatten(), yyy[:,0,:].flatten(), zzz[:,0,:].flatten()))
+xneg_disp_x = et_disp_x(xneg[:,0], t0)
+xneg_disp_y = et_disp_y(xneg[:,1], t0)
+xneg_disp_z = et_disp_z(xneg[:,2], t0)
 
 # xpos
-xpos = numpy.column_stack((xx[:,-1].flatten(), yy[:,-1].flatten()))
-
-u_x_xpos = u_x[:,-1]
-u_y_xpos = u_y[:,-1]
-p_xpos = p[:,-1]
-trace_strain_xpos = trace_strain[:,-1]
+xpos = numpy.column_stack((xxx[:,-1,:].flatten(), yyy[:,-1,:].flatten(), zzz[:,-1,:].flatten()))
+xpos_disp_x = et_disp_x(xpos[:,0], t0)
+xpos_disp_y = et_disp_y(xpos[:,1], t0)
+xpos_disp_z = et_disp_z(xpos[:,2], t0)
 
 # yneg
-yneg = numpy.column_stack((xx[0,:].flatten(), yy[0,:].flatten()))
-u_x_yneg = u_x[0,:]
-u_y_yneg = u_y[0,:]
-p_yneg = p[0,:]
-trace_strain_yneg = trace_strain[0,:]
+yneg = numpy.column_stack((xxx[0,:,:].flatten(), yyy[0,:,:].flatten(), zzz[0,:,:].flatten()))
+yneg_disp_x = et_disp_x(yneg[:,0], t0)
+yneg_disp_y = et_disp_y(yneg[:,1], t0)
+yneg_disp_z = et_disp_z(yneg[:,2], t0)
 
 # ypos
-ypos = numpy.column_stack((xx[-1,:].flatten(), yy[-1,:].flatten()))
-u_x_ypos = u_x[-1,:]
-u_y_ypos = u_y[-1,:]
-p_ypos = p[-1,:]
-trace_strain_ypos = trace_strain[-1,:]
+ypos = numpy.column_stack((xxx[-1,:,:].flatten(), yyy[-1,:,:].flatten(), zzz[1,:,:].flatten()))
+ypos_disp_x = et_disp_x(ypos[:,0], t0)
+ypos_disp_y = et_disp_y(ypos[:,1], t0)
+ypos_disp_z = et_disp_z(ypos[:,2], t0)
+
+# zneg
+zneg = numpy.column_stack((xxx[:,:,0].flatten(), yyy[:,:,0].flatten(), zzz[:,:,0].flatten()))
+zneg_disp_x = et_disp_x(zneg[:,0], t0)
+zneg_disp_y = et_disp_y(zneg[:,1], t0)
+zneg_disp_z = et_disp_z(zneg[:,2], t0)
+
+# zpos
+zpos = numpy.column_stack((xxx[:,:,-1].flatten(), yyy[:,:,-1].flatten(), zzz[:,:,-1].flatten()))
+zpos_disp_x = et_disp_x(zpos[:,0], t0)
+zpos_disp_y = et_disp_y(zpos[:,1], t0)
+zpos_disp_z = et_disp_z(zpos[:,2], t0)
 
 class GenerateDB(object):
     def run(self):
         """Generate the databases.
         """
         # displacement
-        self.xneg_disp()
-        self.xpos_disp()
-        self.yneg_disp()
-        self.ypos_disp()
+        self.xneg_disp_x()
+        self.xneg_disp_y()
+        self.xneg_disp_z()                
 
-        # pressure
-        self.xneg_pres()
-        self.xpos_pres()
-        self.yneg_pres()
-        self.ypos_pres()
+        self.xpos_disp_x()
+        self.xpos_disp_y()
+        self.xpos_disp_z()                
+
+        self.yneg_disp_x()
+        self.yneg_disp_y()
+        self.yneg_disp_z()
+
+        self.ypos_disp_x()
+        self.ypos_disp_y()
+        self.ypos_disp_z()
+
+        self.zneg_disp_x()
+        self.zneg_disp_y()
+        self.zneg_disp_z()                        
+
+        self.zpos_disp_x()
+        self.zpos_disp_y()
+        self.zpos_disp_z()
 
         # time history
-        self.time_history()
+        self.time_history_x()
+        self.time_history_y()
+        self.time_history_z()        
 
         return
 
-    def xneg_disp(self):
-        """Generate the database for xneg displacement.
+# ========================================================================
+
+    def xneg_disp_x(self):
+        """Generate the database for xneg displacement, x component.
         """
         # X Neg Displacement
         from spatialdata.geocoords.CSCart import CSCart
         cs = CSCart()
         cs.inventory.units = 'meter'
-        cs.inventory.spaceDim = 2
+        cs.inventory.spaceDim = 3
         cs._configure()
         
         displacement_x = {"name": "initial_amplitude_x",
                         "units": "m",
-                        "data": numpy.ravel(u_x_xneg)}
+                        "data": numpy.ravel(xneg_disp_x)}
 
         displacement_y = {"name": "initial_amplitude_y",
                                "units": "m",
-                               "data": numpy.ravel(u_y_xneg)}
+                               "data": numpy.zeros(xneg_disp_y.size)}
 
-        data = {"num-x": xneg.shape[0],
-                "num-y": 1,
-                "points": xneg,                
-                "x": x[0],
-                "y": y.flatten(),
+        displacement_z = {"name": "initial_amplitude_z",
+                               "units": "m",
+                               "data": numpy.zeros(xneg_disp_z.size)}
+
+        data = {"points": xneg,                
                 "coordsys": cs,
-                "data_dim": 1,
-                "values": [displacement_x, displacement_y]}
+                "data_dim": 2,
+                "values": [displacement_x, displacement_y, displacement_z]}
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
-        io = createWriter("bc_xneg_disp.spatialdb")
+        io = createWriter("bc_xneg_disp_x.spatialdb")
         io.write(data)        
         return
 
-    def xpos_disp(self):
-        """Generate the database for xpos displacement.
+    def xneg_disp_y(self):
+        """Generate the database for xneg displacement, y component.
+        """
+        # X Neg Displacement
+        from spatialdata.geocoords.CSCart import CSCart
+        cs = CSCart()
+        cs.inventory.units = 'meter'
+        cs.inventory.spaceDim = 3
+        cs._configure()
+        
+        displacement_x = {"name": "initial_amplitude_y",
+                               "units": "m",
+                               "data": numpy.zeros(xneg_disp_x.size)}
+
+        displacement_y = {"name": "initial_amplitude_y",
+                        "units": "m",
+                        "data": numpy.ravel(xneg_disp_y)}
+
+        displacement_z = {"name": "initial_amplitude_z",
+                               "units": "m",
+                               "data": numpy.zeros(xneg_disp_z.size)}
+
+        data = {"points": xneg,                
+                "coordsys": cs,
+                "data_dim": 2,
+                "values": [displacement_x, displacement_y, displacement_z]}
+        from spatialdata.spatialdb.SimpleIOAscii import createWriter
+        io = createWriter("bc_xneg_disp_y.spatialdb")
+        io.write(data)        
+        return
+
+    def xneg_disp_z(self):
+        """Generate the database for xneg displacement, z component.
+        """
+        # X Neg Displacement
+        from spatialdata.geocoords.CSCart import CSCart
+        cs = CSCart()
+        cs.inventory.units = 'meter'
+        cs.inventory.spaceDim = 3
+        cs._configure()
+        
+        displacement_x = {"name": "initial_amplitude_z",
+                               "units": "m",
+                               "data": numpy.zeros(xneg_disp_x.size)}
+
+        displacement_y = {"name": "initial_amplitude_y",
+                               "units": "m",
+                               "data": numpy.zeros(xneg_disp_y.size)}
+
+        displacement_z = {"name": "initial_amplitude_z",
+                        "units": "m",
+                        "data": numpy.ravel(xneg_disp_z)}
+
+        data = {"points": xneg,                
+                "coordsys": cs,
+                "data_dim": 2,
+                "values": [displacement_x, displacement_y, displacement_z]}
+        from spatialdata.spatialdb.SimpleIOAscii import createWriter
+        io = createWriter("bc_xneg_disp_z.spatialdb")
+        io.write(data)        
+        return
+
+    def xpos_disp_x(self):
+        """Generate the database for xpos displacement, x component.
         """
         # X Pos Displacement
         from spatialdata.geocoords.CSCart import CSCart
         cs = CSCart()
         cs.inventory.units = 'meter'
-        cs.inventory.spaceDim = 2
+        cs.inventory.spaceDim = 3
         cs._configure()
         
         displacement_x = {"name": "initial_amplitude_x",
                         "units": "m",
-                        "data": numpy.ravel(u_x_xpos)}
+                        "data": numpy.ravel(xpos_disp_x)}
 
         displacement_y = {"name": "initial_amplitude_y",
                                "units": "m",
-                               "data": numpy.ravel(u_y_xpos)}
+                               "data": numpy.zeros(xpos_disp_y.size)}
 
-        data = {"num-x": xpos.shape[0],
-                "num-y": 1,
-                "points": xpos,                
-                "x": x[-1],
-                "y": y.flatten(),
+        displacement_z = {"name": "initial_amplitude_z",
+                               "units": "m",
+                               "data": numpy.zeros(xpos_disp_z.size)}
+
+        data = {"points": xpos,                
                 "coordsys": cs,
-                "data_dim": 1,
-                "values": [displacement_x, displacement_y]}
+                "data_dim": 2,
+                "values": [displacement_x, displacement_y, displacement_z]}
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
-        io = createWriter("bc_xpos_disp.spatialdb")
+        io = createWriter("bc_xpos_disp_x.spatialdb")
         io.write(data)        
         return
 
-    def yneg_disp(self):
-        """Generate the database for yneg displacement.
+    def xpos_disp_y(self):
+        """Generate the database for xpos displacement, y component.
+        """
+        # X Pos Displacement
+        from spatialdata.geocoords.CSCart import CSCart
+        cs = CSCart()
+        cs.inventory.units = 'meter'
+        cs.inventory.spaceDim = 3
+        cs._configure()
+        
+        displacement_x = {"name": "initial_amplitude_y",
+                               "units": "m",
+                               "data": numpy.zeros(xpos_disp_x.size)}
+
+        displacement_y = {"name": "initial_amplitude_y",
+                        "units": "m",
+                        "data": numpy.ravel(xpos_disp_y)}
+
+        displacement_z = {"name": "initial_amplitude_z",
+                               "units": "m",
+                               "data": numpy.zeros(xpos_disp_z.size)}
+
+        data = {"points": xpos,                
+                "coordsys": cs,
+                "data_dim": 2,
+                "values": [displacement_x, displacement_y, displacement_z]}
+        from spatialdata.spatialdb.SimpleIOAscii import createWriter
+        io = createWriter("bc_xpos_disp_y.spatialdb")
+        io.write(data)        
+        return
+
+    def xpos_disp_z(self):
+        """Generate the database for xpos displacement, z component.
+        """
+        # X Pos Displacement
+        from spatialdata.geocoords.CSCart import CSCart
+        cs = CSCart()
+        cs.inventory.units = 'meter'
+        cs.inventory.spaceDim = 3
+        cs._configure()
+        
+        displacement_x = {"name": "initial_amplitude_z",
+                               "units": "m",
+                               "data": numpy.zeros(xpos_disp_x.size)}
+
+        displacement_y = {"name": "initial_amplitude_y",
+                               "units": "m",
+                               "data": numpy.zeros(xpos_disp_y.size)}
+
+        displacement_z = {"name": "initial_amplitude_z",
+                        "units": "m",
+                        "data": numpy.ravel(xpos_disp_z)}
+
+        data = {"points": xpos,                
+                "coordsys": cs,
+                "data_dim": 2,
+                "values": [displacement_x, displacement_y, displacement_z]}
+        from spatialdata.spatialdb.SimpleIOAscii import createWriter
+        io = createWriter("bc_xpos_disp_z.spatialdb")
+        io.write(data)        
+        return
+
+# ========================================================================
+
+    def yneg_disp_x(self):
+        """Generate the database for yneg displacement, x component.
         """
         # Y Neg Displacement
         from spatialdata.geocoords.CSCart import CSCart
         cs = CSCart()
         cs.inventory.units = 'meter'
-        cs.inventory.spaceDim = 2
+        cs.inventory.spaceDim = 3
         cs._configure()
         
         displacement_x = {"name": "initial_amplitude_x",
                         "units": "m",
-                        "data": numpy.ravel(u_x_yneg)}
+                        "data": numpy.ravel(yneg_disp_x)}
 
         displacement_y = {"name": "initial_amplitude_y",
                                "units": "m",
-                               "data": numpy.ravel(u_y_yneg)}
+                               "data": numpy.zeros(yneg_disp_y.size)}
 
-        data = {"num-x": 1,
-                "num-y": yneg.shape[0],
-                "points": yneg,                
-                "x": x.flatten(),
-                "y": y[0],
+        displacement_z = {"name": "initial_amplitude_z",
+                               "units": "m",
+                               "data": numpy.zeros(yneg_disp_z.size)}
+
+        data = {"points": yneg,                
                 "coordsys": cs,
-                "data_dim": 1,
-                "values": [displacement_x, displacement_y]}
+                "data_dim": 2,
+                "values": [displacement_x, displacement_y, displacement_z]}
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
-        io = createWriter("bc_yneg_disp.spatialdb")
+        io = createWriter("bc_yneg_disp_x.spatialdb")
         io.write(data)        
         return
 
-    def ypos_disp(self):
-        """Generate the database for ypos displacement.
+    def yneg_disp_y(self):
+        """Generate the database for yneg displacement, y component.
+        """
+        # Y Neg Displacement
+        from spatialdata.geocoords.CSCart import CSCart
+        cs = CSCart()
+        cs.inventory.units = 'meter'
+        cs.inventory.spaceDim = 3
+        cs._configure()
+        
+        displacement_x = {"name": "initial_amplitude_y",
+                        "units": "m",
+                        "data": numpy.zeros(yneg_disp_x.size)}
+
+        displacement_y = {"name": "initial_amplitude_y",
+                        "units": "m",
+                        "data": numpy.ravel(yneg_disp_y)}
+
+        displacement_z = {"name": "initial_amplitude_z",
+                        "units": "m",
+                        "data": numpy.zeros(yneg_disp_z.size)}
+
+        data = {"points": yneg,                
+                "coordsys": cs,
+                "data_dim": 2,
+                "values": [displacement_x, displacement_y, displacement_z]}
+        from spatialdata.spatialdb.SimpleIOAscii import createWriter
+        io = createWriter("bc_yneg_disp_y.spatialdb")
+        io.write(data)        
+        return
+
+    def yneg_disp_z(self):
+        """Generate the database for yneg displacement, z component.
+        """
+        # X Neg Displacement
+        from spatialdata.geocoords.CSCart import CSCart
+        cs = CSCart()
+        cs.inventory.units = 'meter'
+        cs.inventory.spaceDim = 3
+        cs._configure()
+        
+        displacement_x = {"name": "initial_amplitude_z",
+                        "units": "m",
+                        "data": numpy.zeros(yneg_disp_x.size)}
+
+        displacement_y = {"name": "initial_amplitude_y",
+                        "units": "m",
+                        "data": numpy.zeros(yneg_disp_y.size)}
+
+        displacement_z = {"name": "initial_amplitude_z",
+                        "units": "m",
+                        "data": numpy.ravel(yneg_disp_z)}
+
+        data = {"points": yneg,                
+                "coordsys": cs,
+                "data_dim": 2,
+                "values": [displacement_x, displacement_y, displacement_z]}
+        from spatialdata.spatialdb.SimpleIOAscii import createWriter
+        io = createWriter("bc_yneg_disp_z.spatialdb")
+        io.write(data)        
+        return
+
+    def ypos_disp_x(self):
+        """Generate the database for ypos displacement, x component.
         """
         # Y Pos Displacement
         from spatialdata.geocoords.CSCart import CSCart
         cs = CSCart()
         cs.inventory.units = 'meter'
-        cs.inventory.spaceDim = 2
+        cs.inventory.spaceDim = 3
         cs._configure()
         
         displacement_x = {"name": "initial_amplitude_x",
                         "units": "m",
-                        "data": numpy.ravel(u_x_ypos)}
+                        "data": numpy.ravel(ypos_disp_x)}
 
         displacement_y = {"name": "initial_amplitude_y",
-                               "units": "m",
-                               "data": numpy.ravel(u_y_ypos)}
+                        "units": "m",
+                        "data": numpy.zeros(ypos_disp_y.size)}
 
-        data = {"num-x": 1,
-                "num-y": ypos.shape[0],
-                "points": ypos,                
-                "x": x.flatten(),
-                "y": y[-1],
+        displacement_z = {"name": "initial_amplitude_z",
+                        "units": "m",
+                        "data": numpy.zeros(ypos_disp_z.size)}
+
+        data = {"points": ypos,                
                 "coordsys": cs,
-                "data_dim": 1,
-                "values": [displacement_x, displacement_y]}
+                "data_dim": 2,
+                "values": [displacement_x, displacement_y, displacement_z]}
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
-        io = createWriter("bc_ypos_disp.spatialdb")
+        io = createWriter("bc_ypos_disp_x.spatialdb")
         io.write(data)        
         return
 
-    def xneg_pres(self):
-        """Generate the database for xneg pressure.
+    def ypos_disp_y(self):
+        """Generate the database for ypos displacement, y component.
         """
-        # X Neg Pressure
+        # Y Pos Displacement
         from spatialdata.geocoords.CSCart import CSCart
         cs = CSCart()
-        cs.inventory.units = 'm'
-        cs.inventory.spaceDim = 2
+        cs.inventory.units = 'meter'
+        cs.inventory.spaceDim = 3
         cs._configure()
         
-        pressure = {"name": "initial_amplitude",
-                        "units": "Pa",
-                        "data": numpy.zeros(p_xneg.shape[0]).ravel()}
+        displacement_x = {"name": "initial_amplitude_y",
+                        "units": "m",
+                        "data": numpy.zeros(ypos_disp_x.size)}
 
-        time_history_start = {"name": "time_history_start_time",
-                        "units": "second",
-                        "data": numpy.zeros(p_xneg.shape[0]).ravel()}
+        displacement_y = {"name": "initial_amplitude_y",
+                        "units": "m",
+                        "data": numpy.ravel(ypos_disp_y)}
 
-        time_history_amplitude = {"name": "time_history_amplitude",
-                        "units": "Pa",
-                        "data": numpy.ravel(p_xneg)}
+        displacement_z = {"name": "initial_amplitude_z",
+                        "units": "m",
+                        "data": numpy.zeros(ypos_disp_z.size)}
 
-        data = {"num-x": xneg.shape[0],
-                "num-y": 1,
-                "points": xneg,                
-                "x": x[0],
-                "y": y.flatten(),
+        data = {"points": ypos,                
                 "coordsys": cs,
-                "data_dim": 1,
-                "values": [pressure, time_history_start, time_history_amplitude]}
+                "data_dim": 2,
+                "values": [displacement_x, displacement_y, displacement_z]}
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
-        io = createWriter("bc_xneg_pres.spatialdb")
+        io = createWriter("bc_ypos_disp_y.spatialdb")
         io.write(data)        
         return
 
-    def xpos_pres(self):
-        """Generate the database for xpos pressure.
+    def ypos_disp_z(self):
+        """Generate the database for ypos displacement, z component.
         """
-        # X Pos Pressure
+        # Y Pos Displacement
         from spatialdata.geocoords.CSCart import CSCart
         cs = CSCart()
-        cs.inventory.units = 'm'
-        cs.inventory.spaceDim = 2
+        cs.inventory.units = 'meter'
+        cs.inventory.spaceDim = 3
         cs._configure()
         
-        pressure = {"name": "initial_amplitude",
-                        "units": "Pa",
-                        "data": numpy.zeros(p_xpos.shape[0]).ravel()}
+        displacement_x = {"name": "initial_amplitude_z",
+                        "units": "m",
+                        "data": numpy.zeros(ypos_disp_x.size)}
 
-        time_history_start = {"name": "time_history_start_time",
-                        "units": "second",
-                        "data": numpy.zeros(p_xpos.shape[0]).ravel()}
+        displacement_y = {"name": "initial_amplitude_y",
+                        "units": "m",
+                        "data": numpy.zeros(ypos_disp_y.size)}
 
-        time_history_amplitude = {"name": "time_history_amplitude",
-                        "units": "Pa",
-                        "data": numpy.ravel(p_xpos)}
+        displacement_z = {"name": "initial_amplitude_z",
+                        "units": "m",
+                        "data": numpy.ravel(ypos_disp_z)}
 
-        data = {"num-x": xpos.shape[0],
-                "num-y": 1,
-                "points": xpos,                
-                "x": x[-1],
-                "y": y.flatten(),
+        data = {"points": ypos,                
                 "coordsys": cs,
-                "data_dim": 1,
-                "values": [pressure, time_history_start, time_history_amplitude]}
+                "data_dim": 2,
+                "values": [displacement_x, displacement_y, displacement_z]}
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
-        io = createWriter("bc_xpos_pres.spatialdb")
+        io = createWriter("bc_ypos_disp_z.spatialdb")
         io.write(data)        
         return
 
-    def yneg_pres(self):
-        """Generate the database for yneg pressure.
+# ========================================================================
+
+    def zneg_disp_x(self):
+        """Generate the database for zneg displacement, x component.
         """
-        # Y Neg Pressure
+        # Z Neg Displacement
         from spatialdata.geocoords.CSCart import CSCart
         cs = CSCart()
-        cs.inventory.units = 'm'
-        cs.inventory.spaceDim = 2
+        cs.inventory.units = 'meter'
+        cs.inventory.spaceDim = 3
         cs._configure()
         
-        pressure = {"name": "initial_amplitude",
-                        "units": "Pa",
-                        "data": numpy.zeros(p_yneg.shape[0]).ravel()}
+        displacement_x = {"name": "initial_amplitude_x",
+                        "units": "m",
+                        "data": numpy.ravel(zneg_disp_x)}
 
-        time_history_start = {"name": "time_history_start_time",
-                        "units": "second",
-                        "data": numpy.zeros(p_yneg.shape[0]).ravel()}
+        displacement_y = {"name": "initial_amplitude_y",
+                        "units": "m",
+                        "data": numpy.zeros(zneg_disp_y.size)}
 
-        time_history_amplitude = {"name": "time_history_amplitude",
-                        "units": "Pa",
-                        "data": numpy.ravel(p_yneg)}
+        displacement_z = {"name": "initial_amplitude_z",
+                        "units": "m",
+                        "data": numpy.zeros(zneg_disp_z.size)}
 
-        data = {"num-x": 1,
-                "num-y": yneg.shape[0],
-                "points": yneg,                
-                "x": x.flatten(),
-                "y": y[0],
+        data = {"points": zneg,                
                 "coordsys": cs,
-                "data_dim": 1,
-                "values": [pressure, time_history_start, time_history_amplitude]}
+                "data_dim": 2,
+                "values": [displacement_x, displacement_y, displacement_z]}
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
-        io = createWriter("bc_yneg_pres.spatialdb")
+        io = createWriter("bc_zneg_disp_x.spatialdb")
         io.write(data)        
         return
 
-    def ypos_pres(self):
-        """Generate the database for ypos pressure.
+    def zneg_disp_y(self):
+        """Generate the database for zneg displacement, y component.
         """
-        # Y Pos Pressure
+        # Z Neg Displacement
         from spatialdata.geocoords.CSCart import CSCart
         cs = CSCart()
-        cs.inventory.units = 'm'
-        cs.inventory.spaceDim = 2
+        cs.inventory.units = 'meter'
+        cs.inventory.spaceDim = 3
         cs._configure()
         
-        pressure = {"name": "initial_amplitude",
-                        "units": "Pa",
-                        "data": numpy.zeros(p_ypos.shape[0]).ravel()}
+        displacement_x = {"name": "initial_amplitude_y",
+                        "units": "m",
+                        "data": numpy.zeros(zneg_disp_x.size)}
 
-        time_history_start = {"name": "time_history_start_time",
-                        "units": "second",
-                        "data": numpy.zeros(p_ypos.shape[0]).ravel()}
+        displacement_y = {"name": "initial_amplitude_y",
+                        "units": "m",
+                        "data": numpy.ravel(zneg_disp_y)}
 
-        time_history_amplitude = {"name": "time_history_amplitude",
-                        "units": "Pa",
-                        "data": numpy.ravel(p_ypos)}
+        displacement_z = {"name": "initial_amplitude_z",
+                        "units": "m",
+                        "data": numpy.zeros(zneg_disp_z.size)}
 
-        data = {"num-x": 1,
-                "num-y": ypos.shape[0],
-                "points": ypos,                
-                "x": x.flatten(),
-                "y": y[-1],
+        data = {"points": zneg,                
                 "coordsys": cs,
-                "data_dim": 1,
-                "values": [pressure, time_history_start, time_history_amplitude]}
+                "data_dim": 2,
+                "values": [displacement_x, displacement_y, displacement_z]}
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
-        io = createWriter("bc_ypos_pres.spatialdb")
+        io = createWriter("bc_zneg_disp_y.spatialdb")
         io.write(data)        
         return
 
-    def time_history(self):
+    def zneg_disp_z(self):
+        """Generate the database for zneg displacement, z component.
+        """
+        # Z Neg Displacement
+        from spatialdata.geocoords.CSCart import CSCart
+        cs = CSCart()
+        cs.inventory.units = 'meter'
+        cs.inventory.spaceDim = 3
+        cs._configure()
+        
+        displacement_x = {"name": "initial_amplitude_z",
+                        "units": "m",
+                        "data": numpy.zeros(zneg_disp_x.size)}
+
+        displacement_y = {"name": "initial_amplitude_y",
+                        "units": "m",
+                        "data": numpy.zeros(zneg_disp_y.size)}
+
+        displacement_z = {"name": "initial_amplitude_z",
+                        "units": "m",
+                        "data": numpy.ravel(zneg_disp_z)}
+
+        data = {"points": zneg,                
+                "coordsys": cs,
+                "data_dim": 2,
+                "values": [displacement_x, displacement_y, displacement_z]}
+        from spatialdata.spatialdb.SimpleIOAscii import createWriter
+        io = createWriter("bc_zneg_disp_z.spatialdb")
+        io.write(data)        
+        return
+
+    def zpos_disp_x(self):
+        """Generate the database for zpos displacement, x component.
+        """
+        # Z Pos Displacement
+        from spatialdata.geocoords.CSCart import CSCart
+        cs = CSCart()
+        cs.inventory.units = 'meter'
+        cs.inventory.spaceDim = 3
+        cs._configure()
+        
+        displacement_x = {"name": "initial_amplitude_x",
+                        "units": "m",
+                        "data": numpy.ravel(zpos_disp_x)}
+
+        displacement_y = {"name": "initial_amplitude_y",
+                        "units": "m",
+                        "data": numpy.zeros(zpos_disp_y.size)}
+
+        displacement_z = {"name": "initial_amplitude_z",
+                        "units": "m",
+                        "data": numpy.zeros(zpos_disp_z.size)}
+
+        data = {"points": zpos,                
+                "coordsys": cs,
+                "data_dim": 2,
+                "values": [displacement_x, displacement_y, displacement_z]}
+        from spatialdata.spatialdb.SimpleIOAscii import createWriter
+        io = createWriter("bc_zpos_disp_x.spatialdb")
+        io.write(data)        
+        return
+
+    def zpos_disp_y(self):
+        """Generate the database for zpos displacement, y component.
+        """
+        # Z Pos Displacement
+        from spatialdata.geocoords.CSCart import CSCart
+        cs = CSCart()
+        cs.inventory.units = 'meter'
+        cs.inventory.spaceDim = 3
+        cs._configure()
+        
+        displacement_x = {"name": "initial_amplitude_y",
+                        "units": "m",
+                        "data": numpy.zeros(zpos_disp_x.size)}
+
+        displacement_y = {"name": "initial_amplitude_y",
+                        "units": "m",
+                        "data": numpy.ravel(zpos_disp_y)}
+
+        displacement_z = {"name": "initial_amplitude_z",
+                        "units": "m",
+                        "data": numpy.zeros(zpos_disp_z.size)}
+
+        data = {"points": zpos,                
+                "coordsys": cs,
+                "data_dim": 2,
+                "values": [displacement_x, displacement_y, displacement_z]}
+        from spatialdata.spatialdb.SimpleIOAscii import createWriter
+        io = createWriter("bc_zpos_disp_y.spatialdb")
+        io.write(data)        
+        return
+
+    def zpos_disp_z(self):
+        """Generate the database for zpos displacement, z component.
+        """
+        # Z Pos Displacement
+        from spatialdata.geocoords.CSCart import CSCart
+        cs = CSCart()
+        cs.inventory.units = 'meter'
+        cs.inventory.spaceDim = 3
+        cs._configure()
+        
+        displacement_x = {"name": "initial_amplitude_z",
+                        "units": "m",
+                        "data": numpy.zeros(zpos_disp_x.size)}
+
+        displacement_y = {"name": "initial_amplitude_y",
+                        "units": "m",
+                        "data": numpy.zeros(zpos_disp_y.size)}
+
+        displacement_z = {"name": "initial_amplitude_z",
+                        "units": "m",
+                        "data": numpy.ravel(zpos_disp_z)}
+
+        data = {"points": ypos,                
+                "coordsys": cs,
+                "data_dim": 2,
+                "values": [displacement_x, displacement_y, displacement_z]}
+        from spatialdata.spatialdb.SimpleIOAscii import createWriter
+        io = createWriter("bc_zpos_disp_z.spatialdb")
+        io.write(data)        
+        return
+
+    def time_history_x(self):
         """Generate the time history database.
         """
-        tmax = 1
-        nsteps = 2001
-        time = numpy.zeros(nsteps+1)
-        time[:-1] = numpy.linspace(0,tmax,nsteps)
-        time[-1] = 999.000
-        amplitude = time.copy()
+        # tmax = 1
+        # nsteps = 2001
+        # time = numpy.zeros(nsteps+1)
+        # time[:-1] = numpy.linspace(0,tmax,nsteps)
+        # time[-1] = 999.000
+        # amplitude = time.copy()
         from spatialdata.spatialdb.TimeHistoryIO import write
-        write(time=time, amplitude=amplitude, units="second", filename="time_history.timedb")        
+        write(time=t, amplitude=time_history[:,0], units="day", filename="time_history_x.timedb")        
+        return
+
+    def time_history_y(self):
+        """Generate the time history database.
+        """
+        # tmax = 1
+        # nsteps = 2001
+        # time = numpy.zeros(nsteps+1)
+        # time[:-1] = numpy.linspace(0,tmax,nsteps)
+        # time[-1] = 999.000
+        # amplitude = time.copy()
+        from spatialdata.spatialdb.TimeHistoryIO import write
+        write(time=t, amplitude=time_history[:,1], units="day", filename="time_history_y.timedb")        
+        return
+
+    def time_history_z(self):
+        """Generate the time history database.
+        """
+        # tmax = 1
+        # nsteps = 2001
+        # time = numpy.zeros(nsteps+1)
+        # time[:-1] = numpy.linspace(0,tmax,nsteps)
+        # time[-1] = 999.000
+        # amplitude = time.copy()
+        from spatialdata.spatialdb.TimeHistoryIO import write
+        write(time=t, amplitude=time_history[:,2], units="day", filename="time_history_z.timedb")        
         return
 
 # ======================================================================
