@@ -504,19 +504,22 @@ static PetscErrorCode fault_pressure(PetscInt dim, PetscReal time, const PetscRe
 
 void pylith::problems::TimeDependent::solve(void)
 {
-    PetscErrorCode (*funcs[5])(PetscInt dim, PetscReal time, const PetscReal x[], PetscInt Nc, PetscScalar u[], void *ctx) = {NULL, NULL, NULL};
+    PetscErrorCode (*funcs[5])(PetscInt dim, PetscReal time, const PetscReal x[], PetscInt Nc, PetscScalar u[], void *ctx) = {NULL, NULL, NULL, NULL, NULL};
     DM       dm;
-    Vec      u;
+    Vec      u, lu;
     DMLabel  matLabel;
     PetscInt id;
 
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("solve()");
 
-    PetscErrorCode err = TSGetDM(_ts, &dm);PYLITH_CHECK_ERROR(err);
+    PetscErrorCode err = PetscMallocValidate(__LINE__,"pylith::problems::TimeDependent::solve",__FILE__);PYLITH_CHECK_ERROR(err);
+    err = TSGetDM(_ts, &dm);PYLITH_CHECK_ERROR(err);
     err = DMViewFromOptions(dm, NULL, "-matt_view");PYLITH_CHECK_ERROR(err);
     err = TSGetSolution(_ts, &u);PYLITH_CHECK_ERROR(err);
+    err = DMGetLocalVector(dm, &lu);PYLITH_CHECK_ERROR(err);
 
+    err = PetscMallocValidate(__LINE__,"pylith::problems::TimeDependent::solve",__FILE__);PYLITH_CHECK_ERROR(err);
     //err = DMGetLabel(dm, "material-id", &matLabel);PYLITH_CHECK_ERROR(err);
     err = DMLabelCreate(PETSC_COMM_SELF, "material", &matLabel);PYLITH_CHECK_ERROR(err);
     err = DMLabelSetValue(matLabel, 0, 1);PYLITH_CHECK_ERROR(err);
@@ -526,9 +529,10 @@ void pylith::problems::TimeDependent::solve(void)
     funcs[1] = quad_linear_p;
     funcs[2] = trace_strain;
     id  = 1;
-    err = DMProjectFunctionLabelLocal(dm, 0.0, matLabel, 1, &id, 0, NULL, funcs, NULL, INSERT_ALL_VALUES, u);PYLITH_CHECK_ERROR(err);
+    err = DMProjectFunctionLabelLocal(dm, 0.0, matLabel, 1, &id, 0, NULL, funcs, NULL, INSERT_ALL_VALUES, lu);PYLITH_CHECK_ERROR(err);
     err = DMLabelDestroy(&matLabel);PYLITH_CHECK_ERROR(err);
 
+    err = PetscMallocValidate(__LINE__,"pylith::problems::TimeDependent::solve",__FILE__);PYLITH_CHECK_ERROR(err);
     err = DMLabelCreate(PETSC_COMM_SELF, "material", &matLabel);PYLITH_CHECK_ERROR(err);
     err = DMLabelSetValue(matLabel, 2, 2);PYLITH_CHECK_ERROR(err);
     err = DMLabelSetValue(matLabel, 3, 2);PYLITH_CHECK_ERROR(err);
@@ -537,9 +541,10 @@ void pylith::problems::TimeDependent::solve(void)
     funcs[1] = quad_linear_p;
     funcs[2] = trace_strain;
     id  = 2;
-    err = DMProjectFunctionLabelLocal(dm, 0.0, matLabel, 1, &id, 0, NULL, funcs, NULL, INSERT_ALL_VALUES, u);PYLITH_CHECK_ERROR(err);
+    err = DMProjectFunctionLabelLocal(dm, 0.0, matLabel, 1, &id, 0, NULL, funcs, NULL, INSERT_ALL_VALUES, lu);PYLITH_CHECK_ERROR(err);
     err = DMLabelDestroy(&matLabel);PYLITH_CHECK_ERROR(err);
 
+    err = PetscMallocValidate(__LINE__,"pylith::problems::TimeDependent::solve",__FILE__);PYLITH_CHECK_ERROR(err);
     err = DMLabelCreate(PETSC_COMM_SELF, "material", &matLabel);PYLITH_CHECK_ERROR(err);
     err = DMLabelSetValue(matLabel, 4, 100);PYLITH_CHECK_ERROR(err);
     err = DMLabelSetValue(matLabel, 5, 100);PYLITH_CHECK_ERROR(err);
@@ -550,9 +555,12 @@ void pylith::problems::TimeDependent::solve(void)
     funcs[3] = fault_traction;
     funcs[4] = fault_pressure;
     id  = 100;
-    err = DMProjectFunctionLabelLocal(dm, 0.0, matLabel, 1, &id, 0, NULL, funcs, NULL, INSERT_ALL_VALUES, u);PYLITH_CHECK_ERROR(err);
+    err = DMProjectFunctionLabelLocal(dm, 0.0, matLabel, 1, &id, 0, NULL, funcs, NULL, INSERT_ALL_VALUES, lu);PYLITH_CHECK_ERROR(err);
     err = DMLabelDestroy(&matLabel);PYLITH_CHECK_ERROR(err);
 
+    err = DMLocalToGlobal(dm, lu, INSERT_VALUES, u);PYLITH_CHECK_ERROR(err);
+    err = DMRestoreLocalVector(dm, &lu);PYLITH_CHECK_ERROR(err);
+    err = PetscMallocValidate(__LINE__,"pylith::problems::TimeDependent::solve",__FILE__);PYLITH_CHECK_ERROR(err);
     err = TSSolve(_ts, NULL);PYLITH_CHECK_ERROR(err);
     PYLITH_METHOD_END;
 } // solve
