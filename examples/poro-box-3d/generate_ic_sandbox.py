@@ -46,8 +46,8 @@ xyz = numpy.column_stack((xxx.flatten(), yyy.flatten(), zzz.flatten()))
 
 # Time in decimal days
 t0 = 0.0
-dt = 0.01
-elapsed = 3.0
+dt = 0.001
+elapsed = 2.0
 tsteps = numpy.int32(elapsed/dt)
 t = numpy.linspace(-dt,elapsed,tsteps+2)
 
@@ -109,5 +109,13 @@ zpos_disp_x = et_disp_x(zpos[:,0], t0)
 zpos_disp_y = et_disp_y(zpos[:,1], t0)
 zpos_disp_z = et_disp_z(zpos[:,2], t0)
 
+# Generate figure for strain vector
+
+ee_x = (5*numpy.cos(t*2*numpy.pi) + 2*numpy.cos((t-0.5)*2*numpy.pi) + 1*numpy.cos((t+0.3)*0.5*numpy.pi))
+ee_y = (7*numpy.cos(t*2*numpy.pi) + 4*numpy.cos((t-0.3)*2*numpy.pi) + 7*numpy.cos((t+0.6)*0.5*numpy.pi))
+ee_z = (7*numpy.cos((t-0.5)*2*numpy.pi) + 4*numpy.cos((t-0.8)*2*numpy.pi) + 7*numpy.cos((t+0.1)*4*numpy.pi))
+
+ee_v = numpy.column_stack((ee_x, ee_y, ee_z))
 # End of file
 
+fig, ax = plt.subplot()

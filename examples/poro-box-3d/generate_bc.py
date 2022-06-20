@@ -19,14 +19,14 @@ from time import time
 import numpy 
 
 # Dimensions
-DOMAIN_X = 10.0
-DOMAIN_Y = 10.0
-DOMAIN_Z = 10.0
+DOMAIN_X = 20.0
+DOMAIN_Y = 20.0
+DOMAIN_Z = 20.0
 
 # Discretization
-dx = 0.5
-dy = 0.5 
-dz = 0.5
+dx = 0.25
+dy = 0.25 
+dz = 0.25
 
 nx = numpy.int64(DOMAIN_X / dx)
 ny = numpy.int64(DOMAIN_Y / dy)
@@ -161,22 +161,26 @@ class GenerateDB(object):
         cs.inventory.spaceDim = 3
         cs._configure()
         
-        displacement_x = {"name": "initial_amplitude_x",
+        displacement_x = {"name": "time_history_amplitude_x",
                         "units": "m",
                         "data": numpy.ravel(xneg_disp_x)}
 
-        displacement_y = {"name": "initial_amplitude_y",
+        displacement_y = {"name": "time_history_amplitude_y",
                                "units": "m",
                                "data": numpy.zeros(xneg_disp_y.size)}
 
-        displacement_z = {"name": "initial_amplitude_z",
+        displacement_z = {"name": "time_history_amplitude_z",
                                "units": "m",
+                               "data": numpy.zeros(xneg_disp_z.size)}
+
+        time_history_start = {"name": "time_history_start_time",
+                               "units": "second",
                                "data": numpy.zeros(xneg_disp_z.size)}
 
         data = {"points": xneg,                
                 "coordsys": cs,
                 "data_dim": 2,
-                "values": [displacement_x, displacement_y, displacement_z]}
+                "values": [displacement_x, displacement_y, displacement_z, time_history_start]}
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
         io = createWriter("bc_xneg_disp_x.spatialdb")
         io.write(data)        
@@ -192,22 +196,26 @@ class GenerateDB(object):
         cs.inventory.spaceDim = 3
         cs._configure()
         
-        displacement_x = {"name": "initial_amplitude_y",
+        displacement_x = {"name": "time_history_amplitude_x",
                                "units": "m",
                                "data": numpy.zeros(xneg_disp_x.size)}
 
-        displacement_y = {"name": "initial_amplitude_y",
+        displacement_y = {"name": "time_history_amplitude_y",
                         "units": "m",
                         "data": numpy.ravel(xneg_disp_y)}
 
-        displacement_z = {"name": "initial_amplitude_z",
+        displacement_z = {"name": "time_history_amplitude_z",
                                "units": "m",
+                               "data": numpy.zeros(xneg_disp_z.size)}
+
+        time_history_start = {"name": "time_history_start_time",
+                               "units": "second",
                                "data": numpy.zeros(xneg_disp_z.size)}
 
         data = {"points": xneg,                
                 "coordsys": cs,
                 "data_dim": 2,
-                "values": [displacement_x, displacement_y, displacement_z]}
+                "values": [displacement_x, displacement_y, displacement_z, time_history_start]}
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
         io = createWriter("bc_xneg_disp_y.spatialdb")
         io.write(data)        
@@ -223,22 +231,26 @@ class GenerateDB(object):
         cs.inventory.spaceDim = 3
         cs._configure()
         
-        displacement_x = {"name": "initial_amplitude_z",
+        displacement_x = {"name": "time_history_amplitude_x",
                                "units": "m",
                                "data": numpy.zeros(xneg_disp_x.size)}
 
-        displacement_y = {"name": "initial_amplitude_y",
+        displacement_y = {"name": "time_history_amplitude_y",
                                "units": "m",
                                "data": numpy.zeros(xneg_disp_y.size)}
 
-        displacement_z = {"name": "initial_amplitude_z",
+        displacement_z = {"name": "time_history_amplitude_z",
                         "units": "m",
                         "data": numpy.ravel(xneg_disp_z)}
+
+        time_history_start = {"name": "time_history_start_time",
+                               "units": "second",
+                               "data": numpy.zeros(xneg_disp_z.size)}                        
 
         data = {"points": xneg,                
                 "coordsys": cs,
                 "data_dim": 2,
-                "values": [displacement_x, displacement_y, displacement_z]}
+                "values": [displacement_x, displacement_y, displacement_z, time_history_start]}
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
         io = createWriter("bc_xneg_disp_z.spatialdb")
         io.write(data)        
@@ -254,22 +266,26 @@ class GenerateDB(object):
         cs.inventory.spaceDim = 3
         cs._configure()
         
-        displacement_x = {"name": "initial_amplitude_x",
+        displacement_x = {"name": "time_history_amplitude_x",
                         "units": "m",
                         "data": numpy.ravel(xpos_disp_x)}
 
-        displacement_y = {"name": "initial_amplitude_y",
+        displacement_y = {"name": "time_history_amplitude_y",
                                "units": "m",
                                "data": numpy.zeros(xpos_disp_y.size)}
 
-        displacement_z = {"name": "initial_amplitude_z",
+        displacement_z = {"name": "time_history_amplitude_z",
                                "units": "m",
+                               "data": numpy.zeros(xpos_disp_z.size)}
+
+        time_history_start = {"name": "time_history_start_time",
+                               "units": "second",
                                "data": numpy.zeros(xpos_disp_z.size)}
 
         data = {"points": xpos,                
                 "coordsys": cs,
                 "data_dim": 2,
-                "values": [displacement_x, displacement_y, displacement_z]}
+                "values": [displacement_x, displacement_y, displacement_z, time_history_start]}
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
         io = createWriter("bc_xpos_disp_x.spatialdb")
         io.write(data)        
@@ -285,22 +301,26 @@ class GenerateDB(object):
         cs.inventory.spaceDim = 3
         cs._configure()
         
-        displacement_x = {"name": "initial_amplitude_y",
+        displacement_x = {"name": "time_history_amplitude_x",
                                "units": "m",
                                "data": numpy.zeros(xpos_disp_x.size)}
 
-        displacement_y = {"name": "initial_amplitude_y",
+        displacement_y = {"name": "time_history_amplitude_y",
                         "units": "m",
                         "data": numpy.ravel(xpos_disp_y)}
 
-        displacement_z = {"name": "initial_amplitude_z",
+        displacement_z = {"name": "time_history_amplitude_z",
                                "units": "m",
+                               "data": numpy.zeros(xpos_disp_z.size)}
+
+        time_history_start = {"name": "time_history_start_time",
+                               "units": "second",
                                "data": numpy.zeros(xpos_disp_z.size)}
 
         data = {"points": xpos,                
                 "coordsys": cs,
                 "data_dim": 2,
-                "values": [displacement_x, displacement_y, displacement_z]}
+                "values": [displacement_x, displacement_y, displacement_z, time_history_start]}
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
         io = createWriter("bc_xpos_disp_y.spatialdb")
         io.write(data)        
@@ -316,22 +336,26 @@ class GenerateDB(object):
         cs.inventory.spaceDim = 3
         cs._configure()
         
-        displacement_x = {"name": "initial_amplitude_z",
+        displacement_x = {"name": "time_history_amplitude_x",
                                "units": "m",
                                "data": numpy.zeros(xpos_disp_x.size)}
 
-        displacement_y = {"name": "initial_amplitude_y",
+        displacement_y = {"name": "time_history_amplitude_y",
                                "units": "m",
                                "data": numpy.zeros(xpos_disp_y.size)}
 
-        displacement_z = {"name": "initial_amplitude_z",
+        displacement_z = {"name": "time_history_amplitude_z",
                         "units": "m",
                         "data": numpy.ravel(xpos_disp_z)}
+
+        time_history_start = {"name": "time_history_start_time",
+                               "units": "second",
+                               "data": numpy.zeros(xpos_disp_z.size)}
 
         data = {"points": xpos,                
                 "coordsys": cs,
                 "data_dim": 2,
-                "values": [displacement_x, displacement_y, displacement_z]}
+                "values": [displacement_x, displacement_y, displacement_z, time_history_start]}
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
         io = createWriter("bc_xpos_disp_z.spatialdb")
         io.write(data)        
@@ -349,22 +373,26 @@ class GenerateDB(object):
         cs.inventory.spaceDim = 3
         cs._configure()
         
-        displacement_x = {"name": "initial_amplitude_x",
+        displacement_x = {"name": "time_history_amplitude_x",
                         "units": "m",
                         "data": numpy.ravel(yneg_disp_x)}
 
-        displacement_y = {"name": "initial_amplitude_y",
+        displacement_y = {"name": "time_history_amplitude_y",
                                "units": "m",
                                "data": numpy.zeros(yneg_disp_y.size)}
 
-        displacement_z = {"name": "initial_amplitude_z",
+        displacement_z = {"name": "time_history_amplitude_z",
                                "units": "m",
+                               "data": numpy.zeros(yneg_disp_z.size)}
+
+        time_history_start = {"name": "time_history_start_time",
+                               "units": "second",
                                "data": numpy.zeros(yneg_disp_z.size)}
 
         data = {"points": yneg,                
                 "coordsys": cs,
                 "data_dim": 2,
-                "values": [displacement_x, displacement_y, displacement_z]}
+                "values": [displacement_x, displacement_y, displacement_z, time_history_start]}
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
         io = createWriter("bc_yneg_disp_x.spatialdb")
         io.write(data)        
@@ -380,22 +408,26 @@ class GenerateDB(object):
         cs.inventory.spaceDim = 3
         cs._configure()
         
-        displacement_x = {"name": "initial_amplitude_y",
+        displacement_x = {"name": "time_history_amplitude_x",
                         "units": "m",
                         "data": numpy.zeros(yneg_disp_x.size)}
 
-        displacement_y = {"name": "initial_amplitude_y",
+        displacement_y = {"name": "time_history_amplitude_y",
                         "units": "m",
                         "data": numpy.ravel(yneg_disp_y)}
 
-        displacement_z = {"name": "initial_amplitude_z",
+        displacement_z = {"name": "time_history_amplitude_z",
                         "units": "m",
                         "data": numpy.zeros(yneg_disp_z.size)}
+
+        time_history_start = {"name": "time_history_start_time",
+                               "units": "second",
+                               "data": numpy.zeros(yneg_disp_z.size)}
 
         data = {"points": yneg,                
                 "coordsys": cs,
                 "data_dim": 2,
-                "values": [displacement_x, displacement_y, displacement_z]}
+                "values": [displacement_x, displacement_y, displacement_z, time_history_start]}
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
         io = createWriter("bc_yneg_disp_y.spatialdb")
         io.write(data)        
@@ -411,22 +443,27 @@ class GenerateDB(object):
         cs.inventory.spaceDim = 3
         cs._configure()
         
-        displacement_x = {"name": "initial_amplitude_z",
+        displacement_x = {"name": "time_history_amplitude_x",
                         "units": "m",
                         "data": numpy.zeros(yneg_disp_x.size)}
 
-        displacement_y = {"name": "initial_amplitude_y",
+        displacement_y = {"name": "time_history_amplitude_y",
                         "units": "m",
                         "data": numpy.zeros(yneg_disp_y.size)}
 
-        displacement_z = {"name": "initial_amplitude_z",
+        displacement_z = {"name": "time_history_amplitude_z",
                         "units": "m",
                         "data": numpy.ravel(yneg_disp_z)}
+
+        time_history_start = {"name": "time_history_start_time",
+                               "units": "second",
+                               "data": numpy.zeros(yneg_disp_z.size)}
 
         data = {"points": yneg,                
                 "coordsys": cs,
                 "data_dim": 2,
-                "values": [displacement_x, displacement_y, displacement_z]}
+                "values": [displacement_x, displacement_y, displacement_z, time_history_start
+                ]}
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
         io = createWriter("bc_yneg_disp_z.spatialdb")
         io.write(data)        
@@ -442,22 +479,26 @@ class GenerateDB(object):
         cs.inventory.spaceDim = 3
         cs._configure()
         
-        displacement_x = {"name": "initial_amplitude_x",
+        displacement_x = {"name": "time_history_amplitude_x",
                         "units": "m",
                         "data": numpy.ravel(ypos_disp_x)}
 
-        displacement_y = {"name": "initial_amplitude_y",
+        displacement_y = {"name": "time_history_amplitude_y",
                         "units": "m",
                         "data": numpy.zeros(ypos_disp_y.size)}
 
-        displacement_z = {"name": "initial_amplitude_z",
+        displacement_z = {"name": "time_history_amplitude_z",
                         "units": "m",
                         "data": numpy.zeros(ypos_disp_z.size)}
+
+        time_history_start = {"name": "time_history_start_time",
+                               "units": "second",
+                               "data": numpy.zeros(ypos_disp_z.size)}
 
         data = {"points": ypos,                
                 "coordsys": cs,
                 "data_dim": 2,
-                "values": [displacement_x, displacement_y, displacement_z]}
+                "values": [displacement_x, displacement_y, displacement_z, time_history_start]}
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
         io = createWriter("bc_ypos_disp_x.spatialdb")
         io.write(data)        
@@ -473,22 +514,26 @@ class GenerateDB(object):
         cs.inventory.spaceDim = 3
         cs._configure()
         
-        displacement_x = {"name": "initial_amplitude_y",
+        displacement_x = {"name": "time_history_amplitude_x",
                         "units": "m",
                         "data": numpy.zeros(ypos_disp_x.size)}
 
-        displacement_y = {"name": "initial_amplitude_y",
+        displacement_y = {"name": "time_history_amplitude_y",
                         "units": "m",
                         "data": numpy.ravel(ypos_disp_y)}
 
-        displacement_z = {"name": "initial_amplitude_z",
+        displacement_z = {"name": "time_history_amplitude_z",
                         "units": "m",
                         "data": numpy.zeros(ypos_disp_z.size)}
+
+        time_history_start = {"name": "time_history_start_time",
+                               "units": "second",
+                               "data": numpy.zeros(ypos_disp_z.size)}
 
         data = {"points": ypos,                
                 "coordsys": cs,
                 "data_dim": 2,
-                "values": [displacement_x, displacement_y, displacement_z]}
+                "values": [displacement_x, displacement_y, displacement_z, time_history_start]}
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
         io = createWriter("bc_ypos_disp_y.spatialdb")
         io.write(data)        
@@ -504,22 +549,26 @@ class GenerateDB(object):
         cs.inventory.spaceDim = 3
         cs._configure()
         
-        displacement_x = {"name": "initial_amplitude_z",
+        displacement_x = {"name": "time_history_amplitude_x",
                         "units": "m",
                         "data": numpy.zeros(ypos_disp_x.size)}
 
-        displacement_y = {"name": "initial_amplitude_y",
+        displacement_y = {"name": "time_history_amplitude_y",
                         "units": "m",
                         "data": numpy.zeros(ypos_disp_y.size)}
 
-        displacement_z = {"name": "initial_amplitude_z",
+        displacement_z = {"name": "time_history_amplitude_z",
                         "units": "m",
                         "data": numpy.ravel(ypos_disp_z)}
+
+        time_history_start = {"name": "time_history_start_time",
+                               "units": "second",
+                               "data": numpy.zeros(ypos_disp_z.size)}
 
         data = {"points": ypos,                
                 "coordsys": cs,
                 "data_dim": 2,
-                "values": [displacement_x, displacement_y, displacement_z]}
+                "values": [displacement_x, displacement_y, displacement_z, time_history_start]}
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
         io = createWriter("bc_ypos_disp_z.spatialdb")
         io.write(data)        
@@ -537,22 +586,26 @@ class GenerateDB(object):
         cs.inventory.spaceDim = 3
         cs._configure()
         
-        displacement_x = {"name": "initial_amplitude_x",
+        displacement_x = {"name": "time_history_amplitude_x",
                         "units": "m",
                         "data": numpy.ravel(zneg_disp_x)}
 
-        displacement_y = {"name": "initial_amplitude_y",
+        displacement_y = {"name": "time_history_amplitude_y",
                         "units": "m",
                         "data": numpy.zeros(zneg_disp_y.size)}
 
-        displacement_z = {"name": "initial_amplitude_z",
+        displacement_z = {"name": "time_history_amplitude_z",
                         "units": "m",
                         "data": numpy.zeros(zneg_disp_z.size)}
+
+        time_history_start = {"name": "time_history_start_time",
+                               "units": "second",
+                               "data": numpy.zeros(zneg_disp_z.size)}
 
         data = {"points": zneg,                
                 "coordsys": cs,
                 "data_dim": 2,
-                "values": [displacement_x, displacement_y, displacement_z]}
+                "values": [displacement_x, displacement_y, displacement_z, time_history_start]}
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
         io = createWriter("bc_zneg_disp_x.spatialdb")
         io.write(data)        
@@ -568,22 +621,26 @@ class GenerateDB(object):
         cs.inventory.spaceDim = 3
         cs._configure()
         
-        displacement_x = {"name": "initial_amplitude_y",
+        displacement_x = {"name": "time_history_amplitude_x",
                         "units": "m",
                         "data": numpy.zeros(zneg_disp_x.size)}
 
-        displacement_y = {"name": "initial_amplitude_y",
+        displacement_y = {"name": "time_history_amplitude_y",
                         "units": "m",
                         "data": numpy.ravel(zneg_disp_y)}
 
-        displacement_z = {"name": "initial_amplitude_z",
+        displacement_z = {"name": "time_history_amplitude_z",
                         "units": "m",
                         "data": numpy.zeros(zneg_disp_z.size)}
+
+        time_history_start = {"name": "time_history_start_time",
+                               "units": "second",
+                               "data": numpy.zeros(zneg_disp_z.size)}
 
         data = {"points": zneg,                
                 "coordsys": cs,
                 "data_dim": 2,
-                "values": [displacement_x, displacement_y, displacement_z]}
+                "values": [displacement_x, displacement_y, displacement_z, time_history_start]}
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
         io = createWriter("bc_zneg_disp_y.spatialdb")
         io.write(data)        
@@ -599,22 +656,26 @@ class GenerateDB(object):
         cs.inventory.spaceDim = 3
         cs._configure()
         
-        displacement_x = {"name": "initial_amplitude_z",
+        displacement_x = {"name": "time_history_amplitude_x",
                         "units": "m",
                         "data": numpy.zeros(zneg_disp_x.size)}
 
-        displacement_y = {"name": "initial_amplitude_y",
+        displacement_y = {"name": "time_history_amplitude_y",
                         "units": "m",
                         "data": numpy.zeros(zneg_disp_y.size)}
 
-        displacement_z = {"name": "initial_amplitude_z",
+        displacement_z = {"name": "time_history_amplitude_z",
                         "units": "m",
                         "data": numpy.ravel(zneg_disp_z)}
+
+        time_history_start = {"name": "time_history_start_time",
+                               "units": "second",
+                               "data": numpy.zeros(zneg_disp_z.size)}
 
         data = {"points": zneg,                
                 "coordsys": cs,
                 "data_dim": 2,
-                "values": [displacement_x, displacement_y, displacement_z]}
+                "values": [displacement_x, displacement_y, displacement_z, time_history_start]}
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
         io = createWriter("bc_zneg_disp_z.spatialdb")
         io.write(data)        
@@ -630,22 +691,26 @@ class GenerateDB(object):
         cs.inventory.spaceDim = 3
         cs._configure()
         
-        displacement_x = {"name": "initial_amplitude_x",
+        displacement_x = {"name": "time_history_amplitude_x",
                         "units": "m",
                         "data": numpy.ravel(zpos_disp_x)}
 
-        displacement_y = {"name": "initial_amplitude_y",
+        displacement_y = {"name": "time_history_amplitude_y",
                         "units": "m",
                         "data": numpy.zeros(zpos_disp_y.size)}
 
-        displacement_z = {"name": "initial_amplitude_z",
+        displacement_z = {"name": "time_history_amplitude_z",
                         "units": "m",
                         "data": numpy.zeros(zpos_disp_z.size)}
+
+        time_history_start = {"name": "time_history_start_time",
+                               "units": "second",
+                               "data": numpy.zeros(zpos_disp_z.size)}
 
         data = {"points": zpos,                
                 "coordsys": cs,
                 "data_dim": 2,
-                "values": [displacement_x, displacement_y, displacement_z]}
+                "values": [displacement_x, displacement_y, displacement_z, time_history_start]}
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
         io = createWriter("bc_zpos_disp_x.spatialdb")
         io.write(data)        
@@ -661,22 +726,26 @@ class GenerateDB(object):
         cs.inventory.spaceDim = 3
         cs._configure()
         
-        displacement_x = {"name": "initial_amplitude_y",
+        displacement_x = {"name": "time_history_amplitude_x",
                         "units": "m",
                         "data": numpy.zeros(zpos_disp_x.size)}
 
-        displacement_y = {"name": "initial_amplitude_y",
+        displacement_y = {"name": "time_history_amplitude_y",
                         "units": "m",
                         "data": numpy.ravel(zpos_disp_y)}
 
-        displacement_z = {"name": "initial_amplitude_z",
+        displacement_z = {"name": "time_history_amplitude_z",
                         "units": "m",
                         "data": numpy.zeros(zpos_disp_z.size)}
+
+        time_history_start = {"name": "time_history_start_time",
+                               "units": "second",
+                               "data": numpy.zeros(zpos_disp_z.size)}
 
         data = {"points": zpos,                
                 "coordsys": cs,
                 "data_dim": 2,
-                "values": [displacement_x, displacement_y, displacement_z]}
+                "values": [displacement_x, displacement_y, displacement_z, time_history_start]}
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
         io = createWriter("bc_zpos_disp_y.spatialdb")
         io.write(data)        
@@ -692,22 +761,26 @@ class GenerateDB(object):
         cs.inventory.spaceDim = 3
         cs._configure()
         
-        displacement_x = {"name": "initial_amplitude_z",
+        displacement_x = {"name": "time_history_amplitude_x",
                         "units": "m",
                         "data": numpy.zeros(zpos_disp_x.size)}
 
-        displacement_y = {"name": "initial_amplitude_y",
+        displacement_y = {"name": "time_history_amplitude_y",
                         "units": "m",
                         "data": numpy.zeros(zpos_disp_y.size)}
 
-        displacement_z = {"name": "initial_amplitude_z",
+        displacement_z = {"name": "time_history_amplitude_z",
                         "units": "m",
                         "data": numpy.ravel(zpos_disp_z)}
+
+        time_history_start = {"name": "time_history_start_time",
+                               "units": "second",
+                               "data": numpy.zeros(zpos_disp_z.size)}
 
         data = {"points": ypos,                
                 "coordsys": cs,
                 "data_dim": 2,
-                "values": [displacement_x, displacement_y, displacement_z]}
+                "values": [displacement_x, displacement_y, displacement_z, time_history_start]}
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
         io = createWriter("bc_zpos_disp_z.spatialdb")
         io.write(data)        
