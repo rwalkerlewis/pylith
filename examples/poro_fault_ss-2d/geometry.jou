@@ -38,9 +38,7 @@ journal idless on
 # ----------------------------------------------------------------------
 # Create block
 # ----------------------------------------------------------------------
-# Block is 150.0 km x 100.0 km
-# -50.0 km <= x <= 50.0 km
-# -75.0 km <= y <= 75.0 km
+
 #
 ${blockWidth=1.0*m}
 ${blockLength=1.0*m}
@@ -126,6 +124,7 @@ vertex ( at -{blockWidth}/2 -{blockLength}/2  0 ordinal 1 ordered ) name "vertex
 
 
 # End of file
+
 
 
 

@@ -498,21 +498,21 @@ static PetscErrorCode fault_traction(PetscInt dim, PetscReal time, const PetscRe
 
 static PetscErrorCode fault_pressure(PetscInt dim, PetscReal time, const PetscReal x[], PetscInt Nc, PetscScalar *u, void *ctx)
 {
-    u[0] = 5.5*time + 0.25*PetscSqr(x[0]);
+    u[0] = 5.5 * time + 0.25 * PetscSqr(x[0]);
     return 0;
 }
 
 void pylith::problems::TimeDependent::solve(void)
 {
     PetscErrorCode (*funcs[5])(PetscInt dim, PetscReal time, const PetscReal x[], PetscInt Nc, PetscScalar u[], void *ctx) = {NULL, NULL, NULL, NULL, NULL};
-    DM       dm;
-    Vec      u, lu;
-    DMLabel  matLabel;
+    DM dm;
+    Vec u, lu;
+    DMLabel matLabel;
     PetscInt id;
 
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("solve()");
-
+#if 0
     PetscErrorCode err = PetscMallocValidate(__LINE__,"pylith::problems::TimeDependent::solve",__FILE__);PYLITH_CHECK_ERROR(err);
     err = TSGetDM(_ts, &dm);PYLITH_CHECK_ERROR(err);
     err = DMViewFromOptions(dm, NULL, "-matt_view");PYLITH_CHECK_ERROR(err);
@@ -561,7 +561,9 @@ void pylith::problems::TimeDependent::solve(void)
     err = DMLocalToGlobal(dm, lu, INSERT_VALUES, u);PYLITH_CHECK_ERROR(err);
     err = DMRestoreLocalVector(dm, &lu);PYLITH_CHECK_ERROR(err);
     err = PetscMallocValidate(__LINE__,"pylith::problems::TimeDependent::solve",__FILE__);PYLITH_CHECK_ERROR(err);
-    err = TSSolve(_ts, NULL);PYLITH_CHECK_ERROR(err);
+#endif
+    PetscErrorCode err = TSSolve(_ts, NULL);
+    PYLITH_CHECK_ERROR(err);
     PYLITH_METHOD_END;
 } // solve
 
