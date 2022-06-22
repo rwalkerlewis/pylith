@@ -118,4 +118,12 @@ ee_z = (7*numpy.cos((t-0.5)*2*numpy.pi) + 4*numpy.cos((t-0.8)*2*numpy.pi) + 7*nu
 ee_v = numpy.column_stack((ee_x, ee_y, ee_z))
 # End of file
 
-fig, ax = plt.subplot()
+# Material Properties
+K_dr = 10e9 # Pa
+G = 6e9 # Pa
+
+
+# Generate body force values
+SF_x = (K_dr - (2*G)/3 + 2*G) * 1E-8*(5*numpy.cos(t*2*numpy.pi) + 2*numpy.cos((t-0.5)*2*numpy.pi) + 1*numpy.cos((t+0.3)*0.5*numpy.pi))
+SF_y = (K_dr - (2*G)/3 + 2*G) * 1E-8*(7*numpy.cos(t*2*numpy.pi) + 4*numpy.cos((t-0.3)*2*numpy.pi) + 7*numpy.cos((t+0.6)*0.5*numpy.pi))
+SF_z = (K_dr - (2*G)/3 + 2*G) * 1E-8*(7*numpy.cos((t-0.5)*2*numpy.pi) + 4*numpy.cos((t-0.8)*2*numpy.pi) + 7*numpy.cos((t+0.1)*4*numpy.pi))
