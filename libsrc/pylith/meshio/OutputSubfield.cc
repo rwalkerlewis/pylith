@@ -195,11 +195,35 @@ void pylith::meshio::OutputSubfield::project(const PetscVec &fieldVector)
 
     PetscErrorCode err;
     const PetscReal t = PetscReal(_subfieldIndex) + 0.01; // :KLUDGE: Easiest way to get subfield to extract into fn.
-    err = DMProjectField(_dm, t, fieldVector, &_fn, INSERT_VALUES, _vector);
-    PYLITH_CHECK_ERROR(err);
-    err = VecScale(_vector, _description.scale);
-    PYLITH_CHECK_ERROR(err);
+    if (_discretization.isFaultOnly) {
+      PetscDM         dm;
+      Vec             lu;
+      DMLabel         matLabel, materialLabel;
+      PetscIS         pointIS;
+      const PetscInt *points;
+      PetscInt        id = 100, n;
 
+      err = VecGetDM(fieldVector, &dm);PYLITH_CHECK_ERROR(err);
+      err = DMGetLocalVector(_dm, &lu);PYLITH_CHECK_ERROR(err);
+      err = DMGetLabel(dm, "material-id", &materialLabel);PYLITH_CHECK_ERROR(err);
+      err = DMLabelGetStratumIS(materialLabel, id, &pointIS);PYLITH_CHECK_ERROR(err);
+      err = ISGetLocalSize(pointIS, &n);PYLITH_CHECK_ERROR(err);
+      err = ISGetIndices(pointIS, &points);PYLITH_CHECK_ERROR(err);
+      for (PetscInt i = 0; i < n; ++i) {
+        err = DMLabelSetValue(matLabel, points[i], id);PYLITH_CHECK_ERROR(err);
+      }
+      err = ISRestoreIndices(pointIS, &points);PYLITH_CHECK_ERROR(err);
+      err = ISDestroy(&pointIS);PYLITH_CHECK_ERROR(err);
+      // Copy Stratum to new label
+      err = DMPlexLabelComplete(dm, matLabel);PYLITH_CHECK_ERROR(err);
+      err = DMProjectFieldLabelLocal(_dm, t, matLabel, 1, &id, 0, NULL, fieldVector, &_fn, INSERT_VALUES, lu);PYLITH_CHECK_ERROR(err);
+      err = DMLabelDestroy(&matLabel);PYLITH_CHECK_ERROR(err);
+      err = DMLocalToGlobal(dm, lu, INSERT_VALUES, _vector);PYLITH_CHECK_ERROR(err);
+      err = DMRestoreLocalVector(dm, &lu);PYLITH_CHECK_ERROR(err);
+    } else {
+      err = DMProjectField(_dm, t, fieldVector, &_fn, INSERT_VALUES, _vector);PYLITH_CHECK_ERROR(err);
+    }
+    err = VecScale(_vector, _description.scale);PYLITH_CHECK_ERROR(err);
     PYLITH_METHOD_END;
 }
 
