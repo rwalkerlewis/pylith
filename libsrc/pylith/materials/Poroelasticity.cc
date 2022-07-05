@@ -334,6 +334,7 @@ pylith::materials::Poroelasticity::getSolverDefaults(const bool isParallel,
 } // getSolverDefaults
 
 // ---------------------------------------------------------------------------------------------------------------------
+pylith::feassemble::AuxiliaryFactory *
 pylith::materials::Poroelasticity::_getAuxiliaryFactory(void)
 {
     assert(_rheology);
