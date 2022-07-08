@@ -27,6 +27,7 @@ SUBDIRS = \
 	faults \
 	friction \
 	fekernels \
+	sources \
 	testing
 
 
@@ -41,6 +42,16 @@ libpylith_la_SOURCES = \
 	bc/NeumannUserFn.cc \
 	bc/AbsorbingDampers.cc \
 	bc/AbsorbingDampersAuxiliaryFactory.cc \
+	sources/AuxiliaryFactoryWellboreSource.cc \
+	sources/AuxiliaryFactoryPointForce.cc \
+	sources/DerivedFactoryPointForce.cc \
+	sources/AuxiliaryFactorySourceTime.cc \
+	sources/Source.cc \
+	sources/WellboreSource.cc \
+	sources/PointForce.cc \
+	sources/RickerWavelet.cc \
+	sources/GaussianWavelet.cc \
+	sources/SourceTimeFunctionPointForce.cc \
 	faults/FaultCohesive.cc \
 	faults/FaultCohesiveKin.cc \
 	faults/FaultCohesiveImpulses.cc \
@@ -84,6 +95,9 @@ libpylith_la_SOURCES = \
 	fekernels/NeumannTimeDependent.cc \
 	fekernels/AbsorbingDampers.cc \
 	fekernels/FaultCohesiveKin.cc \
+	fekernels/WellboreSource.cc \
+	fekernels/RickerWavelet.cc \
+	fekernels/GaussianWavelet.cc \
 	materials/Material.cc \
 	materials/Elasticity.cc \
 	materials/RheologyElasticity.cc \
