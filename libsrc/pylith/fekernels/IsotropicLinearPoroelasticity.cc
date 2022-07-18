@@ -65,7 +65,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f0_mms_ql_u(const P
     const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
-    const PylithScalar lambda = drainedBulkModulus - 2.0/3.0*shearModulus;
+    const PylithScalar lambda = drainedBulkModulus - 2.0 / 3.0 * shearModulus;
 
     f0[0] -= (2.0 * shearModulus - biotCoefficient * t);
     f0[1] -= (2.0 * lambda + 4.0 * shearModulus - biotCoefficient * t);
@@ -154,7 +154,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f0_mms_qt_u(const P
     const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
-    const PylithScalar lambda = drainedBulkModulus - 2.0/3.0*shearModulus;
+    const PylithScalar lambda = drainedBulkModulus - 2.0 / 3.0 * shearModulus;
 
     f0[0] -= (2.0 * shearModulus - biotCoefficient * PetscCosReal(t));
     f0[1] -= (2.0 * lambda + 4.0 * shearModulus - biotCoefficient * PetscCosReal(t));
@@ -193,7 +193,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f0_mms_qt_p(const P
     sum += x[0];
     sum += x[1];
 
-    f0[0] += PetscSinReal(t)*sum/biotModulus;
+    f0[0] += PetscSinReal(t) * sum / biotModulus;
 } // f0_quadratic_trig_p
 
 
@@ -235,17 +235,17 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f0_mms_tl_u(const P
     const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
-    const PylithScalar lambda = drainedBulkModulus - 2.0/3.0*shearModulus;
+    const PylithScalar lambda = drainedBulkModulus - 2.0 / 3.0 * shearModulus;
 
     // f0[0] += PetscSqr(2.0 * PETSC_PI) * PetscSinReal(2.0 * PETSC_PI * x[0]) * (2.0 * shearModulus + lambda) + 2.0 *
     //          (shearModulus + lambda) - 2.0 * PETSC_PI * biotCoefficient * PetscSinReal(2.0 * PETSC_PI * x[0]) * t;
     // f0[1] += PetscSqr(2.0 * PETSC_PI) * PetscSinReal(2.0 * PETSC_PI * x[1]) * (2.0 * shearModulus + lambda) - 2.0 *
     //          PETSC_PI * biotCoefficient * PetscSinReal(2.0 * PETSC_PI * x[1]) * t;
 
-    for (PylithInt d = 0; d < _dim-1; ++d) {
-        f0[d] += PetscSqr(2.*PETSC_PI)*PetscSinReal(2.*PETSC_PI*x[d])*(2.*shearModulus + lambda) + 2.0*(shearModulus + lambda) - 2.*PETSC_PI*biotCoefficient*PetscSinReal(2.*PETSC_PI*x[d])*t;
+    for (PylithInt d = 0; d < _dim - 1; ++d) {
+        f0[d] += PetscSqr(2. * PETSC_PI) * PetscSinReal(2. * PETSC_PI * x[d]) * (2. * shearModulus + lambda) + 2.0 * (shearModulus + lambda) - 2. * PETSC_PI * biotCoefficient * PetscSinReal(2. * PETSC_PI * x[d]) * t;
     }
-    f0[_dim-1] += PetscSqr(2.*PETSC_PI)*PetscSinReal(2.*PETSC_PI*x[_dim-1])*(2.*shearModulus + lambda) - 2.*PETSC_PI*biotCoefficient*PetscSinReal(2.*PETSC_PI*x[_dim-1])*t;
+    f0[_dim - 1] += PetscSqr(2. * PETSC_PI) * PetscSinReal(2. * PETSC_PI * x[_dim - 1]) * (2. * shearModulus + lambda) - 2. * PETSC_PI * biotCoefficient * PetscSinReal(2. * PETSC_PI * x[_dim - 1]) * t;
 } // f0_trig_linear_u
 
 
@@ -288,7 +288,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f0_mms_tl_p(const P
 
     // sum += PetscCosReal(2.0 * PETSC_PI * x[0]) + PetscCosReal(2.0 * PETSC_PI * x[1]);
     for (PylithInt d = 0; d < _dim; ++d) {
-        sum += PetscCosReal(2.*PETSC_PI*x[d]);
+        sum += PetscCosReal(2. * PETSC_PI * x[d]);
     }
 
     f0[0] -= sum / biotModulus - 4.0 * PetscSqr(PETSC_PI) * kappa * sum * t;
@@ -331,7 +331,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f0p_explicit(const 
     const PylithScalar pressure_t = s_t[sOff[i_pressure]];
     const PylithScalar biotModulus = a[aOff[i_biotModulus]];
 
-    f0[0] += pressure_t/biotModulus;
+    f0[0] += pressure_t / biotModulus;
 } // f0p_explicit
 
 
@@ -458,8 +458,8 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f0p_implicit_source
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
     const PylithScalar biotModulus = a[aOff[i_biotModulus]];
 
-    f0[0] += biotCoefficient*trace_strain_t;
-    f0[0] += pressure_t/biotModulus;
+    f0[0] += biotCoefficient * trace_strain_t;
+    f0[0] += pressure_t / biotModulus;
     f0[0] -= source;
 } // f0p_implicit_source
 
@@ -525,8 +525,8 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f0p_implicit_source
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
     const PylithScalar biotModulus = a[aOff[i_biotModulus]];
 
-    f0[0] += biotCoefficient*trace_strain_t;
-    f0[0] += pressure_t/biotModulus;
+    f0[0] += biotCoefficient * trace_strain_t;
+    f0[0] += pressure_t / biotModulus;
     f0[0] -= source;
 } // f0p_implicit_source_body
 
@@ -593,8 +593,8 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f0p_implicit_source
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
     const PylithScalar biotModulus = a[aOff[i_biotModulus]];
 
-    f0[0] += biotCoefficient*trace_strain_t;
-    f0[0] += pressure_t/biotModulus;
+    f0[0] += biotCoefficient * trace_strain_t;
+    f0[0] += pressure_t / biotModulus;
     f0[0] -= source;
 } // f0p_implicit_source_grav
 
@@ -660,8 +660,8 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f0p_implicit_source
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
     const PylithScalar biotModulus = a[aOff[i_biotModulus]];
 
-    f0[0] += biotCoefficient*trace_strain_t;
-    f0[0] += pressure_t/biotModulus;
+    f0[0] += biotCoefficient * trace_strain_t;
+    f0[0] += pressure_t / biotModulus;
     f0[0] -= source;
 } // f0p_implicit_source_grav_body
 
@@ -695,7 +695,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f1u(const PylithInt
     const PylithInt i_pressure = 1;
     const PylithInt i_trace_strain = 2;
 
-    const PylithScalar* displacement_x = &s_x[sOff_x[i_displacement]];
+    const PylithScalar *displacement_x = &s_x[sOff_x[i_displacement]];
     const PylithScalar pressure = s[sOff[i_pressure]];
     const PylithScalar trace_strain = s[sOff[i_trace_strain]];
 
@@ -729,10 +729,10 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f1u(const PylithInt
 
     for (PylithInt c = 0; c < _dim; ++c) {
         for (PylithInt d = 0; d < _dim; ++d) {
-            f1[c*_dim+d] -= shearModulus * (displacement_x[c*_dim+d] + displacement_x[d*_dim+c]);
+            f1[c * _dim + d] -= shearModulus * (displacement_x[c * _dim + d] + displacement_x[d * _dim + c]);
         } // for
-        f1[c*_dim+c] -= (drainedBulkModulus - (2.0*shearModulus)/3.0) * trace_strain;
-        f1[c*_dim+c] += biotCoefficient*pressure;
+        f1[c * _dim + c] -= (drainedBulkModulus - (2.0 * shearModulus) / 3.0) * trace_strain;
+        f1[c * _dim + c] += biotCoefficient * pressure;
     } // for
 } // f1u
 
@@ -765,7 +765,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f1u_refstate(const 
     const PylithInt i_pressure = 1;
     const PylithInt i_trace_strain = 2;
 
-    const PylithScalar* displacement_x = &s_x[sOff_x[i_displacement]];
+    const PylithScalar *displacement_x = &s_x[sOff_x[i_displacement]];
     const PylithScalar pressure = s[sOff[i_pressure]];
     const PylithScalar trace_strain = s[sOff[i_trace_strain]];
 
@@ -781,35 +781,30 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f1u_refstate(const 
     const PylithScalar shearModulus = a[aOff[i_shearModulus]];
     const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
-    const PylithScalar* refStress = &a[aOff[i_rstress]]; // stress_xx, stress_yy, stress_zz, stress_xy
-    const PylithScalar* refStrain = &a[aOff[i_rstrain]]; // strain_xx, strain_yy, strain_zz, strain_xy
+    const PylithScalar *refStress = &a[aOff[i_rstress]]; // stress_xx, stress_yy, stress_zz, stress_xy
+    const PylithScalar *refStrain = &a[aOff[i_rstrain]]; // strain_xx, strain_yy, strain_zz, strain_xy
 
     const PylithScalar ref_trace_strain = refStrain[0] + refStrain[1] + refStrain[2];
-    const PylithScalar meanrstress = (refStress[0] + refStress[1] + refStress[2]) / 3.0;
-    const PylithScalar meanStress = meanrstress + drainedBulkModulus * (trace_strain - ref_trace_strain);
-    const PylithScalar alphaPres = biotCoefficient * pressure;
-    const PylithReal traceTerm = (-2.0/3.0)*shearModulus * trace_strain;
 
     // Convert reference vectors to refrence tensors
-    PylithScalar refStressTensor[_dim*_dim];
-    PylithScalar refStrainTensor[_dim*_dim];
+    PylithScalar refStressTensor[_dim * _dim];
+    PylithScalar refStrainTensor[_dim * _dim];
     PylithInt refTensorPos[9] = {0, 3, 5, 3, 1, 4, 5, 4, 2};
 
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; ++j) {
-            refStressTensor[i*_dim+j] = refStress[refTensorPos[i*_dim+j]];
-            refStrainTensor[i*_dim+j] = refStrain[refTensorPos[i*_dim+j]];
+            refStressTensor[i * _dim + j] = refStress[refTensorPos[i * _dim + j]];
+            refStrainTensor[i * _dim + j] = refStrain[refTensorPos[i * _dim + j]];
         } // for
     } // for
 
-    assert(false); // :BUG: Reference stress and strain not used.
-
-    for (PylithInt i = 0; i < _dim; ++i) {
-        f1[i*_dim+i] -= (meanStress - alphaPres);
-        f1[i*_dim+i] -= refStress[i*_dim+i] - meanrstress + traceTerm;
-        for (PylithInt j = 0; j < _dim; ++j) {
-            f1[i*_dim+j] -= shearModulus * (displacement_x[i*_dim+j] + displacement_x[j*_dim+i]) - refStrain[i*_dim+j];
+    for (PylithInt c = 0; c < _dim; ++c) {
+        for (PylithInt d = 0; d < _dim; ++d) {
+            f1[c * _dim + d] -= 2.0 * shearModulus * ((displacement_x[c * _dim + d] / 2.0 + displacement_x[d * _dim + c]) / 2.0 - refStrainTensor[c * _dim + d]);
+            f1[c * _dim + d] -= refStressTensor[c * _dim + d];
         } // for
+        f1[c * _dim + c] -= (drainedBulkModulus - (2.0 * shearModulus) / 3.0) * (trace_strain - ref_trace_strain);
+        f1[c * _dim + c] += biotCoefficient * pressure;
     } // for
 } // f1u_refstate
 
@@ -864,7 +859,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f1p(const PylithInt
     assert(aOff[i_isotropicPermeability] >= 0);
     assert(f1);
 
-    const PylithScalar* pressure_x = &s_x[sOff_x[i_pressure]];
+    const PylithScalar *pressure_x = &s_x[sOff_x[i_pressure]];
 
     const PylithScalar isotropicPermeability = a[aOff[i_isotropicPermeability]];
     const PylithScalar fluidViscosity = a[aOff[i_fluidViscosity]];
@@ -924,8 +919,8 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f1p_tensor_permeabi
     assert(aOff[i_tensorPermeability] >= 0);
     assert(f1);
 
-    const PylithScalar* pressure_x = &s_x[sOff_x[i_pressure]];
-    const PylithScalar* vectorPermeability = &a[aOff[i_tensorPermeability]];
+    const PylithScalar *pressure_x = &s_x[sOff_x[i_pressure]];
+    const PylithScalar *vectorPermeability = &a[aOff[i_tensorPermeability]];
     const PylithScalar fluidViscosity = a[aOff[i_fluidViscosity]];
 
     PylithScalar tensorPermeability[4];
@@ -936,7 +931,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f1p_tensor_permeabi
 
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; j++) {
-            f1[i] += (tensorPermeability[i*_dim+j] / fluidViscosity) * (pressure_x[j]);
+            f1[i] += (tensorPermeability[i * _dim + j] / fluidViscosity) * (pressure_x[j]);
         } // for
     } // for
 } // f1p_tensor_permeability
@@ -1431,8 +1426,8 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::Jf3uu(const PylithI
 
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; ++j) {
-            Jf3[((i*_dim + i)*_dim + j)*_dim + j] -= shearModulus;
-            Jf3[((i*_dim + j)*_dim + j)*_dim + i] -= shearModulus;
+            Jf3[((i * _dim + i) * _dim + j) * _dim + j] -= shearModulus;
+            Jf3[((i * _dim + j) * _dim + j) * _dim + i] -= shearModulus;
         }
     }
 
@@ -1478,7 +1473,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::Jf2up(const PylithI
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
     for (PylithInt d = 0; d < _dim; ++d) {
-        Jf2[d*_dim+d] += biotCoefficient;
+        Jf2[d * _dim + d] += biotCoefficient;
     } // for
 } // Jf2up
 
@@ -1523,10 +1518,10 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::Jf2ue(const PylithI
 
     const PylithScalar shearModulus = a[aOff[i_shearModulus]];
     const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
-    const PylithScalar lambda = drainedBulkModulus - 2.0/3.0*shearModulus;
+    const PylithScalar lambda = drainedBulkModulus - 2.0 / 3.0 * shearModulus;
 
     for (PylithInt d = 0; d < _dim; ++d) {
-        Jf2[d*_dim+d] -= lambda;
+        Jf2[d * _dim + d] -= lambda;
     } // for
 } // Jf2ue
 
@@ -1575,7 +1570,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::Jf3pp(const PylithI
     const PylithScalar fluidViscosity = a[aOff[i_fluidViscosity]];
 
     for (PylithInt d = 0; d < _dim; ++d) {
-        Jf3[d*_dim+d] += isotropicPermeablity / fluidViscosity;
+        Jf3[d * _dim + d] += isotropicPermeablity / fluidViscosity;
     }
 } // Jf3pp
 
@@ -1620,7 +1615,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::Jf3pp_tensor_permea
     assert(aOff[i_tensorPermeability] >= 0);
     assert(Jf3);
 
-    const PylithScalar* vectorPermeability = &a[aOff[i_tensorPermeability]];
+    const PylithScalar *vectorPermeability = &a[aOff[i_tensorPermeability]];
     const PylithScalar fluidViscosity = a[aOff[i_fluidViscosity]];
 
     PylithScalar tensorPermeability[4];
@@ -1631,7 +1626,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::Jf3pp_tensor_permea
 
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; j++) {
-            Jf3[i*_dim+j] += tensorPermeability[i*_dim+j]/fluidViscosity;
+            Jf3[i * _dim + j] += tensorPermeability[i * _dim + j] / fluidViscosity;
         } // for
     } // for
 } // Jf3pp_tensorPermeability
@@ -1841,17 +1836,17 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::g0p(const PylithInt
     // IsotropicLinearPoroelasticity
     const PylithInt i_biotCoefficient = numA - 3;
 
-    const PylithScalar* velocity_x = &s_x[sOff[i_velocity]];
+    const PylithScalar *velocity_x = &s_x[sOff[i_velocity]];
 
     PylithScalar trace_strain_t = 0.0;
 
     for (PylithInt d = 0; d < _dim; ++d) {
-        trace_strain_t += velocity_x[d*_dim+d];
+        trace_strain_t += velocity_x[d * _dim + d];
     }
 
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
-    g0[0] -= biotCoefficient*trace_strain_t;
+    g0[0] -= biotCoefficient * trace_strain_t;
 } // g0p_implicit
 
 
@@ -1892,16 +1887,16 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::g0p_source(const Py
     const PylithInt i_biotCoefficient = numA - 3;
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
-    const PylithScalar* velocity_x = &s_x[sOff[i_velocity]];
+    const PylithScalar *velocity_x = &s_x[sOff[i_velocity]];
 
     PylithScalar trace_strain_t = 0.0;
 
     for (PylithInt d = 0; d < _dim; ++d) {
-        trace_strain_t += velocity_x[d*_dim+d];
+        trace_strain_t += velocity_x[d * _dim + d];
     }
 
     g0[0] += source;
-    g0[0] -= biotCoefficient*trace_strain_t;
+    g0[0] -= biotCoefficient * trace_strain_t;
 } // g0p_source
 
 
@@ -1942,16 +1937,16 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::g0p_source_body(con
     const PylithInt i_biotCoefficient = numA - 3;
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
-    const PylithScalar* velocity_x = &s_x[sOff[i_velocity]];
+    const PylithScalar *velocity_x = &s_x[sOff[i_velocity]];
 
     PylithScalar trace_strain_t = 0.0;
 
     for (PylithInt d = 0; d < _dim; ++d) {
-        trace_strain_t += velocity_x[d*_dim+d];
+        trace_strain_t += velocity_x[d * _dim + d];
     }
 
     g0[0] += source;
-    g0[0] -= biotCoefficient*trace_strain_t;
+    g0[0] -= biotCoefficient * trace_strain_t;
 } // g0p_source_body
 
 
@@ -1992,16 +1987,16 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::g0p_source_grav(con
     const PylithInt i_biotCoefficient = numA - 3;
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
-    const PylithScalar* velocity_x = &s_x[sOff[i_velocity]];
+    const PylithScalar *velocity_x = &s_x[sOff[i_velocity]];
 
     PylithScalar trace_strain_t = 0.0;
 
     for (PylithInt d = 0; d < _dim; ++d) {
-        trace_strain_t += velocity_x[d*_dim+d];
+        trace_strain_t += velocity_x[d * _dim + d];
     }
 
     g0[0] += source;
-    g0[0] -= biotCoefficient*trace_strain_t;
+    g0[0] -= biotCoefficient * trace_strain_t;
 } // g0p_source_grav
 
 
@@ -2042,16 +2037,16 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::g0p_source_grav_bod
     const PylithInt i_biotCoefficient = numA - 3;
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
-    const PylithScalar* velocity_x = &s_x[sOff[i_velocity]];
+    const PylithScalar *velocity_x = &s_x[sOff[i_velocity]];
 
     PylithScalar trace_strain_t = 0.0;
 
     for (PylithInt d = 0; d < _dim; ++d) {
-        trace_strain_t += velocity_x[d*_dim+d];
+        trace_strain_t += velocity_x[d * _dim + d];
     }
 
     g0[0] += source;
-    g0[0] -= biotCoefficient*trace_strain_t;
+    g0[0] -= biotCoefficient * trace_strain_t;
 } // g0p_source_grav_body
 
 
@@ -2096,14 +2091,14 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::g1p_gravity(const P
     // IsotropicLinearPoroelasticity
     const PylithInt i_isotropicPermeability = numA - 1;
 
-    const PylithScalar* pressure_x = &s_x[sOff_x[i_pressure]];
+    const PylithScalar *pressure_x = &s_x[sOff_x[i_pressure]];
     const PylithScalar fluidDensity = a[aOff[i_fluidDensity]];
     const PylithScalar isotropicPermeability = a[aOff[i_isotropicPermeability]];
     const PylithScalar fluidViscosity = a[aOff[i_fluidViscosity]];
-    const PylithScalar* gravityField = &a[aOff[i_gravityField]];
+    const PylithScalar *gravityField = &a[aOff[i_gravityField]];
 
     for (PylithInt d = 0; d < _dim; ++d) {
-        g1[d] -= (isotropicPermeability / fluidViscosity) * (pressure_x[d] - fluidDensity*gravityField[d]);
+        g1[d] -= (isotropicPermeability / fluidViscosity) * (pressure_x[d] - fluidDensity * gravityField[d]);
     } // for
 
 } // g1p_gravity
@@ -2150,11 +2145,11 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::g1p_gravity_tensor_
     // IsotropicLinearPoroelasticity
     const PylithInt i_tensorPermeability = numA - 1;
 
-    const PylithScalar* pressure_x = &s_x[sOff_x[i_pressure]];
+    const PylithScalar *pressure_x = &s_x[sOff_x[i_pressure]];
     const PylithScalar fluidDensity = a[aOff[i_fluidDensity]];
-    const PylithScalar* vectorPermeability = &a[aOff[i_tensorPermeability]];
+    const PylithScalar *vectorPermeability = &a[aOff[i_tensorPermeability]];
     const PylithScalar fluidViscosity = a[aOff[i_fluidViscosity]];
-    const PylithScalar* gravityField = &a[aOff[i_gravityField]];
+    const PylithScalar *gravityField = &a[aOff[i_gravityField]];
 
     PylithScalar tensorPermeability[4];
     tensorPermeability[0] = vectorPermeability[0];
@@ -2164,7 +2159,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::g1p_gravity_tensor_
 
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; j++) {
-            g1[i] -= (tensorPermeability[i*_dim+j] / fluidViscosity) * (pressure_x[j] - fluidDensity*gravityField[j]);
+            g1[i] -= (tensorPermeability[i * _dim + j] / fluidViscosity) * (pressure_x[j] - fluidDensity * gravityField[j]);
         } // for
     } // for
 
@@ -2210,7 +2205,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::g1p(const PylithInt
     // IsotropicLinearPoroelasticity
     const PylithInt i_isotropicPermeability = numA - 1;
 
-    const PylithScalar* pressure_x = &s_x[sOff_x[i_pressure]];
+    const PylithScalar *pressure_x = &s_x[sOff_x[i_pressure]];
 
     const PylithScalar isotropicPermeability = a[aOff[i_isotropicPermeability]];
     const PylithScalar fluidViscosity = a[aOff[i_fluidViscosity]];
@@ -2260,9 +2255,9 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::g1p_tensor_permeabi
     // IsotropicLinearPoroelasticity
     const PylithInt i_tensorPermeability = numA - 1;
 
-    const PylithScalar* pressure_x = &s_x[sOff_x[i_pressure]];
+    const PylithScalar *pressure_x = &s_x[sOff_x[i_pressure]];
 
-    const PylithScalar* vectorPermeability = &a[aOff[i_tensorPermeability]];
+    const PylithScalar *vectorPermeability = &a[aOff[i_tensorPermeability]];
     const PylithScalar fluidViscosity = a[aOff[i_fluidViscosity]];
 
     PylithScalar tensorPermeability[4];
@@ -2273,7 +2268,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::g1p_tensor_permeabi
 
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; j++) {
-            g1[i] -= (tensorPermeability[i*_dim+j] / fluidViscosity) * (pressure_x[j]);
+            g1[i] -= (tensorPermeability[i * _dim + j] / fluidViscosity) * (pressure_x[j]);
         } // for
     } // for
 } // g1p_tensor_permeability
@@ -2307,12 +2302,12 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::g1v(const PylithInt
     const PylithInt i_displacement = 0;
     const PylithInt i_pressure = 1;
 
-    const PylithScalar* displacement_x = &s_x[sOff_x[i_displacement]];
+    const PylithScalar *displacement_x = &s_x[sOff_x[i_displacement]];
     const PylithScalar pressure = s[sOff[i_pressure]];
 
     PylithScalar trace_strain = 0.0;
     for (PylithInt d = 0; d < _dim; ++d) {
-        trace_strain += displacement_x[d*_dim+d];
+        trace_strain += displacement_x[d * _dim + d];
     }
 
     // Incoming auxiliary fields.
@@ -2328,10 +2323,10 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::g1v(const PylithInt
 
     for (PylithInt c = 0; c < _dim; ++c) {
         for (PylithInt d = 0; d < _dim; ++d) {
-            g1[c*dim+d] -= shearModulus * (displacement_x[c*_dim+d] + displacement_x[d*_dim+c]);
+            g1[c * dim + d] -= shearModulus * (displacement_x[c * _dim + d] + displacement_x[d * _dim + c]);
         } // for
-        g1[c*dim+c] -= (drainedBulkModulus - (2.0*shearModulus)/3.0) * trace_strain;
-        g1[c*dim+c] += biotCoefficient*pressure;
+        g1[c * dim + c] -= (drainedBulkModulus - (2.0 * shearModulus) / 3.0) * trace_strain;
+        g1[c * dim + c] += biotCoefficient * pressure;
     } // for
 } // g1v
 
@@ -2363,12 +2358,12 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::g1v_refstate(const 
     const PylithInt i_displacement = 0;
     const PylithInt i_pressure = 1;
 
-    const PylithScalar* displacement_x = &s_x[sOff_x[i_displacement]];
+    const PylithScalar *displacement_x = &s_x[sOff_x[i_displacement]];
     const PylithScalar pressure = s[sOff[i_pressure]];
 
     PylithScalar trace_strain = 0.0;
     for (PylithInt d = 0; d < _dim; ++d) {
-        trace_strain += displacement_x[d*_dim+d];
+        trace_strain += displacement_x[d * _dim + d];
     }
 
     // Incoming auxiliary fields.
@@ -2383,33 +2378,30 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::g1v_refstate(const 
     const PylithScalar shearModulus = a[aOff[i_shearModulus]];
     const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
-    const PylithScalar* refStress = &a[aOff[i_rstress]]; // stress_xx, stress_yy, stress_zz, stress_xy
-    const PylithScalar* refStrain = &a[aOff[i_rstrain]]; // strain_xx, strain_yy, strain_zz, strain_xy
+    const PylithScalar *refStress = &a[aOff[i_rstress]]; // stress_xx, stress_yy, stress_zz, stress_xy
+    const PylithScalar *refStrain = &a[aOff[i_rstrain]]; // strain_xx, strain_yy, strain_zz, strain_xy
 
     const PylithScalar ref_trace_strain = refStrain[0] + refStrain[1] + refStrain[2];
-    const PylithScalar meanRefStress = (refStress[0] + refStress[1] + refStress[2]) / 3.0;
-    const PylithScalar meanStress = meanRefStress + drainedBulkModulus * (trace_strain - ref_trace_strain);
-    const PylithScalar alphaPres = biotCoefficient * pressure;
-    const PylithReal traceTerm = (-2.0/3.0)*shearModulus * trace_strain;
 
     // Convert reference vectors to refrence tensors
-    PylithScalar refStressTensor[_dim*_dim];
-    PylithScalar refStrainTensor[_dim*_dim];
+    PylithScalar refStressTensor[_dim * _dim];
+    PylithScalar refStrainTensor[_dim * _dim];
     PylithInt refTensorPos[9] = {0, 3, 5, 3, 1, 4, 5, 4, 2};
 
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; ++j) {
-            refStressTensor[i*_dim+j] = refStress[refTensorPos[i*_dim+j]];
-            refStrainTensor[i*_dim+j] = refStrain[refTensorPos[i*_dim+j]];
+            refStressTensor[i * _dim + j] = refStress[refTensorPos[i * _dim + j]];
+            refStrainTensor[i * _dim + j] = refStrain[refTensorPos[i * _dim + j]];
         } // for
     } // for
 
-    for (PylithInt i = 0; i < _dim; ++i) {
-        g1[i*_dim+i] -= (meanStress - alphaPres);
-        g1[i*_dim+i] -= refStressTensor[i*_dim+i] - meanRefStress + traceTerm;
-        for (PylithInt j = 0; j < _dim; ++j) {
-            g1[i*_dim+j] -= shearModulus * (displacement_x[i*_dim+j] + displacement_x[j*_dim+i]) - refStrainTensor[i*_dim+j];
+    for (PylithInt c = 0; c < _dim; ++c) {
+        for (PylithInt d = 0; d < _dim; ++d) {
+            g1[c * _dim + d] -= 2.0 * shearModulus * ((displacement_x[c * _dim + d] / 2.0 + displacement_x[d * _dim + c]) / 2.0 - refStrainTensor[c * _dim + d]);
+            g1[c * _dim + d] -= refStressTensor[c * _dim + d];
         } // for
+        g1[c * _dim + c] -= (drainedBulkModulus - (2.0 * shearModulus) / 3.0) * (trace_strain - ref_trace_strain);
+        g1[c * _dim + c] += biotCoefficient * pressure;
     } // for
 } // g1v_refstate
 
@@ -2453,7 +2445,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::cauchyStress(const 
     const PylithInt i_pressure = 1;
     const PylithInt i_trace_strain = 2;
 
-    const PylithScalar* displacement_x = &s_x[sOff_x[i_displacement]];
+    const PylithScalar *displacement_x = &s_x[sOff_x[i_displacement]];
     const PylithScalar pressure = s[sOff[i_pressure]];
     const PylithScalar trace_strain = s[sOff[i_trace_strain]];
 
@@ -2471,24 +2463,24 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::cauchyStress(const 
 
     // Create and populate stress tensor
 
-    PylithScalar stressTensor[4] = { 0.0, 0.0, 0.0, 0.0 };
+    PylithScalar stressTensor[4] = {0.0, 0.0, 0.0, 0.0};
 
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; ++j) {
-            stressTensor[i*_dim+j] += shearModulus * (displacement_x[i*_dim+j] + displacement_x[j*_dim+i]);
+            stressTensor[i * _dim + j] += shearModulus * (displacement_x[i * _dim + j] + displacement_x[j * _dim + i]);
         } // for
-        stressTensor[i*_dim+i] += (drainedBulkModulus - (2.0*shearModulus)/3.0) * trace_strain;
-        stressTensor[i*_dim+i] -= biotCoefficient*pressure;
+        stressTensor[i * _dim + i] += (drainedBulkModulus - (2.0 * shearModulus) / 3.0) * trace_strain;
+        stressTensor[i * _dim + i] -= biotCoefficient * pressure;
     } // for
 
     // Construct stress vector
-    const PylithScalar lambda = drainedBulkModulus - 2.0/3.0*shearModulus;
-    const PylithScalar stress_zz = 0.5*lambda/(lambda+shearModulus) * (stressTensor[0*_dim+0] + stressTensor[1*_dim+1]);
+    const PylithScalar lambda = drainedBulkModulus - 2.0 / 3.0 * shearModulus;
+    const PylithScalar stress_zz = 0.5 * lambda / (lambda + shearModulus) * (stressTensor[0 * _dim + 0] + stressTensor[1 * _dim + 1]);
 
-    stressVector[0] = stressTensor[0*_dim+0]; // stress_xx
-    stressVector[1] = stressTensor[1*_dim+1]; // stress_yy
+    stressVector[0] = stressTensor[0 * _dim + 0]; // stress_xx
+    stressVector[1] = stressTensor[1 * _dim + 1]; // stress_yy
     stressVector[2] = stress_zz;
-    stressVector[3] = stressTensor[0*_dim+1]; // stress_xy
+    stressVector[3] = stressTensor[0 * _dim + 1]; // stress_xy
 } // cauchyStress
 
 
@@ -2527,7 +2519,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::cauchyStress_refsta
     const PylithInt i_pressure = 1;
     const PylithInt i_trace_strain = 2;
 
-    const PylithScalar* displacement_x = &s_x[sOff_x[i_displacement]];
+    const PylithScalar *displacement_x = &s_x[sOff_x[i_displacement]];
     const PylithScalar pressure = s[sOff[i_pressure]];
     const PylithScalar trace_strain = s[sOff[i_trace_strain]];
 
@@ -2543,49 +2535,49 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::cauchyStress_refsta
     const PylithScalar shearModulus = a[aOff[i_shearModulus]];
     const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
-    const PylithScalar* refStress = &a[aOff[i_rstress]]; // stress_xx, stress_yy, stress_zz, stress_xy
-    const PylithScalar* refStrain = &a[aOff[i_rstrain]]; // strain_xx, strain_yy, strain_zz, strain_xy
+    const PylithScalar *refStress = &a[aOff[i_rstress]]; // stress_xx, stress_yy, stress_zz, stress_xy
+    const PylithScalar *refStrain = &a[aOff[i_rstrain]]; // strain_xx, strain_yy, strain_zz, strain_xy
 
     const PylithScalar ref_trace_strain = refStrain[0] + refStrain[1] + refStrain[2];
     const PylithScalar meanRefStress = (refStress[0] + refStress[1] + refStress[2]) / 3.0;
     const PylithScalar meanStress = meanRefStress + drainedBulkModulus * (trace_strain - ref_trace_strain);
     const PylithScalar alphaPres = biotCoefficient * pressure;
-    const PylithReal traceTerm = (-2.0/3.0)*shearModulus * trace_strain;
+    const PylithReal traceTerm = (-2.0 / 3.0) * shearModulus * trace_strain;
 
     // Convert reference vectors to refrence tensors
-    PylithScalar refStressTensor[_dim*_dim];
-    PylithScalar refStrainTensor[_dim*_dim];
+    PylithScalar refStressTensor[_dim * _dim];
+    PylithScalar refStrainTensor[_dim * _dim];
     PylithInt refTensorPos[9] = {0, 3, 5, 3, 1, 4, 5, 4, 2};
 
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; ++j) {
-            refStressTensor[i*_dim+j] = refStress[refTensorPos[i*_dim+j]];
-            refStrainTensor[i*_dim+j] = refStrain[refTensorPos[i*_dim+j]];
+            refStressTensor[i * _dim + j] = refStress[refTensorPos[i * _dim + j]];
+            refStrainTensor[i * _dim + j] = refStrain[refTensorPos[i * _dim + j]];
         } // for
     } // for
 
     // Create and populate stress tensor
 
-    PylithScalar stressTensor[4] = { 0.0, 0.0, 0.0, 0.0 };
+    PylithScalar stressTensor[4] = {0.0, 0.0, 0.0, 0.0};
 
     for (PylithInt i = 0; i < _dim; ++i) {
-        stressTensor[i*_dim+i] -= (meanStress - alphaPres);
-        stressTensor[i*_dim+i] -= refStressTensor[i*_dim+i] - meanRefStress + traceTerm;
+        stressTensor[i * _dim + i] -= (meanStress - alphaPres);
+        stressTensor[i * _dim + i] -= refStressTensor[i * _dim + i] - meanRefStress + traceTerm;
         for (PylithInt j = 0; j < _dim; ++j) {
-            stressTensor[i*_dim+j] -= shearModulus * (displacement_x[i*_dim+j] + displacement_x[j*_dim+i]) - refStrainTensor[i*_dim+j];
+            stressTensor[i * _dim + j] -= shearModulus * (displacement_x[i * _dim + j] + displacement_x[j * _dim + i]) - refStrainTensor[i * _dim + j];
         } // for
     } // for
 
     // Generate stress vector
 
-    const PylithScalar lambda = drainedBulkModulus - 2.0/3.0*shearModulus;
-    const PylithScalar stress_zz = refStress[2] +  0.5*lambda/(lambda+shearModulus) *
-                                   (stressTensor[0*_dim+0]-refStress[0] + stressTensor[1*_dim+1]-refStress[1]);
+    const PylithScalar lambda = drainedBulkModulus - 2.0 / 3.0 * shearModulus;
+    const PylithScalar stress_zz = refStress[2] + 0.5 * lambda / (lambda + shearModulus) *
+                                   (stressTensor[0 * _dim + 0] - refStress[0] + stressTensor[1 * _dim + 1] - refStress[1]);
 
-    stressVector[0] = stressTensor[0*_dim+0]; // stress_xx
-    stressVector[1] = stressTensor[1*_dim+1]; // stress_yy
+    stressVector[0] = stressTensor[0 * _dim + 0]; // stress_xx
+    stressVector[1] = stressTensor[1 * _dim + 1]; // stress_yy
     stressVector[2] = stress_zz;
-    stressVector[3] = stressTensor[0*_dim+1]; // stress_xy
+    stressVector[3] = stressTensor[0 * _dim + 1]; // stress_xy
 } // cauchyStress_refstate
 
 
@@ -2719,7 +2711,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::updatePorosityExpli
 
     // Do stuff
     const PylithScalar pressure_t = s_t[sOff[i_pressure]];
-    const PylithScalar* velocity_x = &s_x[sOff[i_velocity]];
+    const PylithScalar *velocity_x = &s_x[sOff[i_velocity]];
 
     const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
@@ -2727,7 +2719,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::updatePorosityExpli
     PylithScalar trace_strain_t = 0.0;
 
     for (PylithInt d = 0; d < _dim; ++d) {
-        trace_strain_t += velocity_x[d*_dim+d];
+        trace_strain_t += velocity_x[d * _dim + d];
     }
 
     // Update porosity
@@ -2792,12 +2784,12 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::f0_mms_ql_u(const PylithInt 
     const PylithScalar shearModulus = a[aOff[i_shearModulus]];
     const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
-    const PylithScalar lambda = drainedBulkModulus - 2.0/3.0*shearModulus;
+    const PylithScalar lambda = drainedBulkModulus - 2.0 / 3.0 * shearModulus;
 
-    for (PylithInt d = 0; d < _dim-1; ++d) {
-        f0[d] -= 2.0*shearModulus - biotCoefficient*t;
+    for (PylithInt d = 0; d < _dim - 1; ++d) {
+        f0[d] -= 2.0 * shearModulus - biotCoefficient * t;
     }
-    f0[_dim-1] -= 2.0*lambda + 4.0*shearModulus - biotCoefficient*t;
+    f0[_dim - 1] -= 2.0 * lambda + 4.0 * shearModulus - biotCoefficient * t;
 } // f0_quadratic_linear_u
 
 
@@ -2843,7 +2835,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::f0_mms_ql_p(const PylithInt 
     for (PylithInt d = 0; d < _dim; ++d) {
         sum += x[d];
     }
-    f0[0] -= sum/biotModulus;
+    f0[0] -= sum / biotModulus;
 } // f0_quadratic_linear_p
 
 
@@ -2882,12 +2874,12 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::f0_mms_qt_u(const PylithInt 
     const PylithScalar shearModulus = a[aOff[i_shearModulus]];
     const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
-    const PylithScalar lambda = drainedBulkModulus - 2.0/3.0*shearModulus;
+    const PylithScalar lambda = drainedBulkModulus - 2.0 / 3.0 * shearModulus;
 
-    for (PylithInt d = 0; d < _dim-1; ++d) {
-        f0[d] -= 2.0*shearModulus - biotCoefficient*PetscCosReal(t);
+    for (PylithInt d = 0; d < _dim - 1; ++d) {
+        f0[d] -= 2.0 * shearModulus - biotCoefficient * PetscCosReal(t);
     }
-    f0[_dim-1] -= 2.0*lambda + 4.0*shearModulus - biotCoefficient*PetscCosReal(t);
+    f0[_dim - 1] -= 2.0 * lambda + 4.0 * shearModulus - biotCoefficient * PetscCosReal(t);
 } // f0_quadratic_trig_u
 
 
@@ -2926,7 +2918,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::f0_mms_qt_p(const PylithInt 
         sum += x[d];
     }
 
-    f0[0] += PetscSinReal(t)*sum/biotModulus;
+    f0[0] += PetscSinReal(t) * sum / biotModulus;
 } // f0_quadratic_trig_p
 
 
@@ -2967,12 +2959,12 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::f0_mms_tl_u(const PylithInt 
     const PylithScalar shearModulus = a[aOff[i_shearModulus]];
     const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
-    const PylithScalar lambda = drainedBulkModulus - 2.0/3.0*shearModulus;
+    const PylithScalar lambda = drainedBulkModulus - 2.0 / 3.0 * shearModulus;
 
-    for (PylithInt d = 0; d < _dim-1; ++d) {
-        f0[d] += PetscSqr(2.*PETSC_PI)*PetscSinReal(2.*PETSC_PI*x[d])*(2.*shearModulus + lambda) + 2.0*(shearModulus + lambda) - 2.*PETSC_PI*biotCoefficient*PetscSinReal(2.*PETSC_PI*x[d])*t;
+    for (PylithInt d = 0; d < _dim - 1; ++d) {
+        f0[d] += PetscSqr(2. * PETSC_PI) * PetscSinReal(2. * PETSC_PI * x[d]) * (2. * shearModulus + lambda) + 2.0 * (shearModulus + lambda) - 2. * PETSC_PI * biotCoefficient * PetscSinReal(2. * PETSC_PI * x[d]) * t;
     }
-    f0[_dim-1] += PetscSqr(2.*PETSC_PI)*PetscSinReal(2.*PETSC_PI*x[_dim-1])*(2.*shearModulus + lambda) - 2.*PETSC_PI*biotCoefficient*PetscSinReal(2.*PETSC_PI*x[_dim-1])*t;
+    f0[_dim - 1] += PetscSqr(2. * PETSC_PI) * PetscSinReal(2. * PETSC_PI * x[_dim - 1]) * (2. * shearModulus + lambda) - 2. * PETSC_PI * biotCoefficient * PetscSinReal(2. * PETSC_PI * x[_dim - 1]) * t;
 } // f0_trig_linear_u
 
 
@@ -3013,10 +3005,10 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::f0_mms_tl_p(const PylithInt 
     PylithScalar sum = 0.0;
 
     for (PylithInt d = 0; d < _dim; ++d) {
-        sum += PetscCosReal(2.*PETSC_PI*x[d]);
+        sum += PetscCosReal(2. * PETSC_PI * x[d]);
     }
 
-    f0[0] -= sum/biotModulus - 4*PetscSqr(PETSC_PI)*kappa*sum*t;
+    f0[0] -= sum / biotModulus - 4 * PetscSqr(PETSC_PI) * kappa * sum * t;
 } // f0_quadratic_trig_p
 
 
@@ -3056,7 +3048,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::f0p_explicit(const PylithInt
     const PylithScalar pressure_t = s_t[sOff[i_pressure]];
     const PylithScalar biotModulus = a[aOff[i_biotModulus]];
 
-    f0[0] += pressure_t/biotModulus;
+    f0[0] += pressure_t / biotModulus;
 } // f0p_explicit
 
 
@@ -3114,8 +3106,8 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::f0p_implicit(const PylithInt
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
     const PylithScalar biotModulus = a[aOff[i_biotModulus]];
 
-    f0[0] += biotCoefficient*trace_strain_t;
-    f0[0] += pressure_t/biotModulus;
+    f0[0] += biotCoefficient * trace_strain_t;
+    f0[0] += pressure_t / biotModulus;
 } // f0p_implicit
 
 
@@ -3176,8 +3168,8 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::f0p_implicit_source(const Py
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
     const PylithScalar biotModulus = a[aOff[i_biotModulus]];
 
-    f0[0] += biotCoefficient*trace_strain_t;
-    f0[0] += pressure_t/biotModulus;
+    f0[0] += biotCoefficient * trace_strain_t;
+    f0[0] += pressure_t / biotModulus;
     f0[0] -= source;
 } // f0p_implicit_source
 
@@ -3240,8 +3232,8 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::f0p_implicit_source_body(con
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
     const PylithScalar biotModulus = a[aOff[i_biotModulus]];
 
-    f0[0] += biotCoefficient*trace_strain_t;
-    f0[0] += pressure_t/biotModulus;
+    f0[0] += biotCoefficient * trace_strain_t;
+    f0[0] += pressure_t / biotModulus;
     f0[0] -= source;
 } // f0p_implicit_source_body
 
@@ -3308,8 +3300,8 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::f0p_implicit_source_grav(con
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
     const PylithScalar biotModulus = a[aOff[i_biotModulus]];
 
-    f0[0] += biotCoefficient*trace_strain_t;
-    f0[0] += pressure_t/biotModulus;
+    f0[0] += biotCoefficient * trace_strain_t;
+    f0[0] += pressure_t / biotModulus;
     f0[0] -= source;
 } // f0p_implicit_source_grav
 
@@ -3375,8 +3367,8 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::f0p_implicit_source_grav_bod
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
     const PylithScalar biotModulus = a[aOff[i_biotModulus]];
 
-    f0[0] += biotCoefficient*trace_strain_t;
-    f0[0] += pressure_t/biotModulus;
+    f0[0] += biotCoefficient * trace_strain_t;
+    f0[0] += pressure_t / biotModulus;
     f0[0] -= source;
 } // f0p_implicit_source_grav_body
 
@@ -3431,7 +3423,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::f1u(const PylithInt dim,
     assert(aOff[i_biotCoefficient] >= 0);
     assert(f1);
 
-    const PylithScalar* displacement_x = &s_x[sOff_x[i_displacement]];
+    const PylithScalar *displacement_x = &s_x[sOff_x[i_displacement]];
     const PylithScalar pressure = s[sOff[i_pressure]];
     const PylithScalar trace_strain = s[sOff[i_trace_strain]];
 
@@ -3441,10 +3433,10 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::f1u(const PylithInt dim,
 
     for (PylithInt c = 0; c < _dim; ++c) {
         for (PylithInt d = 0; d < _dim; ++d) {
-            f1[c*_dim+d] -= shearModulus * (displacement_x[c*_dim+d] + displacement_x[d*_dim+c]);
+            f1[c * _dim + d] -= shearModulus * (displacement_x[c * _dim + d] + displacement_x[d * _dim + c]);
         } // for
-        f1[c*_dim+c] -= (drainedBulkModulus - (2.0*shearModulus)/3.0) * trace_strain;
-        f1[c*_dim+c] += biotCoefficient*pressure;
+        f1[c * _dim + c] -= (drainedBulkModulus - (2.0 * shearModulus) / 3.0) * trace_strain;
+        f1[c * _dim + c] += biotCoefficient * pressure;
     } // for
 } // f1u
 
@@ -3477,7 +3469,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::f1u_refstate(const PylithInt
     const PylithInt i_pressure = 1;
     const PylithInt i_trace_strain = 2;
 
-    const PylithScalar* displacement_x = &s_x[sOff_x[i_displacement]];
+    const PylithScalar *displacement_x = &s_x[sOff_x[i_displacement]];
     const PylithScalar pressure = s[sOff[i_pressure]];
     const PylithScalar trace_strain = s[sOff[i_trace_strain]];
 
@@ -3493,35 +3485,30 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::f1u_refstate(const PylithInt
     const PylithScalar shearModulus = a[aOff[i_shearModulus]];
     const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
-    const PylithScalar* refStress = &a[aOff[i_rstress]]; // stress_xx, stress_yy, stress_zz, stress_xy
-    const PylithScalar* refStrain = &a[aOff[i_rstrain]]; // strain_xx, strain_yy, strain_zz, strain_xy
+    const PylithScalar *refStress = &a[aOff[i_rstress]]; // stress_xx, stress_yy, stress_zz, stress_xy
+    const PylithScalar *refStrain = &a[aOff[i_rstrain]]; // strain_xx, strain_yy, strain_zz, strain_xy
 
     const PylithScalar ref_trace_strain = refStrain[0] + refStrain[1] + refStrain[2];
-    const PylithScalar meanrstress = (refStress[0] + refStress[1] + refStress[2]) / 3.0;
-    const PylithScalar meanStress = meanrstress + drainedBulkModulus * (trace_strain - ref_trace_strain);
-    const PylithScalar alphaPres = biotCoefficient * pressure;
-    const PylithReal traceTerm = (-2.0/3.0)*shearModulus * trace_strain;
 
     // Convert reference vectors to refrence tensors
-    PylithScalar refStressTensor[_dim*_dim];
-    PylithScalar refStrainTensor[_dim*_dim];
+    PylithScalar refStressTensor[_dim * _dim];
+    PylithScalar refStrainTensor[_dim * _dim];
     PylithInt refTensorPos[9] = {0, 3, 5, 3, 1, 4, 5, 4, 2};
 
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; ++j) {
-            refStressTensor[i*_dim+j] = refStress[refTensorPos[i*_dim+j]];
-            refStrainTensor[i*_dim+j] = refStrain[refTensorPos[i*_dim+j]];
+            refStressTensor[i * _dim + j] = refStress[refTensorPos[i * _dim + j]];
+            refStrainTensor[i * _dim + j] = refStrain[refTensorPos[i * _dim + j]];
         } // for
     } // for
 
-   assert(false); // :BUG: Reference stress and strain not used.
-
-    for (PylithInt i = 0; i < _dim; ++i) {
-        f1[i*_dim+i] -= (meanStress - alphaPres);
-        f1[i*_dim+i] -= refStress[i*_dim+i] - meanrstress + traceTerm;
-        for (PylithInt j = 0; j < _dim; ++j) {
-            f1[i*_dim+j] -= shearModulus * (displacement_x[i*_dim+j] + displacement_x[j*_dim+i]) - refStrain[i*_dim+j];
+    for (PylithInt c = 0; c < _dim; ++c) {
+        for (PylithInt d = 0; d < _dim; ++d) {
+            f1[c * _dim + d] -= 2.0 * shearModulus * ((displacement_x[c * _dim + d] / 2.0 + displacement_x[d * _dim + c]) / 2.0 - refStrainTensor[c * _dim + d]);
+            f1[c * _dim + d] -= refStressTensor[c * _dim + d];
         } // for
+        f1[c * _dim + c] -= (drainedBulkModulus - (2.0 * shearModulus) / 3.0) * (trace_strain - ref_trace_strain);
+        f1[c * _dim + c] += biotCoefficient * pressure;
     } // for
 } // f1u_refstate
 
@@ -4176,8 +4163,8 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::Jf3uu(const PylithInt dim,
 
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; ++j) {
-            Jf3[((i*_dim + i)*_dim + j)*_dim + j] -= shearModulus;
-            Jf3[((i*_dim + j)*_dim + j)*_dim + i] -= shearModulus;
+            Jf3[((i * _dim + i) * _dim + j) * _dim + j] -= shearModulus;
+            Jf3[((i * _dim + j) * _dim + j) * _dim + i] -= shearModulus;
         }
     }
 
@@ -4223,7 +4210,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::Jf2up(const PylithInt dim,
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
     for (PylithInt d = 0; d < _dim; ++d) {
-        Jf2[d*_dim+d] += biotCoefficient;
+        Jf2[d * _dim + d] += biotCoefficient;
     } // for
 } // Jf2up
 
@@ -4270,7 +4257,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::Jf2ue(const PylithInt dim,
     const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
 
     for (PylithInt d = 0; d < _dim; ++d) {
-        Jf2[d*_dim+d] -= drainedBulkModulus - (2.0*shearModulus) / 3.0;
+        Jf2[d * _dim + d] -= drainedBulkModulus - (2.0 * shearModulus) / 3.0;
     } // for
 } // Jf2ue
 
@@ -4319,7 +4306,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::Jf3pp(const PylithInt dim,
     const PylithScalar fluidViscosity = a[aOff[i_fluidViscosity]];
 
     for (PylithInt d = 0; d < _dim; ++d) {
-        Jf3[d*_dim+d] += isotropicPermeablity/fluidViscosity;
+        Jf3[d * _dim + d] += isotropicPermeablity / fluidViscosity;
     }
 } // Jf3pp
 
@@ -4364,7 +4351,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::Jf3pp_tensor_permeability(co
     assert(aOff[i_tensorPermeability] >= 0);
     assert(Jf3);
 
-    const PylithScalar* vectorPermeability = &a[aOff[i_tensorPermeability]];
+    const PylithScalar *vectorPermeability = &a[aOff[i_tensorPermeability]];
     const PylithScalar fluidViscosity = a[aOff[i_fluidViscosity]];
 
     PylithScalar tensorPermeability[9];
@@ -4380,7 +4367,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::Jf3pp_tensor_permeability(co
 
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; j++) {
-            Jf3[i*_dim+j] += tensorPermeability[i*_dim+j]/fluidViscosity;
+            Jf3[i * _dim + j] += tensorPermeability[i * _dim + j] / fluidViscosity;
         } // for
     } // for
 } // Jf3pp_tensorPermeability
@@ -4590,17 +4577,17 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::g0p(const PylithInt dim,
     // IsotropicLinearPoroelasticity
     const PylithInt i_biotCoefficient = numA - 3;
 
-    const PylithScalar* velocity_x = &s_x[sOff[i_velocity]];
+    const PylithScalar *velocity_x = &s_x[sOff[i_velocity]];
 
     PylithScalar trace_strain_t = 0.0;
 
     for (PylithInt d = 0; d < _dim; ++d) {
-        trace_strain_t += velocity_x[d*_dim+d];
+        trace_strain_t += velocity_x[d * _dim + d];
     }
 
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
-    g0[0] -= biotCoefficient*trace_strain_t;
+    g0[0] -= biotCoefficient * trace_strain_t;
 } // g0p_implicit
 
 
@@ -4641,16 +4628,16 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::g0p_source(const PylithInt d
     const PylithInt i_biotCoefficient = numA - 3;
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
-    const PylithScalar* velocity_x = &s_x[sOff[i_velocity]];
+    const PylithScalar *velocity_x = &s_x[sOff[i_velocity]];
 
     PylithScalar trace_strain_t = 0.0;
 
     for (PylithInt d = 0; d < _dim; ++d) {
-        trace_strain_t += velocity_x[d*_dim+d];
+        trace_strain_t += velocity_x[d * _dim + d];
     }
 
     g0[0] += source;
-    g0[0] -= biotCoefficient*trace_strain_t;
+    g0[0] -= biotCoefficient * trace_strain_t;
 } // g0p_source
 
 
@@ -4692,16 +4679,16 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::g0p_source_body(const Pylith
     const PylithInt i_biotCoefficient = numA - 3;
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
-    const PylithScalar* velocity_x = &s_x[sOff[i_velocity]];
+    const PylithScalar *velocity_x = &s_x[sOff[i_velocity]];
 
     PylithScalar trace_strain_t = 0.0;
 
     for (PylithInt d = 0; d < _dim; ++d) {
-        trace_strain_t += velocity_x[d*_dim+d];
+        trace_strain_t += velocity_x[d * _dim + d];
     }
 
     g0[0] += source;
-    g0[0] -= biotCoefficient*trace_strain_t;
+    g0[0] -= biotCoefficient * trace_strain_t;
 } // g0p_source_body
 
 
@@ -4742,16 +4729,16 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::g0p_source_grav(const Pylith
     const PylithInt i_biotCoefficient = numA - 3;
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
-    const PylithScalar* velocity_x = &s_x[sOff[i_velocity]];
+    const PylithScalar *velocity_x = &s_x[sOff[i_velocity]];
 
     PylithScalar trace_strain_t = 0.0;
 
     for (PylithInt d = 0; d < _dim; ++d) {
-        trace_strain_t += velocity_x[d*_dim+d];
+        trace_strain_t += velocity_x[d * _dim + d];
     }
 
     g0[0] += source;
-    g0[0] -= biotCoefficient*trace_strain_t;
+    g0[0] -= biotCoefficient * trace_strain_t;
 } // g0p_source_grav
 
 
@@ -4792,16 +4779,16 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::g0p_source_grav_body(const P
     const PylithInt i_biotCoefficient = numA - 3;
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
 
-    const PylithScalar* velocity_x = &s_x[sOff[i_velocity]];
+    const PylithScalar *velocity_x = &s_x[sOff[i_velocity]];
 
     PylithScalar trace_strain_t = 0.0;
 
     for (PylithInt d = 0; d < _dim; ++d) {
-        trace_strain_t += velocity_x[d*_dim+d];
+        trace_strain_t += velocity_x[d * _dim + d];
     }
 
     g0[0] += source;
-    g0[0] -= biotCoefficient*trace_strain_t;
+    g0[0] -= biotCoefficient * trace_strain_t;
 } // g0p_source_grav_body
 
 
@@ -4846,14 +4833,14 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::g1p_gravity(const PylithInt 
     // IsotropicLinearPoroelasticity
     const PylithInt i_isotropicPermeability = numA - 1;
 
-    const PylithScalar* pressure_x = &s_x[sOff_x[i_pressure]];
+    const PylithScalar *pressure_x = &s_x[sOff_x[i_pressure]];
     const PylithScalar fluidDensity = a[aOff[i_fluidDensity]];
     const PylithScalar isotropicPermeability = a[aOff[i_isotropicPermeability]];
     const PylithScalar fluidViscosity = a[aOff[i_fluidViscosity]];
-    const PylithScalar* gravityField = &a[aOff[i_gravityField]];
+    const PylithScalar *gravityField = &a[aOff[i_gravityField]];
 
     for (PylithInt d = 0; d < _dim; ++d) {
-        g1[d] -= (isotropicPermeability / fluidViscosity) * (pressure_x[d] - fluidDensity*gravityField[d]);
+        g1[d] -= (isotropicPermeability / fluidViscosity) * (pressure_x[d] - fluidDensity * gravityField[d]);
     } // for
 
 } // g1p_gravity
@@ -4900,11 +4887,11 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::g1p_gravity_tensor_permeabil
     // IsotropicLinearPoroelasticity
     const PylithInt i_tensorPermeability = numA - 1;
 
-    const PylithScalar* pressure_x = &s_x[sOff_x[i_pressure]];
+    const PylithScalar *pressure_x = &s_x[sOff_x[i_pressure]];
     const PylithScalar fluidDensity = a[aOff[i_fluidDensity]];
-    const PylithScalar* vectorPermeability = &a[aOff[i_tensorPermeability]];
+    const PylithScalar *vectorPermeability = &a[aOff[i_tensorPermeability]];
     const PylithScalar fluidViscosity = a[aOff[i_fluidViscosity]];
-    const PylithScalar* gravityField = &a[aOff[i_gravityField]];
+    const PylithScalar *gravityField = &a[aOff[i_gravityField]];
 
     PylithScalar tensorPermeability[9];
     tensorPermeability[0] = vectorPermeability[0];
@@ -4919,7 +4906,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::g1p_gravity_tensor_permeabil
 
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; j++) {
-            g1[i] -= (tensorPermeability[i*_dim+j] / fluidViscosity) * (pressure_x[j] - fluidDensity*gravityField[j]);
+            g1[i] -= (tensorPermeability[i * _dim + j] / fluidViscosity) * (pressure_x[j] - fluidDensity * gravityField[j]);
         } // for
     } // for
 
@@ -4965,7 +4952,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::g1p(const PylithInt dim,
     // IsotropicLinearPoroelasticity
     const PylithInt i_isotropicPermeability = numA - 1;
 
-    const PylithScalar* pressure_x = &s_x[sOff_x[i_pressure]];
+    const PylithScalar *pressure_x = &s_x[sOff_x[i_pressure]];
 
     const PylithScalar isotropicPermeability = a[aOff[i_isotropicPermeability]];
     const PylithScalar fluidViscosity = a[aOff[i_fluidViscosity]];
@@ -5015,9 +5002,9 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::g1p_tensor_permeability(cons
     // IsotropicLinearPoroelasticity
     const PylithInt i_tensorPermeability = numA - 1;
 
-    const PylithScalar* pressure_x = &s_x[sOff_x[i_pressure]];
+    const PylithScalar *pressure_x = &s_x[sOff_x[i_pressure]];
 
-    const PylithScalar* vectorPermeability = &a[aOff[i_tensorPermeability]];
+    const PylithScalar *vectorPermeability = &a[aOff[i_tensorPermeability]];
     const PylithScalar fluidViscosity = a[aOff[i_fluidViscosity]];
 
     PylithScalar tensorPermeability[9];
@@ -5033,7 +5020,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::g1p_tensor_permeability(cons
 
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; j++) {
-            g1[i] -= (tensorPermeability[i*_dim+j] / fluidViscosity) * (pressure_x[j]);
+            g1[i] -= (tensorPermeability[i * _dim + j] / fluidViscosity) * (pressure_x[j]);
         } // for
     } // for
 } // g1p_tensor_permeability
@@ -5067,12 +5054,12 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::g1v(const PylithInt dim,
     const PylithInt i_displacement = 0;
     const PylithInt i_pressure = 1;
 
-    const PylithScalar* displacement_x = &s_x[sOff_x[i_displacement]];
+    const PylithScalar *displacement_x = &s_x[sOff_x[i_displacement]];
     const PylithScalar pressure = s[sOff[i_pressure]];
 
     PylithScalar trace_strain = 0.0;
     for (PylithInt d = 0; d < _dim; ++d) {
-        trace_strain += displacement_x[d*_dim+d];
+        trace_strain += displacement_x[d * _dim + d];
     }
 
     // Incoming auxiliary fields.
@@ -5088,10 +5075,10 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::g1v(const PylithInt dim,
 
     for (PylithInt c = 0; c < _dim; ++c) {
         for (PylithInt d = 0; d < _dim; ++d) {
-            g1[c*dim+d] -= shearModulus * (displacement_x[c*_dim+d] + displacement_x[d*_dim+c]);
+            g1[c * dim + d] -= shearModulus * (displacement_x[c * _dim + d] + displacement_x[d * _dim + c]);
         } // for
-        g1[c*dim+c] -= (drainedBulkModulus - (2.0*shearModulus)/3.0) * trace_strain;
-        g1[c*dim+c] += biotCoefficient*pressure;
+        g1[c * dim + c] -= (drainedBulkModulus - (2.0 * shearModulus) / 3.0) * trace_strain;
+        g1[c * dim + c] += biotCoefficient * pressure;
     } // for
 } // g1v
 
@@ -5123,12 +5110,12 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::g1v_refstate(const PylithInt
     const PylithInt i_displacement = 0;
     const PylithInt i_pressure = 1;
 
-    const PylithScalar* displacement_x = &s_x[sOff_x[i_displacement]];
+    const PylithScalar *displacement_x = &s_x[sOff_x[i_displacement]];
     const PylithScalar pressure = s[sOff[i_pressure]];
 
     PylithScalar trace_strain = 0.0;
     for (PylithInt d = 0; d < _dim; ++d) {
-        trace_strain += displacement_x[d*_dim+d];
+        trace_strain += displacement_x[d * _dim + d];
     }
 
     // Incoming auxiliary fields.
@@ -5143,33 +5130,30 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::g1v_refstate(const PylithInt
     const PylithScalar shearModulus = a[aOff[i_shearModulus]];
     const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
-    const PylithScalar* refStress = &a[aOff[i_rstress]]; // stress_xx, stress_yy, stress_zz, stress_xy
-    const PylithScalar* refStrain = &a[aOff[i_rstrain]]; // strain_xx, strain_yy, strain_zz, strain_xy
+    const PylithScalar *refStress = &a[aOff[i_rstress]]; // stress_xx, stress_yy, stress_zz, stress_xy
+    const PylithScalar *refStrain = &a[aOff[i_rstrain]]; // strain_xx, strain_yy, strain_zz, strain_xy
 
     const PylithScalar ref_trace_strain = refStrain[0] + refStrain[1] + refStrain[2];
-    const PylithScalar meanRefStress = (refStress[0] + refStress[1] + refStress[2]) / 3.0;
-    const PylithScalar meanStress = meanRefStress + drainedBulkModulus * (trace_strain - ref_trace_strain);
-    const PylithScalar alphaPres = biotCoefficient * pressure;
-    const PylithReal traceTerm = (-2.0/3.0)*shearModulus * trace_strain;
 
     // Convert reference vectors to refrence tensors
-    PylithScalar refStressTensor[_dim*_dim];
-    PylithScalar refStrainTensor[_dim*_dim];
+    PylithScalar refStressTensor[_dim * _dim];
+    PylithScalar refStrainTensor[_dim * _dim];
     PylithInt refTensorPos[9] = {0, 3, 5, 3, 1, 4, 5, 4, 2};
 
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; ++j) {
-            refStressTensor[i*_dim+j] = refStress[refTensorPos[i*_dim+j]];
-            refStrainTensor[i*_dim+j] = refStrain[refTensorPos[i*_dim+j]];
+            refStressTensor[i * _dim + j] = refStress[refTensorPos[i * _dim + j]];
+            refStrainTensor[i * _dim + j] = refStrain[refTensorPos[i * _dim + j]];
         } // for
     } // for
 
-    for (PylithInt i = 0; i < _dim; ++i) {
-        g1[i*_dim+i] -= (meanStress - alphaPres);
-        g1[i*_dim+i] -= refStressTensor[i*_dim+i] - meanRefStress + traceTerm;
-        for (PylithInt j = 0; j < _dim; ++j) {
-            g1[i*_dim+j] -= shearModulus * (displacement_x[i*_dim+j] + displacement_x[j*_dim+i]) - refStrainTensor[i*_dim+j];
+    for (PylithInt c = 0; c < _dim; ++c) {
+        for (PylithInt d = 0; d < _dim; ++d) {
+            g1[c * _dim + d] -= 2.0 * shearModulus * ((displacement_x[c * _dim + d] / 2.0 + displacement_x[d * _dim + c]) / 2.0 - refStrainTensor[c * _dim + d]);
+            g1[c * _dim + d] -= refStressTensor[c * _dim + d];
         } // for
+        g1[c * _dim + c] -= (drainedBulkModulus - (2.0 * shearModulus) / 3.0) * (trace_strain - ref_trace_strain);
+        g1[c * _dim + c] += biotCoefficient * pressure;
     } // for
 } // g1v_refstate
 
@@ -5211,7 +5195,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::cauchyStress(const PylithInt
     const PylithInt i_pressure = 1;
     const PylithInt i_trace_strain = 2;
 
-    const PylithScalar* displacement_x = &s_x[sOff_x[i_displacement]];
+    const PylithScalar *displacement_x = &s_x[sOff_x[i_displacement]];
     const PylithScalar pressure = s[sOff[i_pressure]];
     const PylithScalar trace_strain = s[sOff[i_trace_strain]];
 
@@ -5229,24 +5213,24 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::cauchyStress(const PylithInt
 
     // Create and populate stress tensor
 
-    PylithScalar stressTensor[9] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+    PylithScalar stressTensor[9] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; ++j) {
-            stressTensor[i*_dim+j] += shearModulus * (displacement_x[i*_dim+j] + displacement_x[j*_dim+i]);
+            stressTensor[i * _dim + j] += shearModulus * (displacement_x[i * _dim + j] + displacement_x[j * _dim + i]);
         } // for
-        stressTensor[i*_dim+i] += (drainedBulkModulus - (2.0*shearModulus)/3.0) * trace_strain;
-        stressTensor[i*_dim+i] -= biotCoefficient*pressure;
+        stressTensor[i * _dim + i] += (drainedBulkModulus - (2.0 * shearModulus) / 3.0) * trace_strain;
+        stressTensor[i * _dim + i] -= biotCoefficient * pressure;
     } // for
 
     // Construct stress vector
-    const PylithScalar lambda = drainedBulkModulus - 2.0/3.0*shearModulus;
-    const PylithScalar stress_zz = 0.5*lambda/(lambda+shearModulus) * (stressTensor[0*_dim+0] + stressTensor[1*_dim+1]);
+    const PylithScalar lambda = drainedBulkModulus - 2.0 / 3.0 * shearModulus;
+    const PylithScalar stress_zz = 0.5 * lambda / (lambda + shearModulus) * (stressTensor[0 * _dim + 0] + stressTensor[1 * _dim + 1]);
 
-    stressVector[0] = stressTensor[0*_dim+0]; // stress_xx
-    stressVector[1] = stressTensor[1*_dim+1]; // stress_yy
+    stressVector[0] = stressTensor[0 * _dim + 0]; // stress_xx
+    stressVector[1] = stressTensor[1 * _dim + 1]; // stress_yy
     stressVector[2] = stress_zz;
-    stressVector[3] = stressTensor[0*_dim+1]; // stress_xy
+    stressVector[3] = stressTensor[0 * _dim + 1]; // stress_xy
 } // cauchyStress
 
 
@@ -5285,7 +5269,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::cauchyStress_refstate(const 
     const PylithInt i_pressure = 1;
     const PylithInt i_trace_strain = 2;
 
-    const PylithScalar* displacement_x = &s_x[sOff_x[i_displacement]];
+    const PylithScalar *displacement_x = &s_x[sOff_x[i_displacement]];
     const PylithScalar pressure = s[sOff[i_pressure]];
     const PylithScalar trace_strain = s[sOff[i_trace_strain]];
 
@@ -5301,49 +5285,49 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::cauchyStress_refstate(const 
     const PylithScalar shearModulus = a[aOff[i_shearModulus]];
     const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
-    const PylithScalar* refStress = &a[aOff[i_rstress]]; // stress_xx, stress_yy, stress_zz, stress_xy
-    const PylithScalar* refStrain = &a[aOff[i_rstrain]]; // strain_xx, strain_yy, strain_zz, strain_xy
+    const PylithScalar *refStress = &a[aOff[i_rstress]]; // stress_xx, stress_yy, stress_zz, stress_xy
+    const PylithScalar *refStrain = &a[aOff[i_rstrain]]; // strain_xx, strain_yy, strain_zz, strain_xy
 
     const PylithScalar ref_trace_strain = refStrain[0] + refStrain[1] + refStrain[2];
     const PylithScalar meanRefStress = (refStress[0] + refStress[1] + refStress[2]) / 3.0;
     const PylithScalar meanStress = meanRefStress + drainedBulkModulus * (trace_strain - ref_trace_strain);
     const PylithScalar alphaPres = biotCoefficient * pressure;
-    const PylithReal traceTerm = (-2.0/3.0)*shearModulus * trace_strain;
+    const PylithReal traceTerm = (-2.0 / 3.0) * shearModulus * trace_strain;
 
     // Convert reference vectors to refrence tensors
-    PylithScalar refStressTensor[_dim*_dim];
-    PylithScalar refStrainTensor[_dim*_dim];
+    PylithScalar refStressTensor[_dim * _dim];
+    PylithScalar refStrainTensor[_dim * _dim];
     PylithInt refTensorPos[9] = {0, 3, 5, 3, 1, 4, 5, 4, 2};
 
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; ++j) {
-            refStressTensor[i*_dim+j] = refStress[refTensorPos[i*_dim+j]];
-            refStrainTensor[i*_dim+j] = refStrain[refTensorPos[i*_dim+j]];
+            refStressTensor[i * _dim + j] = refStress[refTensorPos[i * _dim + j]];
+            refStrainTensor[i * _dim + j] = refStrain[refTensorPos[i * _dim + j]];
         } // for
     } // for
 
     // Create and populate stress tensor
 
-    PylithScalar stressTensor[9] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+    PylithScalar stressTensor[9] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
     for (PylithInt i = 0; i < _dim; ++i) {
-        stressTensor[i*_dim+i] -= (meanStress - alphaPres);
-        stressTensor[i*_dim+i] -= refStressTensor[i*_dim+i] - meanRefStress + traceTerm;
+        stressTensor[i * _dim + i] -= (meanStress - alphaPres);
+        stressTensor[i * _dim + i] -= refStressTensor[i * _dim + i] - meanRefStress + traceTerm;
         for (PylithInt j = 0; j < _dim; ++j) {
-            stressTensor[i*_dim+j] -= shearModulus * (displacement_x[i*_dim+j] + displacement_x[j*_dim+i]) - refStrainTensor[i*_dim+j];
+            stressTensor[i * _dim + j] -= shearModulus * (displacement_x[i * _dim + j] + displacement_x[j * _dim + i]) - refStrainTensor[i * _dim + j];
         } // for
     } // for
 
     // Generate stress vector
 
-    const PylithScalar lambda = drainedBulkModulus - 2.0/3.0*shearModulus;
-    const PylithScalar stress_zz = refStress[2] +  0.5*lambda/(lambda+shearModulus) *
-                                   (stressTensor[0*_dim+0]-refStress[0] + stressTensor[1*_dim+1]-refStress[1]);
+    const PylithScalar lambda = drainedBulkModulus - 2.0 / 3.0 * shearModulus;
+    const PylithScalar stress_zz = refStress[2] + 0.5 * lambda / (lambda + shearModulus) *
+                                   (stressTensor[0 * _dim + 0] - refStress[0] + stressTensor[1 * _dim + 1] - refStress[1]);
 
-    stressVector[0] = stressTensor[0*_dim+0]; // stress_xx
-    stressVector[1] = stressTensor[1*_dim+1]; // stress_yy
+    stressVector[0] = stressTensor[0 * _dim + 0]; // stress_xx
+    stressVector[1] = stressTensor[1 * _dim + 1]; // stress_yy
     stressVector[2] = stress_zz;
-    stressVector[3] = stressTensor[0*_dim+1]; // stress_xy
+    stressVector[3] = stressTensor[0 * _dim + 1]; // stress_xy
 } // cauchyStress_refstate
 
 
@@ -5491,7 +5475,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::updatePorosityExplicit(const
 
     // Do stuff
     const PylithScalar pressure_t = s_t[sOff[i_pressure]];
-    const PylithScalar* velocity_x = &s_x[sOff[i_velocity]];
+    const PylithScalar *velocity_x = &s_x[sOff[i_velocity]];
 
     const PylithScalar drainedBulkModulus = a[aOff[i_drainedBulkModulus]];
     const PylithScalar biotCoefficient = a[aOff[i_biotCoefficient]];
@@ -5499,7 +5483,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::updatePorosityExplicit(const
     PylithScalar trace_strain_t = 0.0;
 
     for (PylithInt d = 0; d < _dim; ++d) {
-        trace_strain_t += velocity_x[d*_dim+d];
+        trace_strain_t += velocity_x[d * _dim + d];
     }
 
     // Update porosity
