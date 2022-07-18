@@ -45,7 +45,7 @@ class GenerateDB(object):
         xy = numpy.vstack((x, y)).transpose()
 
         from gravity_refstate_soln import AnalyticalSoln
-        from gravity_refstate_soln import p_density, p_vs, p_vp
+        from gravity_refstate_soln import p_solid_density, p_fluid_density, p_vs, p_vp
         soln = AnalyticalSoln()
         stress = soln.stress(xy)
         strain = soln.strain(xy)
@@ -60,9 +60,13 @@ class GenerateDB(object):
             'data_dim': 1,
             'values': [
                 {
-                    'name': "density",
+                    'name': "solid_density",
                     'units': "kg/m**3",
-                    'data': p_density * numpy.ones((npts,)),
+                    'data': p_solid_density * numpy.ones((npts,)),
+                }, {
+                    'name': "fluid_density",
+                    'units': "kg/m**3",
+                    'data': p_fluid_density * numpy.ones((npts,)),
                 }, {
                     'name': "vs",
                     'units': "m/s",

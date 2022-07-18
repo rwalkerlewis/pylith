@@ -33,12 +33,24 @@ import numpy
 
 
 # Physical properties
-p_density = 2500.0  # kg/m**3
-p_vs = 3000.0  # m/s
-p_vp = 5291.5026  # m/s
+p_solid_density = 2500.0  # kg/m**3
+p_fluid_density = 1000.0 # kg/m**3
+p_fluid_viscosity = 0.001 # Pa*s
+p_porosity = 0.1 # -
+p_shear_modulus = 8e9 # Pa
+p_drained_bulk_modulus = 10e9 # Pa
+p_fluid_bulk_modulus = 2e9 # Pa
+p_solid_bulk_modulus = 10e9 # Pa
+p_biot_coefficient = 0.8 # -
+p_isotropic_permeability = 1e-14 # m**2
 
-p_mu = p_density * p_vs**2
-p_lambda = p_density * p_vp**2 - 2 * p_mu
+p_biot_modulus = p_fluid_bulk_modulus / p_porosity + p_solid_bulk_modulus / (p_biot_coefficient + p_porosity)
+p_bulk_density = p_solid_density*(1.0 - p_porosity) + p_fluid_density * p_porosity
+
+p_mu = p_shear_modulus
+p_undrained_bulk_modulus = p_drained_bulk_modulus + p_biot_coefficient**2 + p_biot_modulus
+p_lambda = p_undrained_bulk_modulus - (2.0 * p_shear_modulus) / 3.0
+
 
 gacc = 9.80665  # m/s
 ymax = +4000.0
@@ -55,13 +67,17 @@ class AnalyticalSoln(object):
     def __init__(self):
         self.fields = {
             "displacement": self.displacement,
-            "density": self.density,
+            "pressure": self.pressure,
+            "porosity": self.porosity,
+            "trace_strain": self.trace_strain,
+            "solid_density": self.solid_density,
+            "fluid_density": self.fluid_density,
+            "fluid_viscosity": self.fluid_viscosity,
             "shear_modulus": self.shear_modulus,
-            "bulk_modulus": self.bulk_modulus,
-            "cauchy_strain": self.strain,
-            "cauchy_stress": self.stress,
-            "gravitational_acceleration": self.gacc,
-            "initial_amplitude": self.zero_vector,
+            "drained_bulk_modulus": self.drained_bulk_modulus,
+            "biot_coefficient": self.biot_coefficient,
+            "biot_modulus": self.biot_modulus,
+            "isotropic_permeability": self.isotropic_permeability,
         }
         return
 
@@ -83,31 +99,73 @@ class AnalyticalSoln(object):
         (npts, dim) = locs.shape
         return numpy.zeros((1, npts, self.SPACE_DIM), dtype=numpy.float64)
 
-    def density(self, locs):
-        """Compute density field at locations.
+    def solid_density(self, locs):
+        """Compute solid_density field at locations.
         """
         (npts, dim) = locs.shape
-        density = p_density * numpy.ones((1, npts, 1), dtype=numpy.float64)
-        return density
+        solid_density = p_solid_density * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        return solid_density
+
+    def fluid_density(self, locs):
+        """Compute fluid density field at locations.
+        """
+        (npts, dim) = locs.shape
+        fluid_density = p_fluid_density * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        return fluid_density
 
     def shear_modulus(self, locs):
         """Compute shear modulus field at locations.
         """
         (npts, dim) = locs.shape
-        shear_modulus = p_mu * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        shear_modulus = p_shear_modulus * numpy.ones((1, npts, 1), dtype=numpy.float64)
         return shear_modulus
 
-    def bulk_modulus(self, locs):
-        """Compute bulk modulus field at locations.
+    def porosity(self, locs):
+        """Compute porosity field at locations.
         """
         (npts, dim) = locs.shape
-        bulk_modulus = (p_lambda + 2.0 / 3.0 * p_mu) * numpy.ones((1, npts, 1), dtype=numpy.float64)
-        return bulk_modulus
+        porosity = p_porosity * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        return porosity
+
+    def fluid_viscosity(self, locs):
+        """Compute fluid_viscosity field at locations.
+        """
+        (npts, dim) = locs.shape
+        fluid_viscosity = p_fluid_viscosity * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        return fluid_viscosity
+
+    def drained_bulk_modulus(self, locs):
+        """Compute undrained bulk modulus field at locations.
+        """
+        (npts, dim) = locs.shape
+        undrained_bulk_modulus = p_drained_bulk_modulus * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        return undrained_bulk_modulus
+
+    def biot_coefficient(self, locs):
+        """Compute biot coefficient field at locations.
+        """
+        (npts, dim) = locs.shape
+        biot_coefficient = p_biot_coefficient * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        return biot_coefficient
+
+    def biot_modulus(self, locs):
+        """Compute biot modulus field at locations.
+        """
+        (npts, dim) = locs.shape
+        biot_modulus = p_biot_modulus * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        return biot_modulus
+
+    def isotropic_permeability(self, locs):
+        """Compute isotropic permeability field at locations.
+        """
+        (npts, dim) = locs.shape
+        isotropic_permeability = p_isotropic_permeability * numpy.ones((1, npts, 1), dtype=numpy.float64)
+        return isotropic_permeability
 
     def strain(self, locs):
         """Compute strain field at locations.
         """
-        eyy = p_density * gacc * (locs[:, 1] - ymax) / (p_lambda + 2 * p_mu)
+        eyy = p_bulk_density * gacc * (locs[:, 1] - ymax) / (p_lambda + 2 * p_mu)
         exx = 0
         ezz = 0
         exy = 0
@@ -123,7 +181,7 @@ class AnalyticalSoln(object):
     def stress(self, locs):
         """Compute stress field at locations.
         """
-        syy = p_density * gacc * (locs[:, 1] - ymax)
+        syy = p_bulk_density * gacc * (locs[:, 1] - ymax)
         sxx = p_lambda / (p_lambda + 2 * p_mu) * syy
         sxy = 0.0
         szz = p_lambda / (2 * p_lambda + 2 * p_mu) * (sxx + syy)
