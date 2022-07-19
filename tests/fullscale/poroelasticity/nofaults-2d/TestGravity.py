@@ -22,6 +22,10 @@ from pylith.testing.FullTestApp import (FullTestCase, Check)
 import meshes
 import gravity_soln
 
+# We do not include trace_strain in the check of the solution fields, because of the
+# poor convergence of the series solution.
+SOLUTION_FIELDS = ["displacement", "pressure", "cauchy_strain", "cauchy_stress"]
+SOLUTION_TOLERANCE = 0.2
 
 # -------------------------------------------------------------------------------------------------
 class TestCase(FullTestCase):
@@ -36,8 +40,9 @@ class TestCase(FullTestCase):
         self.checks = [
             Check(
                 mesh_entities=["domain", "bc_ypos", "points"],
-                vertex_fields=["displacement"],
+                vertex_fields=["displacement", "pressure"],
                 defaults=defaults,
+                tolerance=SOLUTION_TOLERANCE,
             ),
             Check(
                 mesh_entities=["poroelastic_xpos", "poroelastic_xneg"],
@@ -57,8 +62,9 @@ class TestCase(FullTestCase):
             ),
             Check(
                 mesh_entities=["poroelastic_xpos", "poroelastic_xneg"],
-                vertex_fields = ["displacement", "pressure", "trace_strain", "cauchy_strain", "cauchy_stress"],
+                vertex_fields = ["displacement", "pressure", "cauchy_strain", "cauchy_stress"],
                 defaults=defaults,
+                tolerance=SOLUTION_TOLERANCE,
             ),
             Check(
                 mesh_entities=["bc_xneg", "bc_xpos", "bc_yneg"],
@@ -68,8 +74,9 @@ class TestCase(FullTestCase):
             ),
             Check(
                 mesh_entities=["bc_xneg", "bc_xpos", "bc_yneg"],
-                vertex_fields=["displacement"],
+                vertex_fields=["displacement", "pressure"],
                 defaults=defaults,
+                tolerance=SOLUTION_TOLERANCE,
             ),
         ]
 

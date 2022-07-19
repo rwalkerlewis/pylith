@@ -45,7 +45,7 @@ class GenerateDB(object):
         xy = numpy.vstack((x, y)).transpose()
 
         from gravity_refstate_soln import AnalyticalSoln
-        from gravity_refstate_soln import p_solid_density, p_fluid_density, p_vs, p_vp
+        from gravity_refstate_soln import p_solid_density, p_fluid_density, p_fluid_viscosity, p_porosity, p_shear_modulus, p_drained_bulk_modulus, p_biot_coefficient, p_fluid_bulk_modulus, p_solid_bulk_modulus, p_isotropic_permeability
         soln = AnalyticalSoln()
         stress = soln.stress(xy)
         strain = soln.strain(xy)
@@ -68,13 +68,37 @@ class GenerateDB(object):
                     'units': "kg/m**3",
                     'data': p_fluid_density * numpy.ones((npts,)),
                 }, {
-                    'name': "vs",
-                    'units': "m/s",
-                    'data': p_vs * numpy.ones((npts,)),
+                    'name': "fluid_viscosity",
+                    'units': "Pa*s",
+                    'data': p_fluid_viscosity * numpy.ones((npts,)),
                 }, {
-                    'name': "vp",
-                    'units': "m/s",
-                    'data': p_vp * numpy.ones((npts,)),
+                    'name': "porosity",
+                    'units': "none",
+                    'data': p_porosity * numpy.ones((npts,)),
+                }, {
+                    'name': "shear_modulus",
+                    'units': "Pa",
+                    'data': p_shear_modulus * numpy.ones((npts,)),
+                }, {
+                    'name': "drained_bulk_modulus",
+                    'units': "Pa",
+                    'data': p_drained_bulk_modulus * numpy.ones((npts,)),
+                }, {
+                    'name': "biot_coefficient",
+                    'units': "none",
+                    'data': p_biot_coefficient * numpy.ones((npts,)),
+                }, {
+                    'name': "fluid_bulk_modulus",
+                    'units': "Pa",
+                    'data': p_fluid_bulk_modulus * numpy.ones((npts,)),
+                }, {
+                    'name': "solid_bulk_modulus",
+                    'units': "Pa",
+                    'data': p_solid_bulk_modulus * numpy.ones((npts,)),
+                }, {
+                    'name': "isotropic_permeability",
+                    'units': "m**2",
+                    'data': p_isotropic_permeability * numpy.ones((npts,)),
                 }, {
                     'name': "reference_stress_xx",
                     'units': "Pa",

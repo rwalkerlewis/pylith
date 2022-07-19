@@ -58,8 +58,8 @@ class TestCase(FullTestCase):
                 defaults=defaults,
             ),
             Check(
-                mesh_entities=["elastic_xpos", "elastic_xneg"],
-                vertex_fields = ["displacement", "pressure", "trace_strain"],
+                mesh_entities=["poroelastic_xpos", "poroelastic_xneg"],
+                vertex_fields = ["displacement"],
                 cell_fields = ["cauchy_strain", "cauchy_stress"],
                 defaults=defaults,
             ),

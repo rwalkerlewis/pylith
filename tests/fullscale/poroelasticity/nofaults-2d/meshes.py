@@ -23,8 +23,8 @@ class TriGmsh(object):
         "points": MeshEntity(ncells=3, ncorners=1, nvertices=3),
 
         # Materials
-        "elastic_xneg": MeshEntity(ncells=64, ncorners=3, nvertices=45),
-        "elastic_xpos": MeshEntity(ncells=64, ncorners=3, nvertices=45),
+        "poroelastic_xneg": MeshEntity(ncells=64, ncorners=3, nvertices=45),
+        "poroelastic_xpos": MeshEntity(ncells=64, ncorners=3, nvertices=45),
 
         # Boundaries
         "bc_xneg": MeshEntity(ncells=8, ncorners=2, nvertices=9),
@@ -41,8 +41,8 @@ class QuadGmsh(object):
         "domain": MeshEntity(ncells=99, ncorners=4, nvertices=120),
         "points": MeshEntity(ncells=3, ncorners=1, nvertices=3),
 
-        "elastic_xneg": MeshEntity(ncells=54, ncorners=4, nvertices=70),
-        "elastic_xpos": MeshEntity(ncells=45, ncorners=4, nvertices=60),
+        "poroelastic_xneg": MeshEntity(ncells=54, ncorners=4, nvertices=70),
+        "poroelastic_xpos": MeshEntity(ncells=45, ncorners=4, nvertices=60),
 
         "bc_xneg": MeshEntity(ncells=9, ncorners=2, nvertices=10),
         "bc_xpos": MeshEntity(ncells=9, ncorners=2, nvertices=10),
@@ -59,8 +59,8 @@ class TriCubit(object):
         "points": MeshEntity(ncells=3, ncorners=1, nvertices=3),
 
         # Materials
-        "elastic_xneg": MeshEntity(ncells=60, ncorners=3, nvertices=43),
-        "elastic_xpos": MeshEntity(ncells=64, ncorners=3, nvertices=45),
+        "poroelastic_xneg": MeshEntity(ncells=60, ncorners=3, nvertices=43),
+        "poroelastic_xpos": MeshEntity(ncells=64, ncorners=3, nvertices=45),
 
         # Boundaries
         "bc_xneg": MeshEntity(ncells=8, ncorners=2, nvertices=9),
@@ -77,8 +77,8 @@ class QuadCubit(object):
         "domain": MeshEntity(ncells=64, ncorners=4, nvertices=81),
         "points": MeshEntity(ncells=3, ncorners=1, nvertices=3),
 
-        "elastic_xneg": MeshEntity(ncells=32, ncorners=4, nvertices=45),
-        "elastic_xpos": MeshEntity(ncells=32, ncorners=4, nvertices=45),
+        "poroelastic_xneg": MeshEntity(ncells=32, ncorners=4, nvertices=45),
+        "poroelastic_xpos": MeshEntity(ncells=32, ncorners=4, nvertices=45),
 
         "bc_xneg": MeshEntity(ncells=8, ncorners=2, nvertices=9),
         "bc_xpos": MeshEntity(ncells=8, ncorners=2, nvertices=9),
