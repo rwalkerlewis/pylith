@@ -39,9 +39,9 @@ class TestApp(TestDriver):
         for test in TestGravity.test_cases():
             suite.addTest(unittest.makeSuite(test))
 
-        # import TestGravityRefState
-        # for test in TestGravityRefState.test_cases():
-        #     suite.addTest(unittest.makeSuite(test))
+        import TestGravityRefState
+        for test in TestGravityRefState.test_cases():
+            suite.addTest(unittest.makeSuite(test))
 
         return suite
 

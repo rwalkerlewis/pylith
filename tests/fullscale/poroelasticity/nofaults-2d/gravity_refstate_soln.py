@@ -13,7 +13,7 @@
 #
 # ----------------------------------------------------------------------
 #
-# @file tests/fullscale/linearelasticity/nofaults-2d/gravity_refstate)soln.py
+# @file tests/fullscale/poroelasticity/nofaults-2d/gravity_refstate)soln.py
 #
 # @brief Analytical solution to gravitational body foces with initial stress.
 #
@@ -33,27 +33,34 @@ import numpy
 
 # Physical properties
 p_solid_density = 2500.0  # kg/m**3
-p_fluid_density = 1000.0 # kg/m**3
-p_fluid_viscosity = 0.001 # Pa*s
+p_fluid_density = 2500.0 # kg/m**3
+p_fluid_viscosity = 1.0 # Pa*s
 p_porosity = 0.1 # -
 p_shear_modulus = 6e9 # Pa
-p_drained_bulk_modulus = 10e9 # Pa
-p_fluid_bulk_modulus = 2e9 # Pa
-p_solid_bulk_modulus = 10e9 # Pa
-p_biot_coefficient = 1.0 # -
-p_isotropic_permeability = 1e-14 # m**2
+p_drained_bulk_modulus = 20e9 # Pa
+p_fluid_bulk_modulus = 0.1 # Pa
+p_solid_bulk_modulus = 20e9 # Pa
+p_biot_coefficient = 1.2 # -
+p_isotropic_permeability = 0.0 #1e-14 # m**2
 
-p_biot_modulus = p_fluid_bulk_modulus / p_porosity + p_solid_bulk_modulus / (p_biot_coefficient + p_porosity)
+p_biot_modulus = 1.0 / ( p_porosity / p_fluid_bulk_modulus + (p_biot_coefficient - p_porosity) / p_solid_bulk_modulus )
 p_bulk_density = p_solid_density*(1.0 - p_porosity) + p_fluid_density * p_porosity
 
 p_mu = p_shear_modulus
 p_undrained_bulk_modulus = p_drained_bulk_modulus + p_biot_coefficient**2 + p_biot_modulus
-p_lambda = p_undrained_bulk_modulus - (2.0 * p_shear_modulus) / 3.0
-
+p_drained_lambda = p_drained_bulk_modulus - (2.0 * p_shear_modulus) / 3.0
+p_undrained_lambda = p_undrained_bulk_modulus - (2.0 * p_shear_modulus) / 3.0
+p_skempton_coefficient = (p_biot_coefficient * p_biot_modulus) / p_undrained_bulk_modulus
+p_constant_stress_storage = p_undrained_bulk_modulus / (p_biot_modulus * (p_undrained_bulk_modulus - p_biot_coefficient**2 * p_biot_modulus))
+p_drained_poisson_ratio = p_drained_lambda / (2.0 * (p_drained_lambda + p_mu))
+p_undrained_poisson_ratio = p_undrained_lambda / (2.0 * (p_undrained_lambda + p_mu))
+p_drained_youngs_modulus = 2.0 * p_shear_modulus * (1.0 * p_drained_poisson_ratio)
+p_undrained_youngs_modulus = 2.0 * p_shear_modulus * (1.0 * p_undrained_poisson_ratio)
 
 gacc = 9.80665  # m/s
 ymax = +4000.0
 ymin = -4000.0  # m
+
 
 
 # ----------------------------------------------------------------------
@@ -163,17 +170,26 @@ class AnalyticalSoln(object):
     def strain(self, locs):
         """Compute strain field at locations.
         """
+        eyy = p_bulk_density * gacc * (locs[:, 1] - ymax) / (p_undrained_lambda + 2 * p_mu)
+        exx = 0
+        ezz = 0
+        exy = 0
+
         (npts, dim) = locs.shape
         strain = numpy.zeros((1, npts, self.TENSOR_SIZE), dtype=numpy.float64)
+        strain[:,:, 0] = exx
+        strain[:,:, 1] = eyy
+        strain[:,:, 2] = ezz
+        strain[:,:, 3] = exy
         return strain
 
     def stress(self, locs):
         """Compute stress field at locations.
         """
         syy = p_bulk_density * gacc * (locs[:, 1] - ymax)
-        sxx = syy
-        szz = syy
-        sxy = 0
+        sxx = p_undrained_lambda / (p_undrained_lambda + 2 * p_mu) * syy
+        sxy = 0.0
+        szz = p_undrained_lambda / (2 * p_undrained_lambda + 2 * p_mu) * (sxx + syy)
 
         (npts, dim) = locs.shape
         stress = numpy.zeros((1, npts, self.TENSOR_SIZE), dtype=numpy.float64)

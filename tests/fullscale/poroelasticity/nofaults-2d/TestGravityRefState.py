@@ -36,7 +36,7 @@ class TestCase(FullTestCase):
         self.checks = [
             Check(
                 mesh_entities=["domain", "bc_ypos"],
-                vertex_fields=["displacement"],
+                vertex_fields=["displacement", "pressure"],
                 defaults=defaults,
             ),
             Check(
@@ -59,7 +59,7 @@ class TestCase(FullTestCase):
             ),
             Check(
                 mesh_entities=["poroelastic_xpos", "poroelastic_xneg"],
-                vertex_fields = ["displacement"],
+                vertex_fields = ["displacement", "pressure"],
                 cell_fields = ["cauchy_strain", "cauchy_stress"],
                 defaults=defaults,
             ),
@@ -71,7 +71,7 @@ class TestCase(FullTestCase):
             ),
             Check(
                 mesh_entities=["bc_xneg", "bc_xpos", "bc_yneg"],
-                vertex_fields=["displacement"],
+                vertex_fields=["displacement", "pressure"],
                 defaults=defaults,
             ),
         ]

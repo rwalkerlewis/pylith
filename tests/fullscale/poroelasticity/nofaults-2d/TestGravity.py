@@ -24,7 +24,9 @@ import gravity_soln
 
 # We do not include trace_strain in the check of the solution fields, because of the
 # poor convergence of the series solution.
-SOLUTION_FIELDS = ["displacement", "pressure", "cauchy_strain", "cauchy_stress"]
+# We ignore pressure as well, as the point here is to check the refrence stress/strain feature
+# for poroelasticity.
+SOLUTION_FIELDS = ["displacement",  "cauchy_strain", "cauchy_stress"]
 SOLUTION_TOLERANCE = 0.2
 
 # -------------------------------------------------------------------------------------------------
@@ -40,7 +42,7 @@ class TestCase(FullTestCase):
         self.checks = [
             Check(
                 mesh_entities=["domain", "bc_ypos", "points"],
-                vertex_fields=["displacement", "pressure"],
+                vertex_fields=["displacement"],
                 defaults=defaults,
                 tolerance=SOLUTION_TOLERANCE,
             ),
@@ -62,7 +64,7 @@ class TestCase(FullTestCase):
             ),
             Check(
                 mesh_entities=["poroelastic_xpos", "poroelastic_xneg"],
-                vertex_fields = ["displacement", "pressure", "cauchy_strain", "cauchy_stress"],
+                vertex_fields = ["displacement", "cauchy_strain", "cauchy_stress"],
                 defaults=defaults,
                 tolerance=SOLUTION_TOLERANCE,
             ),
@@ -74,7 +76,7 @@ class TestCase(FullTestCase):
             ),
             Check(
                 mesh_entities=["bc_xneg", "bc_xpos", "bc_yneg"],
-                vertex_fields=["displacement", "pressure"],
+                vertex_fields=["displacement"],
                 defaults=defaults,
                 tolerance=SOLUTION_TOLERANCE,
             ),

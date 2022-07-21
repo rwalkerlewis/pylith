@@ -15,7 +15,7 @@
 #
 # @file tests/fullscale/linearelasticity/nofaults-2d/gravity_soln.py
 #
-# @brief Analytical solution to gravitational body foces (no initial stress).
+# @brief Analytical solution to gravitational body forces (no initial stress).
 #
 #       ----------
 #       |        |
