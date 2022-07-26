@@ -45,6 +45,8 @@ class GenerateDB(object):
         disp = soln.initial_displacement(xy)
         pres = soln.initial_pressure(xy)
         trace_strain = soln.initial_trace_strain(xy)
+        sigma_xx = soln.zero_scalar(xy)
+        sigma_zz = soln.initial_traction(xy)
 
         from spatialdata.geocoords.CSCart import CSCart
         cs = CSCart()
@@ -56,18 +58,18 @@ class GenerateDB(object):
             'points': xy,
             'coordsys': cs,
             'data_dim': 2,
-            'values': [{'name': "initial_amplitude_x",
-                        'units': "m",
-                        'data': numpy.ravel(disp[0, :, 0])},
-                       {'name': "initial_amplitude_y",
-                        'units': "m",
-                        'data': numpy.ravel(disp[0, :, 1])},
-                       {'name': "initial_pressure",
-                        'units': "Pa",
-                        'data': numpy.ravel(pres[0, :])},
-                       {'name': "initial_trace_strain",
-                        'units': "none",
-                        'data': numpy.ravel(trace_strain[0, :])}]}
+            'values': [
+                {
+                    'name': "initial_amplitude_x",
+                    'units': "m",
+                    'data': numpy.ravel(sigma_xx)
+                }, {
+                    'name': "initial_amplitude_y",
+                    'units': "m",
+                    'data': numpy.ravel(sigma_zz)
+                }
+            ]
+         }
 
         from spatialdata.spatialdb.SimpleGridAscii import SimpleGridAscii
         io = SimpleGridAscii()

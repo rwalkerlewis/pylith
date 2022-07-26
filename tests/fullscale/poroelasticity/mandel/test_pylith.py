@@ -35,12 +35,16 @@ class TestApp(TestDriver):
         """
         suite = unittest.TestSuite()
 
-        import TestMandel
-        for test in TestMandel.test_cases():
-            suite.addTest(unittest.makeSuite(test))
+        # import TestMandel
+        # for test in TestMandel.test_cases():
+        #     suite.addTest(unittest.makeSuite(test))
 
-        import TestMandelCompaction
-        for test in TestMandelCompaction.test_cases():
+        # import TestMandelCompaction
+        # for test in TestMandelCompaction.test_cases():
+        #     suite.addTest(unittest.makeSuite(test))
+
+        import TestMandelRefState
+        for test in TestMandelRefState.test_cases():
             suite.addTest(unittest.makeSuite(test))
 
         return suite

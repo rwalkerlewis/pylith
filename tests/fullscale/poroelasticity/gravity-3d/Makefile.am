@@ -21,43 +21,37 @@ dist_check_SCRIPTS = test_pylith.py
 
 dist_noinst_PYTHON = \
 	meshes.py \
-	TestMandel.py \
-	mandel_soln.py \
-	mandel_gendb.py \
-	TestMandelCompaction.py \
-	mandel_compaction_soln.py \
-	mandel_compaction_gendb.py \
-	TestMandelRefState.py \
-	mandel_refstate_soln.py \
-	mandel_refstate_gendb.py 
+	TestGravity.py \
+	gravity_soln.py \
+	TestGravityRefState.py \
+	gravity_refstate_soln.py \
+	gravity_refstate_gendb.py
 
 dist_noinst_DATA = \
 	geometry.jou \
 	bc.jou \
-	mesh_tri.jou \
-	mesh_tri.exo \
-	mesh_quad.jou \
-	mesh_quad.exo \
-	mandel.cfg \
-	mandel_tri.cfg \
-	mandel_quad.cfg \
-	mandel_compaction.cfg \
-	mandel_compaction_tri.cfg \
-	mandel_compaction_quad.cfg \
-	mandel_refstate.cfg \
-	mandel_refstate_tri.cfg \
-	mandel_refstate_quad.cfg \
-	y_pos_disp_y.timedb
+	mesh_tet.jou \
+	mesh_tet.exo \
+	mesh_hex.jou \
+	mesh_hex.exo \
+	output_points.txt \
+	pylithapp.cfg \
+	gravity.cfg \
+	gravity_tet.cfg \
+	gravity_hex.cfg \
+	gravity_refstate.cfg \
+	gravity_refstate_tet.cfg \
+	gravity_refstate_hex.cfg
 
 noinst_TMP = \
-	mandel_bc.spatialdb \
-	mandel_ic.spatialdb \
-	mandel_compaction_bc.spatialdb \
-	mandel_compaction_ic.spatialdb \
-	mandel_refstate_matfields.spatialdb
+	gravity_refstate_matfields.spatialdb \
+	gravity_matfields.spatialdb \
+	gravity_ic.spatialdb
+
+
 
 # 'export' the input files by performing a mock install
-export_datadir = $(abs_top_builddir)/tests/fullscale/poroelasticity/mandel
+export_datadir = $(abs_top_builddir)/tests/fullscale/poroelasticity/gravity-3d
 export-data: $(dist_noinst_PYTHON) $(dist_noinst_DATA)
 	for f in $(dist_noinst_PYTHON) $(dist_noinst_DATA); do $(install_sh_DATA) $(srcdir)/$$f $(export_datadir); done
 

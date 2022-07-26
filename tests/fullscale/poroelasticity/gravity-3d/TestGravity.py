@@ -14,27 +14,22 @@
 # See LICENSE.md for license information.
 #
 # ----------------------------------------------------------------------
+#
+# @file tests/fullscale/linearelasticity/nofaults-3d/TestGravity.py
+#
+# @brief Test suite for testing pylith with 3-D gravitational body forces (no initial stress).
 
 import unittest
 
-from pylith.testing.FullTestApp import (FullTestCase, Check)
+from pylith.testing.FullTestApp import (FullTestCase, Check, check_data)
 
 import meshes
 import gravity_soln
 import gravity_gendb
 
-
-# We do not include trace_strain in the check of the solution fields, because of the
-# poor convergence of the series solution.
-# We ignore pressure as well, as the point here is to check the refrence stress/strain feature
-# for poroelasticity.
-SOLUTION_FIELDS = ["displacement",  "cauchy_strain", "cauchy_stress"]
-SOLUTION_TOLERANCE = 0.2
-
 # -------------------------------------------------------------------------------------------------
 class TestCase(FullTestCase):
-    """Test suite for testing PyLith with gravitational body forces (no initial stress).
-    """
+
     def setUp(self):
         defaults = {
             "filename": "output/{name}-{mesh_entity}.h5",
@@ -43,13 +38,12 @@ class TestCase(FullTestCase):
         }
         self.checks = [
             Check(
-                mesh_entities=["domain", "bc_ypos", "points"],
-                vertex_fields=["displacement"],
+                mesh_entities=["domain", "groundsurf", "points"],
+                vertex_fields=["displacement", "pressure"],
                 defaults=defaults,
-                tolerance=SOLUTION_TOLERANCE,
             ),
             Check(
-                mesh_entities=["poroelastic_xpos", "poroelastic_xneg"],
+                mesh_entities=["upper_crust", "lower_crust"],
                 filename="output/{name}-{mesh_entity}_info.h5",
                 cell_fields=[
                     "biot_coefficient",
@@ -65,22 +59,20 @@ class TestCase(FullTestCase):
                 defaults=defaults,
             ),
             Check(
-                mesh_entities=["poroelastic_xpos", "poroelastic_xneg"],
-                vertex_fields = ["displacement", "cauchy_strain", "cauchy_stress"],
+                mesh_entities=["upper_crust", "lower_crust"],
+                vertex_fields = ["displacement", "pressure", "cauchy_strain", "cauchy_stress"],
                 defaults=defaults,
-                tolerance=SOLUTION_TOLERANCE,
             ),
             Check(
-                mesh_entities=["bc_xneg", "bc_xpos", "bc_yneg"],
+                mesh_entities=["bc_xneg", "bc_xpos", "bc_yneg", "bc_ypos", "bc_zneg"],
                 filename="output/{name}-{mesh_entity}_info.h5",
                 cell_fields=["initial_amplitude"],
                 defaults=defaults,
             ),
             Check(
-                mesh_entities=["bc_xneg", "bc_xpos", "bc_yneg"],
+                mesh_entities=["bc_xneg", "bc_xpos", "bc_yneg", "bc_ypos", "bc_zneg"],
                 vertex_fields=["displacement", "pressure"],
                 defaults=defaults,
-                tolerance=SOLUTION_TOLERANCE,
             ),
         ]
 
@@ -89,34 +81,34 @@ class TestCase(FullTestCase):
 
 
 # -------------------------------------------------------------------------------------------------
-class TestQuad(TestCase):
+class TestHex(TestCase):
 
     def setUp(self):
-        self.name = "gravity_quad"
-        self.mesh = meshes.QuadGmsh()
+        self.name = "gravity_hex"
+        self.mesh = meshes.Hex()
         super().setUp()
 
-        TestCase.run_pylith(self, self.name, ["gravity.cfg", "gravity_quad.cfg"])
+        TestCase.run_pylith(self, self.name, ["gravity.cfg", "gravity_hex.cfg"])
         return
 
 
 # -------------------------------------------------------------------------------------------------
-class TestTri(TestCase):
+class TestTet(TestCase):
 
     def setUp(self):
-        self.name = "gravity_tri"
-        self.mesh = meshes.TriGmsh()
+        self.name = "gravity_tet"
+        self.mesh = meshes.Tet()
         super().setUp()
 
-        TestCase.run_pylith(self, self.name, ["gravity.cfg", "gravity_tri.cfg"])
+        TestCase.run_pylith(self, self.name, ["gravity.cfg", "gravity_tet.cfg"])
         return
 
 
 # -------------------------------------------------------------------------------------------------
 def test_cases():
     return [
-        TestQuad,
-        TestTri,
+        TestHex,
+        TestTet,
     ]
 
 

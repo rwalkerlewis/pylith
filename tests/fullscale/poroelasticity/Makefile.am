@@ -17,6 +17,7 @@
 
 SUBDIRS = \
 	nofaults-2d \
+	gravity-3d \
 	terzaghi \
 	mandel \
 	cryer

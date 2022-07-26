@@ -66,15 +66,9 @@ class TestCase(FullTestCase):
             ),
             Check(
                 mesh_entities=["poroelastic"],
-                vertex_fields = SOLUTION_FIELDS,
+                vertex_fields = ["displacement", "pressure", "cauchy_strain", "cauchy_stress"],
                 defaults=defaults,
                 tolerance=SOLUTION_TOLERANCE,
-            ),
-            Check(
-                mesh_entities=["x_neg", "x_pos", "y_neg", "y_pos"],
-                filename="output/{name}-{mesh_entity}_info.h5",
-                vertex_fields=["initial_amplitude"],
-                defaults=defaults,
             ),
             Check(
                 mesh_entities=["x_neg", "x_pos", "y_neg", "y_pos"],

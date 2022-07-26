@@ -13,22 +13,14 @@
 #
 # ----------------------------------------------------------------------
 #
-# @file tests/fullscale/poroelasticity/nofaults-2d/gravity_soln.py
+# @file tests/fullscale/linearelasticity/nofaults-3d/gravity_soln.py
 #
 # @brief Analytical solution to gravitational body foces (no initial stress).
-# 
-#          P=0
-#       ----------
-#       |        |
-# Ux=0  |        | Ux=0
-#       |        |
-#       |        |
-#       ----------
-#         Uy=0
 #
-# Dirichlet boundary conditions
-# Ux(+-4000,0) = 0
-# Uy(x,-4000) = 0
+# Dirichlet boundary conditions on lateral sides and bottom
+# boundary +-x: Ux(+-4000,0,z) = 0
+# boundary +-y: Uy(x,-4000,z) = 0
+# boundary -z: Uz(x,y,-9000) = 0
 
 import numpy
 
@@ -42,7 +34,7 @@ p_shear_modulus = 6e9 # Pa
 p_drained_bulk_modulus = 10e9 # Pa
 p_fluid_bulk_modulus = 2e9 # Pa
 p_solid_bulk_modulus = 20e9 # Pa
-p_biot_coefficient = 1.0 # -
+p_biot_coefficient = 0.8 # -
 p_isotropic_permeability = 1e-14 # m**2
 
 p_biot_modulus = 1.0 / ( p_porosity / p_fluid_bulk_modulus + (p_biot_coefficient - p_porosity) / p_solid_bulk_modulus )
@@ -60,15 +52,16 @@ p_drained_youngs_modulus = 2.0 * p_shear_modulus * (1.0 * p_drained_poisson_rati
 p_undrained_youngs_modulus = 2.0 * p_shear_modulus * (1.0 * p_undrained_poisson_ratio)
 
 gacc = 9.80665  # m/s
-ymax = +4000.0
-ymin = -4000.0  # m
+zmax = 0.0
+zmin = -9000.0  # m
+
 
 # ----------------------------------------------------------------------
 class AnalyticalSoln(object):
     """Analytical solution to gravitational body forces (no initial stress).
     """
-    SPACE_DIM = 2
-    TENSOR_SIZE = 4
+    SPACE_DIM = 3
+    TENSOR_SIZE = 6
 
     def __init__(self):
         self.fields = {
@@ -100,27 +93,32 @@ class AnalyticalSoln(object):
 
         (npts, dim) = locs.shape
         disp = numpy.zeros((1, npts, self.SPACE_DIM), dtype=numpy.float64)
-        # disp[:,:, 1] = ((1 + p_drained_poisson_ratio)*(1-2.0*p_drained_poisson_ratio))/(2.0*p_drained_youngs_modulus*(1.0 - p_drained_poisson_ratio)) * (-p_biot_coefficient*p_fluid_density + p_bulk_density) * gacc * (locs[:, 1] - ymin) * ((locs[:, 1] - ymin) - 2.0*(ymax - ymin))
-        disp[:,:, 1] = p_bulk_density * gacc / (p_undrained_lambda + 2 * p_mu) * \
-            (0.5 * (locs[:, 1]**2 - ymin**2) - ymax * (locs[:, 1] - ymin))
+        pressure = -p_fluid_density * gacc * (locs[:, 2] - zmax)
+        constrained_modulus = (p_drained_youngs_modulus * (1.0 - p_drained_poisson_ratio) ) / ( (1.0 + p_drained_poisson_ratio) * (1.0 - 2.0 * p_drained_poisson_ratio))
+        ezz = (p_bulk_density * gacc * (locs[:, 2] - zmax) - p_biot_coefficient * pressure) / constrained_modulus
+
+        disp[:,:, 2] = ezz * (locs[:, 2] - zmin)
         return disp
 
-    def pressure(self, locs):
-        """ Assume hydrostatic pressure.
-        """
+    def zero_scalar(self, locs):
         (npts, dim) = locs.shape
-        pressure = numpy.zeros((1, npts, 1), dtype=numpy.float64)
-        (npts, dim) = locs.shape
-        pressure[0,:,0] = -p_fluid_density * gacc * (locs[:, 1] - ymax)
-        return pressure
+        return numpy.zeros((1, npts, 1), dtype=numpy.float64)
 
     def zero_vector(self, locs):
         (npts, dim) = locs.shape
         return numpy.zeros((1, npts, self.SPACE_DIM), dtype=numpy.float64)
 
-    def zero_scalar(self, locs):
+    def zero_tensor(self, locs):
         (npts, dim) = locs.shape
-        return numpy.zeros((1, npts, 1), dtype=numpy.float64)
+        return numpy.zeros((1, npts, self.TENSOR_SIZE), dtype=numpy.float64)
+
+    def ones_scalar(self, locs):
+        (npts, dim) = locs.shape
+        return numpy.ones((1, npts, 1), dtype=numpy.float64)
+
+    def ones_vector(self, locs):
+        (npts, dim) = locs.shape
+        return numpy.ones((1, npts, self.SPACE_DIM), dtype=numpy.float64)
 
     def solid_density(self, locs):
         """Compute solid_density field at locations.
@@ -185,20 +183,26 @@ class AnalyticalSoln(object):
         isotropic_permeability = p_isotropic_permeability * numpy.ones((1, npts, 1), dtype=numpy.float64)
         return isotropic_permeability
 
+    def pressure(self, locs):
+        """ Assume hydrostatic pressure.
+        """
+        (npts, dim) = locs.shape
+        pressure = numpy.zeros((1, npts, 1), dtype=numpy.float64)
+        (npts, dim) = locs.shape
+        pressure[0,:,0] = -p_fluid_density * gacc * (locs[:, 2] - zmax)
+        return pressure
+
     def strain(self, locs):
         """Compute strain field at locations.
         """
-        # pressure = -p_fluid_density * gacc * (locs[:, 1] - ymax)
-        # syy = p_bulk_density * gacc * (locs[:, 1] - ymax)
-        # eyy = (p_biot_coefficient * pressure + syy) / (p_drained_lambda + 2.0 * p_shear_modulus)
-        # exx = 0
-        # ezz = 0
-        # exy = 0
-
-        eyy = p_bulk_density * gacc * (locs[:, 1] - ymax) / (p_undrained_lambda + 2 * p_mu)
-        exx = 0
-        ezz = 0
-        exy = 0
+        pressure = -p_fluid_density * gacc * (locs[:, 2] - zmax)
+        constrained_modulus = (p_drained_youngs_modulus * (1.0 - p_drained_poisson_ratio) ) / ( (1.0 + p_drained_poisson_ratio) * (1.0 - 2.0 * p_drained_poisson_ratio))
+        exx = 0.0
+        eyy = 0.0
+        ezz = (p_bulk_density * gacc * (locs[:, 2] - zmax) - p_biot_coefficient * pressure) / constrained_modulus
+        exy = 0.0
+        eyz = 0.0
+        exz = 0.0
 
         (npts, dim) = locs.shape
         strain = numpy.zeros((1, npts, self.TENSOR_SIZE), dtype=numpy.float64)
@@ -206,26 +210,21 @@ class AnalyticalSoln(object):
         strain[:,:, 1] = eyy
         strain[:,:, 2] = ezz
         strain[:,:, 3] = exy
+        strain[:,:, 4] = eyz
+        strain[:,:, 5] = exz
         return strain
 
     def stress(self, locs):
         """Compute stress field at locations.
         """
-        pressure = -p_fluid_density * gacc * (locs[:, 1] - ymax)
+        pressure = -p_fluid_density * gacc * (locs[:, 2] - zmax)
 
-        # syy = p_bulk_density * gacc * (locs[:, 1] - ymax)
-        # eyy = (p_biot_coefficient * pressure + syy) / (p_drained_lambda + 2.0 * p_shear_modulus)
-        # sxx = p_drained_lambda * eyy - p_biot_coefficient * pressure
-        # # szz = p_drained_poisson_ratio * (sxx + syy + 2.0 * p_biot_coefficient * pressure) - p_biot_coefficient * pressure
-        # szz = p_drained_poisson_ratio * (sxx + syy) - p_biot_coefficient * (1.0 - 2.0 * p_drained_poisson_ratio) * pressure
-        # sxy = 0.0
-
-        eyy = p_bulk_density * gacc * (locs[:, 1] - ymax) / (p_undrained_lambda + 2 * p_mu)
-
-        syy = p_bulk_density * gacc * (locs[:, 1] - ymax)
-        sxx = (p_undrained_lambda + 2.0 * p_mu) * eyy
+        szz = p_bulk_density * gacc * (locs[:, 2] - zmax)
+        sxx = p_biot_coefficient * pressure + (p_drained_poisson_ratio / (1.0 - p_drained_poisson_ratio)) * (szz - p_biot_coefficient * pressure)
+        syy = p_biot_coefficient * pressure + (p_drained_poisson_ratio / (1.0 - p_drained_poisson_ratio)) * (szz - p_biot_coefficient * pressure)
         sxy = 0.0
-        szz = p_undrained_lambda / (2 * p_undrained_lambda + 2 * p_mu) * (sxx + syy)
+        syz = 0.0
+        sxz = 0.0
 
         (npts, dim) = locs.shape
         stress = numpy.zeros((1, npts, self.TENSOR_SIZE), dtype=numpy.float64)
@@ -233,6 +232,8 @@ class AnalyticalSoln(object):
         stress[0,:, 1] = syy
         stress[0,:, 2] = szz
         stress[0,:, 3] = sxy
+        stress[0,:, 4] = syz
+        stress[0,:, 5] = sxz
         return stress
 
     def gacc(self, locs):
@@ -240,7 +241,7 @@ class AnalyticalSoln(object):
         """
         (npts, dim) = locs.shape
         gravacc = numpy.zeros((1, npts, self.SPACE_DIM), dtype=numpy.float64)
-        gravacc[0,:, 1] = -gacc
+        gravacc[0,:, 2] = -gacc
         return gravacc
 
 
