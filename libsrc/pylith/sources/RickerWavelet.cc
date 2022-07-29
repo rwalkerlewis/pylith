@@ -32,8 +32,7 @@
 // ---------------------------------------------------------------------------------------------------------------------
 // Default constructor.
 pylith::sources::RickerWavelet::RickerWavelet(void) :
-    _auxiliaryFactory(new pylith::sources::AuxiliaryFactorySourceTime)
-     {
+    _auxiliaryFactory(new pylith::sources::AuxiliaryFactorySourceTime) {
     pylith::utils::PyreComponent::setName("rickerwavelet");
 } // constructor
 
@@ -49,14 +48,15 @@ pylith::sources::RickerWavelet::~RickerWavelet(void) {
 // Deallocate PETSc and local data structures.
 void
 pylith::sources::RickerWavelet::deallocate(void) {
-    SourceTimeFunctionPointForce::deallocate();
+    SourceTimeFunctionMomentTensorForce::deallocate();
 
     delete _auxiliaryFactory;_auxiliaryFactory = NULL;
 } // deallocate
 
+
 // ---------------------------------------------------------------------------------------------------------------------
 // Get auxiliary factory associated with physics.
-pylith::sources::AuxiliaryFactoryPointForce*
+pylith::sources::AuxiliaryFactoryMomentTensorForce*
 pylith::sources::RickerWavelet::getAuxiliaryFactory(void) {
     return _auxiliaryFactory;
 } // getAuxiliaryFactory
@@ -73,7 +73,7 @@ pylith::sources::RickerWavelet::addAuxiliarySubfields(void) {
     // functions (kernels).
 
     _auxiliaryFactory->addCenterFrequency(); // numA - 1
-    
+
     PYLITH_METHOD_END;
 } // addAuxiliarySubfields
 
@@ -93,8 +93,6 @@ pylith::sources::RickerWavelet::getKernelg1v_explicit(const spatialdata::geocoor
 
     PYLITH_METHOD_RETURN(g1v);
 } // getKernelResidualStress
-
-
 
 
 // End of file

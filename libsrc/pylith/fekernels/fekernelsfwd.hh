@@ -84,6 +84,8 @@ namespace pylith {
         class GaussianWaveletPlaneStrain;
         class GaussianWavelet3D;
 
+        class PointForce;
+
         class BoundaryDirections;
     } // fekernels
 } // pylith

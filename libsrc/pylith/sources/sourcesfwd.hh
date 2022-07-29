@@ -32,14 +32,17 @@ namespace pylith {
         // New stuff
         class Source;
 
-        class PointForce;
-        class AuxiliaryFactoryPointForce;
-        class DerivedFactoryPointForce;
+        class MomentTensorForce;
+        class AuxiliaryFactoryMomentTensorForce;
+        class DerivedFactoryMomentTensorForce;
 
-        class SourceTimeFunctionPointForce;
+        class SourceTimeFunctionMomentTensorForce;
         class AuxiliaryFactorySourceTime;
         class RickerWavelet;
         class GaussianWavelet;
+
+        class PointForce;
+        class AuxiliaryFactoryPointForce;
 
         class SquarePulseSource;
         class AuxiliaryFactorySquarePulseSource;

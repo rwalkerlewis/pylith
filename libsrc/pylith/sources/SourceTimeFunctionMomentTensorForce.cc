@@ -18,7 +18,7 @@
 
 #include <portinfo>
 
-#include "pylith/sources/SourceTimeFunctionPointForce.hh" // implementation of object methods
+#include "pylith/sources/SourceTimeFunctionMomentTensorForce.hh" // implementation of object methods
 
 #include "pylith/feassemble/Integrator.hh" // USES NEW_JACOBIAN_NEVER
 
@@ -31,14 +31,13 @@
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Default constructor.
-pylith::sources::SourceTimeFunctionPointForce::SourceTimeFunctionPointForce(void) :
-    _JacobianTriggers(pylith::feassemble::Integrator::NEW_JACOBIAN_NEVER)
-{}
+pylith::sources::SourceTimeFunctionMomentTensorForce::SourceTimeFunctionMomentTensorForce(void) :
+    _JacobianTriggers(pylith::feassemble::Integrator::NEW_JACOBIAN_NEVER) {}
 
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Destructor.
-pylith::sources::SourceTimeFunctionPointForce::~SourceTimeFunctionPointForce(void) {
+pylith::sources::SourceTimeFunctionMomentTensorForce::~SourceTimeFunctionMomentTensorForce(void) {
     deallocate();
 } // destructor
 
@@ -46,13 +45,13 @@ pylith::sources::SourceTimeFunctionPointForce::~SourceTimeFunctionPointForce(voi
 // ---------------------------------------------------------------------------------------------------------------------
 // Deallocate PETSc and local data structures.
 void
-pylith::sources::SourceTimeFunctionPointForce::deallocate(void) {}
+pylith::sources::SourceTimeFunctionMomentTensorForce::deallocate(void) {}
 
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Get triggers for needing to compute the elastic constants for the RHS Jacobian.
 int
-pylith::sources::SourceTimeFunctionPointForce::getJacobianTriggers(void) const {
+pylith::sources::SourceTimeFunctionMomentTensorForce::getJacobianTriggers(void) const {
     return _JacobianTriggers;
 } // getJacobianTriggers
 
@@ -60,8 +59,8 @@ pylith::sources::SourceTimeFunctionPointForce::getJacobianTriggers(void) const {
 // ---------------------------------------------------------------------------------------------------------------------
 // Update kernel constants.
 void
-pylith::sources::SourceTimeFunctionPointForce::updateKernelConstants(pylith::real_array* kernelConstants,
-                                                             const PylithReal dt) const {
+pylith::sources::SourceTimeFunctionMomentTensorForce::updateKernelConstants(pylith::real_array* kernelConstants,
+                                                                            const PylithReal dt) const {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("updateKernelConstants(kernelConstants"<<kernelConstants<<", dt="<<dt<<") empty method");
 
@@ -74,8 +73,8 @@ pylith::sources::SourceTimeFunctionPointForce::updateKernelConstants(pylith::rea
 // ---------------------------------------------------------------------------------------------------------------------
 // Add kernels for updating state variables.
 void
-pylith::sources::SourceTimeFunctionPointForce::addKernelsUpdateStateVars(std::vector<pylith::feassemble::IntegratorDomain::ProjectKernels>* kernels,
-                                                                 const spatialdata::geocoords::CoordSys* coordsys) const {
+pylith::sources::SourceTimeFunctionMomentTensorForce::addKernelsUpdateStateVars(std::vector<pylith::feassemble::IntegratorDomain::ProjectKernels>* kernels,
+                                                                                const spatialdata::geocoords::CoordSys* coordsys) const {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("addKernelsUpdateStateVars(kernels="<<kernels<<", coordsys="<<typeid(coordsys).name()<<") empty method");
 

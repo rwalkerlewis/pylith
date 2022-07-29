@@ -41,7 +41,8 @@ subpkginclude_HEADERS = \
 	WellboreSource.hh \
 	SquarePulseSource.hh \
 	RickerWavelet.hh \
-	GaussianWavelet.hh	
+	GaussianWavelet.hh \
+	PointForce.hh
 
 dist_noinst_HEADERS =
 

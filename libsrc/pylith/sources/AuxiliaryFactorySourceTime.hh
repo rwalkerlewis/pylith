@@ -25,9 +25,9 @@
 #define pylith_sources_auxiliaryfactorysourcetime_hh
 
 #include "sourcesfwd.hh" // forward declarations
-#include "pylith/sources/AuxiliaryFactoryPointForce.hh" // ISA AuxiliaryFactoryPointForce
+#include "pylith/sources/AuxiliaryFactoryMomentTensorForce.hh" // ISA AuxiliaryFactoryMomentTensorForce
 
-class pylith::sources::AuxiliaryFactorySourceTime : public pylith::sources::AuxiliaryFactoryPointForce {
+class pylith::sources::AuxiliaryFactorySourceTime : public pylith::sources::AuxiliaryFactoryMomentTensorForce {
     friend class TestAuxiliaryFactorySourceTime; // unit testing
 
     // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////////////

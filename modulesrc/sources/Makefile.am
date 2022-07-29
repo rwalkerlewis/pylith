@@ -29,6 +29,12 @@ swig_sources = \
 	../problems/Physics.i \
 	Source.i \
 	WellboreSource.i \
+	SquarePulseSource.i \
+	PointForce.i \
+	MomentTensorForce.i \
+	SourceTimeFunctionMomentTensorForce.i \
+	RickerWavelet.i \
+	GaussianWavelet.i \
 	../utils/PyreComponent.i
 
 swigincludedir = $(pkgdatadir)/swig/$(subpackage)

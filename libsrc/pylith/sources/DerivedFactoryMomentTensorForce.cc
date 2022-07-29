@@ -18,7 +18,7 @@
 
 #include <portinfo>
 
-#include "DerivedFactoryPointForce.hh" // implementation of object methods
+#include "DerivedFactoryMomentTensorForce.hh" // implementation of object methods
 
 #include "pylith/topology/Field.hh" // USES Field
 
@@ -31,20 +31,20 @@
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Default constructor.
-pylith::sources::DerivedFactoryPointForce::DerivedFactoryPointForce(void) {
-    GenericComponent::setName("derivedfactorypointforce");
+pylith::sources::DerivedFactoryMomentTensorForce::DerivedFactoryMomentTensorForce(void) {
+    GenericComponent::setName("derivedfactorymomenttensorforce");
 } // constructor
 
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Destructor.
-pylith::sources::DerivedFactoryPointForce::~DerivedFactoryPointForce(void) {}
+pylith::sources::DerivedFactoryMomentTensorForce::~DerivedFactoryMomentTensorForce(void) {}
 
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Add Cauchy stress subfield to derived field.
 void
-pylith::sources::DerivedFactoryPointForce::addCauchyStress(void) {
+pylith::sources::DerivedFactoryMomentTensorForce::addCauchyStress(void) {
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addCauchyStress(void)");
 
@@ -74,7 +74,7 @@ pylith::sources::DerivedFactoryPointForce::addCauchyStress(void) {
 // ---------------------------------------------------------------------------------------------------------------------
 // Add Cauchy (infinitesimal) strain subfield to derived fields.
 void
-pylith::sources::DerivedFactoryPointForce::addCauchyStrain(void) {
+pylith::sources::DerivedFactoryMomentTensorForce::addCauchyStrain(void) {
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addCauchyStrain(void)");
 
@@ -103,7 +103,7 @@ pylith::sources::DerivedFactoryPointForce::addCauchyStrain(void) {
 // ---------------------------------------------------------------------------------------------------------------------
 // Add subfields using discretizations provided.
 void
-pylith::sources::DerivedFactoryPointForce::addSubfields(void) {
+pylith::sources::DerivedFactoryMomentTensorForce::addSubfields(void) {
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addSubfields(void)");
 

@@ -16,13 +16,13 @@
 // ----------------------------------------------------------------------
 //
 
-/** @file libsrc/sources/SourceTimeFunctionPointForce.hh
+/** @file libsrc/sources/SourceTimeFunctionMomentTensorForce.hh
  *
- * @brief C++ abstract base class for bulk rheologies associated with the pointforce equation.
+ * @brief C++ abstract base class for bulk rheologies associated with the momenttensorforce equation.
  */
 
-#if !defined(pylith_sources_sourcetimefunctionpointforce_hh)
-#define pylith_sources_sourcetimefunctionpointforce_hh
+#if !defined(pylith_sources_sourcetimefunctionmomenttensorforce_hh)
+#define pylith_sources_sourcetimefunctionmomenttensorforce_hh
 
 #include "sourcesfwd.hh" // forward declarations
 #include "pylith/utils/PyreComponent.hh" // ISA PyreComponent
@@ -35,17 +35,17 @@
 
 #include "petscds.h" // USES PetscPointFunc, PetscPointJac
 
-class pylith::sources::SourceTimeFunctionPointForce : public pylith::utils::PyreComponent {
+class pylith::sources::SourceTimeFunctionMomentTensorForce : public pylith::utils::PyreComponent {
     friend class TestRickerFunction; // unit testing
 
     // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
 
     /// Default constructor.
-    SourceTimeFunctionPointForce(void);
+    SourceTimeFunctionMomentTensorForce(void);
 
     /// Destructor.
-    virtual ~SourceTimeFunctionPointForce(void);
+    virtual ~SourceTimeFunctionMomentTensorForce(void);
 
     /// Deallocate PETSc and local data structures.
     void deallocate(void);
@@ -55,7 +55,7 @@ public:
      * @return Auxiliary factory for physics object.
      */
     virtual
-    pylith::sources::AuxiliaryFactoryPointForce* getAuxiliaryFactory(void) = 0;
+    pylith::sources::AuxiliaryFactoryMomentTensorForce* getAuxiliaryFactory(void) = 0;
 
     /// Add sourcetimefunctionfunction subfields to auxiliary field.
     virtual
@@ -101,11 +101,12 @@ public:
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
 
-    SourceTimeFunctionPointForce(const SourceTimeFunctionPointForce&); ///< Not implemented.
-    const SourceTimeFunctionPointForce& operator=(const SourceTimeFunctionPointForce&); /// Not implemented.
+    SourceTimeFunctionMomentTensorForce(const SourceTimeFunctionMomentTensorForce&); ///< Not implemented.
+    const SourceTimeFunctionMomentTensorForce& operator=(const SourceTimeFunctionMomentTensorForce&); /// Not
+                                                                                                      /// implemented.
 
-}; // class SourceTimeFunctionPointForce
+}; // class SourceTimeFunctionMomentTensorForce
 
-#endif // pylith_sources_sourcetimefunctionpointforce_hh
+#endif // pylith_sources_sourcetimefunctionmomenttensorforce_hh
 
 // End of file
