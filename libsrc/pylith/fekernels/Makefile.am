@@ -39,7 +39,9 @@ subpkginclude_HEADERS = \
 	IsotropicLinearPoroelasticity.hh \
 	Poroelasticity.hh \
 	WellboreSource.hh \
-	SquarePulseSource.hh
+	SquarePulseSource.hh \
+	RickerWavelet.hh \
+	GaussianWavelet.hh	
 
 dist_noinst_HEADERS =
 

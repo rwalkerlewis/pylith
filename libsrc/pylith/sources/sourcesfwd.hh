@@ -27,12 +27,19 @@
 #if !defined(pylith_sources_sourcesfwd_hh)
 #define pylith_sources_sourcesfwd_hh
 
-namespace pylith
-{
-    namespace sources
-    {
+namespace pylith {
+    namespace sources {
         // New stuff
         class Source;
+
+        class PointForce;
+        class AuxiliaryFactoryPointForce;
+        class DerivedFactoryPointForce;
+
+        class SourceTimeFunctionPointForce;
+        class AuxiliaryFactorySourceTime;
+        class RickerWavelet;
+        class GaussianWavelet;
 
         class SquarePulseSource;
         class AuxiliaryFactorySquarePulseSource;

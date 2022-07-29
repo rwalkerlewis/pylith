@@ -27,10 +27,8 @@
 #if !defined(pylith_fekernels_fekernelsfwd_hh)
 #define pylith_fekernels_fekernelsfwd_hh
 
-namespace pylith
-{
-    namespace fekernels
-    {
+namespace pylith {
+    namespace fekernels {
         class Solution;
         class DispVel;
 
@@ -77,6 +75,14 @@ namespace pylith
 
         class SquarePulseSource;
         class WellboreSource;
+
+        class RickerWavelet;
+        class RickerWaveletPlaneStrain;
+        class RickerWavelet3D;
+
+        class GaussianWavelet;
+        class GaussianWaveletPlaneStrain;
+        class GaussianWavelet3D;
 
         class BoundaryDirections;
     } // fekernels

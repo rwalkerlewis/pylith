@@ -21,10 +21,16 @@ include $(top_srcdir)/subpackage.am
 
 subpkginclude_HEADERS = \
 	Source.hh \
+	PointForce.hh \
+	WellboreSource.hh \
 	SquarePulseSource.hh \
 	AuxiliaryFactorySquarePulseSource.hh \
-	WellboreSource.hh \
+	AuxiliaryFactoryPointForce.hh \
 	AuxiliaryFactoryWellboreSource.hh \
+	AuxiliaryFactorySourceTime.hh \
+	DerivedFactoryPointForce.hh \
+	RickerWavelet.hh \
+	GaussianWavelet.hh \
 	sourcesfwd.hh
 
 
