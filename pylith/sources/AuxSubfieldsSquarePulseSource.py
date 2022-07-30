@@ -13,7 +13,7 @@
 #
 # ----------------------------------------------------------------------
 #
-# @file pylith/sources/AuxSubieldsSquarePulseSource.py
+# @file pylith/sources/AuxSubfieldsSquarePulseSource.py
 #
 # @brief Python container for squarepulsesource equation subfields.
 

@@ -13,7 +13,7 @@
 #
 # ----------------------------------------------------------------------
 #
-# @file pylith/sources/AuxSubieldsWellboreSource.py
+# @file pylith/sources/AuxSubfieldsWellboreSource.py
 #
 # @brief Python container for wellboresource equation subfields.
 

@@ -21,7 +21,16 @@
 __all__ = [
     "Source",
     "AuxSubfieldsWellboreSource",
-    "WellboreSource"
+    "WellboreSource",
+    "SquarePulseSource",
+    "PointForce",
+    "AuxSubfieldsPointForce",
+    "MomentTensorForce",
+    "AuxSubfieldsMomentTensorForce",
+    "SourceTimeFunctionMomentTensorForce",
+    "AuxSubfieldsSourceTime",
+    "RickerWavelet",
+    "GaussianWavelet"
 ]
 
 

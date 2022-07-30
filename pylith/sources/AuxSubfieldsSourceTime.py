@@ -13,15 +13,15 @@
 #
 # ----------------------------------------------------------------------
 #
-# @file pylith/sources/AuxSubfieldsMomentTensorForce.py
+# @file pylith/sources/AuxSubfieldsSourceTime.py
 #
-# @brief Python container for momenttensorforce equation subfields.
+# @brief Python container for SourceTime equation subfields.
 
 from pylith.utils.PetscComponent import PetscComponent
 
 
-class AuxSubfieldsMomentTensorForce(PetscComponent):
-    """Python container for momenttensorforce equation subfields.
+class AuxSubfieldsSourceTime(PetscComponent):
+    """Python container for SourceTime equation subfields.
 
     FACTORY: auxiliary_subfields
     """
@@ -30,15 +30,12 @@ class AuxSubfieldsMomentTensorForce(PetscComponent):
 
     from pylith.topology.Subfield import Subfield
 
-    momentTensor = pythia.pyre.inventory.facility("moment_tensor", family="auxiliary_subfield", factory=Subfield)
-    momentTensor.meta['tip'] = "Moment tensor subfield."
-
-    TimeDelay = pythia.pyre.inventory.facility("time_delay", family="auxiliary_subfield", factory=Subfield)
-    TimeDelay.meta['tip'] = "time delay subfield."
+    CenterFrequency = pythia.pyre.inventory.facility("center_frequency", family="auxiliary_subfield", factory=Subfield)
+    CenterFrequency.meta['tip'] = "center frequency subfield."
 
     # PUBLIC METHODS /////////////////////////////////////////////////////
 
-    def __init__(self, name="auxsubfieldsmomenttensorforce"):
+    def __init__(self, name="auxsubfieldssourcetime"):
         """Constructor.
         """
         PetscComponent.__init__(self, name, facility="auxiliary_subfields")
@@ -54,9 +51,9 @@ class AuxSubfieldsMomentTensorForce(PetscComponent):
 # FACTORIES ////////////////////////////////////////////////////////////
 
 def auxiliary_subfields():
-    """Factory associated with AuxSubfieldsMomentTensorForce.
+    """Factory associated with AuxSubfieldsSourceTime.
     """
-    return AuxSubfieldsMomentTensorForce()
+    return AuxSubfieldsSourceTime()
 
 
 # End of file

@@ -13,7 +13,7 @@
 #
 # ----------------------------------------------------------------------
 #
-# @file pylith/sources/AuxSubieldsPointForce.py
+# @file pylith/sources/AuxSubfieldsPointForce.py
 #
 # @brief Python container for pointforce equation subfields.
 
