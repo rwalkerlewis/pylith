@@ -44,14 +44,6 @@ def faultFactory(name):
     from pylith.faults.FaultCohesiveKin import FaultCohesiveKin
     return facility(name, family="fault", factory=FaultCohesiveKin)
 
-
-def observerFactory(name):
-    """Factory for output items.
-    """
-    from pythia.pyre.inventory import facility
-    from pylith.meshio.OutputSolnDomain import OutputSolnDomain
-    return facility(name, family="observer", factory=OutputSolnDomain)
-
 def sourceFactory(name):
     """Factory for source items.
     """
@@ -59,6 +51,13 @@ def sourceFactory(name):
     from pylith.sources.WellboreSource import WellboreSource
     return facility(name, family="source", factory=WellboreSource)
 
+def observerFactory(name):
+    """Factory for output items.
+    """
+    from pythia.pyre.inventory import facility
+    from pylith.meshio.OutputSolnDomain import OutputSolnDomain
+    return facility(name, family="observer", factory=OutputSolnDomain)
+    
 class Problem(PetscComponent, ModuleProblem):
     """
     Abstract base class for a problem.
@@ -173,6 +172,11 @@ class Problem(PetscComponent, ModuleProblem):
         for interface in self.interfaces.components():
             interface.preinitialize(self)
         ModuleProblem.setInterfaces(self, self.interfaces.components())
+
+        # Preinitialize Sources
+        for source in self.sources.components():
+            source.preinitialize(self)
+        ModuleProblem.setSources(self, self.sources.components())
 
         # Preinitialize observers.
         for observer in self.observers.components():
