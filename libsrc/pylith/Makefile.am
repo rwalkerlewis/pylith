@@ -47,6 +47,15 @@ libpylith_la_SOURCES = \
 	sources/WellboreSource.cc \
 	sources/SquarePulseSource.cc \
 	sources/AuxiliaryFactorySquarePulseSource.cc \
+	sources/MomentTensorForce.cc \
+	sources/PointForce.cc \
+	sources/AuxiliaryFactoryMomentTensorForce.cc \
+	sources/AuxiliaryFactoryPointForce.cc \
+	sources/GaussianWavelet.cc \
+	sources/RickerWavelet.cc \
+	sources/SourceTimeFunctionMomentTensorForce.cc \
+	sources/DerivedFactoryMomentTensorForce.cc \
+	sources/AuxiliaryFactorySourceTime.cc \
 	faults/FaultCohesive.cc \
 	faults/FaultCohesiveKin.cc \
 	faults/FaultCohesiveImpulses.cc \
@@ -90,6 +99,11 @@ libpylith_la_SOURCES = \
 	fekernels/NeumannTimeDependent.cc \
 	fekernels/AbsorbingDampers.cc \
 	fekernels/FaultCohesiveKin.cc \
+	fekernels/WellboreSource.cc \
+	fekernels/SquarePulseSource.cc \
+	fekernels/RickerWavelet.cc \
+	fekernels/GaussianWavelet.cc \
+	fekernels/PointForce.cc \
 	materials/Material.cc \
 	materials/Elasticity.cc \
 	materials/RheologyElasticity.cc \

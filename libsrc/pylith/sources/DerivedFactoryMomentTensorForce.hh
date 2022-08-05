@@ -16,28 +16,28 @@
 // ----------------------------------------------------------------------
 //
 
-/** @file libsrc/sources/DerivedFactoryPointForce.hh
+/** @file libsrc/sources/DerivedFactoryMomentTensorForce.hh
  *
  * @brief C++ helper class for setting up derived subfields for elastic sources.
  */
 
-#if !defined(pylith_sources_derivedfactorypointforce_hh)
-#define pylith_sources_derivedfactorypointforce_hh
+#if !defined(pylith_sources_derivedfactorymomenttensorforce_hh)
+#define pylith_sources_derivedfactorymomenttensorforce_hh
 
 #include "sourcesfwd.hh" // forward declarations
 #include "pylith/topology/FieldFactory.hh" // ISA AuxiliaryFactory
 
-class pylith::sources::DerivedFactoryPointForce : public pylith::topology::FieldFactory {
-    friend class TestDerivedFactoryPointForce; // unit testing
+class pylith::sources::DerivedFactoryMomentTensorForce : public pylith::topology::FieldFactory {
+    friend class TestDerivedFactoryMomentTensorForce; // unit testing
 
     // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
 
     /// Default constructor.
-    DerivedFactoryPointForce(void);
+    DerivedFactoryMomentTensorForce(void);
 
     /// Destructor.
-    virtual ~DerivedFactoryPointForce(void);
+    virtual ~DerivedFactoryMomentTensorForce(void);
 
     /// Add Cauchy stress subfield to derived field.
     void addCauchyStress(void);
@@ -51,11 +51,11 @@ public:
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
 
-    DerivedFactoryPointForce(const DerivedFactoryPointForce &); ///< Not implemented.
-    const DerivedFactoryPointForce& operator=(const DerivedFactoryPointForce&); ///< Not implemented
+    DerivedFactoryMomentTensorForce(const DerivedFactoryMomentTensorForce &); ///< Not implemented.
+    const DerivedFactoryMomentTensorForce& operator=(const DerivedFactoryMomentTensorForce&); ///< Not implemented
 
-}; // class DerivedFactoryPointForce
+}; // class DerivedFactoryMomentTensorForce
 
-#endif // pylith_materials_derivedfactorypointforce_hh
+#endif // pylith_materials_derivedfactorymomenttensorforce_hh
 
 // End of file

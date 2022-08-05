@@ -54,9 +54,7 @@ public:
      * @param[out] f0 [dim].
      */
 
-    /** f0 function for pressure equation
-     *
-     */
+    /** f0 function for pressure equation  **/
     static
     void f0p(const PylithInt dim,
              const PylithInt numS,
@@ -77,8 +75,7 @@ public:
              const PylithScalar constants[],
              PylithScalar f0[]);
 
-    /** Jf0 function for pressure
-     */
+    /** Jf0 function for pressure **/
     static
     void Jf0pp(const PylithInt dim,
                const PylithInt numS,

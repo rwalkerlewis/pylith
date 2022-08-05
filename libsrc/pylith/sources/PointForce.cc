@@ -223,7 +223,7 @@ pylith::sources::PointForce::createAuxiliaryField(const pylith::topology::Field 
     // of magnitude of 1.
 
     // add in aux specific to square pulse
-    _auxiliaryFactory->addVolumeFlowRate(); // 0
+    _auxiliaryFactory->addPointForce(); // 0
 
     assert(_auxiliaryFactory);
     _auxiliaryFactory->setValuesFromDB();
