@@ -55,8 +55,7 @@ pylith::sources::AuxiliaryFactoryPointForce::addPointForce(void) {
         "point_force_y",
         "point_force_z",
     };
-    const PylithReal lengthScale = _normalizer->getLengthScale();
-    const PylithReal timeScale = _normalizer->getTimeScale();
+    const PylithReal pressureScale = _normalizer->getPressureScale();
 
     pylith::topology::Field::Description description;
     description.label = subfieldName;
@@ -67,7 +66,7 @@ pylith::sources::AuxiliaryFactoryPointForce::addPointForce(void) {
     for (int i = 0; i < _spaceDim; ++i) {
         description.componentNames[i] = componentNames[i];
     } // for
-    description.scale = lengthScale * lengthScale * lengthScale / timeScale;
+    description.scale = pressureScale;
     description.validator = pylith::topology::FieldQuery::validatorPositive;
 
     _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
