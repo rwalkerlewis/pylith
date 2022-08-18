@@ -120,7 +120,7 @@ class AnalyticalSoln(object):
     def __init__(self):
         self.fields = {
             "displacement": self.zero_vector_time,
-            "pressure": self.zero_scalar,
+            "pressure": self.pressure,
             "trace_strain": self.trace_strain,
             "porosity": self.porosity,
             "solid_density": self.solid_density,
@@ -442,9 +442,7 @@ class AnalyticalSoln(object):
         syy = self.sigma_zz(locs)
         sxx = numpy.zeros((ntpts, npts))
         sxy = numpy.zeros((ntpts, npts))
-        # szz = p_undrained_lambda / (2 * p_undrained_lambda + 2 * p_mu) * (sxx + syy)
-        szz = 0.5 * p_drained_lambda / (p_drained_lambda + p_shear_modulus) * (sxx + syy)
-        # szz = p_drained_poisson_ratio * (sxx + syy) - p_biot_coefficient*(1.0 - 2.0*p_drained_poisson_ratio) * pressure
+        szz = p_drained_poisson_ratio * (sxx + syy) - p_biot_coefficient*(1.0 - 2.0*p_drained_poisson_ratio) * pressure
 
         stress[:,:,0] = sxx
         stress[:,:,1] = syy
