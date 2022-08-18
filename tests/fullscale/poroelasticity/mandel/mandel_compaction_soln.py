@@ -372,10 +372,10 @@ class AnalyticalSoln(object):
 
         stress = numpy.zeros((ntpts, npts, self.TENSOR_SIZE), dtype=numpy.float64)
         stress[:, :, 0] = ((2 * p_G * p_poisson_ratio) / (1 - 2 * p_poisson_ratio)) * \
-            trace_strain + 2 * p_G * e_xx - p_alpha * pressure
+            trace_strain + 2 * p_G * e_xx - alpha * pressure
         stress[:, :, 1] = ((2 * p_G * p_poisson_ratio) / (1 - 2 * p_poisson_ratio)) * \
-            trace_strain + 2 * p_G * e_yy - p_alpha * pressure
-        stress[:, :, 2] = ((2 * p_G * p_poisson_ratio) / (1 - 2 * p_poisson_ratio)) * trace_strain - p_alpha * pressure
+            trace_strain + 2 * p_G * e_yy - alpha * pressure
+        stress[:, :, 2] = ((2 * p_G * p_poisson_ratio) / (1 - 2 * p_poisson_ratio)) * trace_strain - alpha * pressure
         stress[:, :, 3] = 2 * p_G * e_xy
         return stress
 

@@ -2518,7 +2518,10 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::cauchyStress(const 
 
     // Construct stress vector
     const PylithScalar lambda = drainedBulkModulus - 2.0 / 3.0 * shearModulus;
-    const PylithScalar stress_zz = 0.5 * lambda / (lambda + shearModulus) * (stressTensor[0 * _dim + 0] + stressTensor[1 * _dim + 1]);
+    const PylithScalar poissonRatio = lambda / (2.0 * (lambda + shearModulus));
+
+    // const PylithScalar stress_zz = 0.5 * lambda / (lambda + shearModulus) * (stressTensor[0 * _dim + 0] + stressTensor[1 * _dim + 1]);
+    const PylithScalar stress_zz = poissonRatio*(stressTensor[0 * _dim + 0] + stressTensor[1 * _dim + 1]) - biotCoefficient * (1.0 - 2.0*poissonRatio) * pressure; // Cheng, 7.106
 
     stressVector[0] = stressTensor[0 * _dim + 0]; // stress_xx
     stressVector[1] = stressTensor[1 * _dim + 1]; // stress_yy
@@ -2612,8 +2615,14 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::cauchyStress_refsta
     // Generate stress vector
 
     const PylithScalar lambda = drainedBulkModulus - 2.0 / 3.0 * shearModulus;
-    const PylithScalar stress_zz = refStressVector[2] + 0.5 * lambda / (lambda + shearModulus) *
-                                   (stressTensor[0 * _dim + 0] - refStressVector[0] + stressTensor[1 * _dim + 1] - refStressVector[1]);
+    const PylithScalar poissonRatio = lambda / (2.0 * (lambda + shearModulus));
+    // const PylithScalar stress_zz = refStressVector[2] + 0.5 * lambda / (lambda + shearModulus) *
+                                //    (stressTensor[0 * _dim + 0] - refStressVector[0] + stressTensor[1 * _dim + 1] - refStressVector[1]);
+
+
+    // const PylithScalar stress_zz = 0.5 * lambda / (lambda + shearModulus) * (stressTensor[0 * _dim + 0] + stressTensor[1 * _dim + 1]);
+    const PylithScalar stress_zz = poissonRatio*(stressTensor[0 * _dim + 0] + stressTensor[1 * _dim + 1]) - biotCoefficient * (1.0 - 2.0*poissonRatio) * pressure; // Cheng, 7.106
+
 
     stressVector[0] = stressTensor[0 * _dim + 0]; // stress_xx
     stressVector[1] = stressTensor[1 * _dim + 1]; // stress_yy

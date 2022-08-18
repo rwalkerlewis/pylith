@@ -54,7 +54,8 @@ class GenerateDB(object):
         strain = soln.strain(xy)
         ones_scalar = soln.ones_scalar(xy)
         zero_scalar = soln.zero_scalar(xy)
-        pressure = soln.pressure(xy)
+        # pressure = soln.zero_scalar(xy)
+        pressure = soln.initial_pressure(xy)
 
         # Aux Fields
         from spatialdata.geocoords.CSCart import CSCart
@@ -164,7 +165,7 @@ class GenerateDB(object):
         }
 
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
-        io_mat = createWriter("mandel_refstate_matfields.spatialdb")
+        io_mat = createWriter("mandel_refstate_ypos_neu.spatialdb")
         io_mat.write(data_ypos)
 
         data_ic = {

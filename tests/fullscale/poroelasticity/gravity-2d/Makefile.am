@@ -44,7 +44,7 @@ dist_noinst_DATA = \
 	gravity_refstate.cfg \
 	gravity_refstate_tri.cfg \
 	gravity_refstate_quad.cfg \
-	output_points.txt
+	output_points.txt 
 
 noinst_TMP = \
 	gravity_refstate_matfields.spatialdb
@@ -52,7 +52,7 @@ noinst_TMP = \
 
 
 # 'export' the input files by performing a mock install
-export_datadir = $(abs_top_builddir)/tests/fullscale/poroelasticity/nofaults-2d
+export_datadir = $(abs_top_builddir)/tests/fullscale/poroelasticity/gravity-2d
 export-data: $(dist_noinst_PYTHON) $(dist_noinst_DATA)
 	for f in $(dist_noinst_PYTHON) $(dist_noinst_DATA); do $(install_sh_DATA) $(srcdir)/$$f $(export_datadir); done
 

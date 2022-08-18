@@ -120,7 +120,7 @@ class AnalyticalSoln(object):
     def __init__(self):
         self.fields = {
             "displacement": self.zero_vector_time,
-            "pressure": self.pressure,
+            "pressure": self.zero_scalar,
             "trace_strain": self.trace_strain,
             "porosity": self.porosity,
             "solid_density": self.solid_density,
@@ -405,26 +405,27 @@ class AnalyticalSoln(object):
         return zeroArray
 
     def strain(self, locs):
-        """Compute strain field at locations.
+        """Compute strain field at locations. 
+           Uses reference stress, so strain should be zero.
         """
         (npts, dim) = locs.shape
         ntpts = tsteps.shape[0]
-        pressure = self.pressure(locs)[:,:,0]
-        stress = self.stress(locs)
+        # pressure = self.pressure(locs)[:,:,0]
+        # stress = self.stress(locs)
 
-        sxx = stress[:,:,0]
-        syy = stress[:,:,1]
+        # sxx = stress[:,:,0]
+        # syy = stress[:,:,1]
 
-        exx = (M_yy*sxx - M_xy*syy + p_biot_coefficient*M_yy*pressure - p_biot_coefficient*M_xy*pressure) / (M_xx*M_yy - M_xy**2)
-        eyy = (M_xx*syy - M_xy*sxx + p_biot_coefficient*M_xx*pressure - p_biot_coefficient*M_xy*pressure) / (M_xx*M_yy - M_xy**2)        
-        ezz = 0.0
-        exy = 0.0
+        # exx = (M_yy*sxx - M_xy*syy + p_biot_coefficient*M_yy*pressure - p_biot_coefficient*M_xy*pressure) / (M_xx*M_yy - M_xy**2)
+        # eyy = (M_xx*syy - M_xy*sxx + p_biot_coefficient*M_xx*pressure - p_biot_coefficient*M_xy*pressure) / (M_xx*M_yy - M_xy**2)        
+        # ezz = 0.0
+        # exy = 0.0
 
         strain = numpy.zeros((ntpts, npts, self.TENSOR_SIZE), dtype=numpy.float64)
-        strain[:, :, 0] = exx
-        strain[:, :, 1] = eyy
-        strain[:, :, 2] = ezz
-        strain[:, :, 3] = exy
+        # strain[:, :, 0] = exx
+        # strain[:, :, 1] = eyy
+        # strain[:, :, 2] = ezz
+        # strain[:, :, 3] = exy
         return strain
 
     def stress(self, locs):

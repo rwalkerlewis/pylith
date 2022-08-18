@@ -14,7 +14,7 @@
 #
 # ----------------------------------------------------------------------
 #
-# @file tests/fullscale/linearelasticity/nofaults-2d/gravity_gendb.py
+# @file tests/fullscale/linearelasticity/gravity-2d/gravity_gendb.py
 #
 # @brief Python script to generate spatial database with auxiliary
 # fields for test with gravitational body forces and initial
