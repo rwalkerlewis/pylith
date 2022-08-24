@@ -2569,28 +2569,52 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::cauchyStress_refsta
     refStrainTensor[3] = refStrainVector[1];
     // Create and populate stress tensor
 
+    // PylithScalar stressTensor[4] = {0.0, 0.0, 0.0, 0.0};
+
+    // for (PylithInt c = 0; c < _dim; ++c) {
+    //     for (PylithInt d = 0; d < _dim; ++d) {
+    //         stressTensor[c * _dim + d] += refStressTensor[c * _dim + d] + 2.0 * shearModulus * ((displacement_x[c * _dim + d] + displacement_x[d * _dim + c]) / 2.0 - refStrainTensor[c * _dim + d]);
+    //     } // for      
+    //     stressTensor[c * _dim + c] += (drainedBulkModulus - (2.0 * shearModulus) / 3.0) * (trace_strain - ref_trace_strain);
+    //     // Biot Effective Stress Pressure Correction
+    //     stressTensor[c * _dim + c] -= biotCoefficient * pressure;
+    // } // for
+
+    // // Generate stress vector
+
+    // const PylithScalar lambda = drainedBulkModulus - 2.0 / 3.0 * shearModulus;
+    // const PylithScalar poissonRatio = lambda / (2.0 * (lambda + shearModulus));
+    // const PylithScalar stress_zz = poissonRatio*(stressTensor[0 * _dim + 0] + stressTensor[1 * _dim + 1]) - biotCoefficient * (1.0 - 2.0*poissonRatio) * pressure; // Cheng, 7.106
+
+
+    // stressVector[0] = stressTensor[0 * _dim + 0]; // stress_xx
+    // stressVector[1] = stressTensor[1 * _dim + 1]; // stress_yy
+    // stressVector[2] = stress_zz;
+    // stressVector[3] = stressTensor[0 * _dim + 1]; // stress_xy
+
+    // Create and populate stress tensor
+
     PylithScalar stressTensor[4] = {0.0, 0.0, 0.0, 0.0};
 
-    for (PylithInt c = 0; c < _dim; ++c) {
-        for (PylithInt d = 0; d < _dim; ++d) {
-            stressTensor[c * _dim + d] += refStressTensor[c * _dim + d] + 2.0 * shearModulus * ((displacement_x[c * _dim + d] + displacement_x[d * _dim + c]) / 2.0 - refStrainTensor[c * _dim + d]);
-        } // for      
-        stressTensor[c * _dim + c] += (drainedBulkModulus - (2.0 * shearModulus) / 3.0) * (trace_strain - ref_trace_strain);
-        // Biot Effective Stress Pressure Correction
-        stressTensor[c * _dim + c] -= biotCoefficient * pressure;
+    for (PylithInt i = 0; i < _dim; ++i) {
+        for (PylithInt j = 0; j < _dim; ++j) {
+            stressTensor[i * _dim + j] += shearModulus * (displacement_x[i * _dim + j] + displacement_x[j * _dim + i]);
+        } // for
+        stressTensor[i * _dim + i] += (drainedBulkModulus - (2.0 * shearModulus) / 3.0) * trace_strain;
+        stressTensor[i * _dim + i] -= biotCoefficient * pressure;
     } // for
 
-    // Generate stress vector
-
+    // Construct stress vector
     const PylithScalar lambda = drainedBulkModulus - 2.0 / 3.0 * shearModulus;
     const PylithScalar poissonRatio = lambda / (2.0 * (lambda + shearModulus));
     const PylithScalar stress_zz = poissonRatio*(stressTensor[0 * _dim + 0] + stressTensor[1 * _dim + 1]) - biotCoefficient * (1.0 - 2.0*poissonRatio) * pressure; // Cheng, 7.106
-
 
     stressVector[0] = stressTensor[0 * _dim + 0]; // stress_xx
     stressVector[1] = stressTensor[1 * _dim + 1]; // stress_yy
     stressVector[2] = stress_zz;
     stressVector[3] = stressTensor[0 * _dim + 1]; // stress_xy
+
+
 } // cauchyStress_refstate
 
 

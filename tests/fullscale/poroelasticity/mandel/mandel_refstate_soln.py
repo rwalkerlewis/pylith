@@ -130,7 +130,7 @@ class AnalyticalSoln(object):
             "biot_modulus": self.biot_modulus,
             "isotropic_permeability": self.isotropic_permeability,
             "cauchy_stress": self.stress,
-            "cauchy_strain": self.strain,
+            "cauchy_strain": self.zero_tensor,
             "reference_stress": self.input_stress,
             "reference_strain": self.strain,                        
             "initial_amplitude": {
@@ -156,6 +156,10 @@ class AnalyticalSoln(object):
     def zero_vector(self, locs):
         (npts, dim) = locs.shape
         return numpy.zeros((1, npts, self.SPACE_DIM), dtype=numpy.float64)
+
+    def zero_tensor(self, locs):
+        (npts, dim) = locs.shape
+        return numpy.zeros((1, npts, self.TENSOR_SIZE), dtype=numpy.float64)
 
     def zero_vector_time(self, locs):
         (npts, dim) = locs.shape
@@ -443,17 +447,17 @@ class AnalyticalSoln(object):
         ntpts = tsteps.shape[0]
 
         stress = numpy.zeros((ntpts, npts, self.TENSOR_SIZE), dtype=numpy.float64)
-        # pressure = self.pressure(locs)[:,:,0]
+        pressure = self.pressure(locs)[:,:,0]
 
-        # syy = self.input_sigma_zz(locs)
-        # sxx = numpy.zeros((ntpts, npts)) # Cheng 7.262
-        # sxy = numpy.zeros((ntpts, npts)) # Cheng 7.264
-        # szz = p_drained_poisson_ratio * (sxx + syy) - p_biot_coefficient*(1.0 - 2.0*p_drained_poisson_ratio) * pressure # Cheng 7.106        
+        syy = self.input_sigma_zz(locs)
+        sxx = numpy.zeros((ntpts, npts)) # Cheng 7.262
+        sxy = numpy.zeros((ntpts, npts)) # Cheng 7.264
+        szz = p_drained_poisson_ratio * (sxx + syy) - p_biot_coefficient*(1.0 - 2.0*p_drained_poisson_ratio) * pressure # Cheng 7.106        
 
-        # stress[:,:,0] = sxx
-        # stress[:,:,1] = syy
-        # stress[:,:,2] = szz
-        # stress[:,:,3] = sxy
+        stress[:,:,0] = sxx
+        stress[:,:,1] = syy
+        stress[:,:,2] = szz
+        stress[:,:,3] = sxy
 
         return stress
 
