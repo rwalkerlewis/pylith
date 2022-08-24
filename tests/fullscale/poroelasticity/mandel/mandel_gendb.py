@@ -1,5 +1,4 @@
 #!/usr/bin/env nemesis
-#
 # ----------------------------------------------------------------------
 #
 # Brad T. Aagaard, U.S. Geological Survey
@@ -15,18 +14,25 @@
 #
 # ----------------------------------------------------------------------
 #
-# @file tests/fullscale/poroelasticity/mandel/mandel_gendb.py
+# @file tests/fullscale/linearporoelasticity/mandel/mandel_refstate_gendb.py
 #
-# @brief Python script to generate spatial database with displacement
-# boundary conditions for the mandel test.
+# @brief Python script to generate spatial database with auxiliary
+# fields for test with gravitational body forces and initial
+# stress/strain but no displacement.
 
 import numpy
 
 
 class GenerateDB(object):
-    """Python object to generate spatial database with displacement
-    boundary conditions for the axial displacement test.
+    """Python object to generate spatial database with auxiliary fields for
+    test with gravitational body forces and initial stress/strain but no
+    displacement.
     """
+
+    def __init__(self):
+        """Constructor.
+        """
+        return
 
     def run(self):
         """Generate the database.
@@ -41,68 +47,77 @@ class GenerateDB(object):
         xy[:, 1] = y.ravel()
 
         from mandel_soln import AnalyticalSoln
+        from mandel_soln import p_solid_density, p_fluid_density, p_fluid_viscosity, p_porosity, p_shear_modulus, p_drained_bulk_modulus, p_biot_coefficient, p_fluid_bulk_modulus, p_solid_bulk_modulus, p_isotropic_permeability
         soln = AnalyticalSoln()
-        disp = soln.initial_displacement(xy)
-        pres = soln.initial_pressure(xy)
-        trace_strain = soln.initial_trace_strain(xy)
-        sigma_xx = soln.zero_scalar(xy)
-        sigma_zz = soln.initial_traction(xy)
+        stress = soln.stress(xy)
+        strain = soln.strain(xy)
+        ones_scalar = soln.ones_scalar(xy)
+        zero_scalar = soln.zero_scalar(xy)
+        # pressure = soln.zero_scalar(xy)
+        pressure = soln.initial_pressure(xy)
 
+        # Aux Fields
         from spatialdata.geocoords.CSCart import CSCart
         cs = CSCart()
         cs.inventory.spaceDim = 2
         cs._configure()
-        data = {
-            'x': x1,
-            'y': y1,
+        # Y+ Neumann BC
+        data_ypos = {
             'points': xy,
             'coordsys': cs,
             'data_dim': 2,
             'values': [
                 {
-                    'name': "initial_amplitude_x",
-                    'units': "m",
-                    'data': numpy.ravel(sigma_xx)
+                    'name': "initial_amplitude_tangential",
+                    'units': "Pa",
+                    'data': numpy.ravel(zero_scalar),
                 }, {
-                    'name': "initial_amplitude_y",
-                    'units': "m",
-                    'data': numpy.ravel(sigma_zz)
+                    'name': "initial_amplitude_normal",
+                    'units': "Pa",
+                    'data': numpy.ravel(zero_scalar),
                 }
             ]
-         }
+        }
+        from spatialdata.spatialdb.SimpleIOAscii import createWriter
+        io_mat = createWriter("mandel_ypos_neu.spatialdb")
+        io_mat.write(data_ypos)
 
-        from spatialdata.spatialdb.SimpleGridAscii import SimpleGridAscii
-        io = SimpleGridAscii()
-        io.inventory.filename = "mandel_bc.spatialdb"
-        io._configure()
-        io.write(data)
-        data["values"] = [
-            {
-                'name': "displacement_x",
-                'units': "m",
-                'data': numpy.ravel(disp[0, :, 0])
-            }, {
-                'name': "displacement_y",
-                'units': "m",
-                'data': numpy.ravel(disp[0, :, 1])
-            }, {
-                'name': "pressure",
-                'units': "Pa",
-                'data': numpy.ravel(pres[0, :])
-            }, {
-                'name': "trace_strain",
-                'units': "none",
-                'data': numpy.ravel(trace_strain[0, :])
-            }]
-        io.inventory.filename = "mandel_ic.spatialdb"
-        io._configure()
-        io.write(data)
+        # Initial conditions
+        data_ic = {
+            'points': xy,
+            'coordsys': cs,
+            'data_dim': 2,
+            'values': [
+                {
+                    'name': "displacement_x",
+                    'units': "m",
+                    'data': numpy.ravel(zero_scalar),
+                }, {
+                    'name': "displacement_y",
+                    'units': "m",
+                    'data': numpy.ravel(zero_scalar),
+                }, {
+                    'name': "pressure",
+                    'units': "Pa",
+                    'data': numpy.ravel(pressure),
+                }, {
+                    'name': "trace_strain",
+                    'units': "none",
+                    'data': numpy.ravel(zero_scalar),
+                }
+            ]
+        }
+        from spatialdata.spatialdb.SimpleIOAscii import createWriter
+        io_ic = createWriter("mandel_ic.spatialdb")
+        io_ic.write(data_ic) 
+
         return
+
 
 
 # ======================================================================
 if __name__ == "__main__":
-    GenerateDB().run()
+    app = GenerateDB().run()
 
 
 # End of file

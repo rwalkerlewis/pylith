@@ -69,18 +69,16 @@ xmax = 10.0  # m
 ymin = 0.0  # m
 ymax = 1.0  # m
 
-
 # Height of column, m
 a = (xmax - xmin)
 b = (ymax - ymin)
-
 
 vertical_stress = 1.0  # Pa
 F = vertical_stress*a
 
 # p_biot_modulus = 1.0 / (p_porosity / p_fluid_bulk_modulus + (p_biot_coefficient - p_porosity) / p_solid_bulk_modulus)  # Pa
 # p_undrained_bulk_modulus = p_drained_bulk_modulus + p_biot_coefficient * p_biot_coefficient * p_biot_modulus  # Pa,      Cheng (B.5)
-# # p_drained_bulk_modulus = p_undrained_bulk_modulus - p_biot_coefficient*p_biot_coefficient*p_biot_modulus # Pa,      Cheng (B.5)
+# p_drained_bulk_modulus = p_undrained_bulk_modulus - p_biot_coefficient*p_biot_coefficient*p_biot_modulus # Pa,      Cheng (B.5)
 # p_drained_poisson_ratio = (3.0 * p_drained_bulk_modulus - 2.0 * p_shear_modulus) / (2.0 * (3.0 * p_drained_bulk_modulus + p_shear_modulus))  # -,       Cheng (B.8)
 # p_undrained_poisson_ratio = (3.0 * p_undrained_bulk_modulus - 2.0 * p_shear_modulus) / (2.0 * (3.0 * p_undrained_bulk_modulus + p_shear_modulus))  # -,       Cheng (B.9)
 eta = (3.0 * p_biot_coefficient * p_shear_modulus) / (3.0 * p_drained_bulk_modulus + 4.0 * p_shear_modulus)  # -,       Cheng (B.11)
@@ -88,15 +86,15 @@ S = (3.0 * p_undrained_bulk_modulus + 4.0 * p_shear_modulus) / (p_biot_modulus *
 c = (p_isotropic_permeability / p_fluid_viscosity) / S  # m^2 / s, Cheng (B.16)
 B = (3. * (p_undrained_poisson_ratio - p_drained_poisson_ratio)) / (p_biot_coefficient * (1. - 2. * p_drained_poisson_ratio) * (1. + p_undrained_poisson_ratio))
 
-M_xx = p_undrained_lambda + 2.0 * p_shear_modulus
-M_xy = p_undrained_lambda
-M_xz = p_undrained_lambda
-M_yx = p_undrained_lambda
-M_yy = p_undrained_lambda + 2.0 * p_shear_modulus
-M_yz = p_undrained_lambda
-M_zx = p_undrained_lambda
-M_zy = p_undrained_lambda
-M_zz = p_undrained_lambda + 2.0 * p_shear_modulus
+M_xx = p_drained_lambda + 2.0 * p_shear_modulus
+M_xy = p_drained_lambda
+M_xz = p_drained_lambda
+M_yx = p_drained_lambda
+M_yy = p_drained_lambda + 2.0 * p_shear_modulus
+M_yz = p_drained_lambda
+M_zx = p_drained_lambda
+M_zy = p_drained_lambda
+M_zz = p_drained_lambda + 2.0 * p_shear_modulus
 
 A1 = ((p_biot_coefficient**2) * M_yy - 2.0 * p_biot_coefficient*p_biot_coefficient*M_xy + p_biot_coefficient**2 * M_xx) / (p_biot_coefficient*M_xx - p_biot_coefficient*M_xy) \
      + (M_xx*M_yy - M_xy**2) / (p_biot_modulus*(p_biot_coefficient*M_xx - p_biot_coefficient*M_xy))
@@ -107,10 +105,9 @@ ts = 0.0028666667  # sec
 nts = 1
 tsteps = numpy.arange(0.0, ts * nts, ts) + ts  # sec
 
-
 # ----------------------------------------------------------------------
 class AnalyticalSoln(object):
-    """Analytical solution to Mandel's problem with Reference Stress and Strain
+    """Analytical solution to Mandel's problem
     """
     SPACE_DIM = 2
     TENSOR_SIZE = 4
@@ -119,7 +116,7 @@ class AnalyticalSoln(object):
 
     def __init__(self):
         self.fields = {
-            "displacement": self.zero_vector_time,
+            "displacement": self.displacement,
             "pressure": self.pressure,
             "trace_strain": self.trace_strain,
             "porosity": self.porosity,
@@ -132,10 +129,10 @@ class AnalyticalSoln(object):
             "biot_coefficient": self.biot_coefficient,
             "biot_modulus": self.biot_modulus,
             "isotropic_permeability": self.isotropic_permeability,
-            "reference_stress": self.stress,
-            "reference_strain": self.strain,
-            "cauchy_stress": self.zero_tensor,
-            "cauchy_strain": self.zero_tensor,                               
+            "cauchy_stress": self.stress,
+            "cauchy_strain": self.strain,
+            "reference_stress": self.input_stress,
+            "reference_strain": self.strain,                        
             "initial_amplitude": {
                 "x_neg": self.zero_vector,
                 "x_pos": self.zero_scalar,
@@ -151,7 +148,7 @@ class AnalyticalSoln(object):
         else:
             field = self.fields[name](pts)
         return field
-
+        
     def zero_scalar(self, locs):
         (npts, dim) = locs.shape
         return numpy.zeros((1, npts, 1), dtype=numpy.float64)
@@ -159,10 +156,6 @@ class AnalyticalSoln(object):
     def zero_vector(self, locs):
         (npts, dim) = locs.shape
         return numpy.zeros((1, npts, self.SPACE_DIM), dtype=numpy.float64)
-
-    def zero_tensor(self, locs):
-        (npts, dim) = locs.shape
-        return numpy.zeros((1, npts, self.TENSOR_SIZE), dtype=numpy.float64)
 
     def zero_vector_time(self, locs):
         (npts, dim) = locs.shape
@@ -291,38 +284,6 @@ class AnalyticalSoln(object):
 
         return displacement
 
-    # def scaled_displacement(self, locs):
-    #     """ Generate scaled y pos y displacement"""
-    #     ts = 0.0028666667  # sec
-    #     nts_scaled = 200
-    #     tsteps_scaled = numpy.arange(0.0, ts * nts_scaled, ts)  # sec
-
-    #     (npts, dim) = locs.shape
-    #     ntpts = tsteps_scaled.shape[0]
-    #     displacement = numpy.zeros((ntpts, npts, dim), dtype=numpy.float64)
-    #     x = locs[:, 0]
-    #     z = locs[:, 1]
-    #     t_track = 0
-    #     zeroArray = self.mandelZeros()
-
-    #     for t in tsteps_scaled:
-    #         A_x = 0.0
-    #         B_x = 0.0
-
-    #         for n in numpy.arange(1, self.ITERATIONS + 1, 1):
-    #             a_n = zeroArray[n - 1]
-    #             A_x += (numpy.sin(a_n) * numpy.cos(a_n) / (a_n - numpy.sin(a_n) * numpy.cos(a_n))) * \
-    #                 numpy.exp(-1.0 * (a_n * a_n * c * t) / (a * a))
-    #             B_x += (numpy.cos(a_n) / (a_n - numpy.sin(a_n) * numpy.cos(a_n))) * \
-    #                 numpy.sin((a_n * x) / a) * numpy.exp(-1.0 * (a_n * a_n * c * t) / (a * a))
-
-    #         displacement[t_track, :, 0] = ((F * p_drained_poisson_ratio) / (2.0 * p_shear_modulus * a) - (F * p_undrained_poisson_ratio) / (p_shear_modulus * a) * A_x) * x + F / p_shear_modulus * B_x
-    #         displacement[t_track, :, 1] = (-1 * (F * (1.0 - p_drained_poisson_ratio)) / (2 * p_shear_modulus * a) + (F * (1 - p_undrained_poisson_ratio)) / (p_shear_modulus * a) * A_x) * z
-    #         t_track += 1
-
-    #     return displacement
-
-
     def pressure(self, locs):
         """Compute pressure field at locations.
         """
@@ -405,44 +366,43 @@ class AnalyticalSoln(object):
         return zeroArray
 
     def strain(self, locs):
-        """Compute strain field at locations. 
-           Uses reference stress, so strain should be zero.
+        """Compute strain field at locations.
         """
         (npts, dim) = locs.shape
         ntpts = tsteps.shape[0]
-        # pressure = self.pressure(locs)[:,:,0]
-        # stress = self.stress(locs)
+        pressure = self.pressure(locs)[:,:,0]
+        stress = self.stress(locs)
 
-        # sxx = stress[:,:,0]
-        # syy = stress[:,:,1]
+        sxx = stress[:,:,0]
+        syy = stress[:,:,1]
+        szz = stress[:,:,2]
+        sxy = stress[:,:,3]
 
-        # exx = (M_yy*sxx - M_xy*syy + p_biot_coefficient*M_yy*pressure - p_biot_coefficient*M_xy*pressure) / (M_xx*M_yy - M_xy**2)
-        # eyy = (M_xx*syy - M_xy*sxx + p_biot_coefficient*M_xx*pressure - p_biot_coefficient*M_xy*pressure) / (M_xx*M_yy - M_xy**2)        
-        # ezz = 0.0
-        # exy = 0.0
+        exx = (M_yy*sxx - M_xy*syy + p_biot_coefficient*M_yy*pressure - p_biot_coefficient*M_xy*pressure) / (M_xx*M_yy - M_xy**2) # Cheng 7.92
+        eyy = (M_xx*syy - M_xy*sxx + p_biot_coefficient*M_xx*pressure - p_biot_coefficient*M_xy*pressure) / (M_xx*M_yy - M_xy**2) # Cheng 7.93
+        ezz = 0.0
+        exy = sxy / (2.0 * p_shear_modulus)
 
         strain = numpy.zeros((ntpts, npts, self.TENSOR_SIZE), dtype=numpy.float64)
-        # strain[:, :, 0] = exx
-        # strain[:, :, 1] = eyy
-        # strain[:, :, 2] = ezz
-        # strain[:, :, 3] = exy
+        strain[:, :, 0] = exx
+        strain[:, :, 1] = eyy
+        strain[:, :, 2] = ezz
+        strain[:, :, 3] = exy
         return strain
 
     def stress(self, locs):
         """Compute stress field at locations.
         """
         (npts, dim) = locs.shape
-        (npts, dim) = locs.shape
         ntpts = tsteps.shape[0]
 
-        ntpts = tsteps.shape[0]
         stress = numpy.zeros((ntpts, npts, self.TENSOR_SIZE), dtype=numpy.float64)
         pressure = self.pressure(locs)[:,:,0]
 
         syy = self.sigma_zz(locs)
-        sxx = numpy.zeros((ntpts, npts))
-        sxy = numpy.zeros((ntpts, npts))
-        szz = p_drained_poisson_ratio * (sxx + syy) - p_biot_coefficient*(1.0 - 2.0*p_drained_poisson_ratio) * pressure
+        sxx = numpy.zeros((ntpts, npts)) # Cheng 7.262
+        sxy = numpy.zeros((ntpts, npts)) # Cheng 7.264
+        szz = p_drained_poisson_ratio * (sxx + syy) - p_biot_coefficient*(1.0 - 2.0*p_drained_poisson_ratio) * pressure # Cheng 7.106        
 
         stress[:,:,0] = sxx
         stress[:,:,1] = syy
@@ -451,6 +411,53 @@ class AnalyticalSoln(object):
 
         return stress
 
+    def input_strain(self, locs):
+        """Compute strain field at locations.
+        """
+        (npts, dim) = locs.shape
+        ntpts = tsteps.shape[0]
+        # pressure = self.pressure(locs)[:,:,0]
+        # stress = self.stress(locs)
+
+        # sxx = stress[:,:,0]
+        # syy = stress[:,:,1]
+        # szz = stress[:,:,2]
+        # sxy = stress[:,:,3]
+
+        # exx = (M_yy*sxx - M_xy*syy + p_biot_coefficient*M_yy*pressure - p_biot_coefficient*M_xy*pressure) / (M_xx*M_yy - M_xy**2) # Cheng 7.92
+        # eyy = (M_xx*syy - M_xy*sxx + p_biot_coefficient*M_xx*pressure - p_biot_coefficient*M_xy*pressure) / (M_xx*M_yy - M_xy**2) # Cheng 7.93
+        # ezz = 0.0
+        # exy = sxy / (2.0 * p_shear_modulus)
+
+        strain = numpy.zeros((ntpts, npts, self.TENSOR_SIZE), dtype=numpy.float64)
+        # strain[:, :, 0] = exx
+        # strain[:, :, 1] = eyy
+        # strain[:, :, 2] = ezz
+        # strain[:, :, 3] = exy
+        return strain
+
+    def input_stress(self, locs):
+        """Compute stress field at locations.
+        """
+        (npts, dim) = locs.shape
+        ntpts = tsteps.shape[0]
+
+        stress = numpy.zeros((ntpts, npts, self.TENSOR_SIZE), dtype=numpy.float64)
+        # pressure = self.pressure(locs)[:,:,0]
+
+        # syy = self.input_sigma_zz(locs)
+        # sxx = numpy.zeros((ntpts, npts)) # Cheng 7.262
+        # sxy = numpy.zeros((ntpts, npts)) # Cheng 7.264
+        # szz = p_drained_poisson_ratio * (sxx + syy) - p_biot_coefficient*(1.0 - 2.0*p_drained_poisson_ratio) * pressure # Cheng 7.106        
+
+        # stress[:,:,0] = sxx
+        # stress[:,:,1] = syy
+        # stress[:,:,2] = szz
+        # stress[:,:,3] = sxy
+
+        return stress
+
+
     def initial_traction(self, locs):
         """Compute traction at locations.
 
@@ -458,7 +465,7 @@ class AnalyticalSoln(object):
         """
         (npts, dim) = locs.shape
         ntpts = tsteps.shape[0]
-        traction = numpy.zeros((npts), dtype=numpy.float64)
+        traction = numpy.zeros((1, npts), dtype=numpy.float64)
         x = locs[:, 0]
         z = locs[:, 1]
         t_track = 0
@@ -476,49 +483,10 @@ class AnalyticalSoln(object):
             sigma_zz_B += ((numpy.sin(x_n) * numpy.cos(x_n)) / (x_n - numpy.sin(x_n) *
                                                                 numpy.cos(x_n))) * numpy.exp(-1.0 * (x_n * x_n * c * t) / (a * a))
 
-        traction[:] = -(F / a) - ((2.0 * F) / a * A2 / A1) * sigma_zz_A + ((2.0 * F) / a) * sigma_zz_B
+        traction[t_track, :] = -(F / a) - ((2.0 * F) / a * A2 / A1) * sigma_zz_A + ((2.0 * F) / a) * sigma_zz_B
+        t_track += 1
 
         return traction
-
-    def initial_stress(self, locs):
-        """Compute stress at locations.
-
-        :TODO: If this is the initial traction, then it should be a single time point (0).
-        """
-        (npts, dim) = locs.shape
-
-        syy = self.initial_traction(locs)
-
-        stress = numpy.zeros((npts, self.TENSOR_SIZE), dtype=numpy.float64)
-        sxx = numpy.zeros(npts)
-        sxy = numpy.zeros(npts)
-        # szz = p_undrained_lambda / (2 * p_undrained_lambda + 2 * p_mu) * (sxx + syy)
-        szz = 0.5 * p_drained_lambda / (p_drained_lambda + p_shear_modulus) * (sxx + syy)
-        # szz = p_drained_poisson_ratio * (sxx + syy) - p_biot_coefficient*(1.0 - 2.0*p_drained_poisson_ratio) * pressure
-
-        stress[:,0] = sxx
-        stress[:,1] = syy
-        stress[:,2] = szz
-        stress[:,3] = sxy
-
-        return stress
-
-    def initial_strain(self, locs):
-        """Compute initial strain field at locations.
-        """
-        (npts, dim) = locs.shape
-
-        exx = 0.0
-        eyy = 0.0
-        ezz = 0.0
-        exy = 0.0
-
-        strain = numpy.zeros((npts, self.TENSOR_SIZE), dtype=numpy.float64)
-        strain[:, 0] = exx
-        strain[:, 1] = eyy
-        strain[:, 2] = ezz
-        strain[:, 3] = exy
-        return strain
 
     def initial_displacement(self, locs):
         """Compute initial displacement at locations
@@ -601,6 +569,34 @@ class AnalyticalSoln(object):
 
         for t in tsteps:
 
+            sigma_zz_A = 0.0
+            sigma_zz_B = 0.0
+
+            for i in numpy.arange(1, self.ITERATIONS + 1, 1):
+                x_n = zeroArray[i - 1]
+                sigma_zz_A += (numpy.sin(x_n) / (x_n - numpy.sin(x_n) * numpy.cos(x_n))) * \
+                    numpy.cos((x_n * x) / a) * numpy.exp(-1.0 * (x_n * x_n * c * t) / (a * a))
+                sigma_zz_B += ((numpy.sin(x_n) * numpy.cos(x_n)) / (x_n - numpy.sin(x_n) *
+                                                                    numpy.cos(x_n))) * numpy.exp(-1.0 * (x_n * x_n * c * t) / (a * a))
+
+            traction[t_track, :] = -(F / a) - ((2.0 * F) / a * A2 / A1) * sigma_zz_A + ((2.0 * F) / a) * sigma_zz_B
+            t_track += 1
+
+        return traction
+
+    def input_sigma_zz(self, locs):
+        """Compute traction at locations.
+        """
+        (npts, dim) = locs.shape
+        ntpts = tsteps.shape[0]
+        traction = numpy.zeros((ntpts, npts), dtype=numpy.float64)
+        x = locs[:, 0]
+        z = locs[:, 1]
+        t_track = 0
+        zeroArray = self.mandelZeros()
+
+        for t in tsteps:
+            t -= ts
             sigma_zz_A = 0.0
             sigma_zz_B = 0.0
 

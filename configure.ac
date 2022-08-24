@@ -254,8 +254,6 @@ AC_CONFIG_FILES([Makefile
 		tests/fullscale/viscoelasticity/nofaults-2d/Makefile
 		tests/fullscale/viscoelasticity/nofaults-3d/Makefile
 		tests/fullscale/poroelasticity/Makefile
-		tests/fullscale/poroelasticity/gravity-2d/Makefile
-		tests/fullscale/poroelasticity/gravity-3d/Makefile
 		tests/fullscale/poroelasticity/terzaghi/Makefile
 		tests/fullscale/poroelasticity/mandel/Makefile
 		tests/fullscale/poroelasticity/cryer/Makefile

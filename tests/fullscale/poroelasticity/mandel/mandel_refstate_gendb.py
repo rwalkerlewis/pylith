@@ -50,8 +50,8 @@ class GenerateDB(object):
         from mandel_refstate_soln import AnalyticalSoln
         from mandel_refstate_soln import p_solid_density, p_fluid_density, p_fluid_viscosity, p_porosity, p_shear_modulus, p_drained_bulk_modulus, p_biot_coefficient, p_fluid_bulk_modulus, p_solid_bulk_modulus, p_isotropic_permeability
         soln = AnalyticalSoln()
-        stress = soln.stress(xy)
-        strain = soln.strain(xy)
+        stress = soln.input_stress(xy)
+        strain = soln.input_strain(xy)
         ones_scalar = soln.ones_scalar(xy)
         zero_scalar = soln.zero_scalar(xy)
         # pressure = soln.zero_scalar(xy)
