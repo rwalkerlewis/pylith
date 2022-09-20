@@ -13,7 +13,7 @@
 #
 # ----------------------------------------------------------------------
 #
-# @file tests/fullscale/poroelasticity/cryer/cryer_soln.py
+# @file tests/fullscale/poroelasticity/cryer/cryer_compaction_soln.py
 #
 # @brief Analytical solution to Cryer's problem.
 # Owing to the symmetry of the problem, we only need consider the quarter
@@ -79,7 +79,7 @@ class AnalyticalSoln(object):
     Analytical solution to Cryer's problem
     """
     SPACE_DIM = 3
-    TENSOR_SIZE = 6
+    TENSOR_SIZE = 4
     ITERATIONS = 50
     EPS = 1e-25
 
@@ -98,8 +98,6 @@ class AnalyticalSoln(object):
             "biot_coefficient": self.biot_coefficient,
             "biot_modulus": self.biot_modulus,
             "isotropic_permeability": self.isotropic_permeability,
-            "cauchy_stress": self.stress,
-            "cauchy_strain": self.zero_tensor,            
             "initial_amplitude": {
                 "x_neg": self.zero_vector,
                 "y_neg": self.zero_vector,
@@ -124,23 +122,6 @@ class AnalyticalSoln(object):
     def zero_vector(self, locs):
         (npts, dim) = locs.shape
         return numpy.zeros((1, npts, self.SPACE_DIM), dtype=numpy.float64)
-
-    def zero_tensor(self, locs):
-        (npts, dim) = locs.shape
-        return numpy.zeros((1, npts, self.TENSOR_SIZE), dtype=numpy.float64)
-
-    def zero_vector_time(self, locs):
-        (npts, dim) = locs.shape
-        ntpts = tsteps.shape[0]
-        return numpy.zeros((ntpts, npts, self.SPACE_DIM), dtype=numpy.float64)
-
-    def ones_scalar(self, locs):
-        (npts, dim) = locs.shape
-        return numpy.ones((1, npts, 1), dtype=numpy.float64)
-
-    def ones_vector(self, locs):
-        (npts, dim) = locs.shape
-        return numpy.ones((1, npts, self.SPACE_DIM), dtype=numpy.float64)
 
     def solid_density(self, locs):
         """
@@ -356,71 +337,7 @@ class AnalyticalSoln(object):
         ntpts = tsteps.shape[0]
         stress = numpy.zeros((ntpts, npts, self.TENSOR_SIZE), dtype=numpy.float64)
 
-        x_n = self.cryerZeros()
-        center = numpy.where(~locs.any(axis=1))[0]
-        R = numpy.sqrt(locs[:,0]*locs[:,0] + locs[:,1]*locs[:,1] + locs[:,2]*locs[:,2])
-        theta = numpy.nan_to_num( numpy.arctan( numpy.nan_to_num( numpy.sqrt(locs[:,0]**2 + locs[:,1]**2) / locs[:,2] ) ) )
-        phi = numpy.nan_to_num( numpy.arctan( numpy.nan_to_num( locs[:,1] / locs[:,0] ) ) )
-        R_star = R.reshape([R.size,1]) / R_0
-
-        x_n.reshape([1,x_n.size])
-
-        E = numpy.square(1-nu)*numpy.square(1+nu_u)*x_n - 18*(1+nu)*(nu_u-nu)*(1-nu_u)
-
-        t_track = 0
-
-        for t in tsteps:
-            t_star = (c*t)/(R_0**2)
-            # Normalized Radial Stress
-            sigma_RR =  -1.0 - numpy.nan_to_num(numpy.sum(((12*(1 + nu)*(nu_u - nu)) / \
-                                               (E*R_star*R_star*R_star*x_n*numpy.sin(numpy.sqrt(x_n))) ) * \
-                                        (6*(nu_u - nu) * (numpy.sin(R_star*numpy.sqrt(x_n)) - R_star*numpy.sqrt(x_n)*numpy.cos(R_star*numpy.sqrt(x_n))) - \
-                                        (1 - nu)*(1 + nu)*R_star*R_star*R_star*numpy.sin(numpy.sqrt(x_n))) * \
-                                        numpy.exp(-x_n*t_star),axis=1))
-
-            # Normalized Circumferential Stress
-            sigma_phiphi =  -1.0 - numpy.nan_to_num(numpy.sum(((12*(1 + nu)*(nu_u - nu)) / \
-                                        (E*R_star*R_star*R_star*x_n*numpy.sin(numpy.sqrt(x_n))) ) * \
-                                        (3*(nu_u - nu) * ((R_star*R_star*x_n - 1.0) * (numpy.sin(R_star*numpy.sqrt(x_n))) + \
-                                        R_star*numpy.sqrt(x_n)*numpy.cos(R_star*numpy.sqrt(x_n))) - \
-                                        (1 - nu)*(1 + nu)*R_star*R_star*R_star*x_n*numpy.sin(numpy.sqrt(x_n))) * \
-                                        numpy.exp(-x_n*t_star),axis=1))
-
-            sigma_thetatheta = sigma_phiphi
-
-            sigma_sph = numpy.array([ [         sigma_RR*P_0, numpy.zeros(npts), numpy.zeros(npts)],
-                                    [numpy.zeros(npts),  sigma_thetatheta*P_0, numpy.zeros(npts)],
-                                    [numpy.zeros(npts), numpy.zeros(npts),      sigma_phiphi*P_0] ])
-
-
-            A = numpy.array( [ [numpy.sin(theta)*numpy.cos(phi), numpy.cos(theta)*numpy.cos(phi),   -numpy.sin(phi)],
-                            [numpy.sin(theta)*numpy.sin(phi), numpy.cos(theta)*numpy.sin(phi),    numpy.cos(phi)],
-                            [               numpy.cos(theta),               -numpy.sin(theta), numpy.zeros(npts)] ] ) 
-
-            B = numpy.array( [ [numpy.sin(theta)*numpy.cos(phi), numpy.sin(theta)*numpy.sin(phi),   numpy.cos(theta)],
-                            [numpy.cos(theta)*numpy.cos(phi), numpy.cos(theta)*numpy.sin(phi),  -numpy.sin(theta)],
-                            [                -numpy.sin(phi),                  numpy.cos(phi),  numpy.zeros(npts)] ] )    
-        
-            sigma_car = numpy.einsum('ij...,jk...->ik...',numpy.einsum('ij...,jk...->ik...',A,sigma_sph), B)
-
-            stress[t_track, :, 0] = sigma_car[0,0,:] # sxx
-            stress[t_track, :, 1] = sigma_car[1,1,:] # syy
-            stress[t_track, :, 2] = sigma_car[2,2,:] # szz
-            stress[t_track, :, 3] = sigma_car[0,1,:] # sxy
-            stress[t_track, :, 4] = sigma_car[1,2,:] # syz
-            stress[t_track, :, 5] = sigma_car[0,2,:] # sxz
-            t_track += 1
         return stress
-
-    def strain(self, locs):
-        """
-        Compute strain field at locations.
-        """
-        (npts, dim) = locs.shape
-        ntpts = tsteps.shape[0]
-        strain = numpy.zeros((ntpts, npts, self.TENSOR_SIZE), dtype=numpy.float64)
-
-        return strain
 
     def surface_traction(self, locs):
         (npts, dim) = locs.shape

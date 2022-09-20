@@ -22,7 +22,8 @@ dist_check_SCRIPTS = test_pylith.py
 dist_noinst_PYTHON = \
 	meshes.py \
 	TestCryer.py \
-	cryer_soln.py 
+	cryer_soln.py \
+	TestCryerCompaction.py 
 
 dist_noinst_DATA = \
 	geometry.jou \
@@ -33,7 +34,10 @@ dist_noinst_DATA = \
 	mesh_hex.exo \
 	cryer.cfg \
 	cryer_tet.cfg \
-	cryer_hex.cfg
+	cryer_hex.cfg \
+	cryer_compaction.cfg \
+	cryer_compaction_tet.cfg \
+	cryer_compaction_hex.cfg
 
 noinst_TMP = \
 	cryer_bc.spatialdb \

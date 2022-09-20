@@ -474,6 +474,9 @@ class AnalyticalSoln(object):
         pressure = numpy.zeros((1, npts, 1), dtype=numpy.float64)
         x = locs[:, 0]
         z = locs[:, 1]
+        """Compute initial pressure at locations
+        """
+        (npts, dim) = locs.shape
         t_track = 0
         zeroArray = self.mandelZeros()
 
@@ -534,6 +537,42 @@ class AnalyticalSoln(object):
             t_track += 1
 
         return traction
+
+    def ypos_disp(self):
+        """
+        Compute scaling for y pos displacement
+        """
+        locs = numpy.array([[0,1]])
+        tsteps_ypos = numpy.linspace(0,5,10001)
+
+        (npts, dim) = locs.shape
+        ntpts = tsteps_ypos.shape[0]
+        displacement = numpy.zeros((ntpts, npts, dim), dtype=numpy.float64)
+        x = locs[:, 0]
+        z = locs[:, 1]
+        t_track = 0
+        zeroArray = self.mandelZeros()
+
+        for t in tsteps_ypos:
+            A_x = 0.0
+            B_x = 0.0
+
+            for n in numpy.arange(1, self.ITERATIONS + 1, 1):
+                a_n = zeroArray[n - 1]
+                A_x += (numpy.sin(a_n) * numpy.cos(a_n) / (a_n - numpy.sin(a_n) * numpy.cos(a_n))) * \
+                    numpy.exp(-1.0 * (a_n * a_n * c * t) / (a * a))
+                B_x += (numpy.cos(a_n) / (a_n - numpy.sin(a_n) * numpy.cos(a_n))) * \
+                    numpy.sin((a_n * x) / a) * numpy.exp(-1.0 * (a_n * a_n * c * t) / (a * a))
+
+            displacement[t_track, :, 0] = ((F * p_drained_poisson_ratio) / (2.0 * p_shear_modulus * a) - (F * p_undrained_poisson_ratio) / (p_shear_modulus * a) * A_x) * x + F / p_shear_modulus * B_x
+            displacement[t_track, :, 1] = (-1 * (F * (1.0 - p_drained_poisson_ratio)) / (2 * p_shear_modulus * a) + (F * (1 - p_undrained_poisson_ratio)) / (p_shear_modulus * a) * A_x) * z
+            t_track += 1
+
+        
+        scaling = numpy.zeros([tsteps_ypos.size,2])
+        scaling[:,0] = tsteps_ypos[:]
+        scaling[:,1] = displacement[:,0,1] / displacement[0,0,1]
+        return scaling
 
 
 

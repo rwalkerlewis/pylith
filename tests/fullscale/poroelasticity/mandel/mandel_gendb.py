@@ -55,6 +55,7 @@ class GenerateDB(object):
         zero_scalar = soln.zero_scalar(xy)
         # pressure = soln.zero_scalar(xy)
         pressure = soln.initial_pressure(xy)
+        ypos_scaling = soln.ypos_disp()
 
         # Aux Fields
         from spatialdata.geocoords.CSCart import CSCart
@@ -111,6 +112,8 @@ class GenerateDB(object):
         io_ic = createWriter("mandel_ic.spatialdb")
         io_ic.write(data_ic) 
 
+        from spatialdata.spatialdb.TimeHistoryIO import write
+        write(ypos_scaling[:,0],ypos_scaling[:,1],'second','y_pos_disp_y.timedb')
         return
 
 

@@ -46,8 +46,7 @@ dist_noinst_DATA = \
 	mandel_compaction_quad.cfg \
 	mandel_refstate.cfg \
 	mandel_refstate_tri.cfg \
-	mandel_refstate_quad.cfg \
-	y_pos_disp_y.timedb
+	mandel_refstate_quad.cfg 
 
 noinst_TMP = \
 	mandel_bc.spatialdb \

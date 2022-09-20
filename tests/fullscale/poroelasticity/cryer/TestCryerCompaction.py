@@ -15,7 +15,7 @@
 #
 # ----------------------------------------------------------------------
 #
-# @file tests/fullscale/poroelasticity/cryer/TestCryer.py
+# @file tests/fullscale/poroelasticity/cryer/TestCryerCompaction.py
 #
 # @brief Test suite for testing pylith with Cryer's problem.
 
@@ -24,7 +24,7 @@ import unittest
 from pylith.testing.FullTestApp import (FullTestCase, Check, check_data)
 
 import meshes
-import cryer_soln
+import cryer_compaction_soln
 
 # We do not include trace_strain in the test of the solution fields, because of the
 # poor convergence of the series solution.
@@ -37,7 +37,7 @@ class TestCase(FullTestCase):
     def setUp(self):
         defaults = {
             "filename": "output/{name}-{mesh_entity}.h5",
-            "exact_soln": cryer_soln.AnalyticalSoln(),
+            "exact_soln": cryer_compaction_soln.AnalyticalSoln(),
             "mesh": self.mesh,
         }
         self.checks = [
@@ -65,7 +65,7 @@ class TestCase(FullTestCase):
             ),
             Check(
                 mesh_entities=["poroelastic"],
-                vertex_fields = ["displacement", "pressure", "cauchy_strain", "cauchy_stress"],
+                vertex_fields = SOLUTION_FIELDS,
                 defaults=defaults,
                 tolerance=SOLUTION_TOLERANCE,
             ),
@@ -91,11 +91,11 @@ class TestCase(FullTestCase):
 class TestHex(TestCase):
 
     def setUp(self):
-        self.name = "cryer_hex"
+        self.name = "cryer_compaction_hex"
         self.mesh = meshes.Hex()
         super().setUp()
 
-        TestCase.run_pylith(self, self.name, ["cryer.cfg", "cryer_hex.cfg"])
+        TestCase.run_pylith(self, self.name, ["cryer_compaction.cfg", "cryer_compaction_hex.cfg"])
         return
 
 
@@ -103,11 +103,11 @@ class TestHex(TestCase):
 class TestTet(TestCase):
 
     def setUp(self):
-        self.name = "cryer_tet"
+        self.name = "cryer_compaction_tet"
         self.mesh = meshes.Tet()
         super().setUp()
 
-        TestCase.run_pylith(self, self.name, ["cryer.cfg", "cryer_tet.cfg"])
+        TestCase.run_pylith(self, self.name, ["cryer_compaction.cfg", "cryer_compaction_tet.cfg"])
         return
 
 

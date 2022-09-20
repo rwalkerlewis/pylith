@@ -42,6 +42,14 @@ class TestApp(TestDriver):
         for test in TestCryer.test_cases():
             suite.addTest(unittest.makeSuite(test))
 
+        # import TestCryerCompaction
+        # for test in TestCryerCompaction.test_cases():
+        #     suite.addTest(unittest.makeSuite(test))
+
+        # import TestCryerRefState
+        # for test in TestCryerRefState.test_cases():
+        #     suite.addTest(unittest.makeSuite(test))
+
         return suite
 
 
