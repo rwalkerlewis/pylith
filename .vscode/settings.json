@@ -9,10 +9,7 @@
         "editor.wordWrapColumn": 100,
     },
     "files.associations": {
-        "string": "cpp",
-        "*.icc": "cpp",
-        "vector": "cpp",
-        "stdexcept": "cpp"
+        "iostream": "cpp"
     },
     "python.formatting.autopep8Args": [
         "-max-line-length",

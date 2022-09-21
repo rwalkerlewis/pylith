@@ -193,10 +193,24 @@ ViscousFriction::updateState(const double slip,
 
 // --------------------------------------------------------------------------------------------------
 namespace _RateStateFriction {
+    // original choices
+    //static const double aStable = 0.05;
+    //static const double aUnstable = 0.2;
+    //static const double b = 0.2;
+    //static const double l = 0.2;
+
+    // v1
+    //static const double aStable = 0.05;
+    //static const double aUnstable = 0.01;
+    //static const double b = 0.02;
+    //static const double l = 0.2;
+
+    // v2
     static const double aStable = 0.05;
-    static const double aUnstable= 0.2;
-    static const double b = 0.1;
-    static const double l = 0.2;
+    static const double aUnstable = 0.01;
+    static const double b = 0.02;
+    static const double l = 0.1;
+
     static const double v0 = 0.01;
     static const double frictionStatic = 1.0;
     static const double vLinear = 1.0e-8;

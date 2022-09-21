@@ -133,8 +133,10 @@ QuasistaticSpontaneousRupture::_computeLHSResidual(const PetscReal t,
 #endif
 
     residualArray[0] = -2*_ka*u[0] + _ka*u[1];
-    residualArray[1] = +_ka*u[0] - _ka*u[1] + fc;
-    residualArray[2] = -_kb*u[2] + _kb*u[3] - fc;
+    // residualArray[1] = +_ka*u[0] - _ka*u[1] + fc;
+    // residualArray[2] = -_kb*u[2] + _kb*u[3] - fc;
+    residualArray[1] = +_ka*u[0] - _ka*u[1] + _eta*v[1] + fc;
+    residualArray[2] = -_kb*u[2] + _kb*u[3] - _eta*v[2] - fc;
     residualArray[3] = +_kb*u[2] - 2*_kb*u[3] + _kb*u4;
 
     residualArray[4] = uDot[0] - v[0];

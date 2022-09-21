@@ -124,6 +124,9 @@ protected:
     static const double _ma;
     static const double _kb;
     static const double _mb;
+    static const double _mu;
+    static const double _cs;
+    static const double _eta;
 
     static const size_t _numDOFDisp;
 
