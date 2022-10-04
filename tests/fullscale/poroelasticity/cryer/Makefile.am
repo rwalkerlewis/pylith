@@ -23,7 +23,10 @@ dist_noinst_PYTHON = \
 	meshes.py \
 	TestCryer.py \
 	cryer_soln.py \
-	TestCryerCompaction.py 
+	TestCryerCompaction.py \
+	cryer_compaction_soln.py \
+	TestCryerRefState.py \
+	cryer_refstate_soln.py
 
 dist_noinst_DATA = \
 	geometry.jou \
@@ -37,7 +40,10 @@ dist_noinst_DATA = \
 	cryer_hex.cfg \
 	cryer_compaction.cfg \
 	cryer_compaction_tet.cfg \
-	cryer_compaction_hex.cfg
+	cryer_compaction_hex.cfg \
+	cryer_refstate.cfg \
+	cryer_refstate_tet.cfg \
+	cryer_refstate_hex.cfg 	
 
 noinst_TMP = \
 	cryer_bc.spatialdb \

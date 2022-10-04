@@ -25,6 +25,7 @@ from pylith.testing.FullTestApp import (FullTestCase, Check, check_data)
 
 import meshes
 import cryer_refstate_soln
+import cryer_refstate_gendb
 
 # We do not include trace_strain in the test of the solution fields, because of the
 # poor convergence of the series solution.
@@ -65,16 +66,16 @@ class TestCase(FullTestCase):
             ),
             Check(
                 mesh_entities=["poroelastic"],
-                vertex_fields = SOLUTION_FIELDS,
+                vertex_fields = ["displacement", "pressure", "cauchy_strain", "cauchy_stress"],
                 defaults=defaults,
                 tolerance=SOLUTION_TOLERANCE,
             ),
-            Check(
-                mesh_entities=["x_neg", "y_neg", "z_neg", "surface_pressure"],
-                filename="output/{name}-{mesh_entity}_info.h5",
-                vertex_fields=["initial_amplitude"],
-                defaults=defaults,
-            ),
+            # Check(
+            #     mesh_entities=["x_neg", "y_neg", "z_neg", "surface_pressure"],
+            #     filename="output/{name}-{mesh_entity}_info.h5",
+            #     vertex_fields=["initial_amplitude"],
+            #     defaults=defaults,
+            # ),
             Check(
                 mesh_entities=["x_neg", "y_neg", "z_neg", "surface_pressure"],
                 vertex_fields=SOLUTION_FIELDS,
@@ -84,7 +85,7 @@ class TestCase(FullTestCase):
         ]
 
     def run_pylith(self, testName, args):
-        FullTestCase.run_pylith(self, testName, args)
+        FullTestCase.run_pylith(self, testName, args, cryer_refstate_gendb.GenerateDB)
 
 
 # -------------------------------------------------------------------------------------------------

@@ -14,17 +14,17 @@
 #
 # ----------------------------------------------------------------------
 #
-# @file tests/fullscale/poroelasticity/mandel/mandel_refstate_gendb.py
+# @file tests/fullscale/poroelasticity/cryer/cryer_refstate_gendb.py
 #
 # @brief Python script to generate spatial database with auxiliary
-# fields for mandel text example with refrence stress and strain.
+# fields for cryer text example with refrence stress and strain.
 
 import numpy
 
 
 class GenerateDB(object):
     """Python object to generate spatial database with auxiliary
-        fields for mandel test example with refrence stress and strain.
+        fields for cryer test example with refrence stress and strain.
     """
 
     def __init__(self):
@@ -36,34 +36,36 @@ class GenerateDB(object):
         """Generate the database.
         """
         # Domain
-        x1 = numpy.arange(-0.1, 10.1, 0.1)
+        x1 = numpy.arange(-0.1, 1.01, 0.1)
         y1 = numpy.arange(-0.1, 1.01, 0.1)
-        x, y = numpy.meshgrid(x1, y1)
+        z1 = numpy.arange(-0.1, 1.01, 0.1)
+        x, y, z = numpy.meshgrid(x1, y1, z1)
 
-        xy = numpy.zeros((len(x1) * len(y1), 2), dtype=numpy.float64)
-        xy_data = numpy.ones((len(x1) * len(y1), 2), dtype=numpy.float64)
-        xy[:, 0] = x.ravel()
-        xy[:, 1] = y.ravel()
+        xyz = numpy.zeros((len(x1) * len(y1) * len(z1), 3), dtype=numpy.float64)
+        xyz_data = numpy.ones((len(x1) * len(y1) * len(z1), 3), dtype=numpy.float64)
+        xyz[:, 0] = x.ravel()
+        xyz[:, 1] = y.ravel()
+        xyz[:, 2] = z.ravel()
 
-        from mandel_refstate_soln import AnalyticalSoln
-        from mandel_refstate_soln import p_solid_density, p_fluid_density, p_fluid_viscosity, p_porosity, p_shear_modulus, p_drained_bulk_modulus, p_biot_coefficient, p_fluid_bulk_modulus, p_solid_bulk_modulus, p_isotropic_permeability
+        from cryer_refstate_soln import AnalyticalSoln
+        from cryer_refstate_soln import p_solid_density, p_fluid_density, p_fluid_viscosity, p_porosity, p_shear_modulus, p_drained_bulk_modulus, p_biot_coefficient, p_fluid_bulk_modulus, p_solid_bulk_modulus, p_isotropic_permeability
         soln = AnalyticalSoln()
-        stress = soln.input_stress(xy)
-        strain = soln.input_strain(xy)
-        ones_scalar = soln.ones_scalar(xy)
-        zero_scalar = soln.zero_scalar(xy)
+        stress = soln.input_stress(xyz)
+        strain = soln.input_strain(xyz)
+        ones_scalar = soln.ones_scalar(xyz)
+        zero_scalar = soln.zero_scalar(xyz)
         # pressure = soln.zero_scalar(xy)
-        pressure = soln.initial_pressure(xy)
+        pressure = soln.initial_pressure(xyz)
 
         # Aux Fields
         from spatialdata.geocoords.CSCart import CSCart
         cs = CSCart()
-        cs.inventory.spaceDim = 2
+        cs.inventory.spaceDim = 3
         cs._configure()
         data_mat = {
-            'points': xy,
+            'points': xyz,
             'coordsys': cs,
-            'data_dim': 2,
+            'data_dim': 3,
             'values': [
                 {
                     'name': "solid_density",
@@ -122,6 +124,14 @@ class GenerateDB(object):
                     'units': "Pa",
                     'data': numpy.ravel(stress[0, :, 3]),
                 }, {
+                    'name': "reference_stress_yz",
+                    'units': "Pa",
+                    'data': numpy.ravel(stress[0, :, 4]),
+                }, {
+                    'name': "reference_stress_xz",
+                    'units': "Pa",
+                    'data': numpy.ravel(stress[0, :, 5]),
+                }, {
                     'name': "reference_strain_xx",
                     'units': "none",
                     'data': numpy.ravel(strain[0, :, 0]),
@@ -137,18 +147,26 @@ class GenerateDB(object):
                     'name': "reference_strain_xy",
                     'units': "none",
                     'data': numpy.ravel(strain[0, :, 3]),
+                }, {
+                    'name': "reference_strain_yz",
+                    'units': "none",
+                    'data': numpy.ravel(strain[0, :, 4]),
+                }, {
+                    'name': "reference_strain_xz",
+                    'units': "none",
+                    'data': numpy.ravel(strain[0, :, 5]),
                 }
             ]
         }
 
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
-        io_mat = createWriter("mandel_refstate_matfields.spatialdb")
+        io_mat = createWriter("cryer_refstate_matfields.spatialdb")
         io_mat.write(data_mat)
 
         data_ypos = {
-            'points': xy,
+            'points': xyz,
             'coordsys': cs,
-            'data_dim': 2,
+            'data_dim': 3,
             'values': [
                 {
                     'name': "initial_amplitude_tangential",
@@ -157,19 +175,19 @@ class GenerateDB(object):
                 }, {
                     'name': "initial_amplitude_normal",
                     'units': "Pa",
-                    'data': numpy.ravel(soln.sigma_zz(xy)),
+                    'data': numpy.ravel(soln.sigma_zz(xyz)),
                 }
             ]
         }
 
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
-        io_mat = createWriter("mandel_refstate_ypos_neu.spatialdb")
+        io_mat = createWriter("cryer_refstate_ypos_neu.spatialdb")
         io_mat.write(data_ypos)
 
         data_ic = {
-            'points': xy,
+            'points': xyz,
             'coordsys': cs,
-            'data_dim': 2,
+            'data_dim': 3,
             'values': [
                 {
                     'name': "displacement_x",
@@ -177,6 +195,10 @@ class GenerateDB(object):
                     'data': numpy.ravel(zero_scalar),
                 }, {
                     'name': "displacement_y",
+                    'units': "m",
+                    'data': numpy.ravel(zero_scalar),
+                }, {
+                    'name': "displacement_z",
                     'units': "m",
                     'data': numpy.ravel(zero_scalar),
                 }, {
@@ -191,7 +213,7 @@ class GenerateDB(object):
             ]
         }
         from spatialdata.spatialdb.SimpleIOAscii import createWriter
-        io_ic = createWriter("mandel_refstate_ic.spatialdb")
+        io_ic = createWriter("cryer_refstate_ic.spatialdb")
         io_ic.write(data_ic) 
 
         return
