@@ -26,7 +26,8 @@ dist_noinst_PYTHON = \
 	TestCryerCompaction.py \
 	cryer_compaction_soln.py \
 	TestCryerRefState.py \
-	cryer_refstate_soln.py
+	cryer_refstate_soln.py \
+	cryer_refstate_gendb.py 
 
 dist_noinst_DATA = \
 	geometry.jou \

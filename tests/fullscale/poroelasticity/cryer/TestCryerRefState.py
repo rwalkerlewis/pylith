@@ -15,7 +15,7 @@
 #
 # ----------------------------------------------------------------------
 #
-# @file tests/fullscale/poroelasticity/cryer/TestCryerCompaction.py
+# @file tests/fullscale/poroelasticity/cryer/TestCryerRefState.py
 #
 # @brief Test suite for testing pylith with Cryer's problem.
 

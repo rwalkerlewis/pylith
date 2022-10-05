@@ -37,6 +37,17 @@
 import numpy
 
 # Physical properties
+p_shear_modulus = 3.0
+p_solid_density = 2500
+p_fluid_density = 1000
+p_fluid_bulk_modulus = 8.0
+p_solid_bulk_modulus = 10.0
+p_drained_bulk_modulus = 4.0
+p_biot_coefficient = 0.6
+p_porosity = 0.1
+p_isotropic_permeability = 1.5
+p_fluid_viscosity = 1.0
+
 G = 3.0
 rho_s = 2500
 rho_f = 1000
@@ -79,7 +90,7 @@ class AnalyticalSoln(object):
     Analytical solution to Cryer's problem
     """
     SPACE_DIM = 3
-    TENSOR_SIZE = 4
+    TENSOR_SIZE = 6
     ITERATIONS = 50
     EPS = 1e-25
 
@@ -116,6 +127,10 @@ class AnalyticalSoln(object):
         else:
             field = self.fields[name](pts)
         return field
+
+    def ones_scalar(self, locs):
+        (npts, dim) = locs.shape
+        return numpy.zeros((1, npts, 1), dtype=numpy.float64)
 
     def zero_scalar(self, locs):
         (npts, dim) = locs.shape
@@ -281,6 +296,42 @@ class AnalyticalSoln(object):
 
         return pressure
 
+    def initial_pressure(self, locs):
+        """
+        Compute pressure field at locations.
+        """
+        (npts, dim) = locs.shape
+        ntpts = tsteps.shape[0]
+        pressure = numpy.zeros((ntpts, npts, 1), dtype=numpy.float64)
+
+        center = numpy.where(~locs.any(axis=1))[0]
+
+        x_n = self.cryerZeros()
+
+        R = numpy.sqrt(locs[:,0]*locs[:,0] + locs[:,1]*locs[:,1] + locs[:,2]*locs[:,2])
+        R_star = R.reshape([R.size,1]) / R_0
+        x_n.reshape([1,x_n.size])
+
+        E = (1-nu)**2 * (1+nu_u)**2 * x_n - 18*(1+nu)*(nu_u-nu)*(1-nu_u)
+
+        t_track = 0
+
+        t = 0
+
+        t_star = (c*t)/(R_0**2)
+        pressure[t_track,:,0] = numpy.sum( ( (18*numpy.square(nu_u-nu) ) / (eta*E) ) * \
+                                    ( (numpy.sin(R_star*numpy.sqrt(x_n))) / (R_star*numpy.sin(numpy.sqrt(x_n)) ) - 1 ) * \
+                                    numpy.exp(-x_n*t_star) , axis=1)
+
+        # Account for center value
+        #pressure[t_track,center] = numpy.sum( (8*eta*(numpy.sqrt(x_n) - numpy.sin(numpy.sqrt(x_n)))) / ( (x_n - 12*eta + 16*eta*eta)*numpy.sin(numpy.sqrt(x_n)) ) * numpy.exp(-x_n * t_star) )
+        pressure[t_track,center,0] = numpy.sum( ( (18*numpy.square(nu_u-nu) ) / (eta*E) ) * \
+                                    ( (numpy.sqrt(x_n)) / (numpy.sin(numpy.sqrt(x_n)) ) - 1 ) * \
+                                    numpy.exp(-x_n*t_star))
+        t_track += 1
+
+        return pressure
+
     # Series functions
 
 
@@ -341,68 +392,73 @@ class AnalyticalSoln(object):
         """
         (npts, dim) = locs.shape
         ntpts = tsteps.shape[0]
-        stress = numpy.zeros((ntpts, npts, self.TENSOR_SIZE), dtype=numpy.float64)
-
+        stress = numpy.zeros((ntpts, npts, 6), dtype=numpy.float64)    
         x_n = self.cryerZeros()
         center = numpy.where(~locs.any(axis=1))[0]
         R = numpy.sqrt(locs[:,0]*locs[:,0] + locs[:,1]*locs[:,1] + locs[:,2]*locs[:,2])
+        R_star = R.reshape([R.size,1]) / R_0
+        x_n.reshape([1,x_n.size])
         theta = numpy.nan_to_num( numpy.arctan( numpy.nan_to_num( numpy.sqrt(locs[:,0]**2 + locs[:,1]**2) / locs[:,2] ) ) )
         phi = numpy.nan_to_num( numpy.arctan( numpy.nan_to_num( locs[:,1] / locs[:,0] ) ) )
-        R_star = R.reshape([R.size,1]) / R_0
-
-        x_n.reshape([1,x_n.size])
-
+            
         E = numpy.square(1-nu)*numpy.square(1+nu_u)*x_n - 18*(1+nu)*(nu_u-nu)*(1-nu_u)
-
-        # Rotation Matrix
-
-        R = numpy.zeros([npts, dim, dim])
-        R[:,0,0] =  numpy.sin(theta)*numpy.cos(phi)
-        R[:,0,1] =  numpy.sin(phi)*numpy.sin(phi)
-        R[:,0,2] =  numpy.cos(theta)
-        R[:,1,0] =  numpy.cos(theta)*numpy.cos(phi)
-        R[:,1,1] =  numpy.cos(theta)*numpy.sin(phi)
-        R[:,1,2] = -numpy.sin(theta)
-        R[:,2,0] = -numpy.sin(phi)
-        R[:,2,1] =  numpy.cos(phi)
-        R[:,2,2] =  numpy.zeros(theta.size)
-        # R = numpy.array( [ [numpy.sin(theta)*numpy.cos(phi),   numpy.sin(phi)*numpy.sin(phi),         numpy.cos(theta)],
-        #                    [numpy.cos(theta)*numpy.cos(phi), numpy.cos(theta)*numpy.sin(phi),        -numpy.sin(theta)],
-        #                    [                -numpy.sin(phi),                  numpy.cos(phi),  numpy.zeros(theta.size)] ] )
-
-        # Spherical stress tensor
-        sigma_rr = numpy.zeros([ntpts, npts])
-        sigma_pp = numpy.zeros([ntpts, npts])
-        sigma_tt = numpy.zeros([ntpts, npts])
-
+        
         t_track = 0
-
+        
         for t in tsteps:
             t_star = (c*t)/(R_0**2)
 
-            sigma_rr[t_track,:] = -1.0 - numpy.nan_to_num(numpy.sum( ( (12.0*(nu_u-nu) ) / \
-                                                            (E * R_star**3 * x_n * numpy.sin(numpy.sqrt(x_n)))) ) * \
-                                                            (6*(nu_u - nu) * (numpy.sin(R_star*numpy.sqrt(x_n)) - R_star*numpy.sqrt(x_n)*numpy.cos(R_star * numpy.sqrt(x_n))) + \
-                                                            -(1-nu)*(1+nu_u)*R_star**3 * numpy.sin(numpy.sqrt(x_n)) ) * \
-                                                            numpy.exp(-x_n * t_star), axis=1) * P_0
+            # Normalized Radial Stress
+            sigma_RR =  -1.0 - numpy.nan_to_num(numpy.sum(((12*(1 + nu)*(nu_u - nu)) / \
+                                            (E*R_star*R_star*R_star*x_n*numpy.sin(numpy.sqrt(x_n))) ) * \
+                                        (6*(nu_u - nu) * (numpy.sin(R_star*numpy.sqrt(x_n)) - R_star*numpy.sqrt(x_n)*numpy.cos(R_star*numpy.sqrt(x_n))) - \
+                                        (1 - nu)*(1 + nu)*R_star*R_star*R_star*numpy.sin(numpy.sqrt(x_n))) * \
+                                        numpy.exp(-x_n*t_star),axis=1)) * P_0
 
-            sigma_pp[t_track,:] = -1.0 - numpy.nan_to_num(numpy.sum( ( (12.0*(nu_u-nu) ) / \
-                                                            (E * R_star**3 * x_n * numpy.sin(numpy.sqrt(x_n)))) ) * \
-                                                            (3*(nu_u - nu) * ( (R_star**2 * x_n - 1) * numpy.sin(R_star*numpy.sqrt(x_n)) + R_star*numpy.sqrt(x_n) * numpy.cos(R_star * numpy.sqrt(x_n))) + \
-                                                            -(1-nu)*(1+nu_u)*R_star**3 * numpy.sin(numpy.sqrt(x_n)) ) * \
-                                                            numpy.exp(-x_n * t_star), axis=1) * P_0
+            # Normalized Circumferential Stress
+            sigma_phiphi =  -1.0 - numpy.nan_to_num(numpy.sum(((12*(1 + nu)*(nu_u - nu)) / \
+                                        (E*R_star*R_star*R_star*x_n*numpy.sin(numpy.sqrt(x_n))) ) * \
+                                        (3*(nu_u - nu) * ((R_star*R_star*x_n - 1.0) * (numpy.sin(R_star*numpy.sqrt(x_n))) + \
+                                        R_star*numpy.sqrt(x_n)*numpy.cos(R_star*numpy.sqrt(x_n))) - \
+                                        (1 - nu)*(1 + nu)*R_star*R_star*R_star*x_n*numpy.sin(numpy.sqrt(x_n))) * \
+                                        numpy.exp(-x_n*t_star),axis=1)) * P_0
+            
+            sigma_thetatheta = sigma_phiphi
 
-            sigma_tt[t_track,:] = sigma_pp[t_track,:]
 
+            sigma_sph = numpy.array([ [         sigma_RR*P_0, numpy.zeros(npts), numpy.zeros(npts)],
+                                    [numpy.zeros(npts),  sigma_thetatheta*P_0, numpy.zeros(npts)],
+                                    [numpy.zeros(npts), numpy.zeros(npts),      sigma_phiphi*P_0] ])
+
+
+            A = numpy.array( [ [numpy.sin(theta)*numpy.cos(phi), numpy.cos(theta)*numpy.cos(phi),   -numpy.sin(phi)],
+                            [numpy.sin(theta)*numpy.sin(phi), numpy.cos(theta)*numpy.sin(phi),    numpy.cos(phi)],
+                            [               numpy.cos(theta),               -numpy.sin(theta), numpy.zeros(npts)] ] ) 
+
+            B = numpy.array( [ [numpy.sin(theta)*numpy.cos(phi), numpy.sin(theta)*numpy.sin(phi),   numpy.cos(theta)],
+                            [numpy.cos(theta)*numpy.cos(phi), numpy.cos(theta)*numpy.sin(phi),  -numpy.sin(theta)],
+                            [                -numpy.sin(phi),                  numpy.cos(phi),  numpy.zeros(npts)] ] )    
+        
+            sigma_car = numpy.einsum('ij...,jk...->ik...',numpy.einsum('ij...,jk...->ik...',A,sigma_sph), B)
+
+            stress[t_track, :, 0] = sigma_car[0,0,:] # sxx
+            stress[t_track, :, 1] = sigma_car[1,1,:] # syy
+            stress[t_track, :, 2] = sigma_car[2,2,:] # szz
+            stress[t_track, :, 3] = sigma_car[0,1,:] # sxy
+            stress[t_track, :, 4] = sigma_car[1,2,:] # syz
+            stress[t_track, :, 5] = sigma_car[0,2,:] # sxz
             t_track += 1
+        return stress
 
-        # Convert to cartesian coordinates
-        sigma_sph = numpy.zeros([ntpts, npts, dim, dim])
-        sigma_sph[:,:,0,0] = sigma_rr[:,:]
-        sigma_sph[:,:,1,1] = sigma_pp[:,:]
-        sigma_sph[:,:,2,2] = sigma_tt[:,:]
+    def strain(self, locs):
+        """
+        Compute stress field at locations.
+        """
+        (npts, dim) = locs.shape
+        ntpts = tsteps.shape[0]
+        strain = numpy.zeros((ntpts, npts, self.TENSOR_SIZE), dtype=numpy.float64)
 
-        return stress        
+        return strain                
 
     def surface_traction(self, locs):
         (npts, dim) = locs.shape
