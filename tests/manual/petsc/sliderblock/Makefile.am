@@ -11,7 +11,7 @@ sliderblock_SOURCES = \
 	PrescribedSlip.cc \
 	DisplacementBC.cc \
 	Friction.cc \
-	sliderblock.cc
+	sliderblock.cc 
 
 noinst_HEADERS = \
 	SliderBlockApp.hh \
@@ -22,7 +22,6 @@ noinst_HEADERS = \
 	PrescribedSlip.hh \
 	Friction.hh \
 	DisplacementBC.hh
-
 
 AM_CPPFLAGS = $(PETSC_CC_INCLUDES)
 

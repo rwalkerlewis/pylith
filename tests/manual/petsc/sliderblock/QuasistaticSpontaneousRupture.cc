@@ -124,6 +124,7 @@ QuasistaticSpontaneousRupture::_computeLHSResidual(const PetscReal t,
     std::cout << "t:" << t
               << ", u1:" << u[1]
               << ", u2:" << u[2]
+              << ", d:" << d
               << ", f:" << friction
               << ", l:" << lambda
               << ", slip:" << slip
