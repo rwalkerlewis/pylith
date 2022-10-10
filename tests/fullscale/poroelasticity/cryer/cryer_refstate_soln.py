@@ -130,7 +130,7 @@ class AnalyticalSoln(object):
 
     def ones_scalar(self, locs):
         (npts, dim) = locs.shape
-        return numpy.zeros((1, npts, 1), dtype=numpy.float64)
+        return numpy.ones((1, npts, 1), dtype=numpy.float64)
 
     def zero_scalar(self, locs):
         (npts, dim) = locs.shape
@@ -302,7 +302,7 @@ class AnalyticalSoln(object):
         """
         (npts, dim) = locs.shape
         ntpts = tsteps.shape[0]
-        pressure = numpy.zeros((ntpts, npts, 1), dtype=numpy.float64)
+        pressure = numpy.zeros((1, npts, 1), dtype=numpy.float64)
 
         center = numpy.where(~locs.any(axis=1))[0]
 
@@ -328,7 +328,6 @@ class AnalyticalSoln(object):
         pressure[t_track,center,0] = numpy.sum( ( (18*numpy.square(nu_u-nu) ) / (eta*E) ) * \
                                     ( (numpy.sqrt(x_n)) / (numpy.sin(numpy.sqrt(x_n)) ) - 1 ) * \
                                     numpy.exp(-x_n*t_star))
-        t_track += 1
 
         return pressure
 

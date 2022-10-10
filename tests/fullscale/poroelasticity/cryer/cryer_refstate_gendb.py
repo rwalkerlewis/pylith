@@ -36,9 +36,9 @@ class GenerateDB(object):
         """Generate the database.
         """
         # Domain
-        x1 = numpy.arange(-0.001, 1.01, 0.001)
-        y1 = numpy.arange(-0.001, 1.01, 0.001)
-        z1 = numpy.arange(-0.001, 1.01, 0.001)
+        x1 = numpy.arange(-0.1, 1.01, 0.01)
+        y1 = numpy.arange(-0.1, 1.01, 0.01)
+        z1 = numpy.arange(-0.1, 1.01, 0.01)
         x, y, z = numpy.meshgrid(x1, y1, z1)
 
         xyz = numpy.zeros((len(x1) * len(y1) * len(z1), 3), dtype=numpy.float64)
@@ -54,7 +54,6 @@ class GenerateDB(object):
         strain = soln.strain(xyz)
         ones_scalar = soln.ones_scalar(xyz)
         zero_scalar = soln.zero_scalar(xyz)
-        # pressure = soln.zero_scalar(xy)
         pressure = soln.initial_pressure(xyz)
 
         # Aux Fields
