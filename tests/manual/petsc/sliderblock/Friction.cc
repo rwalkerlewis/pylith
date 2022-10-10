@@ -48,8 +48,9 @@ StaticFriction::jacobianSlip(const double slip) {
 
 
 double
-StaticFriction::jacobianSlipRate(const double slipRate) {
-    return 0.0;
+StaticFriction::jacobianSlipRate(const double slipRate,
+                                 const double eta) {
+    return eta;
 }
 
 
@@ -118,8 +119,9 @@ SlipWeakeningFriction::jacobianSlip(const double slip) {
 
 
 double
-SlipWeakeningFriction::jacobianSlipRate(const double slipRate) {
-    return 0.0;
+SlipWeakeningFriction::jacobianSlipRate(const double slipRate,
+                                        const double eta) {
+    return eta;
 }
 
 
@@ -172,11 +174,12 @@ ViscousFriction::jacobianSlip(const double slip) {
 
 
 double
-ViscousFriction::jacobianSlipRate(const double slipRate) {
+ViscousFriction::jacobianSlipRate(const double slipRate,
+                                  const double eta) {
     const double v0 = _ViscousFriction::rateParameter;
     const double viscosity = _ViscousFriction::viscosity;
 
-    return viscosity / v0;
+    return viscosity / v0 + eta;
 }
 
 
@@ -266,10 +269,11 @@ RateStateFriction::jacobianSlip(const double slip) {
 
 
 double
-RateStateFriction::jacobianSlipRate(const double slipRate) {
+RateStateFriction::jacobianSlipRate(const double slipRate,
+                                    const double eta) {
     const double vlinear = _RateStateFriction::vLinear;
 
-    return (slipRate > vlinear) ? _a/slipRate : _a/vlinear;
+    return (slipRate > vlinear) ? _a/slipRate + eta : _a/vlinear;
 }
 
 

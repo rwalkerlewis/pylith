@@ -187,7 +187,7 @@ QuasistaticSpontaneousRupture::_computeLHSJacobian(const PetscReal t,
     const PetscScalar slip = u[2] - u[1];
     const PetscScalar slipRate = v[2] - v[1];
     const PetscScalar df = _friction->jacobianSlip(fabs(slip));
-    const PetscScalar ddf = _friction->jacobianSlipRate(fabs(slipRate));
+    const PetscScalar ddf = _friction->jacobianSlipRate(fabs(slipRate), _eta);
     const PetscScalar d = _friction->lockedSlip();
 
     const PetscScalar lambda = solutionArray[_numDOFAll-1];

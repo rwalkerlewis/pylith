@@ -20,12 +20,13 @@ public:
     double jacobianSlip(const double slip) = 0;
 
     virtual
-    double jacobianSlipRate(const double slipRate) = 0;
+    double jacobianSlipRate(const double slipRate,
+                            const double eta) = 0;
 
     virtual
     void updateState(const double slip,
                      const double slipRate,
-		     const double dt) = 0;
+                     const double dt) = 0;
 
 private:
 
@@ -48,11 +49,12 @@ public:
 
     double jacobianSlip(const double slip);
 
-    double jacobianSlipRate(const double slipRate);
+    double jacobianSlipRate(const double slipRate,
+                            const double eta);
 
     void updateState(const double slip,
                      const double slipRate,
-		     const double dt);
+                     const double dt);
 
 private:
 
@@ -79,11 +81,12 @@ public:
 
     double jacobianSlip(const double slip);
 
-    double jacobianSlipRate(const double slipRate);
+    double jacobianSlipRate(const double slipRate,
+                            const double eta);
 
     void updateState(const double slip,
                      const double slipRate,
-		     const double dt);
+                     const double dt);
 
 private:
 
@@ -112,11 +115,12 @@ public:
 
     double jacobianSlip(const double slip);
 
-    double jacobianSlipRate(const double slipRate);
+    double jacobianSlipRate(const double slipRate,
+                            const double eta);
 
     void updateState(const double slip,
                      const double slipRate,
-		     const double dt);
+                     const double dt);
 
 private:
 
@@ -143,11 +147,12 @@ public:
 
     double jacobianSlip(const double slip);
 
-    double jacobianSlipRate(const double slipRate);
+    double jacobianSlipRate(const double slipRate,
+                            const double eta);
 
     void updateState(const double slip,
                      const double slipRate,
-		     const double dt);
+                     const double dt);
 
 private:
 
