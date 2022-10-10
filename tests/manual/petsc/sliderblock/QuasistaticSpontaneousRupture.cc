@@ -49,6 +49,10 @@ QuasistaticSpontaneousRupture::QuasistaticSpontaneousRupture(const char* frictio
         std::cerr << "Unknown friction model '" << friction << "'. Using default (slip_weakening)." << std::endl;
         _friction = new SlipWeakeningFriction(true);
     }
+#if 1
+    std::cout << "Friction: " << friction
+              << std::endl;
+#endif
 }
 
 
