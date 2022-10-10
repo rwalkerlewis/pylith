@@ -13,9 +13,13 @@ const double Formulation::_duration = 20.0;
 const double Formulation::_dtInitial = 0.02;
 
 const double Formulation::_ka = 1.0;
+const double Formulation::_ka1 = 1.0;
+const double Formulation::_ka2 = 1.0;
 const double Formulation::_ma = 1.0;
 
 const double Formulation::_kb = 1.0;
+const double Formulation::_kb1 = 1.0;
+const double Formulation::_kb2 = 1.0;
 const double Formulation::_mb = 1.5;
 
 const double Formulation::_mu = 1.0;

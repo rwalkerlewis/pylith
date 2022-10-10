@@ -63,20 +63,20 @@ protected:
 
     virtual
     void _computeLHSResidual(const PetscReal,
-			     const PetscReal,
+                             const PetscReal,
                              const PetscVec,
                              const PetscVec,
                              PetscVec);
 
     virtual
     void _computeRHSResidual(const PetscReal,
-			     const PetscReal,
+                             const PetscReal,
                              const PetscVec,
                              PetscVec);
 
     virtual
     void _computeLHSJacobian(const PetscReal,
-			     const PetscReal,
+                             const PetscReal,
                              const PetscVec,
                              const PetscVec,
                              const PetscReal,
@@ -85,14 +85,14 @@ protected:
 
     virtual
     void _computeRHSJacobian(const PetscReal,
-			     const PetscReal,
+                             const PetscReal,
                              const PetscVec,
                              PetscMat,
                              PetscMat);
 
     virtual
     void _updateState(const double dt);
-  
+
     virtual
     void _setSolutionBounds(PetscTS ts);
 
@@ -121,8 +121,12 @@ protected:
     size_t _numDOFAll;
 
     static const double _ka;
+    static const double _ka1;
+    static const double _ka2;
     static const double _ma;
     static const double _kb;
+    static const double _kb1;
+    static const double _kb2;
     static const double _mb;
     static const double _mu;
     static const double _cs;

@@ -3,8 +3,7 @@
 #include "Friction.hh"
 
 #include <cmath>
-#include <strings.h> 
-
+#include <strings.h>
 
 // --------------------------------------------------------------------------------------------------
 namespace _Friction {
@@ -57,7 +56,7 @@ StaticFriction::jacobianSlipRate(const double slipRate) {
 void
 StaticFriction::updateState(const double slip,
                             const double slipRate,
-			    const double dt) {
+                            const double dt) {
     if (slipRate <= _Friction::zeroTolerance) {
         _lockedSlip = slip;
     } // if
@@ -81,13 +80,13 @@ SlipWeakeningFriction::~SlipWeakeningFriction(void) {}
 
 double
 SlipWeakeningFriction::traction(const double slip,
-                        const double slipRate) {
+                                const double slipRate) {
     const double d0 = _SlipWeakeningFriction::weakeningSlip;
     const double fs = _SlipWeakeningFriction::frictionStatic;
     const double fd = _SlipWeakeningFriction::frictionDynamic;
 
     const double d = slip - _lockedSlip;
-    
+
     double f = fs;
     if (d > d0) {
         f = fd;
@@ -126,9 +125,9 @@ SlipWeakeningFriction::jacobianSlipRate(const double slipRate) {
 
 void
 SlipWeakeningFriction::updateState(const double slip,
-				   const double slipRate,
-				   const double dt) {
-    if (slipRate <= _Friction::zeroTolerance || _forceHealing) {
+                                   const double slipRate,
+                                   const double dt) {
+    if ((slipRate <= _Friction::zeroTolerance) || _forceHealing) {
         _lockedSlip = slip;
     } // if
 }
@@ -142,7 +141,7 @@ namespace _ViscousFriction {
 }
 
 ViscousFriction::ViscousFriction(void) :
-  _lockedSlip(0.0) {}
+    _lockedSlip(0.0) {}
 
 
 ViscousFriction::~ViscousFriction(void) {}
@@ -150,7 +149,7 @@ ViscousFriction::~ViscousFriction(void) {}
 
 double
 ViscousFriction::traction(const double slip,
-                        const double slipRate) {
+                          const double slipRate) {
     const double f0 = _ViscousFriction::frictionStatic;
     const double v0 = _ViscousFriction::rateParameter;
     const double viscosity = _ViscousFriction::viscosity;
@@ -162,13 +161,13 @@ ViscousFriction::traction(const double slip,
 
 double
 ViscousFriction::lockedSlip(void) const {
-  return _lockedSlip;
+    return _lockedSlip;
 }
 
 
 double
 ViscousFriction::jacobianSlip(const double slip) {
-  return 0.0;
+    return 0.0;
 }
 
 
@@ -183,8 +182,8 @@ ViscousFriction::jacobianSlipRate(const double slipRate) {
 
 void
 ViscousFriction::updateState(const double slip,
-			     const double slipRate,
-			     const double dt) {
+                             const double slipRate,
+                             const double dt) {
     if (slipRate <= _Friction::zeroTolerance) {
         _lockedSlip = slip;
     } // if
@@ -193,17 +192,20 @@ ViscousFriction::updateState(const double slip,
 
 // --------------------------------------------------------------------------------------------------
 namespace _RateStateFriction {
-    // original choices
-    //static const double aStable = 0.05;
-    //static const double aUnstable = 0.2;
-    //static const double b = 0.2;
-    //static const double l = 0.2;
+    // Stable: Velocity Strengthing (a-b) >= 0
+    // Unstable: Velocity Weakening (a-b) < 0
+
+    // original choices -
+    // static const double aStable = 0.05;
+    // static const double aUnstable = 0.2;
+    // static const double b = 0.2;
+    // static const double l = 0.2;
 
     // v1
-    //static const double aStable = 0.05;
-    //static const double aUnstable = 0.01;
-    //static const double b = 0.02;
-    //static const double l = 0.2;
+    // static const double aStable = 0.05;
+    // static const double aUnstable = 0.01;
+    // static const double b = 0.02;
+    // static const double l = 0.2;
 
     // v2
     static const double aStable = 0.05;
@@ -217,15 +219,15 @@ namespace _RateStateFriction {
 }
 
 RateStateFriction::RateStateFriction(const char* paramset) :
-  _lockedSlip(0.0),
-  _theta(_RateStateFriction::l/_RateStateFriction::v0) {
-  if (0 == strcasecmp(paramset, "stable")) {
-    _a = _RateStateFriction::aStable;
-  } else if (0 == strcasecmp(paramset, "unstable")) {
-    _a = _RateStateFriction::aUnstable;
-  } else {
-    _a = _RateStateFriction::aStable;
-  }
+    _lockedSlip(0.0),
+    _theta(_RateStateFriction::l/_RateStateFriction::v0) {
+    if (0 == strcasecmp(paramset, "stable")) {
+        _a = _RateStateFriction::aStable;
+    } else if (0 == strcasecmp(paramset, "unstable")) {
+        _a = _RateStateFriction::aUnstable;
+    } else {
+        _a = _RateStateFriction::aStable;
+    }
 }
 
 
@@ -234,7 +236,7 @@ RateStateFriction::~RateStateFriction(void) {}
 
 double
 RateStateFriction::traction(const double slip,
-                        const double slipRate) {
+                            const double slipRate) {
     const double f0 = _RateStateFriction::frictionStatic;
     const double v0 = _RateStateFriction::v0;
     const double l = _RateStateFriction::l;
@@ -243,9 +245,9 @@ RateStateFriction::traction(const double slip,
 
     double f = f0;
     if (slipRate > vlinear) {
-      f += _a*log(slipRate/v0) + b*log(v0*_theta/l);
+        f += _a*log(slipRate/v0) + b*log(v0*_theta/l);
     } else {
-      f += _a*log(vlinear/v0) + b*log(v0*_theta/l) - _a*(1.0-slipRate/vlinear);
+        f += _a*log(vlinear/v0) + b*log(v0*_theta/l) - _a*(1.0-slipRate/vlinear);
     }
     return f;
 }
@@ -253,13 +255,13 @@ RateStateFriction::traction(const double slip,
 
 double
 RateStateFriction::lockedSlip(void) const {
-  return _lockedSlip;
+    return _lockedSlip;
 }
 
 
 double
 RateStateFriction::jacobianSlip(const double slip) {
-  return 0.0;
+    return 0.0;
 }
 
 
@@ -273,18 +275,18 @@ RateStateFriction::jacobianSlipRate(const double slipRate) {
 
 void
 RateStateFriction::updateState(const double slip,
-			       const double slipRate,
-			       const double dt) {
-  const double l = _RateStateFriction::l;
-  
+                               const double slipRate,
+                               const double dt) {
+    const double l = _RateStateFriction::l;
+
     if (slipRate <= _Friction::zeroTolerance) {
         _lockedSlip = slip;
     } // if
 
     if (slipRate*dt/l > 1.0e-5) {
-      _theta = _theta*exp(-slipRate*dt/l) + l/slipRate*(1.0-exp(-slipRate*dt/l));
+        _theta = _theta*exp(-slipRate*dt/l) + l/slipRate*(1.0-exp(-slipRate*dt/l));
     } else {
-      _theta = _theta*exp(-slipRate*dt/l) + dt-0.5*slipRate*dt*dt/l;
+        _theta = _theta*exp(-slipRate*dt/l) + dt-0.5*slipRate*dt*dt/l;
     } // if/else
 }
 
