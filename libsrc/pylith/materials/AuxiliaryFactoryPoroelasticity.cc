@@ -22,32 +22,33 @@
 
 #include "Query.hh" // USES Query
 
-#include "pylith/topology/Field.hh"      // USES Field
+#include "pylith/topology/Field.hh" // USES Field
 #include "pylith/topology/FieldQuery.hh" // HOLDSA FieldQuery
 
-#include "spatialdata/units/Nondimensional.hh"   // USES Nondimensional
+#include "spatialdata/units/Nondimensional.hh" // USES Nondimensional
 #include "spatialdata/spatialdb/GravityField.hh" // USES GravityField
 
-#include "pylith/utils/error.hh"    // USES PYLITH_METHOD*
+#include "pylith/utils/error.hh" // USES PYLITH_METHOD*
 #include "pylith/utils/journals.hh" // USES PYLITH_JOURNAL*
 
 #include <cassert>
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Default constructor.
-pylith::materials::AuxiliaryFactoryPoroelasticity::AuxiliaryFactoryPoroelasticity(void)
-{
+pylith::materials::AuxiliaryFactoryPoroelasticity::AuxiliaryFactoryPoroelasticity(void) {
     GenericComponent::setName("auxiliaryfactoryporoelasticity");
 } // constructor
+
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Destructor.
 pylith::materials::AuxiliaryFactoryPoroelasticity::~AuxiliaryFactoryPoroelasticity(void) {}
 
+
 // ---------------------------------------------------------------------------------------------------------------------
 // Add body force subfield to auxiliary fields.
-void pylith::materials::AuxiliaryFactoryPoroelasticity::addBodyForce(void)
-{
+void
+pylith::materials::AuxiliaryFactoryPoroelasticity::addBodyForce(void) {
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addBodyForce(void)");
 
@@ -65,8 +66,7 @@ void pylith::materials::AuxiliaryFactoryPoroelasticity::addBodyForce(void)
     description.vectorFieldType = pylith::topology::Field::VECTOR;
     description.numComponents = _spaceDim;
     description.componentNames.resize(_spaceDim);
-    for (int i = 0; i < _spaceDim; ++i)
-    {
+    for (int i = 0; i < _spaceDim; ++i) {
         description.componentNames[i] = componentNames[i];
     } // for
     description.scale = forceScale;
@@ -78,10 +78,11 @@ void pylith::materials::AuxiliaryFactoryPoroelasticity::addBodyForce(void)
     PYLITH_METHOD_END;
 } // addBodyForce
 
+
 // ---------------------------------------------------------------------------------------------------------------------
 // Add gravity subfield to auxiliary fields.
-void pylith::materials::AuxiliaryFactoryPoroelasticity::addGravityField(spatialdata::spatialdb::GravityField *gf)
-{
+void
+pylith::materials::AuxiliaryFactoryPoroelasticity::addGravityField(spatialdata::spatialdb::GravityField *gf) {
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addGravityField(void)");
 
@@ -100,8 +101,7 @@ void pylith::materials::AuxiliaryFactoryPoroelasticity::addGravityField(spatiald
     description.vectorFieldType = pylith::topology::Field::VECTOR;
     description.numComponents = _spaceDim;
     description.componentNames.resize(_spaceDim);
-    for (int i = 0; i < _spaceDim; ++i)
-    {
+    for (int i = 0; i < _spaceDim; ++i) {
         description.componentNames[i] = componentNames[i];
     } // for
     description.scale = accelerationScale;
@@ -113,10 +113,11 @@ void pylith::materials::AuxiliaryFactoryPoroelasticity::addGravityField(spatiald
     PYLITH_METHOD_END;
 } // addGravityField
 
+
 // ----------------------------------------------------------------------
 // Add porosity subfield to auxiliary fields.
-void pylith::materials::AuxiliaryFactoryPoroelasticity::addPorosity(void)
-{ // porosity
+void
+pylith::materials::AuxiliaryFactoryPoroelasticity::addPorosity(void) { // porosity
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addPorosity(void)");
 
@@ -141,10 +142,11 @@ void pylith::materials::AuxiliaryFactoryPoroelasticity::addPorosity(void)
     PYLITH_METHOD_END;
 } // addPorosity
 
+
 // ---------------------------------------------------------------------------------------------------------------------
 // Add density subfield to auxiliary fields.
-void pylith::materials::AuxiliaryFactoryPoroelasticity::addSolidDensity(void)
-{
+void
+pylith::materials::AuxiliaryFactoryPoroelasticity::addSolidDensity(void) {
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addSolidDensity(void)");
 
@@ -167,10 +169,11 @@ void pylith::materials::AuxiliaryFactoryPoroelasticity::addSolidDensity(void)
     PYLITH_METHOD_END;
 } // addSolidDensity
 
+
 // ----------------------------------------------------------------------
 // Add fluid density subfield to auxiliary fields.
-void pylith::materials::AuxiliaryFactoryPoroelasticity::addFluidDensity(void)
-{ // fluidDensity
+void
+pylith::materials::AuxiliaryFactoryPoroelasticity::addFluidDensity(void) { // fluidDensity
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addFluidDensity(void)");
 
@@ -193,10 +196,11 @@ void pylith::materials::AuxiliaryFactoryPoroelasticity::addFluidDensity(void)
     PYLITH_METHOD_END;
 } // addFluidDensity
 
+
 // ----------------------------------------------------------------------
 // Add fluid viscosity subfield to auxiliary fields.
-void pylith::materials::AuxiliaryFactoryPoroelasticity::addFluidViscosity(void)
-{ // fluidViscosity
+void
+pylith::materials::AuxiliaryFactoryPoroelasticity::addFluidViscosity(void) { // fluidViscosity
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addFluidViscosity(void)");
 
@@ -222,10 +226,11 @@ void pylith::materials::AuxiliaryFactoryPoroelasticity::addFluidViscosity(void)
 
 } // addFluidViscosity
 
+
 // ----------------------------------------------------------------------
 // Add source density subfield to auxiliary fields.
-void pylith::materials::AuxiliaryFactoryPoroelasticity::addSourceDensity(void)
-{ // sourceDensity
+void
+pylith::materials::AuxiliaryFactoryPoroelasticity::addSourceDensity(void) { // sourceDensity
     PYLITH_METHOD_BEGIN;
     PYLITH_JOURNAL_DEBUG("addSourceDensity(void)");
 
@@ -251,32 +256,5 @@ void pylith::materials::AuxiliaryFactoryPoroelasticity::addSourceDensity(void)
 
 } // addSourceDensity
 
-// ----------------------------------------------------------------------
-// Add constant pressure source subfield to auxiliary fields.
-void pylith::materials::AuxiliaryFactoryPoroelasticity::addConstantPressureSource(void)
-{ // constantPressureSource
-    PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("addConstantPressureSource(void)");
-
-    const char *subfieldName = "constant_pressure_source";
-    const PylithReal pressureScale = _normalizer->getPressureScale();
-    const PylithReal constantPressureSourceScale = pressureScale;
-
-    pylith::topology::Field::Description description;
-    description.label = subfieldName;
-    description.alias = subfieldName;
-    description.vectorFieldType = pylith::topology::Field::SCALAR;
-    description.numComponents = 1;
-    description.componentNames.resize(1);
-    description.componentNames[0] = subfieldName;
-    description.scale = constantPressureSourceScale;
-    description.validator = pylith::topology::FieldQuery::validatorNonnegative;
-
-    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
-    this->setSubfieldQuery(subfieldName);
-
-    PYLITH_METHOD_END;
-
-} // addConstantPressureSource
 
 // End of file

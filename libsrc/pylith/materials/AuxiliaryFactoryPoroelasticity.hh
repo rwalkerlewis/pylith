@@ -65,9 +65,6 @@ public:
     /// Add reference sourceDensity subfield to auxiliary fields.
     void addSourceDensity(void);
 
-    /// Add constant pressure sourcesubfield to auxiliary fields.
-    void addConstantPressureSource(void);
-
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
 
