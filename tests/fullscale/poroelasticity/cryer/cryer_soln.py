@@ -348,7 +348,7 @@ class AnalyticalSoln(object):
 
         return(a_n)
 
-  def stress(self, locs):
+    def stress(self, locs):
         """
         Compute stress field at locations.
         """
@@ -402,8 +402,8 @@ class AnalyticalSoln(object):
         stress_sph_tensor[:,1,1,:] = stress_sph[:, :, 1]    # syy
         stress_sph_tensor[:,2,2,:] = stress_sph[:, :, 2]    # szz
 
-        theta = numpy.nan_to_num( numpy.arctan( numpy.nan_to_num( numpy.sqrt(xyz[:,0]**2 + xyz[:,1]**2) / xyz[:,2] ) ) )
-        phi = numpy.nan_to_num( numpy.arctan( numpy.nan_to_num( xyz[:,1] / xyz[:,0] ) ) )
+        theta = numpy.nan_to_num( numpy.arctan( numpy.nan_to_num( numpy.sqrt(locs[:,0]**2 + locs[:,1]**2) / locs[:,2] ) ) )
+        phi = numpy.nan_to_num( numpy.arctan( numpy.nan_to_num( locs[:,1] / locs[:,0] ) ) )
 
         A = numpy.array( [ [numpy.sin(theta)*numpy.cos(phi), numpy.cos(theta)*numpy.cos(phi),   -numpy.sin(phi)],
                         [numpy.sin(theta)*numpy.sin(phi), numpy.cos(theta)*numpy.sin(phi),    numpy.cos(phi)],

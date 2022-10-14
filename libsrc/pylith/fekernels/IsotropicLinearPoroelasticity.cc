@@ -2495,7 +2495,13 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::cauchyStress(const 
                                                                                                                                                                    //
                                                                                                                                                                    //
                                                                                                                                                                    //
+                                                                                                                                                                   //
+                                                                                                                                                                   //
+                                                                                                                                                                   //
                                                                                                                                                                    // Cheng,
+                                                                                                                                                                   //
+                                                                                                                                                                   //
+                                                                                                                                                                   //
                                                                                                                                                                    //
                                                                                                                                                                    //
                                                                                                                                                                    //
@@ -2618,7 +2624,13 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::cauchyStress_refsta
                                                                                                                                                                    //
                                                                                                                                                                    //
                                                                                                                                                                    //
+                                                                                                                                                                   //
+                                                                                                                                                                   //
+                                                                                                                                                                   //
                                                                                                                                                                    // Cheng,
+                                                                                                                                                                   //
+                                                                                                                                                                   //
+                                                                                                                                                                   //
                                                                                                                                                                    //
                                                                                                                                                                    //
                                                                                                                                                                    //
@@ -5271,7 +5283,8 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::cauchyStress(const PylithInt
 
     // Create and populate stress tensor
 
-    PylithScalar stressTensor[9] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    // PylithScalar stressTensor[9] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    PylithScalar stressTensor[_dim * _dim];
 
     for (PylithInt i = 0; i < _dim; ++i) {
         for (PylithInt j = 0; j < _dim; ++j) {
@@ -5284,7 +5297,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::cauchyStress(const PylithInt
     // Generate stress vector
     stressVector[0] = stressTensor[0]; // stress_xx
     stressVector[1] = stressTensor[4]; // stress_yy
-    stressVector[2] = stressTensor[9]; // stress_zz
+    stressVector[2] = stressTensor[8]; // stress_zz
     stressVector[3] = stressTensor[1]; // stress_xy
     stressVector[4] = stressTensor[5]; // stress_xy
     stressVector[5] = stressTensor[2]; // stress_xz
@@ -5351,8 +5364,8 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::cauchyStress_refstate(const 
     const PylithScalar ref_trace_strain = refStrainVector[0] + refStrainVector[1] + refStrainVector[2];
 
     // // Convert reference vectors to refrence tensors
-    // PylithScalar refStressTensor[_dim * _dim];
-    // PylithScalar refStrainTensor[_dim * _dim];
+    PylithScalar refStressTensor[_dim * _dim];
+    PylithScalar refStrainTensor[_dim * _dim];
     // PylithInt refTensorPos[9] = {0, 3, 5,
     //                              3, 1, 4,
     //                              5, 4, 2};
@@ -5374,6 +5387,17 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::cauchyStress_refstate(const 
     refStressTensor[6] = refStressVector[5]; // stress_zx
     refStressTensor[7] = refStressVector[4]; // stress_zy
     refStressTensor[8] = refStressVector[2]; // stress_zz
+
+    // Generate ref strain vector
+    refStrainTensor[0] = refStrainVector[0]; // stress_xx
+    refStrainTensor[1] = refStrainVector[3]; // stress_xy
+    refStrainTensor[2] = refStrainVector[5]; // stress_xz
+    refStrainTensor[3] = refStrainVector[3]; // stress_yx
+    refStrainTensor[4] = refStrainVector[1]; // stress_yy
+    refStrainTensor[5] = refStrainVector[4]; // stress_yz
+    refStrainTensor[6] = refStrainVector[5]; // stress_zx
+    refStrainTensor[7] = refStrainVector[4]; // stress_zy
+    refStrainTensor[8] = refStrainVector[2]; // stress_zz
 
     // Create and populate stress tensor
 
