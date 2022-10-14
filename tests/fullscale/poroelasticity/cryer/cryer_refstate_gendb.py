@@ -36,9 +36,9 @@ class GenerateDB(object):
         """Generate the database.
         """
         # Domain
-        x1 = numpy.arange(-0.1, 1.01, 0.01)
-        y1 = numpy.arange(-0.1, 1.01, 0.01)
-        z1 = numpy.arange(-0.1, 1.01, 0.01)
+        x1 = numpy.arange(-0.1, 1.01, 0.1)
+        y1 = numpy.arange(-0.1, 1.01, 0.1)
+        z1 = numpy.arange(-0.1, 1.01, 0.1)
         x, y, z = numpy.meshgrid(x1, y1, z1)
 
         xyz = numpy.zeros((len(x1) * len(y1) * len(z1), 3), dtype=numpy.float64)
@@ -50,8 +50,8 @@ class GenerateDB(object):
         from cryer_refstate_soln import AnalyticalSoln
         from cryer_refstate_soln import p_solid_density, p_fluid_density, p_fluid_viscosity, p_porosity, p_shear_modulus, p_drained_bulk_modulus, p_biot_coefficient, p_fluid_bulk_modulus, p_solid_bulk_modulus, p_isotropic_permeability
         soln = AnalyticalSoln()
-        stress = soln.stress(xyz)
-        strain = soln.strain(xyz)
+        stress = soln.input_stress(xyz)
+        strain = soln.input_strain(xyz)
         ones_scalar = soln.ones_scalar(xyz)
         zero_scalar = soln.zero_scalar(xyz)
         pressure = soln.initial_pressure(xyz)

@@ -42,28 +42,28 @@ class TestCase(FullTestCase):
             "mesh": self.mesh,
         }
         self.checks = [
-            Check(
-                mesh_entities=["domain"],
-                vertex_fields=SOLUTION_FIELDS,
-                defaults=defaults,
-                tolerance=SOLUTION_TOLERANCE,
-            ),
-            Check(
-                mesh_entities=["poroelastic"],
-                filename="output/{name}-{mesh_entity}_info.h5",
-                cell_fields = [
-                    "biot_coefficient",
-                    "biot_modulus",
-                    "drained_bulk_modulus",
-                    "fluid_density",
-                    "fluid_viscosity",
-                    "isotropic_permeability",
-                    "porosity",
-                    "shear_modulus",
-                    "solid_density",
-                ],
-                defaults=defaults,
-            ),
+            # Check(
+            #     mesh_entities=["domain"],
+            #     vertex_fields=SOLUTION_FIELDS,
+            #     defaults=defaults,
+            #     tolerance=SOLUTION_TOLERANCE,
+            # ),
+            # Check(
+            #     mesh_entities=["poroelastic"],
+            #     filename="output/{name}-{mesh_entity}_info.h5",
+            #     cell_fields = [
+            #         "biot_coefficient",
+            #         "biot_modulus",
+            #         "drained_bulk_modulus",
+            #         "fluid_density",
+            #         "fluid_viscosity",
+            #         "isotropic_permeability",
+            #         "porosity",
+            #         "shear_modulus",
+            #         "solid_density",
+            #     ],
+            #     defaults=defaults,
+            # ),
             Check(
                 mesh_entities=["poroelastic"],
                 vertex_fields = ["displacement", "pressure", "cauchy_strain", "cauchy_stress"],
@@ -76,12 +76,12 @@ class TestCase(FullTestCase):
             #     vertex_fields=["initial_amplitude"],
             #     defaults=defaults,
             # ),
-            Check(
-                mesh_entities=["x_neg", "y_neg", "z_neg", "surface_pressure"],
-                vertex_fields=SOLUTION_FIELDS,
-                defaults=defaults,
-                tolerance=SOLUTION_TOLERANCE,
-            ),
+            # Check(
+            #     mesh_entities=["x_neg", "y_neg", "z_neg", "surface_pressure"],
+            #     vertex_fields=SOLUTION_FIELDS,
+            #     defaults=defaults,
+            #     tolerance=SOLUTION_TOLERANCE,
+            # ),
         ]
 
     def run_pylith(self, testName, args):

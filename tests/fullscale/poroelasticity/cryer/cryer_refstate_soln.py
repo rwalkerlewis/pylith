@@ -48,16 +48,16 @@ p_porosity = 0.1
 p_isotropic_permeability = 1.5
 p_fluid_viscosity = 1.0
 
-G = 3.0
-rho_s = 2500
-rho_f = 1000
-K_fl = 8.0
-K_sg = 10.0
-K_d = 4.0
-alpha = 0.6
-phi = 0.1
-k = 1.5
-mu_f = 1.0
+G = p_shear_modulus
+rho_s = p_solid_density
+rho_f = p_fluid_density
+K_fl = p_fluid_bulk_modulus
+K_sg = p_solid_bulk_modulus
+K_d = p_drained_bulk_modulus
+alpha = p_biot_coefficient
+phi = p_porosity
+k = p_isotropic_permeability
+mu_f = p_fluid_viscosity
 P_0 = 1.0
 R_0 = 1.0
 ndim = 3
@@ -225,7 +225,7 @@ class AnalyticalSoln(object):
         return isotropic_permeability
 
     def displacement(self, locs):
-        """
+        """        t_track += 1
         Compute displacement field at locations.
         """
         (npts, dim) = locs.shape
@@ -279,7 +279,7 @@ class AnalyticalSoln(object):
         E = (1-nu)**2 * (1+nu_u)**2 * x_n - 18*(1+nu)*(nu_u-nu)*(1-nu_u)
 
         t_track = 0
-
+        t_track += 1
         for t in tsteps:
 
             t_star = (c*t)/(R_0**2)
@@ -385,13 +385,100 @@ class AnalyticalSoln(object):
 
         return(a_n)
 
+    def input_stress(self, locs):
+        """
+        Compute stress field at locations.
+        """
+        (npts, dim) = locs.shape
+        #ntpts = tsteps.shape[0]
+        ntpts = 1
+        stress_sph = numpy.zeros((ntpts, npts, self.TENSOR_SIZE), dtype=numpy.float64)
+        stress_crt = numpy.zeros((ntpts, npts, self.TENSOR_SIZE), dtype=numpy.float64)        
+
+        x_n = self.cryerZeros()
+        center = numpy.where(~locs.any(axis=1))[0]
+        R = numpy.sqrt(locs[:,0]*locs[:,0] + locs[:,1]*locs[:,1] + locs[:,2]*locs[:,2])
+        R_star = R.reshape([R.size,1]) / R_0
+        x_n.reshape([1,x_n.size])
+        theta = numpy.nan_to_num( numpy.arctan( numpy.nan_to_num( numpy.sqrt(locs[:,0]**2 + locs[:,1]**2) / locs[:,2] ) ) )
+        phi = numpy.nan_to_num( numpy.arctan( numpy.nan_to_num( locs[:,1] / locs[:,0] ) ) )
+            
+        E = numpy.square(1-nu)*numpy.square(1+nu_u)*x_n - 18*(1+nu)*(nu_u-nu)*(1-nu_u)
+        
+        t_track = 0
+        t = tsteps[0]
+        #for t in tsteps:
+        t_star = (c*t)/(R_0**2)
+
+        # Normalized Radial Stress
+        sigma_RR =  -1.0 - numpy.nan_to_num( numpy.sum( ( (12*(nu_u - nu) ) / \
+                                                        (E*R_star*R_star*R_star*x_n*numpy.sin(numpy.sqrt(x_n))) ) * \
+                                                        ( 6*(nu_u - nu)*(numpy.sin(R_star*numpy.sqrt(x_n)) - R_star*numpy.sqrt(x_n)*numpy.cos(R_star*numpy.sqrt(x_n))) + \
+                                                        -(1 - nu)*(1 + nu_u)*R_star*R_star*R_star*numpy.sin(numpy.sqrt(x_n)) ) * \
+                                                        numpy.exp(-x_n*t_star),axis=1))
+
+        # Normalized Circumferential Stress
+        sigma_pp =  -1.0 - numpy.nan_to_num( numpy.sum( ( (12*(nu_u - nu)) / \
+                                                        (E*R_star*R_star*R_star*x_n*numpy.sin(numpy.sqrt(x_n))) ) * \
+                                                        ( 3*(nu_u - nu) * ((R_star*R_star*x_n - 1.0) * (numpy.sin(R_star*numpy.sqrt(x_n))) + R_star*numpy.sqrt(x_n)*numpy.cos(R_star*numpy.sqrt(x_n))) + \
+                                                        -(1 - nu)*(1 + nu_u)*R_star*R_star*R_star*x_n*numpy.sin(numpy.sqrt(x_n)) ) * \
+                                                        numpy.exp(-x_n*t_star), axis=1))    
+        
+        #sigma_thetatheta = sigma_phiphi
+        sigma_tt = sigma_pp
+
+        stress_sph[t_track, :, 0] = sigma_RR*P_0        # sxx
+        stress_sph[t_track, :, 1] = sigma_tt*P_0        # syy
+        stress_sph[t_track, :, 2] = sigma_pp*P_0        # szz
+        stress_sph[t_track, :, 3] = numpy.zeros(npts)   # sxy
+        stress_sph[t_track, :, 4] = numpy.zeros(npts)   # syz
+        stress_sph[t_track, :, 5] = numpy.zeros(npts)   # sxz
+
+        stress_sph_tensor = numpy.zeros([ntpts,3,3,npts])
+        stress_sph_tensor[:,0,0,:] = stress_sph[:, :, 0]    # sxx
+        stress_sph_tensor[:,1,1,:] = stress_sph[:, :, 1]    # syy
+        stress_sph_tensor[:,2,2,:] = stress_sph[:, :, 2]    # szz
+
+        theta = numpy.nan_to_num( numpy.arctan( numpy.nan_to_num( numpy.sqrt(xyz[:,0]**2 + xyz[:,1]**2) / xyz[:,2] ) ) )
+        phi = numpy.nan_to_num( numpy.arctan( numpy.nan_to_num( xyz[:,1] / xyz[:,0] ) ) )
+
+        A = numpy.array( [ [numpy.sin(theta)*numpy.cos(phi), numpy.cos(theta)*numpy.cos(phi),   -numpy.sin(phi)],
+                        [numpy.sin(theta)*numpy.sin(phi), numpy.cos(theta)*numpy.sin(phi),    numpy.cos(phi)],
+                        [               numpy.cos(theta),               -numpy.sin(theta), numpy.zeros(npts)] ] ) 
+
+        B = numpy.array( [ [numpy.sin(theta)*numpy.cos(phi), numpy.sin(theta)*numpy.sin(phi),   numpy.cos(theta)],
+                        [numpy.cos(theta)*numpy.cos(phi), numpy.cos(theta)*numpy.sin(phi),  -numpy.sin(theta)],
+                        [                -numpy.sin(phi),                  numpy.cos(phi),  numpy.zeros(npts)] ] )
+
+        A_time = numpy.zeros([ntpts,3,3,npts])
+        A_time[0,:,:,:] = A[:,:,:]
+        A_time[1,:,:,:] = A[:,:,:]
+
+        B_time = numpy.zeros([ntpts,3,3,npts])
+        B_time[0,:,:,:] = B[:,:,:]
+        B_time[1,:,:,:] = B[:,:,:]
+
+        stress_crt_tensor = numpy.zeros([ntpts,3,3,npts])
+        stress_crt_tensor[:,:,:,:] = numpy.einsum('hijl,hjkl->hikl',numpy.einsum('hijl, hjkl->hikl',A_time,stress_sph_tensor[:,:,:,:]), B_time)                            
+
+        stress_crt[:, :, 0] = stress_crt_tensor[:,0,0,:] # sxx
+        stress_crt[:, :, 1] = stress_crt_tensor[:,1,1,:] # syy
+        stress_crt[:, :, 2] = stress_crt_tensor[:,2,2,:] # szz
+        stress_crt[:, :, 3] = stress_crt_tensor[:,0,1,:] # sxy
+        stress_crt[:, :, 4] = stress_crt_tensor[:,1,2,:] # syz
+        stress_crt[:, :, 5] = stress_crt_tensor[:,0,2,:] # sxz
+
+        return stress_crt
+
     def stress(self, locs):
         """
         Compute stress field at locations.
         """
         (npts, dim) = locs.shape
         ntpts = tsteps.shape[0]
-        stress = numpy.zeros((ntpts, npts, 6), dtype=numpy.float64)    
+        stress_sph = numpy.zeros((ntpts, npts, self.TENSOR_SIZE), dtype=numpy.float64)
+        stress_crt = numpy.zeros((ntpts, npts, self.TENSOR_SIZE), dtype=numpy.float64)        
+
         x_n = self.cryerZeros()
         center = numpy.where(~locs.any(axis=1))[0]
         R = numpy.sqrt(locs[:,0]*locs[:,0] + locs[:,1]*locs[:,1] + locs[:,2]*locs[:,2])
@@ -408,46 +495,74 @@ class AnalyticalSoln(object):
             t_star = (c*t)/(R_0**2)
 
             # Normalized Radial Stress
-            sigma_RR =  -1.0 - numpy.nan_to_num(numpy.sum(((12*(1 + nu)*(nu_u - nu)) / \
-                                            (E*R_star*R_star*R_star*x_n*numpy.sin(numpy.sqrt(x_n))) ) * \
-                                        (6*(nu_u - nu) * (numpy.sin(R_star*numpy.sqrt(x_n)) - R_star*numpy.sqrt(x_n)*numpy.cos(R_star*numpy.sqrt(x_n))) - \
-                                        (1 - nu)*(1 + nu)*R_star*R_star*R_star*numpy.sin(numpy.sqrt(x_n))) * \
-                                        numpy.exp(-x_n*t_star),axis=1)) * P_0
+            sigma_RR =  -1.0 - numpy.nan_to_num( numpy.sum( ( (12*(nu_u - nu) ) / \
+                                                            (E*R_star*R_star*R_star*x_n*numpy.sin(numpy.sqrt(x_n))) ) * \
+                                                            ( 6*(nu_u - nu)*(numpy.sin(R_star*numpy.sqrt(x_n)) - R_star*numpy.sqrt(x_n)*numpy.cos(R_star*numpy.sqrt(x_n))) + \
+                                                            -(1 - nu)*(1 + nu_u)*R_star*R_star*R_star*numpy.sin(numpy.sqrt(x_n)) ) * \
+                                                            numpy.exp(-x_n*t_star),axis=1))
 
             # Normalized Circumferential Stress
-            sigma_phiphi =  -1.0 - numpy.nan_to_num(numpy.sum(((12*(1 + nu)*(nu_u - nu)) / \
-                                        (E*R_star*R_star*R_star*x_n*numpy.sin(numpy.sqrt(x_n))) ) * \
-                                        (3*(nu_u - nu) * ((R_star*R_star*x_n - 1.0) * (numpy.sin(R_star*numpy.sqrt(x_n))) + \
-                                        R_star*numpy.sqrt(x_n)*numpy.cos(R_star*numpy.sqrt(x_n))) - \
-                                        (1 - nu)*(1 + nu)*R_star*R_star*R_star*x_n*numpy.sin(numpy.sqrt(x_n))) * \
-                                        numpy.exp(-x_n*t_star),axis=1)) * P_0
+            sigma_pp =  -1.0 - numpy.nan_to_num( numpy.sum( ( (12*(nu_u - nu)) / \
+                                                            (E*R_star*R_star*R_star*x_n*numpy.sin(numpy.sqrt(x_n))) ) * \
+                                                            ( 3*(nu_u - nu) * ((R_star*R_star*x_n - 1.0) * (numpy.sin(R_star*numpy.sqrt(x_n))) + R_star*numpy.sqrt(x_n)*numpy.cos(R_star*numpy.sqrt(x_n))) + \
+                                                            -(1 - nu)*(1 + nu_u)*R_star*R_star*R_star*x_n*numpy.sin(numpy.sqrt(x_n)) ) * \
+                                                            numpy.exp(-x_n*t_star), axis=1))    
             
-            sigma_thetatheta = sigma_phiphi
+            #sigma_thetatheta = sigma_phiphi
+            sigma_tt = sigma_pp
+
+            stress_sph[t_track, :, 0] = sigma_RR*P_0        # sxx
+            stress_sph[t_track, :, 1] = sigma_tt*P_0        # syy
+            stress_sph[t_track, :, 2] = sigma_pp*P_0        # szz
+            stress_sph[t_track, :, 3] = numpy.zeros(npts)   # sxy
+            stress_sph[t_track, :, 4] = numpy.zeros(npts)   # syz
+            stress_sph[t_track, :, 5] = numpy.zeros(npts)   # sxz
 
 
-            sigma_sph = numpy.array([ [         sigma_RR*P_0, numpy.zeros(npts), numpy.zeros(npts)],
-                                    [numpy.zeros(npts),  sigma_thetatheta*P_0, numpy.zeros(npts)],
-                                    [numpy.zeros(npts), numpy.zeros(npts),      sigma_phiphi*P_0] ])
+        stress_sph_tensor = numpy.zeros([ntpts,3,3,npts])
+        stress_sph_tensor[:,0,0,:] = stress_sph[:, :, 0]    # sxx
+        stress_sph_tensor[:,1,1,:] = stress_sph[:, :, 1]    # syy
+        stress_sph_tensor[:,2,2,:] = stress_sph[:, :, 2]    # szz
 
+        theta = numpy.nan_to_num( numpy.arctan( numpy.nan_to_num( numpy.sqrt(xyz[:,0]**2 + xyz[:,1]**2) / xyz[:,2] ) ) )
+        phi = numpy.nan_to_num( numpy.arctan( numpy.nan_to_num( xyz[:,1] / xyz[:,0] ) ) )
 
-            A = numpy.array( [ [numpy.sin(theta)*numpy.cos(phi), numpy.cos(theta)*numpy.cos(phi),   -numpy.sin(phi)],
-                            [numpy.sin(theta)*numpy.sin(phi), numpy.cos(theta)*numpy.sin(phi),    numpy.cos(phi)],
-                            [               numpy.cos(theta),               -numpy.sin(theta), numpy.zeros(npts)] ] ) 
+        A = numpy.array( [ [numpy.sin(theta)*numpy.cos(phi), numpy.cos(theta)*numpy.cos(phi),   -numpy.sin(phi)],
+                        [numpy.sin(theta)*numpy.sin(phi), numpy.cos(theta)*numpy.sin(phi),    numpy.cos(phi)],
+                        [               numpy.cos(theta),               -numpy.sin(theta), numpy.zeros(npts)] ] ) 
 
-            B = numpy.array( [ [numpy.sin(theta)*numpy.cos(phi), numpy.sin(theta)*numpy.sin(phi),   numpy.cos(theta)],
-                            [numpy.cos(theta)*numpy.cos(phi), numpy.cos(theta)*numpy.sin(phi),  -numpy.sin(theta)],
-                            [                -numpy.sin(phi),                  numpy.cos(phi),  numpy.zeros(npts)] ] )    
-        
-            sigma_car = numpy.einsum('ij...,jk...->ik...',numpy.einsum('ij...,jk...->ik...',A,sigma_sph), B)
+        B = numpy.array( [ [numpy.sin(theta)*numpy.cos(phi), numpy.sin(theta)*numpy.sin(phi),   numpy.cos(theta)],
+                        [numpy.cos(theta)*numpy.cos(phi), numpy.cos(theta)*numpy.sin(phi),  -numpy.sin(theta)],
+                        [                -numpy.sin(phi),                  numpy.cos(phi),  numpy.zeros(npts)] ] )
 
-            stress[t_track, :, 0] = sigma_car[0,0,:] # sxx
-            stress[t_track, :, 1] = sigma_car[1,1,:] # syy
-            stress[t_track, :, 2] = sigma_car[2,2,:] # szz
-            stress[t_track, :, 3] = sigma_car[0,1,:] # sxy
-            stress[t_track, :, 4] = sigma_car[1,2,:] # syz
-            stress[t_track, :, 5] = sigma_car[0,2,:] # sxz
-            t_track += 1
-        return stress
+        A_time = numpy.zeros([ntpts,3,3,npts])
+        A_time[0,:,:,:] = A[:,:,:]
+        A_time[1,:,:,:] = A[:,:,:]
+
+        B_time = numpy.zeros([ntpts,3,3,npts])
+        B_time[0,:,:,:] = B[:,:,:]
+        B_time[1,:,:,:] = B[:,:,:]
+
+        stress_crt_tensor = numpy.zeros([ntpts,3,3,npts])
+        stress_crt_tensor[:,:,:,:] = numpy.einsum('hijl,hjkl->hikl',numpy.einsum('hijl, hjkl->hikl',A_time,stress_sph_tensor[:,:,:,:]), B_time)                            
+
+        stress_crt[:, :, 0] = stress_crt_tensor[:,0,0,:] # sxx
+        stress_crt[:, :, 1] = stress_crt_tensor[:,1,1,:] # syy
+        stress_crt[:, :, 2] = stress_crt_tensor[:,2,2,:] # szz
+        stress_crt[:, :, 3] = stress_crt_tensor[:,0,1,:] # sxy
+        stress_crt[:, :, 4] = stress_crt_tensor[:,1,2,:] # syz
+        stress_crt[:, :, 5] = stress_crt_tensor[:,0,2,:] # sxz
+            
+        return stress_crt
+
+    def input_strain(self, locs):
+        """
+        Compute input stress field at locations.
+        """
+        (npts, dim) = locs.shape
+        strain = numpy.zeros((1, npts, self.TENSOR_SIZE), dtype=numpy.float64)
+
+        return strain  
 
     def strain(self, locs):
         """

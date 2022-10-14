@@ -801,11 +801,11 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f1u_refstate(const 
     refStrainTensor[2] = refStrainVector[3];
     refStrainTensor[3] = refStrainVector[1];
 
-
     // for (PylithInt c = 0; c < _dim; ++c) {
     //     for (PylithInt d = 0; d < _dim; ++d) {
-    //         f1[c * _dim + d] -= refStressTensor[c * _dim + d] + 2.0 * shearModulus * ((displacement_x[c * _dim + d] + displacement_x[d * _dim + c]) / 2.0 - refStrainTensor[c * _dim + d]);
-    //     } // for      
+    //         f1[c * _dim + d] -= refStressTensor[c * _dim + d] + 2.0 * shearModulus * ((displacement_x[c * _dim + d] +
+    // displacement_x[d * _dim + c]) / 2.0 - refStrainTensor[c * _dim + d]);
+    //     } // for
     //     f1[c * _dim + c] -= (drainedBulkModulus - (2.0 * shearModulus) / 3.0) * (trace_strain - ref_trace_strain);
     //     // Biot Effective Stress Pressure Correction
     //     f1[c * _dim + c] += biotCoefficient * pressure;
@@ -817,8 +817,9 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::f1u_refstate(const 
         } // for
         f1[c * _dim + c] -= (drainedBulkModulus - (2.0 * shearModulus) / 3.0) * trace_strain;
         f1[c * _dim + c] += biotCoefficient * pressure;
-    } // for    
+    } // for
 } // f1u_refstate
+
 
 // ----------------------------------------------------------------------
 /* Calculate darcy flow rate for isotropic linear
@@ -2412,7 +2413,7 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::g1v_refstate(const 
     for (PylithInt c = 0; c < _dim; ++c) {
         for (PylithInt d = 0; d < _dim; ++d) {
             g1[c * _dim + d] -= refStressTensor[c * _dim + d] + 2.0 * shearModulus * ((displacement_x[c * _dim + d] + displacement_x[d * _dim + c]) / 2.0 - refStrainTensor[c * _dim + d]);
-        } // for      
+        } // for
         g1[c * _dim + c] -= (drainedBulkModulus - (2.0 * shearModulus) / 3.0) * (trace_strain - ref_trace_strain);
         // Biot Effective Stress Pressure Correction
         g1[c * _dim + c] += biotCoefficient * pressure;
@@ -2490,7 +2491,15 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::cauchyStress(const 
     // Construct stress vector
     const PylithScalar lambda = drainedBulkModulus - 2.0 / 3.0 * shearModulus;
     const PylithScalar poissonRatio = lambda / (2.0 * (lambda + shearModulus));
-    const PylithScalar stress_zz = poissonRatio*(stressTensor[0 * _dim + 0] + stressTensor[1 * _dim + 1]) - biotCoefficient * (1.0 - 2.0*poissonRatio) * pressure; // Cheng, 7.106
+    const PylithScalar stress_zz = poissonRatio*(stressTensor[0 * _dim + 0] + stressTensor[1 * _dim + 1]) - biotCoefficient * (1.0 - 2.0*poissonRatio) * pressure; //
+                                                                                                                                                                   //
+                                                                                                                                                                   //
+                                                                                                                                                                   //
+                                                                                                                                                                   // Cheng,
+                                                                                                                                                                   //
+                                                                                                                                                                   //
+                                                                                                                                                                   //
+                                                                                                                                                                   // 7.106
 
     stressVector[0] = stressTensor[0 * _dim + 0]; // stress_xx
     stressVector[1] = stressTensor[1 * _dim + 1]; // stress_yy
@@ -2563,19 +2572,17 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::cauchyStress_refsta
     refStressTensor[2] = refStressVector[3];
     refStressTensor[3] = refStressVector[1];
 
-    refStrainTensor[0] = refStrainVector[0];
-    refStrainTensor[1] = refStrainVector[3];
-    refStrainTensor[2] = refStrainVector[3];
-    refStrainTensor[3] = refStrainVector[1];
     // Create and populate stress tensor
 
     // PylithScalar stressTensor[4] = {0.0, 0.0, 0.0, 0.0};
 
     // for (PylithInt c = 0; c < _dim; ++c) {
     //     for (PylithInt d = 0; d < _dim; ++d) {
-    //         stressTensor[c * _dim + d] += refStressTensor[c * _dim + d] + 2.0 * shearModulus * ((displacement_x[c * _dim + d] + displacement_x[d * _dim + c]) / 2.0 - refStrainTensor[c * _dim + d]);
-    //     } // for      
-    //     stressTensor[c * _dim + c] += (drainedBulkModulus - (2.0 * shearModulus) / 3.0) * (trace_strain - ref_trace_strain);
+    //         stressTensor[c * _dim + d] += refStressTensor[c * _dim + d] + 2.0 * shearModulus * ((displacement_x[c *
+    // _dim + d] + displacement_x[d * _dim + c]) / 2.0 - refStrainTensor[c * _dim + d]);
+    //     } // for
+    //     stressTensor[c * _dim + c] += (drainedBulkModulus - (2.0 * shearModulus) / 3.0) * (trace_strain -
+    // ref_trace_strain);
     //     // Biot Effective Stress Pressure Correction
     //     stressTensor[c * _dim + c] -= biotCoefficient * pressure;
     // } // for
@@ -2584,8 +2591,8 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::cauchyStress_refsta
 
     // const PylithScalar lambda = drainedBulkModulus - 2.0 / 3.0 * shearModulus;
     // const PylithScalar poissonRatio = lambda / (2.0 * (lambda + shearModulus));
-    // const PylithScalar stress_zz = poissonRatio*(stressTensor[0 * _dim + 0] + stressTensor[1 * _dim + 1]) - biotCoefficient * (1.0 - 2.0*poissonRatio) * pressure; // Cheng, 7.106
-
+    // const PylithScalar stress_zz = poissonRatio*(stressTensor[0 * _dim + 0] + stressTensor[1 * _dim + 1]) -
+    // biotCoefficient * (1.0 - 2.0*poissonRatio) * pressure; // Cheng, 7.106
 
     // stressVector[0] = stressTensor[0 * _dim + 0]; // stress_xx
     // stressVector[1] = stressTensor[1 * _dim + 1]; // stress_yy
@@ -2607,13 +2614,20 @@ pylith::fekernels::IsotropicLinearPoroelasticityPlaneStrain::cauchyStress_refsta
     // Construct stress vector
     const PylithScalar lambda = drainedBulkModulus - 2.0 / 3.0 * shearModulus;
     const PylithScalar poissonRatio = lambda / (2.0 * (lambda + shearModulus));
-    const PylithScalar stress_zz = poissonRatio*(stressTensor[0 * _dim + 0] + stressTensor[1 * _dim + 1]) - biotCoefficient * (1.0 - 2.0*poissonRatio) * pressure; // Cheng, 7.106
+    const PylithScalar stress_zz = poissonRatio*(stressTensor[0 * _dim + 0] + stressTensor[1 * _dim + 1]) - biotCoefficient * (1.0 - 2.0*poissonRatio) * pressure; //
+                                                                                                                                                                   //
+                                                                                                                                                                   //
+                                                                                                                                                                   //
+                                                                                                                                                                   // Cheng,
+                                                                                                                                                                   //
+                                                                                                                                                                   //
+                                                                                                                                                                   //
+                                                                                                                                                                   // 7.106
 
     stressVector[0] = stressTensor[0 * _dim + 0]; // stress_xx
     stressVector[1] = stressTensor[1 * _dim + 1]; // stress_yy
     stressVector[2] = stress_zz;
     stressVector[3] = stressTensor[0 * _dim + 1]; // stress_xy
-
 
 } // cauchyStress_refstate
 
@@ -3546,7 +3560,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::f1u_refstate(const PylithInt
     for (PylithInt c = 0; c < _dim; ++c) {
         for (PylithInt d = 0; d < _dim; ++d) {
             f1[c * _dim + d] -= refStressTensor[c * _dim + d] + 2.0 * shearModulus * ((displacement_x[c * _dim + d] + displacement_x[d * _dim + c]) / 2.0 - refStrainTensor[c * _dim + d]);
-        } // for      
+        } // for
         f1[c * _dim + c] -= (drainedBulkModulus - (2.0 * shearModulus) / 3.0) * (trace_strain - ref_trace_strain);
         // Biot Effective Stress Pressure Correction
         f1[c * _dim + c] += biotCoefficient * pressure;
@@ -5194,7 +5208,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::g1v_refstate(const PylithInt
     for (PylithInt c = 0; c < _dim; ++c) {
         for (PylithInt d = 0; d < _dim; ++d) {
             g1[c * _dim + d] -= refStressTensor[c * _dim + d] + 2.0 * shearModulus * ((displacement_x[c * _dim + d] + displacement_x[d * _dim + c]) / 2.0 - refStrainTensor[c * _dim + d]);
-        } // for      
+        } // for
         g1[c * _dim + c] -= (drainedBulkModulus - (2.0 * shearModulus) / 3.0) * (trace_strain - ref_trace_strain);
         // Biot Effective Stress Pressure Correction
         g1[c * _dim + c] += biotCoefficient * pressure;
@@ -5273,7 +5287,7 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::cauchyStress(const PylithInt
     stressVector[2] = stressTensor[9]; // stress_zz
     stressVector[3] = stressTensor[1]; // stress_xy
     stressVector[4] = stressTensor[5]; // stress_xy
-    stressVector[3] = stressTensor[2]; // stress_xz
+    stressVector[5] = stressTensor[2]; // stress_xz
 } // cauchyStress
 
 
@@ -5336,19 +5350,30 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::cauchyStress_refstate(const 
 
     const PylithScalar ref_trace_strain = refStrainVector[0] + refStrainVector[1] + refStrainVector[2];
 
-    // Convert reference vectors to refrence tensors
-    PylithScalar refStressTensor[_dim * _dim];
-    PylithScalar refStrainTensor[_dim * _dim];
-    PylithInt refTensorPos[9] = {0, 3, 5,
-                                 3, 1, 4,
-                                 5, 4, 2};
+    // // Convert reference vectors to refrence tensors
+    // PylithScalar refStressTensor[_dim * _dim];
+    // PylithScalar refStrainTensor[_dim * _dim];
+    // PylithInt refTensorPos[9] = {0, 3, 5,
+    //                              3, 1, 4,
+    //                              5, 4, 2};
 
-    for (PylithInt i = 0; i < _dim; ++i) {
-        for (PylithInt j = 0; j < _dim; ++j) {
-            refStressTensor[i * _dim + j] = refStressVector[refTensorPos[i * _dim + j]];
-            refStrainTensor[i * _dim + j] = refStrainVector[refTensorPos[i * _dim + j]];
-        } // for
-    } // for
+    // for (PylithInt i = 0; i < _dim; ++i) {
+    //     for (PylithInt j = 0; j < _dim; ++j) {
+    //         refStressTensor[i * _dim + j] = refStressVector[refTensorPos[i * _dim + j]];
+    //         refStrainTensor[i * _dim + j] = refStrainVector[refTensorPos[i * _dim + j]];
+    //     } // for
+    // } // for
+
+    // Generate ref stress vector
+    refStressTensor[0] = refStressVector[0]; // stress_xx
+    refStressTensor[1] = refStressVector[3]; // stress_xy
+    refStressTensor[2] = refStressVector[5]; // stress_xz
+    refStressTensor[3] = refStressVector[3]; // stress_yx
+    refStressTensor[4] = refStressVector[1]; // stress_yy
+    refStressTensor[5] = refStressVector[4]; // stress_yz
+    refStressTensor[6] = refStressVector[5]; // stress_zx
+    refStressTensor[7] = refStressVector[4]; // stress_zy
+    refStressTensor[8] = refStressVector[2]; // stress_zz
 
     // Create and populate stress tensor
 
@@ -5366,10 +5391,10 @@ pylith::fekernels::IsotropicLinearPoroelasticity3D::cauchyStress_refstate(const 
     // Generate stress vector
     stressVector[0] = stressTensor[0]; // stress_xx
     stressVector[1] = stressTensor[4]; // stress_yy
-    stressVector[2] = stressTensor[9]; // stress_zz
+    stressVector[2] = stressTensor[8]; // stress_zz
     stressVector[3] = stressTensor[1]; // stress_xy
-    stressVector[4] = stressTensor[5]; // stress_xy
-    stressVector[3] = stressTensor[2]; // stress_xz
+    stressVector[4] = stressTensor[5]; // stress_yz
+    stressVector[5] = stressTensor[2]; // stress_xz
 } // cauchyStress_refstate
 
 
