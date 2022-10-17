@@ -31,8 +31,10 @@ namespace pylith {
     namespace faults {
         class FaultCohesive;
         class FaultCohesiveKin;
+        class FaultCohesiveKinPoro;
         class FaultCohesiveImpulses;
         class AuxiliaryFactoryKinematic;
+        class AuxiliaryFactoryKinematicPoro;
 
         class KinSrc;
         class KinSrcConstRate;
@@ -42,6 +44,15 @@ namespace pylith {
         class KinSrcLiuCos;
         class KinSrcTimeHistory;
         class KinSrcAuxiliaryFactory;
+
+        class KinSrcPoro;
+        class KinSrcPoroConstRate;
+        class KinSrcPoroStep;
+        class KinSrcPoroRamp;
+        class KinSrcPoroBrune;
+        class KinSrcPoroLiuCos;
+        class KinSrcPoroTimeHistory;
+        class KinSrcPoroAuxiliaryFactory;
 
         class TopologyOps;
     } // faults

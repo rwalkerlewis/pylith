@@ -20,48 +20,46 @@
 
 #include "FaultCohesiveKinPoro.hh" // implementation of object methods
 
-#include "pylith/faults/KinSrcPoro.hh"                    // USES KinSrcPoro
+#include "pylith/faults/KinSrcPoro.hh" // USES KinSrcPoro
 #include "pylith/faults/AuxiliaryFactoryKinematicPoro.hh" // USES AuxiliaryFactoryKinematicPoro
-#include "pylith/feassemble/IntegratorInterface.hh"       // USES IntegratorInterface
-#include "pylith/feassemble/InterfacePatches.hh"          // USES InterfacePatches
-#include "pylith/feassemble/ConstraintSimple.hh"          // USES ConstraintSimple
+#include "pylith/feassemble/IntegratorInterface.hh" // USES IntegratorInterface
+#include "pylith/feassemble/InterfacePatches.hh" // USES InterfacePatches
+#include "pylith/feassemble/ConstraintSimple.hh" // USES ConstraintSimple
 
-#include "pylith/topology/Mesh.hh"        // USES Mesh
-#include "pylith/topology/Field.hh"       // USES Field
-#include "pylith/topology/FieldOps.hh"    // USES FieldOps::checkDiscretization()
+#include "pylith/topology/Mesh.hh" // USES Mesh
+#include "pylith/topology/Field.hh" // USES Field
+#include "pylith/topology/FieldOps.hh" // USES FieldOps::checkDiscretization()
 #include "pylith/topology/VisitorMesh.hh" // USES VecVisitorMesh
 
 #include "pylith/fekernels/FaultCohesiveKinPoro.hh" // USES FaultCohesiveKinPoro
 
 #include "pylith/utils/EventLogger.hh" // USES EventLogger
-#include "pylith/utils/journals.hh"    // USES PYLITH_COMPONENT_*
+#include "pylith/utils/journals.hh" // USES PYLITH_COMPONENT_*
 
-#include "spatialdata/geocoords/CoordSys.hh"   // USES CoordSys
+#include "spatialdata/geocoords/CoordSys.hh" // USES CoordSys
 #include "spatialdata/units/Nondimensional.hh" // USES Nondimensionalizer
-#include "spatialdata/spatialdb/SpatialDB.hh"  // USES SpatialDB
+#include "spatialdata/spatialdb/SpatialDB.hh" // USES SpatialDB
 
-#include <cmath>     // USES pow(), sqrt()
+#include <cmath> // USES pow(), sqrt()
 #include <strings.h> // USES strcasecmp()
-#include <cstring>   // USES strlen()
-#include <cstdlib>   // USES atoi()
-#include <cassert>   // USES assert()
-#include <sstream>   // USES std::ostringstream
+#include <cstring> // USES strlen()
+#include <cstdlib> // USES atoi()
+#include <cassert> // USES assert()
+#include <sstream> // USES std::ostringstream
 #include <stdexcept> // USES std::runtime_error
-#include <typeinfo>  // USES typeid()
+#include <typeinfo> // USES typeid()
 
 // ------------------------------------------------------------------------------------------------
 typedef pylith::feassemble::IntegratorInterface::ResidualKernels ResidualKernels;
 typedef pylith::feassemble::IntegratorInterface::JacobianKernels JacobianKernels;
 
 // ------------------------------------------------------------------------------------------------
-namespace pylith
-{
-    namespace faults
-    {
-        class _FaultCohesiveKinPoro
-        {
+namespace pylith {
+    namespace faults {
+        class _FaultCohesiveKinPoro {
             // PUBLIC MEMBERS /////////////////////////////////////////////////////////////////////
-        public:
+public:
+
             static const char *pyreComponent;
         };
         const char *_FaultCohesiveKinPoro::pyreComponent = "faultcohesivekinporo";
@@ -74,23 +72,23 @@ namespace pylith
 // ------------------------------------------------------------------------------------------------
 // Default constructor.
 pylith::faults::FaultCohesiveKinPoro::FaultCohesiveKinPoro(void) : _auxiliaryFactory(new pylith::faults::AuxiliaryFactoryKinematicPoro),
-                                                                   _slipVecRupture(NULL),
-                                                                   _slipVecTotal(NULL)
-{
+    _slipVecRupture(NULL),
+    _slipVecTotal(NULL) {
     pylith::utils::PyreComponent::setName(_FaultCohesiveKinPoro::pyreComponent);
 } // constructor
 
+
 // ------------------------------------------------------------------------------------------------
 // Destructor.
-pylith::faults::FaultCohesiveKinPoro::~FaultCohesiveKinPoro(void)
-{
+pylith::faults::FaultCohesiveKinPoro::~FaultCohesiveKinPoro(void) {
     deallocate();
 } // destructor
 
+
 // ------------------------------------------------------------------------------------------------
 // Deallocate PETSc and local data structures.
-void pylith::faults::FaultCohesiveKinPoro::deallocate(void)
-{
+void
+pylith::faults::FaultCohesiveKinPoro::deallocate(void) {
     FaultCohesive::deallocate();
 
     PetscErrorCode err = VecDestroy(&_slipVecRupture);
@@ -102,13 +100,14 @@ void pylith::faults::FaultCohesiveKinPoro::deallocate(void)
     _ruptures.clear(); // :TODO: Use shared pointers for earthquake ruptures
 } // deallocate
 
+
 // ------------------------------------------------------------------------------------------------
 // Set kinematic earthquake ruptures.
-void pylith::faults::FaultCohesiveKinPoro::setEqRuptures(const char *const *names,
-                                                         const int numNames,
-                                                         KinSrcPoro **ruptures,
-                                                         const int numRuptures)
-{
+void
+pylith::faults::FaultCohesiveKinPoro::setEqRuptures(const char *const *names,
+                                                    const int numNames,
+                                                    KinSrcPoro **ruptures,
+                                                    const int numRuptures) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("setEqRuptures(names=" << names << ", numNames=" << numNames << ", ruptures=" << ruptures << ", numRuptures=" << numRuptures << ")");
 
@@ -116,10 +115,8 @@ void pylith::faults::FaultCohesiveKinPoro::setEqRuptures(const char *const *name
 
     // :TODO: Use shared pointers for earthquake ruptures
     _ruptures.clear();
-    for (int i = 0; i < numRuptures; ++i)
-    {
-        if (!ruptures[i])
-        {
+    for (int i = 0; i < numRuptures; ++i) {
+        if (!ruptures[i]) {
             std::ostringstream msg;
             msg << "Null earthquake rupture object for earthquake rupture '" << names[i] << "'.";
             throw std::runtime_error(msg.str());
@@ -130,57 +127,45 @@ void pylith::faults::FaultCohesiveKinPoro::setEqRuptures(const char *const *name
     PYLITH_METHOD_END;
 } // setEqRuptures
 
+
 // ------------------------------------------------------------------------------------------------
 // Verify configuration is acceptable.
-void pylith::faults::FaultCohesiveKinPoro::verifyConfiguration(const pylith::topology::Field &solution) const
-{
+void
+pylith::faults::FaultCohesiveKinPoro::verifyConfiguration(const pylith::topology::Field &solution) const {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("verifyConfiguration(solution=" << solution.getLabel() << ")");
 
-    if (!solution.hasSubfield("lagrange_multiplier_fault"))
-    {
+    if (!solution.hasSubfield("lagrange_multiplier_fault")) {
         std::ostringstream msg;
         msg << "Cannot find 'lagrange_multiplier_fault' subfield in solution field for poroelastic diffusive fault implementation in component '"
             << PyreComponent::getIdentifier() << "'.";
         throw std::runtime_error(msg.str());
     } // if
 
-    /** TO DO **
-     * Implement or verify field::hasSubfield("pressure", "trace_strain", "fault_pressure") is implemented
-     * Seems that this is fine, at least no need to change the function field::hasSubfield
-     */
-    // ** TO DO **
-    // Seems that pressure is not part of the fault, but part of poroelastic material implementation
-
-    if (!solution.hasSubfield("pressure"))
-    {
+    if (!solution.hasSubfield("pressure")) {
         std::ostringstream msg;
         msg << "Cannot find 'pressure' subfield in solution field for poroelastic diffusive fault implementation in component '"
             << PyreComponent::getIdentifier() << "'.";
         throw std::runtime_error(msg.str());
     } // if
 
-    if (!solution.hasSubfield("fault_pressure"))
-    {
+    if (!solution.hasSubfield("fault_pressure")) {
         std::ostringstream msg;
         msg << "Cannot find 'fault_pressure' subfield in solution field for poroelastic diffusive fault implementation in component '"
             << PyreComponent::getIdentifier() << "'.";
         throw std::runtime_error(msg.str());
     } // if
 
-    switch (_formulation)
-    {
+    switch (_formulation) {
     case QUASISTATIC:
-        if (!solution.hasSubfield("displacement"))
-        {
+        if (!solution.hasSubfield("displacement")) {
             std::ostringstream msg;
             msg << "Cannot find 'displacement' subfield in solution field for fault implementation in component '"
                 << PyreComponent::getIdentifier() << "'.";
             throw std::runtime_error(msg.str());
         } // if
         break;
-        if (!solution.hasSubfield("trace_strain"))
-        {
+        if (!solution.hasSubfield("trace_strain")) {
             std::ostringstream msg;
             msg << "Cannot find 'trace_strain' subfield in solution field for fault implementation in component '"
                 << PyreComponent::getIdentifier() << "'.";
@@ -188,8 +173,7 @@ void pylith::faults::FaultCohesiveKinPoro::verifyConfiguration(const pylith::top
         } // if
         break;
     case DYNAMIC_IMEX:
-        if (!solution.hasSubfield("velocity"))
-        {
+        if (!solution.hasSubfield("velocity")) {
             std::ostringstream msg;
             msg << "Cannot find 'velocity' subfield in solution field for fault implementation in component '"
                 << PyreComponent::getIdentifier() << "'.";
@@ -206,12 +190,12 @@ void pylith::faults::FaultCohesiveKinPoro::verifyConfiguration(const pylith::top
     PYLITH_METHOD_END;
 } // verifyConfiguration
 
+
 // ------------------------------------------------------------------------------------------------
 // Create auxiliary field.
 pylith::topology::Field *
 pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topology::Field &solution,
-                                                           const pylith::topology::Mesh &domainMesh)
-{
+                                                           const pylith::topology::Mesh &domainMesh) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("createAuxiliaryField(solution=" << solution.getLabel() << ", domainMesh=)" << typeid(domainMesh).name() << ")");
 
@@ -246,17 +230,16 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
      * - numA - 2: source(1)
      * - numA - 1: slip(dim)
      */
-    _auxiliaryFactory->addThickness();         // 0
-    _auxiliaryFactory->addPorosity();          // 1
-    _auxiliaryFactory->addBetaP();             // 2
-    _auxiliaryFactory->addBetaSigma();         // 3
+    _auxiliaryFactory->addThickness(); // 0
+    _auxiliaryFactory->addPorosity(); // 1
+    _auxiliaryFactory->addBetaP(); // 2
+    _auxiliaryFactory->addBetaSigma(); // 3
     _auxiliaryFactory->addFaultPermeability(); // 4
-    _auxiliaryFactory->addFluidViscosity();    // 5
+    _auxiliaryFactory->addFluidViscosity(); // 5
 
     // :ATTENTION: The order for adding subfields must match the order of the auxiliary fields in the FE kernels.
 
-    switch (_formulation)
-    {
+    switch (_formulation) {
     case QUASISTATIC:
         _auxiliaryFactory->addSlip(); // numA - 1
         break;
@@ -276,7 +259,8 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
     auxiliaryField->allocate();
     auxiliaryField->createOutputVector();
 
-    // We don't populate the auxiliary field for slip via a spatial database, because they will be set from the earthquake
+    // We don't populate the auxiliary field for slip via a spatial database, because they will be set from the
+    // earthquake
     // rupture.
 
     // Initialize auxiliary fields for kinematic ruptures.
@@ -286,8 +270,7 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
 
     assert(auxiliaryField);
     const srcs_type::const_iterator rupturesEnd = _ruptures.end();
-    for (srcs_type::iterator r_iter = _ruptures.begin(); r_iter != rupturesEnd; ++r_iter)
-    {
+    for (srcs_type::iterator r_iter = _ruptures.begin(); r_iter != rupturesEnd; ++r_iter) {
         KinSrcPoro *src = r_iter->second;
         assert(src);
         src->initialize(*auxiliaryField, *_normalizer, solution.getMesh().getCoordSys());
@@ -310,19 +293,19 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
     PYLITH_METHOD_RETURN(auxiliaryField);
 } // createAuxiliaryField
 
+
 // ------------------------------------------------------------------------------------------------
 // Update auxiliary fields at beginning of time step.
-void pylith::faults::FaultCohesiveKinPoro::updateAuxiliaryField(pylith::topology::Field *auxiliaryField,
-                                                                const double t)
-{
+void
+pylith::faults::FaultCohesiveKinPoro::updateAuxiliaryField(pylith::topology::Field *auxiliaryField,
+                                                           const double t) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("updateAuxiliaryField(auxiliaryField=" << auxiliaryField << ", t=" << t << ")");
 
     assert(auxiliaryField);
     assert(_normalizer);
 
-    switch (_formulation)
-    {
+    switch (_formulation) {
     case QUASISTATIC:
         this->_updateSlip(auxiliaryField, t);
         break;
@@ -339,18 +322,17 @@ void pylith::faults::FaultCohesiveKinPoro::updateAuxiliaryField(pylith::topology
     PYLITH_METHOD_END;
 } // updateAuxiliaryField
 
+
 // ------------------------------------------------------------------------------------------------
 // Create constraint for buried fault edges and faces.
 std::vector<pylith::feassemble::Constraint *>
-pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::Field &solution)
-{
+pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::Field &solution) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("createConstraints(solution=" << solution.getLabel() << ")");
 
     std::vector<pylith::feassemble::Constraint *> constraintArray;
 
-    if (0 == strlen(getBuriedEdgesLabelName()))
-    {
+    if (0 == strlen(getBuriedEdgesLabelName())) {
         std::vector<pylith::feassemble::Constraint *> constraintArray;
         PYLITH_METHOD_RETURN(constraintArray);
     } // if
@@ -361,8 +343,7 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
 
     pylith::int_array constrainedDOFLagrange;
     constrainedDOFLagrange.resize(numComponents);
-    for (int c = 0; c < numComponents; ++c)
-    {
+    for (int c = 0; c < numComponents; ++c) {
         constrainedDOFLagrange[c] = c;
     }
     // Make new label for cohesive edges and faces
@@ -389,8 +370,7 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
     PYLITH_CHECK_ERROR(err);
     err = ISGetIndices(pointIS, &points);
     PYLITH_CHECK_ERROR(err);
-    for (int p = 0; p < n; ++p)
-    {
+    for (int p = 0; p < n; ++p) {
         const PetscInt *support = NULL;
         PetscInt supportSize;
 
@@ -398,15 +378,13 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
         PYLITH_CHECK_ERROR(err);
         err = DMPlexGetSupport(dm, points[p], &support);
         PYLITH_CHECK_ERROR(err);
-        for (int s = 0; s < supportSize; ++s)
-        {
+        for (int s = 0; s < supportSize; ++s) {
             DMPolytopeType ct;
             const PetscInt spoint = support[s];
 
             err = DMPlexGetCellType(dm, spoint, &ct);
             PYLITH_CHECK_ERROR(err);
-            if ((ct == DM_POLYTOPE_SEG_PRISM_TENSOR) || (ct == DM_POLYTOPE_POINT_PRISM_TENSOR))
-            {
+            if ((ct == DM_POLYTOPE_SEG_PRISM_TENSOR) || (ct == DM_POLYTOPE_POINT_PRISM_TENSOR)) {
                 const PetscInt *cone = NULL;
                 PetscInt coneSize;
 
@@ -414,21 +392,19 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
                 PYLITH_CHECK_ERROR(err);
                 err = DMPlexGetCone(dm, spoint, &cone);
                 PYLITH_CHECK_ERROR(err);
-                for (int c = 0; c < coneSize; ++c)
-                {
+                for (int c = 0; c < coneSize; ++c) {
                     PetscInt val;
                     err = DMLabelGetValue(buriedLabel, cone[c], &val);
                     PYLITH_CHECK_ERROR(err);
-                    if (val >= 0)
-                    {
+                    if (val >= 0) {
                         err = DMLabelSetValue(buriedCohesiveLabel, spoint, 1);
                         PYLITH_CHECK_ERROR(err);
                         break;
                     }
                 } // for
-            }     // if
-        }         // for
-    }             // for
+            } // if
+        } // for
+    } // for
 
     pylith::feassemble::ConstraintSimple *constraintLagrange = new pylith::feassemble::ConstraintSimple(this);
     assert(constraintLagrange);
@@ -444,8 +420,7 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
     numComponents = 1;
     pylith::int_array constrainedDOFFaultPressure;
     constrainedDOFFaultPressure.resize(numComponents);
-    for (int c = numComponents; c < numComponents * 2; ++c)
-    {
+    for (int c = numComponents; c < numComponents * 2; ++c) {
         constrainedDOFFaultPressure[c] = c;
     }
     // Make new label for cohesive edges and faces
@@ -472,8 +447,7 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
     PYLITH_CHECK_ERROR(err);
     err = ISGetIndices(pointISFaultPressure, &pointsFaultPressure);
     PYLITH_CHECK_ERROR(err);
-    for (int p = 0; p < nFaultPressure; ++p)
-    {
+    for (int p = 0; p < nFaultPressure; ++p) {
         const PetscInt *supportFaultPressure = NULL;
         PetscInt supportSizeFaultPressure;
 
@@ -481,15 +455,13 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
         PYLITH_CHECK_ERROR(err);
         err = DMPlexGetSupport(dm, pointsFaultPressure[p], &supportFaultPressure);
         PYLITH_CHECK_ERROR(err);
-        for (int s = 0; s < supportSizeFaultPressure; ++s)
-        {
+        for (int s = 0; s < supportSizeFaultPressure; ++s) {
             DMPolytopeType ctFaultPressure;
             const PetscInt spointFaultPressure = supportFaultPressure[s];
 
             err = DMPlexGetCellType(dm, spointFaultPressure, &ctFaultPressure);
             PYLITH_CHECK_ERROR(err);
-            if ((ctFaultPressure == DM_POLYTOPE_SEG_PRISM_TENSOR) || (ctFaultPressure == DM_POLYTOPE_POINT_PRISM_TENSOR))
-            {
+            if ((ctFaultPressure == DM_POLYTOPE_SEG_PRISM_TENSOR) || (ctFaultPressure == DM_POLYTOPE_POINT_PRISM_TENSOR)) {
                 const PetscInt *coneFaultPressure = NULL;
                 PetscInt coneSizeFaultPressure;
 
@@ -497,21 +469,19 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
                 PYLITH_CHECK_ERROR(err);
                 err = DMPlexGetCone(dm, spointFaultPressure, &coneFaultPressure);
                 PYLITH_CHECK_ERROR(err);
-                for (int c = 0; c < coneSizeFaultPressure; ++c)
-                {
+                for (int c = 0; c < coneSizeFaultPressure; ++c) {
                     PetscInt valFaultPressure;
                     err = DMLabelGetValue(buriedLabelFaultPressure, coneFaultPressure[c], &valFaultPressure);
                     PYLITH_CHECK_ERROR(err);
-                    if (valFaultPressure >= 0)
-                    {
+                    if (valFaultPressure >= 0) {
                         err = DMLabelSetValue(buriedCohesiveLabelFaultPressure, spointFaultPressure, 1);
                         PYLITH_CHECK_ERROR(err);
                         break;
                     }
                 } // for
-            }     // if
-        }         // for
-    }             // for
+            } // if
+        } // for
+    } // for
 
     pylith::feassemble::ConstraintSimple *constraintFaultPressure = new pylith::feassemble::ConstraintSimple(this);
     assert(constraintFaultPressure);
@@ -529,19 +499,20 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
     PYLITH_METHOD_RETURN(constraintArray);
 } // createConstraints
 
+
 // ------------------------------------------------------------------------------------------------
 // Get auxiliary factory associated with physics.
 pylith::feassemble::AuxiliaryFactory *
-pylith::faults::FaultCohesiveKinPoro::_getAuxiliaryFactory(void)
-{
+pylith::faults::FaultCohesiveKinPoro::_getAuxiliaryFactory(void) {
     return _auxiliaryFactory;
 } // _getAuxiliaryFactory
 
+
 // ------------------------------------------------------------------------------------------------
 // Update slip subfield in auxiliary field at beginning of time step.
-void pylith::faults::FaultCohesiveKinPoro::_updateSlip(pylith::topology::Field *auxiliaryField,
-                                                       const double t)
-{
+void
+pylith::faults::FaultCohesiveKinPoro::_updateSlip(pylith::topology::Field *auxiliaryField,
+                                                  const double t) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("updateSlip(auxiliaryField=" << auxiliaryField << ", t=" << t << ")");
 
@@ -552,8 +523,7 @@ void pylith::faults::FaultCohesiveKinPoro::_updateSlip(pylith::topology::Field *
     PetscErrorCode err = VecSet(_slipVecTotal, 0.0);
     PYLITH_CHECK_ERROR(err);
     const srcs_type::const_iterator rupturesEnd = _ruptures.end();
-    for (srcs_type::iterator r_iter = _ruptures.begin(); r_iter != rupturesEnd; ++r_iter)
-    {
+    for (srcs_type::iterator r_iter = _ruptures.begin(); r_iter != rupturesEnd; ++r_iter) {
         err = VecSet(_slipVecRupture, 0.0);
         PYLITH_CHECK_ERROR(err);
 
@@ -575,32 +545,30 @@ void pylith::faults::FaultCohesiveKinPoro::_updateSlip(pylith::topology::Field *
     err = VecGetArrayRead(_slipVecTotal, &slipArray);
     PYLITH_CHECK_ERROR(err);
 
-    for (PetscInt p = pStart, iSlip = 0; p < pEnd; ++p)
-    {
+    for (PetscInt p = pStart, iSlip = 0; p < pEnd; ++p) {
         const PetscInt slipDof = auxiliaryVisitor.sectionDof(p);
         const PetscInt slipOff = auxiliaryVisitor.sectionOffset(p);
-        for (PetscInt iDof = 0; iDof < slipDof; ++iDof, ++iSlip)
-        {
+        for (PetscInt iDof = 0; iDof < slipDof; ++iDof, ++iSlip) {
             auxiliaryArray[slipOff + iDof] = slipArray[iSlip];
         } // for
-    }     // for
+    } // for
     err = VecRestoreArrayRead(_slipVecTotal, &slipArray);
     PYLITH_CHECK_ERROR(err);
 
     pythia::journal::debug_t debug(pylith::utils::PyreComponent::getName());
-    if (debug.state())
-    {
+    if (debug.state()) {
         auxiliaryField->view("Fault auxiliary field after setting slip.");
     } // if
 
     PYLITH_METHOD_END;
 } // _updateSlip
 
+
 // ------------------------------------------------------------------------------------------------
 // Update slip rate subfield in auxiliary field at beginning of time step.
-void pylith::faults::FaultCohesiveKinPoro::_updateSlipRate(pylith::topology::Field *auxiliaryField,
-                                                           const double t)
-{
+void
+pylith::faults::FaultCohesiveKinPoro::_updateSlipRate(pylith::topology::Field *auxiliaryField,
+                                                      const double t) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_updateSlipRate(auxiliaryField=" << auxiliaryField << ", t=" << t << ")");
 
@@ -611,8 +579,7 @@ void pylith::faults::FaultCohesiveKinPoro::_updateSlipRate(pylith::topology::Fie
     PetscErrorCode err = VecSet(_slipVecTotal, 0.0);
     PYLITH_CHECK_ERROR(err);
     const srcs_type::const_iterator rupturesEnd = _ruptures.end();
-    for (srcs_type::iterator r_iter = _ruptures.begin(); r_iter != rupturesEnd; ++r_iter)
-    {
+    for (srcs_type::iterator r_iter = _ruptures.begin(); r_iter != rupturesEnd; ++r_iter) {
         err = VecSet(_slipVecRupture, 0.0);
         PYLITH_CHECK_ERROR(err);
 
@@ -634,32 +601,30 @@ void pylith::faults::FaultCohesiveKinPoro::_updateSlipRate(pylith::topology::Fie
     err = VecGetArrayRead(_slipVecTotal, &slipRateArray);
     PYLITH_CHECK_ERROR(err);
 
-    for (PetscInt p = pStart, iSlipRate = 0; p < pEnd; ++p)
-    {
+    for (PetscInt p = pStart, iSlipRate = 0; p < pEnd; ++p) {
         const PetscInt slipRateDof = auxiliaryVisitor.sectionDof(p);
         const PetscInt slipRateOff = auxiliaryVisitor.sectionOffset(p);
-        for (PetscInt iDof = 0; iDof < slipRateDof; ++iDof, ++iSlipRate)
-        {
+        for (PetscInt iDof = 0; iDof < slipRateDof; ++iDof, ++iSlipRate) {
             auxiliaryArray[slipRateOff + iDof] = slipRateArray[iSlipRate];
         } // for
-    }     // for
+    } // for
     err = VecRestoreArrayRead(_slipVecTotal, &slipRateArray);
     PYLITH_CHECK_ERROR(err);
 
     pythia::journal::debug_t debug(pylith::utils::PyreComponent::getName());
-    if (debug.state())
-    {
+    if (debug.state()) {
         auxiliaryField->view("Fault auxiliary field after setting slip rate.");
     } // if
 
     PYLITH_METHOD_END;
 } // _updateSlipRate
 
+
 // ------------------------------------------------------------------------------------------------
 // Update slip acceleration subfield in auxiliary field at beginning of time step.
-void pylith::faults::FaultCohesiveKinPoro::_updateSlipAcceleration(pylith::topology::Field *auxiliaryField,
-                                                                   const double t)
-{
+void
+pylith::faults::FaultCohesiveKinPoro::_updateSlipAcceleration(pylith::topology::Field *auxiliaryField,
+                                                              const double t) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_updateSlipAcceleration(auxiliaryField=" << auxiliaryField << ", t=" << t << ")");
 
@@ -670,8 +635,7 @@ void pylith::faults::FaultCohesiveKinPoro::_updateSlipAcceleration(pylith::topol
     PetscErrorCode err = VecSet(_slipVecTotal, 0.0);
     PYLITH_CHECK_ERROR(err);
     const srcs_type::const_iterator rupturesEnd = _ruptures.end();
-    for (srcs_type::iterator r_iter = _ruptures.begin(); r_iter != rupturesEnd; ++r_iter)
-    {
+    for (srcs_type::iterator r_iter = _ruptures.begin(); r_iter != rupturesEnd; ++r_iter) {
         err = VecSet(_slipVecRupture, 0.0);
         PYLITH_CHECK_ERROR(err);
 
@@ -693,40 +657,37 @@ void pylith::faults::FaultCohesiveKinPoro::_updateSlipAcceleration(pylith::topol
     err = VecGetArrayRead(_slipVecTotal, &slipAccArray);
     PYLITH_CHECK_ERROR(err);
 
-    for (PetscInt p = pStart, iSlipAcc = 0; p < pEnd; ++p)
-    {
+    for (PetscInt p = pStart, iSlipAcc = 0; p < pEnd; ++p) {
         const PetscInt slipAccDof = auxiliaryVisitor.sectionDof(p);
         const PetscInt slipAccOff = auxiliaryVisitor.sectionOffset(p);
-        for (PetscInt iDof = 0; iDof < slipAccDof; ++iDof, ++iSlipAcc)
-        {
+        for (PetscInt iDof = 0; iDof < slipAccDof; ++iDof, ++iSlipAcc) {
             auxiliaryArray[slipAccOff + iDof] = slipAccArray[iSlipAcc];
         } // for
-    }     // for
+    } // for
     err = VecRestoreArrayRead(_slipVecTotal, &slipAccArray);
     PYLITH_CHECK_ERROR(err);
 
     pythia::journal::debug_t debug(pylith::utils::PyreComponent::getName());
-    if (debug.state())
-    {
+    if (debug.state()) {
         auxiliaryField->view("Fault auxiliary field after setting slip acceleration.");
     } // if
 
     PYLITH_METHOD_END;
 } // _updateSlipAcceleration
 
+
 // ------------------------------------------------------------------------------------------------
 // Set kernels for residual.
-void pylith::faults::FaultCohesiveKinPoro::_setKernelsResidual(pylith::feassemble::IntegratorInterface *integrator,
-                                                               const pylith::topology::Field &solution) const
-{
+void
+pylith::faults::FaultCohesiveKinPoro::_setKernelsResidual(pylith::feassemble::IntegratorInterface *integrator,
+                                                          const pylith::topology::Field &solution) const {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_setKernelsResidual(integrator=" << integrator << ", solution=" << solution.getLabel() << ")");
     typedef pylith::feassemble::IntegratorInterface integrator_t;
 
     std::vector<ResidualKernels> kernels;
 
-    switch (_formulation)
-    {
+    switch (_formulation) {
     case QUASISTATIC:
     {
         // Current solution field is
@@ -817,11 +778,12 @@ void pylith::faults::FaultCohesiveKinPoro::_setKernelsResidual(pylith::feassembl
     PYLITH_METHOD_END;
 } // _setKernelsResidual
 
+
 // ------------------------------------------------------------------------------------------------
 // Set kernels for Jacobian.
-void pylith::faults::FaultCohesiveKinPoro::_setKernelsJacobian(pylith::feassemble::IntegratorInterface *integrator,
-                                                               const pylith::topology::Field &solution) const
-{
+void
+pylith::faults::FaultCohesiveKinPoro::_setKernelsJacobian(pylith::feassemble::IntegratorInterface *integrator,
+                                                          const pylith::topology::Field &solution) const {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_setKernelsJacobian(integrator=" << integrator << ", solution=" << solution.getLabel() << ")");
     typedef pylith::feassemble::IntegratorInterface integrator_t;
@@ -830,8 +792,7 @@ void pylith::faults::FaultCohesiveKinPoro::_setKernelsJacobian(pylith::feassembl
     // Jful_neg, Jful_pos, Jfp_fp_f, Jfp_fl, Jfp_fp;
     // Jfpp_neg, Jfpp_pos, Jfpp_f_neg, Jfpp_f_pos, Jflu;
     std::vector<JacobianKernels> kernels;
-    switch (_formulation)
-    {
+    switch (_formulation) {
     case QUASISTATIC:
     {
         // Displacement
@@ -908,5 +869,6 @@ void pylith::faults::FaultCohesiveKinPoro::_setKernelsJacobian(pylith::feassembl
 
     PYLITH_METHOD_END;
 } // _setKernelsJacobian
+
 
 // End of file

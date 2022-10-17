@@ -18,7 +18,7 @@
 
 /** @file libsrc/faults/FaultCohesiveKinPoro.hh
  *
- * @brief C++ implementation for a fault surface with kinematic
+ * @brief C++ implementation for a poroelastic fault surface with kinematic
  * (prescribed) slip implemented with cohesive elements.
  */
 
@@ -28,14 +28,14 @@
 #include "FaultCohesive.hh" // ISA FaultCohesive
 
 #include <string> // HASA std::string
-#include <map>    // HASA std::map
+#include <map> // HASA std::map
 
-class pylith::faults::FaultCohesiveKinPoro : public pylith::faults::FaultCohesive
-{
+class pylith::faults::FaultCohesiveKinPoro : public pylith::faults::FaultCohesive {
     friend class TestFaultCohesiveKinPoro; // unit testing
 
     // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
+
     /// Default constructor.
     FaultCohesiveKinPoro(void);
 
@@ -90,6 +90,7 @@ public:
 
     // PROTECTED METHODS //////////////////////////////////////////////////////////////////////////
 protected:
+
     /** Get auxiliary factory associated with physics.
      *
      * @return Auxiliary factory for physics object.
@@ -138,18 +139,21 @@ protected:
 
     // PROTECTED TYPEDEFS /////////////////////////////////////////////////////////////////////////
 protected:
+
     typedef std::map<std::string, KinSrcPoro *> srcs_type;
 
     // PROTECTED MEMBERS //////////////////////////////////////////////////////////////////////////
 protected:
+
     pylith::faults::AuxiliaryFactoryKinematicPoro *_auxiliaryFactory; ///< Factory for auxiliary subfields.
-    srcs_type _ruptures;                                              ///< Array of kinematic earthquake ruptures.
-    PetscVec _slipVecRupture;                                         ///< PETSc local Vec to hold slip for one kinematic rupture.
-    PetscVec _slipVecTotal;                                           ///< PETSc local Vec to hold slip for all kinematic ruptures.
+    srcs_type _ruptures; ///< Array of kinematic earthquake ruptures.
+    PetscVec _slipVecRupture; ///< PETSc local Vec to hold slip for one kinematic rupture.
+    PetscVec _slipVecTotal; ///< PETSc local Vec to hold slip for all kinematic ruptures.
 
     // NOT IMPLEMENTED ////////////////////////////////////////////////////////////////////////////
 private:
-    FaultCohesiveKinPoro(const FaultCohesiveKinPoro &);                  ///< Not implemented
+
+    FaultCohesiveKinPoro(const FaultCohesiveKinPoro &); ///< Not implemented
     const FaultCohesiveKinPoro &operator=(const FaultCohesiveKinPoro &); ///< Not implemented.
 
 }; // class FaultCohesiveKinPoro
