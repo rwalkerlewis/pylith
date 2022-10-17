@@ -23,7 +23,9 @@ subpkginclude_HEADERS = \
 	FaultCohesive.hh \
 	FaultCohesiveKin.hh \
 	FaultCohesiveImpulses.hh \
+	FaultCohesiveKinPoro.hh \
 	AuxiliaryFactoryKinematic.hh \
+	AuxiliaryFactoryKinematicPoro.hh \
 	KinSrc.hh \
 	KinSrcStep.hh \
 	KinSrcRamp.hh \
@@ -32,6 +34,9 @@ subpkginclude_HEADERS = \
 	KinSrcLiuCos.hh \
 	KinSrcTimeHistory.hh \
 	KinSrcAuxiliaryFactory.hh \
+	KinSrcPoro.hh \
+	KinSrcPoroStep.hh \
+	KinSrcPoroAuxiliaryFactory.hh \	
 	faultsfwd.hh
 
 dist_noinst_HEADERS = \

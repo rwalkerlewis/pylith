@@ -22,6 +22,8 @@ __all__ = [
     "FaultCohesiveKin",
     "FaultCohesiveImpulses",
     "AuxSubfieldsFault",
+    "AuxSubfieldsFaultPoro",
+    "FaultCohesiveKinPoro",    
     "KinSrc",
     "KinSrcConstRate",
     "KinSrcStep",
@@ -29,7 +31,10 @@ __all__ = [
     "KinSrcBrune",
     "KinSrcLiuCos",
     "KinSrcTimeHistory",
+    "KinSrcPoro",
+    "KinSrcPoroStep",    
     "SingleRupture",
+    "SingleRupturePoro"
     ]
 
 

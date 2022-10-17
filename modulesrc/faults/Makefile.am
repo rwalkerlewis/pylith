@@ -31,13 +31,16 @@ swig_sources = \
 	FaultCohesive.i \
 	FaultCohesiveKin.i \
 	FaultCohesiveImpulses.i \
+	FaultCohesiveKinPoro.i \	
 	KinSrc.i \
 	KinSrcStep.i \
 	KinSrcRamp.i \
 	KinSrcConstRate.i \
 	KinSrcBrune.i \
 	KinSrcLiuCos.i \
-	KinSrcTimeHistory.i
+	KinSrcTimeHistory.i \
+	KinSrcPoro.i \
+	KinSrcPoroStep.i	
 
 swig_generated = \
 	faults_wrap.cxx \
