@@ -24,10 +24,22 @@ from .faults import KinSrcPoroStep as ModuleKinSrcPoro
 
 
 class KinSrcPoroStep(KinSrcPoro, ModuleKinSrcPoro):
-    """Python object for a step slip time function.
-
-    Factory: eq_kinematic_src
     """
+    Step slip time function.
+
+    Implements `KinSrc`.
+    """
+    DOC_CONFIG = {
+        "cfg": """
+            [pylithapp.problem.interfaces.fault.eq_ruptures.rupture]
+            origin_time = 10*year
+
+            db_auxiliary_field = spatialdata.spatialdb.UniformDB
+            db_auxiliary_field.description = Step slip time function auxiliary field spatial database
+            db_auxiliary_field.values = [initiation_time, final_slip_left_lateral, final_slip_opening]
+            db_auxiliary_field.data = [0.0*s, -2.0*m, 0.0*m]
+            """
+    }
 
     # PUBLIC METHODS /////////////////////////////////////////////////////
 

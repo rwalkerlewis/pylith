@@ -43,17 +43,22 @@ EXTRA_DIST = \
 	bc/ZeroDB.py \
 	bc/__init__.py \
 	faults/AuxSubfieldsFault.py \
+	faults/AuxSubfieldsFaultPoro.py \
 	faults/FaultCohesive.py \
 	faults/FaultCohesiveImpulses.py \
 	faults/FaultCohesiveKin.py \
+	faults/FaultCohesiveKinPoro.py \
 	faults/KinSrc.py \
 	faults/KinSrcBrune.py \
 	faults/KinSrcConstRate.py \
 	faults/KinSrcLiuCos.py \
+	faults/KinSrcPoro.py \
+	faults/KinSrcPoroStep.py \
 	faults/KinSrcRamp.py \
 	faults/KinSrcStep.py \
 	faults/KinSrcTimeHistory.py \
 	faults/SingleRupture.py \
+	faults/SingleRupturePoro.py \
 	faults/__init__.py \
 	feassemble/__init__.py \
 	friction/__init__.py \
@@ -120,6 +125,7 @@ EXTRA_DIST = \
 	problems/SolnDispPres.py \
 	problems/SolnDispPresLagrange.py \
 	problems/SolnDispPresTracStrain.py \
+	problems/SolnDispPresTracStrainLagrange.py \
 	problems/SolnDispPresTracStrainVelPdotTdot.py \
 	problems/SolnDispPresVel.py \
 	problems/SolnDispVel.py \

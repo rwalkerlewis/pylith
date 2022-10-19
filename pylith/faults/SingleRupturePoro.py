@@ -12,18 +12,19 @@
 # See LICENSE.md for license information.
 #
 # ----------------------------------------------------------------------
-#
-# @file pylith/faults/SingleRupturePoro.py
-#
-# @brief Python kinematic rupture container with one poroelastic rupture.
 
 from pylith.utils.PetscComponent import PetscComponent
 
 
 class SingleRupturePoro(PetscComponent):
-    """Python kinematic rupture container with one rupture.
     """
+    Kinematic slip source container with one poroelastic source.
 
+    :::{seealso}
+    See [`FaultCohesiveKinPoro` Component](FaultCohesiveKinPoro.md).
+    :::
+    """
+    
     import pythia.pyre.inventory
 
     from .KinSrcPoroStep import KinSrcPoroStep

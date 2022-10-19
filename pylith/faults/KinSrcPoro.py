@@ -28,9 +28,8 @@ from .faults import KinSrcPoro as ModuleKinSrcPoro
 
 
 class KinSrcPoro(PetscComponent, ModuleKinSrcPoro):
-    """Python object for managing parameters for a kinematic earthquake sources.
-
-    Factory: eq_kinematic_src
+    """
+    Abstract base class for a prescribed slip source, poroelastic.
     """
 
     import pythia.pyre.inventory
@@ -41,7 +40,7 @@ class KinSrcPoro(PetscComponent, ModuleKinSrcPoro):
 
     from pythia.pyre.units.time import second
     originTime = pythia.pyre.inventory.dimensional("origin_time", default=0.0 * second)
-    originTime.meta['tip'] = "Origin time for earthquake rupture."
+    originTime.meta['tip'] = "Origin time for slip source."
 
     # PUBLIC METHODS /////////////////////////////////////////////////////
 
@@ -51,14 +50,16 @@ class KinSrcPoro(PetscComponent, ModuleKinSrcPoro):
         PetscComponent.__init__(self, name, facility="eq_kinematic_src")
         return
 
-    def preinitialize(self):
+    def preinitialize(self, problem):
         """Do pre-initialization setup.
         """
         self._createModuleObj()
 
         ModuleKinSrcPoro.setIdentifier(self, self.aliases[-1])
         ModuleKinSrcPoro.auxFieldDB(self, self.auxFieldDB)
-        ModuleKinSrcPoro.originTime(self, self.originTime.value)
+
+        originTimeN = self.originTime / problem.normalizer.getTimeScale()
+        ModuleKinSrcPoro.originTime(self, originTimeN)
         return
 
     def verifyConfiguration(self):
