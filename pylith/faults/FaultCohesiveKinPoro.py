@@ -96,7 +96,7 @@ class FaultCohesiveKinPoro(FaultCohesive, ModuleFaultCohesiveKinPoro):
         FaultCohesive.preinitialize(self, problem)
 
         for eqsrc in self.eqRuptures.components():
-            eqsrc.preinitialize()
+            eqsrc.preinitialize(problem)
         ModuleFaultCohesiveKinPoro.setEqRuptures(
             self, self.eqRuptures.inventory.facilityNames(), self.eqRuptures.components())
 

@@ -39,6 +39,7 @@ __all__ = [
     "SolutionSubfield",
     "SubfieldDisplacement",
     "SubfieldLagrangeFault",
+    "SubfieldFaultPressure",
     "SubfieldPressure",
     "SubfieldPressureDot",    
     "SubfieldTemperature",

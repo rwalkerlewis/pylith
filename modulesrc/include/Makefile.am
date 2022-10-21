@@ -24,6 +24,7 @@ dist_subpkgdata_DATA = \
 	chararray.i \
 	scalartypemaps.i \
 	kinsrcarray.i \
+	kinsrcporoarray.i \
 	physicsarray.i
 
 

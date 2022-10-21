@@ -134,6 +134,7 @@ EXTRA_DIST = \
 	problems/SolutionSubfield.py \
 	problems/SubfieldDisplacement.py \
 	problems/SubfieldLagrangeFault.py \
+	problems/SubfieldFaultPressure.py \
 	problems/SubfieldPressure.py \
 	problems/SubfieldPressureDot.py \
 	problems/SubfieldTemperature.py \
