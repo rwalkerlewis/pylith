@@ -66,7 +66,7 @@ class TestCase(FullTestCase):
             # ),
             Check(
                 mesh_entities=["poroelastic"],
-                vertex_fields = ["displacement", "pressure", "cauchy_strain", "cauchy_stress"],
+                vertex_fields = ["cauchy_strain", "cauchy_stress"],
                 defaults=defaults,
                 tolerance=SOLUTION_TOLERANCE,
             ),

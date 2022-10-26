@@ -80,7 +80,7 @@ zmin = 0.0  # m
 zmax = 1.0  # m
 
 # Time steps
-ts = 0.0028666667  # sec
+ts = 0.00001  # sec
 nts = 2
 tsteps = numpy.arange(0.0, ts * nts, ts) + ts  # sec
 
@@ -96,7 +96,7 @@ class AnalyticalSoln(object):
 
     def __init__(self):
         self.fields = {
-            "displacement": self.displacement,
+            "displacement": self.zero_vector_time,
             "pressure": self.pressure,
             #"trace_strain": self.trace_strain,
             "porosity": self.porosity,
@@ -110,7 +110,7 @@ class AnalyticalSoln(object):
             "biot_modulus": self.biot_modulus,
             "isotropic_permeability": self.isotropic_permeability,
             "cauchy_stress": self.stress,
-            "cauchy_strain": self.zero_tensor,            
+            "cauchy_strain": self.strain,            
             "initial_amplitude": {
                 "x_neg": self.zero_vector,
                 "y_neg": self.zero_vector,
@@ -139,6 +139,11 @@ class AnalyticalSoln(object):
     def zero_vector(self, locs):
         (npts, dim) = locs.shape
         return numpy.zeros((1, npts, self.SPACE_DIM), dtype=numpy.float64)
+
+    def zero_vector_time(self, locs):
+        (npts, dim) = locs.shape
+        ntpts = tsteps.shape[0]
+        return numpy.zeros((ntpts, npts, self.SPACE_DIM), dtype=numpy.float64)
 
     def zero_tensor(self, locs):
         (npts, dim) = locs.shape
@@ -225,7 +230,7 @@ class AnalyticalSoln(object):
         return isotropic_permeability
 
     def displacement(self, locs):
-        """        t_track += 1
+        """       
         Compute displacement field at locations.
         """
         (npts, dim) = locs.shape
@@ -279,7 +284,6 @@ class AnalyticalSoln(object):
         E = (1-nu)**2 * (1+nu_u)**2 * x_n - 18*(1+nu)*(nu_u-nu)*(1-nu_u)
 
         t_track = 0
-        t_track += 1
         for t in tsteps:
 
             t_star = (c*t)/(R_0**2)
@@ -451,13 +455,12 @@ class AnalyticalSoln(object):
                         [                -numpy.sin(phi),                  numpy.cos(phi),  numpy.zeros(npts)] ] )
 
         A_time = numpy.zeros([ntpts,3,3,npts])
-        A_time[0,:,:,:] = A[:,:,:]
-        A_time[1,:,:,:] = A[:,:,:]
-
         B_time = numpy.zeros([ntpts,3,3,npts])
-        B_time[0,:,:,:] = B[:,:,:]
-        B_time[1,:,:,:] = B[:,:,:]
 
+        for i in numpy.arange(ntpts):
+            A_time[i,:,:,:] = A[:,:,:]
+            B_time[i,:,:,:] = B[:,:,:]
+    
         stress_crt_tensor = numpy.zeros([ntpts,3,3,npts])
         stress_crt_tensor[:,:,:,:] = numpy.einsum('hijl,hjkl->hikl',numpy.einsum('hijl, hjkl->hikl',A_time,stress_sph_tensor[:,:,:,:]), B_time)                            
 
@@ -536,12 +539,11 @@ class AnalyticalSoln(object):
                         [                -numpy.sin(phi),                  numpy.cos(phi),  numpy.zeros(npts)] ] )
 
         A_time = numpy.zeros([ntpts,3,3,npts])
-        A_time[0,:,:,:] = A[:,:,:]
-        A_time[1,:,:,:] = A[:,:,:]
-
         B_time = numpy.zeros([ntpts,3,3,npts])
-        B_time[0,:,:,:] = B[:,:,:]
-        B_time[1,:,:,:] = B[:,:,:]
+
+        for i in numpy.arange(ntpts):
+            A_time[i,:,:,:] = A[:,:,:]
+            B_time[i,:,:,:] = B[:,:,:]        
 
         stress_crt_tensor = numpy.zeros([ntpts,3,3,npts])
         stress_crt_tensor[:,:,:,:] = numpy.einsum('hijl,hjkl->hikl',numpy.einsum('hijl, hjkl->hikl',A_time,stress_sph_tensor[:,:,:,:]), B_time)                            
