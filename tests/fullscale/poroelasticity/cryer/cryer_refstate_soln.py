@@ -80,7 +80,7 @@ zmin = 0.0  # m
 zmax = 1.0  # m
 
 # Time steps
-ts = 0.00001  # sec
+ts = 0.028666667  # sec
 nts = 2
 tsteps = numpy.arange(0.0, ts * nts, ts) + ts  # sec
 
@@ -91,7 +91,7 @@ class AnalyticalSoln(object):
     """
     SPACE_DIM = 3
     TENSOR_SIZE = 6
-    ITERATIONS = 50
+    ITERATIONS = 88
     EPS = 1e-25
 
     def __init__(self):

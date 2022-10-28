@@ -50,7 +50,7 @@ class GenerateDB(object):
         from cryer_refstate_soln import AnalyticalSoln
         from cryer_refstate_soln import p_solid_density, p_fluid_density, p_fluid_viscosity, p_porosity, p_shear_modulus, p_drained_bulk_modulus, p_biot_coefficient, p_fluid_bulk_modulus, p_solid_bulk_modulus, p_isotropic_permeability
         soln = AnalyticalSoln()
-        stress = soln.input_stress(xyz)
+        stress = soln.input_stress(xyz) 
         strain = soln.input_strain(xyz)
         ones_scalar = soln.ones_scalar(xyz)
         zero_scalar = soln.zero_scalar(xyz)

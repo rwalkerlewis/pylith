@@ -30,7 +30,7 @@ import cryer_refstate_gendb
 # We do not include trace_strain in the test of the solution fields, because of the
 # poor convergence of the series solution.
 SOLUTION_FIELDS = ["displacement", "pressure"]
-SOLUTION_TOLERANCE = 0.5
+SOLUTION_TOLERANCE = 1.0
 
 # -------------------------------------------------------------------------------------------------
 class TestCase(FullTestCase):

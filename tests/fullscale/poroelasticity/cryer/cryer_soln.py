@@ -70,6 +70,7 @@ zmax = 1.0  # m
 
 # Time steps
 ts = 0.0028666667  # sec
+# ts = 0.00002  # sec
 nts = 2
 tsteps = numpy.arange(0.0, ts * nts, ts) + ts  # sec
 
@@ -406,12 +407,12 @@ class AnalyticalSoln(object):
         phi = numpy.nan_to_num( numpy.arctan( numpy.nan_to_num( locs[:,1] / locs[:,0] ) ) )
 
         A = numpy.array( [ [numpy.sin(theta)*numpy.cos(phi), numpy.cos(theta)*numpy.cos(phi),   -numpy.sin(phi)],
-                        [numpy.sin(theta)*numpy.sin(phi), numpy.cos(theta)*numpy.sin(phi),    numpy.cos(phi)],
-                        [               numpy.cos(theta),               -numpy.sin(theta), numpy.zeros(npts)] ] ) 
+                           [numpy.sin(theta)*numpy.sin(phi), numpy.cos(theta)*numpy.sin(phi),    numpy.cos(phi)],
+                           [               numpy.cos(theta),               -numpy.sin(theta), numpy.zeros(npts)] ] ) 
 
         B = numpy.array( [ [numpy.sin(theta)*numpy.cos(phi), numpy.sin(theta)*numpy.sin(phi),   numpy.cos(theta)],
-                        [numpy.cos(theta)*numpy.cos(phi), numpy.cos(theta)*numpy.sin(phi),  -numpy.sin(theta)],
-                        [                -numpy.sin(phi),                  numpy.cos(phi),  numpy.zeros(npts)] ] )
+                           [numpy.cos(theta)*numpy.cos(phi), numpy.cos(theta)*numpy.sin(phi),  -numpy.sin(theta)],
+                           [                -numpy.sin(phi),                  numpy.cos(phi),  numpy.zeros(npts)] ] )
 
         A_time = numpy.zeros([ntpts,3,3,npts])
         A_time[0,:,:,:] = A[:,:,:]
