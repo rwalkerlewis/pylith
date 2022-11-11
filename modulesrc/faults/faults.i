@@ -22,6 +22,7 @@
 #include "pylith/faults/FaultCohesive.hh"
 #include "pylith/faults/FaultCohesiveKin.hh"
 #include "pylith/faults/FaultCohesiveImpulses.hh"
+#include "pylith/faults/FaultCohesiveKinPoro.hh"
 #include "pylith/faults/KinSrc.hh"
 #include "pylith/faults/KinSrcStep.hh"
 #include "pylith/faults/KinSrcRamp.hh"
@@ -29,6 +30,8 @@
 #include "pylith/faults/KinSrcBrune.hh"
 #include "pylith/faults/KinSrcLiuCos.hh"
 #include "pylith/faults/KinSrcTimeHistory.hh"
+#include "pylith/faults/KinSrcPoro.hh"
+#include "pylith/faults/KinSrcPoroStep.hh"
 %}
 
 %include "exception.i"
@@ -44,6 +47,7 @@
 %include "../include/scalartypemaps.i"
 %include "../include/chararray.i"
 %include "../include/kinsrcarray.i"
+%include "../include/kinsrcporoarray.i"
 
 // Numpy interface stuff
 %{
@@ -61,6 +65,7 @@ import_array();
 %include "FaultCohesive.i"
 %include "FaultCohesiveKin.i"
 %include "FaultCohesiveImpulses.i"
+%include "FaultCohesiveKinPoro.i"
 %include "KinSrc.i"
 %include "KinSrcStep.i"
 %include "KinSrcRamp.i"
@@ -68,5 +73,7 @@ import_array();
 %include "KinSrcBrune.i"
 %include "KinSrcLiuCos.i"
 %include "KinSrcTimeHistory.i"
+%include "KinSrcPoro.i"
+%include "KinSrcPoroStep.i"
 
 // End of file
