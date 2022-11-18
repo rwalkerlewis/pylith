@@ -139,16 +139,6 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
         return "Pa**-1";
     } // biot_modulus_units
 
-    // Biot coefficient
-    static double biot_coefficient(const double x,
-                                   const double y) {
-        return 0.5;
-    } // biot_coefficient
-
-    static const char* biot_coefficient_units(void) {
-        return "None";
-    } // biot_coefficient_units
-
     // Fluid bulk modulus
     static double fluid_bulk_modulus(const double x,
                                      const double y) {
@@ -303,7 +293,8 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
     static double trace_strain(const double x,
                                const double y,
                                const double t) {
-        return (x > 0) ? -2*x;
+        return (x > 0) ? -2 * x : 2 * x;
+
     } // trace_strain
 
     static const char* trace_strain_units(void) {
@@ -420,25 +411,24 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
 
     // ----------------------------------------------------------------------
     // f0 function for displacement forcing.
-    static PetscErrorCode f0u(const PylithInt dim,
-                              const PylithInt numS,
-                              const PylithInt numA,
-                              const PylithInt sOff[],
-                              const PylithInt sOff_x[],
-                              const PylithScalar s[],
-                              const PylithScalar s_t[],
-                              const PylithScalar s_x[],
-                              const PylithInt aOff[],
-                              const PylithInt aOff_x[],
-                              const PylithScalar a[],
-                              const PylithScalar a_t[],
-                              const PylithScalar a_x[],
-                              const PylithReal t,
-                              const PylithScalar x[],
-                              const PylithReal n[],
-                              const PylithInt numConstants,
-                              const PylithScalar constants[],
-                              PylithScalar f0[]) {
+    static void f0u(const PylithInt dim,
+                    const PylithInt numS,
+                    const PylithInt numA,
+                    const PylithInt sOff[],
+                    const PylithInt sOff_x[],
+                    const PylithScalar s[],
+                    const PylithScalar s_t[],
+                    const PylithScalar s_x[],
+                    const PylithInt aOff[],
+                    const PylithInt aOff_x[],
+                    const PylithScalar a[],
+                    const PylithScalar a_t[],
+                    const PylithScalar a_x[],
+                    const PylithReal t,
+                    const PylithScalar x[],
+                    const PylithInt numConstants,
+                    const PylithScalar constants[],
+                    PylithScalar f0[]) {
         assert(sOff);
         assert(s);
         assert(f0);
@@ -453,25 +443,24 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
 
     // ----------------------------------------------------------------------
     // f0 function for pressure forcing.
-    static PetscErrorCode f0p(const PylithInt dim,
-                              const PylithInt numS,
-                              const PylithInt numA,
-                              const PylithInt sOff[],
-                              const PylithInt sOff_x[],
-                              const PylithScalar s[],
-                              const PylithScalar s_t[],
-                              const PylithScalar s_x[],
-                              const PylithInt aOff[],
-                              const PylithInt aOff_x[],
-                              const PylithScalar a[],
-                              const PylithScalar a_t[],
-                              const PylithScalar a_x[],
-                              const PylithReal t,
-                              const PylithScalar x[],
-                              const PylithReal n[],
-                              const PylithInt numConstants,
-                              const PylithScalar constants[],
-                              PylithScalar f0[]) {
+    static void f0p(const PylithInt dim,
+                    const PylithInt numS,
+                    const PylithInt numA,
+                    const PylithInt sOff[],
+                    const PylithInt sOff_x[],
+                    const PylithScalar s[],
+                    const PylithScalar s_t[],
+                    const PylithScalar s_x[],
+                    const PylithInt aOff[],
+                    const PylithInt aOff_x[],
+                    const PylithScalar a[],
+                    const PylithScalar a_t[],
+                    const PylithScalar a_x[],
+                    const PylithReal t,
+                    const PylithScalar x[],
+                    const PylithInt numConstants,
+                    const PylithScalar constants[],
+                    PylithScalar f0[]) {
         assert(sOff);
         assert(s);
         assert(f0);
@@ -481,25 +470,24 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
 
     // ----------------------------------------------------------------------
     // f0 function for trace strain forcing.
-    static PetscErrorCode f0e(const PylithInt dim,
-                              const PylithInt numS,
-                              const PylithInt numA,
-                              const PylithInt sOff[],
-                              const PylithInt sOff_x[],
-                              const PylithScalar s[],
-                              const PylithScalar s_t[],
-                              const PylithScalar s_x[],
-                              const PylithInt aOff[],
-                              const PylithInt aOff_x[],
-                              const PylithScalar a[],
-                              const PylithScalar a_t[],
-                              const PylithScalar a_x[],
-                              const PylithReal t,
-                              const PylithScalar x[],
-                              const PylithReal n[],
-                              const PylithInt numConstants,
-                              const PylithScalar constants[],
-                              PylithScalar f0[]) {
+    static void f0e(const PylithInt dim,
+                    const PylithInt numS,
+                    const PylithInt numA,
+                    const PylithInt sOff[],
+                    const PylithInt sOff_x[],
+                    const PylithScalar s[],
+                    const PylithScalar s_t[],
+                    const PylithScalar s_x[],
+                    const PylithInt aOff[],
+                    const PylithInt aOff_x[],
+                    const PylithScalar a[],
+                    const PylithScalar a_t[],
+                    const PylithScalar a_x[],
+                    const PylithReal t,
+                    const PylithScalar x[],
+                    const PylithInt numConstants,
+                    const PylithScalar constants[],
+                    PylithScalar f0[]) {
         assert(sOff);
         assert(s);
         assert(f0);
@@ -559,7 +547,7 @@ protected:
         CPPUNIT_ASSERT(_data->matAuxDB);
         _data->matAuxDB->addValue("solid_density", solid_density, solid_density_units());
         _data->matAuxDB->addValue("fluid_density", fluid_density, fluid_density_units());
-        _data->matAuxDB->addValue("fluid_viscosity", fluid_viscosity_density, fluid_viscosity_units());
+        _data->matAuxDB->addValue("fluid_viscosity", fluid_viscosity, fluid_viscosity_units());
         _data->matAuxDB->addValue("shear_modulus", shear_modulus, shear_modulus_units());
         _data->matAuxDB->addValue("drained_bulk_modulus", drained_bulk_modulus, drained_bulk_modulus_units());
         _data->matAuxDB->addValue("biot_coefficient", biot_coefficient, biot_coefficient_units());
@@ -819,8 +807,8 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip_TriP2 :
         };
         _data->faultAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_faultAuxDiscretizations);
 
-        _data->numSolnSubfields = 2;
-        static const pylith::topology::Field::Discretization _solnDiscretizations[2] = {
+        _data->numSolnSubfields = 3;
+        static const pylith::topology::Field::Discretization _solnDiscretizations[3] = {
             pylith::topology::Field::Discretization(2, 2), // disp
             pylith::topology::Field::Discretization(2, 2, 1, -1, true), // lagrange_multiplier_fault
             pylith::topology::Field::Discretization(2, 2, 1, -1, true), // fault_pressure
@@ -869,8 +857,8 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip_TriP3 :
         };
         _data->faultAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_faultAuxDiscretizations);
 
-        _data->numSolnSubfields = 2;
-        static const pylith::topology::Field::Discretization _solnDiscretizations[2] = {
+        _data->numSolnSubfields = 3;
+        static const pylith::topology::Field::Discretization _solnDiscretizations[3] = {
             pylith::topology::Field::Discretization(3, 3), // disp
             pylith::topology::Field::Discretization(3, 3, 1, -1, true), // lagrange_multiplier_fault
             pylith::topology::Field::Discretization(3, 3, 1, -1, true), // fault_pressure
