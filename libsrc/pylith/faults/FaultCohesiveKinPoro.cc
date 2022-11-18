@@ -415,7 +415,7 @@ pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::
     constraintLagrange->setSubfieldName(lagrangeName);
     constraintLagrange->setUserFn(_zero);
 
-    // "FaultPressure" multipliers
+    // "Fault Pressure" multipliers
     const char *faultPressureName = "fault_pressure";
     numComponents = 1;
     pylith::int_array constrainedDOFFaultPressure;

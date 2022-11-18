@@ -209,9 +209,6 @@ protected:
     PylithReal _refDir1[3]; ///< First choice reference direction used to compute boundary tangential directions.
     PylithReal _refDir2[3]; ///< Second choice reference direction used to compute boundary tangential directions.
 
-    // PRIVATE METHODS ////////////////////////////////////////////////////////////////////////////
-private:
-
     inline
     static
     PetscErrorCode _zero(PetscInt dim,
