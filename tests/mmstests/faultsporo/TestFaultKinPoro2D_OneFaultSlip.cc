@@ -433,12 +433,9 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
         assert(s);
         assert(f0);
 
-        f0[0] = (x[0] > 0) ? 4.0 + x[0] * t :
-                (x[0] < 0) ? -4.0 + x[0] * t :
-                NULL;
-        f0[1] = (x[0] > 0) ? 1.0 :
-                (x[0] < 0) ? -1.0 :
-                NULL;
+        f0[0] = (x[0] > 0) ? 4.0 + x[0] * t : -4.0 + x[0] * t;
+        f0[1] = (x[0] > 0) ? 1.0 : -1.0;
+
     } // f0u
 
     // ----------------------------------------------------------------------
@@ -729,16 +726,15 @@ protected:
         PetscDS prob = NULL;
         err = DMGetDS(dm, &prob);CPPUNIT_ASSERT(!err);
         err = PetscDSSetExactSolution(prob, 0, solnkernel_disp, dm);CPPUNIT_ASSERT(!err);
+        err = PetscDSSetExactSolution(prob, 1, solnkernel_pres, dm);CPPUNIT_ASSERT(!err);
+        err = PetscDSSetExactSolution(prob, 2, solnkernel_tracestrain, dm);CPPUNIT_ASSERT(!err);
         err = DMGetLabel(dm, pylith::topology::Mesh::cells_label_name, &label);CPPUNIT_ASSERT(!err);
         err = DMLabelGetStratumIS(label, _faults[0]->getCohesiveLabelValue(), &is);CPPUNIT_ASSERT(!err);
         err = ISGetMinMax(is, &cohesiveCell, NULL);CPPUNIT_ASSERT(!err);
         err = ISDestroy(&is);CPPUNIT_ASSERT(!err);
         err = DMGetCellDS(dm, cohesiveCell, &prob);CPPUNIT_ASSERT(!err);
-        err = PetscDSSetExactSolution(prob, 0, solnkernel_disp, NULL);CPPUNIT_ASSERT(!err);
-        err = PetscDSSetExactSolution(prob, 1, solnkernel_pres, NULL);CPPUNIT_ASSERT(!err);
-        err = PetscDSSetExactSolution(prob, 2, solnkernel_tracestrain, NULL);CPPUNIT_ASSERT(!err);
-        err = PetscDSSetExactSolution(prob, 3, solnkernel_lagrangemultiplier, NULL);CPPUNIT_ASSERT(!err);
-        err = PetscDSSetExactSolution(prob, 4, solnkernel_faultpressure, NULL);CPPUNIT_ASSERT(!err);
+        err = PetscDSSetExactSolution(prob, 0, solnkernel_lagrangemultiplier, NULL);CPPUNIT_ASSERT(!err);
+        err = PetscDSSetExactSolution(prob, 1, solnkernel_faultpressure, NULL);CPPUNIT_ASSERT(!err);
     } // _setExactSolution
 
 }; // TestFaultKinPoro2D_OneFaultSlip
