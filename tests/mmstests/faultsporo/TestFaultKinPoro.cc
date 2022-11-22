@@ -106,13 +106,14 @@ pylith::mmstests::TestFaultKinPoro::_initialize(void) {
         } // for
     } // for
 
-    // Set up fault ruptures
+    // Set up faults
     for (size_t iFault = 0; iFault < _faults.size(); ++iFault) {
         CPPUNIT_ASSERT(_data->kinsrcporo);
         CPPUNIT_ASSERT(_faults[iFault]);
         _faults[iFault]->adjustTopology(_mesh);
-
+        _faults[iFault]->setAuxiliaryFieldDB(_data->faultAuxDB);
         _data->kinsrcporo->auxFieldDB(_data->ruptureAuxDB);
+
         for (int i = 0; i < _data->faultNumAuxSubfields; ++i) {
             const pylith::topology::FieldBase::Discretization& info = _data->faultAuxDiscretizations[i];
             _faults[iFault]->setAuxiliarySubfieldDiscretization(_data->faultAuxSubfields[i], info.basisOrder, info.quadOrder,
@@ -187,14 +188,18 @@ pylith::mmstests::TestFaultKinPoro_Data::TestFaultKinPoro_Data(void) :
     faultNumAuxSubfields(0),
     faultAuxSubfields(NULL),
     faultAuxDiscretizations(NULL),
+    faultAuxDB(new spatialdata::spatialdb::UserFunctionDB),
     ruptureAuxDB(new spatialdata::spatialdb::UserFunctionDB) {
     CPPUNIT_ASSERT(normalizer);
 
     CPPUNIT_ASSERT(matAuxDB);
     matAuxDB->setDescription("material auxiliary field spatial database");
 
+    CPPUNIT_ASSERT(faultAuxDB);
+    faultAuxDB->setDescription("fault auxiliary field spatial database");
+
     CPPUNIT_ASSERT(ruptureAuxDB);
-    ruptureAuxDB->setDescription("fault auxiliary field spatial database");
+    ruptureAuxDB->setDescription("rupture auxiliary field spatial database");
 } // constructor
 
 
@@ -207,6 +212,7 @@ pylith::mmstests::TestFaultKinPoro_Data::~TestFaultKinPoro_Data(void) {
     delete rheology;rheology = NULL;
     delete matAuxDB;matAuxDB = NULL;
     delete kinsrcporo;kinsrcporo = NULL;
+    delete faultAuxDB;faultAuxDB = NULL;
     delete ruptureAuxDB;ruptureAuxDB = NULL;
 } // destructor
 

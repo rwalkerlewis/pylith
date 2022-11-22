@@ -565,15 +565,6 @@ protected:
         _data->matAuxDB->addValue("isotropic_permeability", isotropic_permeability, isotropic_permeability_units());
         _data->matAuxDB->setCoordSys(*_data->cs);
 
-        CPPUNIT_ASSERT(!_data->kinsrcporo);
-        _data->kinsrcporo = new pylith::faults::KinSrcPoroStep();CPPUNIT_ASSERT(_data->kinsrcporo);
-        _data->kinsrcporo->originTime(0.0);
-        CPPUNIT_ASSERT(_data->ruptureAuxDB);
-        _data->ruptureAuxDB->addValue("initiation_time", initiation_time, time_units());
-        _data->ruptureAuxDB->addValue("final_slip_opening", finalslip_opening, slip_units());
-        _data->ruptureAuxDB->addValue("final_slip_left_lateral", finalslip_leftlateral, slip_units());
-        _data->ruptureAuxDB->setCoordSys(*_data->cs);
-
         _data->faultNumAuxSubfields = 7;
         static const char* _faultAuxSubfields[7] = { "thickness", "porosity", "beta_p", "beta_sigma", "fault_permeability", "fluid_viscosity",  "slip" };
         _data->faultAuxSubfields = _faultAuxSubfields;
@@ -587,6 +578,26 @@ protected:
             pylith::topology::Field::Discretization(0, 1), // slip
         };
         _data->faultAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_faultAuxDiscretizations);
+
+        CPPUNIT_ASSERT(_data->faultAuxDB);
+        _data->faultAuxDB->addValue("thickness", thickness, thickness_units());
+        _data->faultAuxDB->addValue("porosity", porosity, porosity_units());
+        _data->faultAuxDB->addValue("beta_p", beta_p, beta_p_units());
+        _data->faultAuxDB->addValue("beta_sigma", beta_sigma, beta_sigma_units());
+        _data->faultAuxDB->addValue("fault_permeability_xx", fault_permeability_xx, fault_permeability_units());
+        _data->faultAuxDB->addValue("fault_permeability_yy", fault_permeability_yy, fault_permeability_units());
+        _data->faultAuxDB->addValue("fault_permeability_zz", fault_permeability_zz, fault_permeability_units());
+        _data->faultAuxDB->addValue("fault_permeability_xy", fault_permeability_xy, fault_permeability_units());
+        _data->faultAuxDB->addValue("fluid_viscosity", fault_fluid_viscosity, fault_fluid_viscosity_units());
+        _data->faultAuxDB->setCoordSys(*_data->cs);
+        CPPUNIT_ASSERT(!_data->kinsrcporo);
+        _data->kinsrcporo = new pylith::faults::KinSrcPoroStep();CPPUNIT_ASSERT(_data->kinsrcporo);
+        _data->kinsrcporo->originTime(0.0);
+        CPPUNIT_ASSERT(_data->ruptureAuxDB);
+        _data->ruptureAuxDB->addValue("initiation_time", initiation_time, time_units());
+        _data->ruptureAuxDB->addValue("final_slip_opening", finalslip_opening, slip_units());
+        _data->ruptureAuxDB->addValue("final_slip_left_lateral", finalslip_leftlateral, slip_units());
+        _data->ruptureAuxDB->setCoordSys(*_data->cs);
 
         // Body MMS Kernels
         std::vector<ResidualKernels> mms_forcing_kernels;
