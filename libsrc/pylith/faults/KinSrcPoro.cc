@@ -21,69 +21,71 @@
 #include "KinSrcPoro.hh" // implementation of object methods
 
 #include "pylith/faults/KinSrcPoroAuxiliaryFactory.hh" // USES KinSrcPoroAuxiliaryFactory
-#include "pylith/topology/Field.hh"                    // USES Field
-#include "pylith/topology/FieldOps.hh"                 // USES FieldOps::checkDisretization()
+#include "pylith/topology/Field.hh" // USES Field
+#include "pylith/topology/FieldOps.hh" // USES FieldOps::checkDisretization()
 
 #include "pylith/utils/journals.hh" // USES PYLITH_COMPONENT_*
-#include "pylith/utils/error.hh"    // USES PYLITH_METHOD_BEGIN
+#include "pylith/utils/error.hh" // USES PYLITH_METHOD_BEGIN
 
 #include "spatialdata/units/Nondimensional.hh" // USES Nondimensional
 
 #include <typeinfo> // USES typeid()
-#include <cassert>  // USES assert()
+#include <cassert> // USES assert()
 
 // ----------------------------------------------------------------------
 // Default constructor.
 pylith::faults::KinSrcPoro::KinSrcPoro(void) : _auxiliaryFactory(new pylith::faults::KinSrcPoroAuxiliaryFactory),
-                                               _thicknessFnKernel(NULL),
-                                               _porosityFnKernel(NULL),
-                                               _beta_pFnKernel(NULL),
-                                               _beta_sigmaFnKernel(NULL),
-                                               _fault_permeabilityFnKernel(NULL),
-                                               _fluid_viscosityFnKernel(NULL),
-                                               _slipFnKernel(NULL),
-                                               _slipRateFnKernel(NULL),
-                                               _slipAccFnKernel(NULL),
-                                               _auxiliaryField(NULL),
-                                               _originTime(0.0) {}
+    _thicknessFnKernel(NULL),
+    _porosityFnKernel(NULL),
+    _beta_pFnKernel(NULL),
+    _beta_sigmaFnKernel(NULL),
+    _fault_permeabilityFnKernel(NULL),
+    _fluid_viscosityFnKernel(NULL),
+    _slipFnKernel(NULL),
+    _slipRateFnKernel(NULL),
+    _slipAccFnKernel(NULL),
+    _auxiliaryField(NULL),
+    _originTime(0.0) {}
+
 
 // ----------------------------------------------------------------------
 // Destructor.
-pylith::faults::KinSrcPoro::~KinSrcPoro(void)
-{
+pylith::faults::KinSrcPoro::~KinSrcPoro(void) {
     deallocate();
 } // destructor
 
+
 // ----------------------------------------------------------------------
 // Deallocate PETSc and local data structures.
-void pylith::faults::KinSrcPoro::deallocate(void)
-{
+void
+pylith::faults::KinSrcPoro::deallocate(void) {
     delete _auxiliaryField;
     _auxiliaryField = NULL;
     delete _auxiliaryFactory;
     _auxiliaryFactory = NULL;
 } // deallocate
 
+
 // ----------------------------------------------------------------------
 // Set origin time for earthquake source.
-void pylith::faults::KinSrcPoro::originTime(const PylithReal value)
-{
+void
+pylith::faults::KinSrcPoro::originTime(const PylithReal value) {
     _originTime = value;
 } // originTime
+
 
 // ----------------------------------------------------------------------
 // Get origin time for earthquake source.
 PylithReal
-pylith::faults::KinSrcPoro::originTime(void) const
-{
+pylith::faults::KinSrcPoro::originTime(void) const {
     return _originTime;
 } // originTime
+
 
 // ----------------------------------------------------------------------
 // Get auxiliary field.
 const pylith::topology::Field &
-pylith::faults::KinSrcPoro::auxField(void) const
-{
+pylith::faults::KinSrcPoro::auxField(void) const {
     PYLITH_METHOD_BEGIN;
 
     assert(_auxiliaryField);
@@ -91,10 +93,11 @@ pylith::faults::KinSrcPoro::auxField(void) const
     PYLITH_METHOD_RETURN(*_auxiliaryField);
 } // auxField
 
+
 // ----------------------------------------------------------------------
 // Set database for auxiliary fields.
-void pylith::faults::KinSrcPoro::auxFieldDB(spatialdata::spatialdb::SpatialDB *value)
-{
+void
+pylith::faults::KinSrcPoro::auxFieldDB(spatialdata::spatialdb::SpatialDB *value) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("auxFieldDB(value=" << typeid(value).name() << ")");
 
@@ -104,12 +107,13 @@ void pylith::faults::KinSrcPoro::auxFieldDB(spatialdata::spatialdb::SpatialDB *v
     PYLITH_METHOD_END;
 } // auxFieldDB
 
+
 // ----------------------------------------------------------------------
 // Initialize kinematic (prescribed slip) earthquake source.
-void pylith::faults::KinSrcPoro::initialize(const pylith::topology::Field &faultAuxField,
-                                            const spatialdata::units::Nondimensional &normalizer,
-                                            const spatialdata::geocoords::CoordSys *cs)
-{
+void
+pylith::faults::KinSrcPoro::initialize(const pylith::topology::Field &faultAuxField,
+                                       const spatialdata::units::Nondimensional &normalizer,
+                                       const spatialdata::geocoords::CoordSys *cs) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("initialize(faultAuxField" << faultAuxField.getLabel() << ", normalizer, cs=" << typeid(cs).name() << ")");
 
@@ -135,8 +139,7 @@ void pylith::faults::KinSrcPoro::initialize(const pylith::topology::Field &fault
     _auxiliaryFactory->setValuesFromDB();
 
     pythia::journal::debug_t debug(PyreComponent::getName());
-    if (debug.state())
-    {
+    if (debug.state()) {
         PYLITH_COMPONENT_DEBUG("Displaying kinematic earthquake source auxiliary field");
         _auxiliaryField->view("KinSrcPoro auxiliary field");
     } // if
@@ -144,20 +147,20 @@ void pylith::faults::KinSrcPoro::initialize(const pylith::topology::Field &fault
     PYLITH_METHOD_END;
 } // initialize
 
+
 // ----------------------------------------------------------------------
 // Set slip values at time t.
 // Also set rest of auxiliary fields
-void pylith::faults::KinSrcPoro::updateSlip(PetscVec slipLocalVec,
-                                            pylith::topology::Field *faultAuxiliaryField,
-                                            const PylithScalar t,
-                                            const PylithScalar timeScale)
-{
+void
+pylith::faults::KinSrcPoro::updateSlip(PetscVec slipLocalVec,
+                                       pylith::topology::Field *faultAuxiliaryField,
+                                       const PylithScalar t,
+                                       const PylithScalar timeScale) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("updateSlip(slipLocalVec=" << slipLocalVec << ", faultAuxiliaryField=" << faultAuxiliaryField
                                                       << ", t=" << t << ", timeScale=" << timeScale << ")");
 
-    if (!_slipFnKernel || (t < _originTime))
-    {
+    if (!_slipFnKernel || (t < _originTime)) {
         PYLITH_METHOD_END;
     } // if
 
@@ -166,14 +169,14 @@ void pylith::faults::KinSrcPoro::updateSlip(PetscVec slipLocalVec,
 
     _setFEConstants(*faultAuxiliaryField); // Constants are attached to the auxiliary field for the slip vector.
 
-    PetscPointFunc subfieldKernels[7];
-    subfieldKernels[0] = _thicknessFnKernel;          // 0
-    subfieldKernels[1] = _porosityFnKernel;           // 1
-    subfieldKernels[2] = _beta_pFnKernel;             // 2
-    subfieldKernels[3] = _beta_sigmaFnKernel;         // 3
-    subfieldKernels[4] = _fault_permeabilityFnKernel; // 4
-    subfieldKernels[5] = _fluid_viscosityFnKernel;    // 6
-    subfieldKernels[6] = _slipFnKernel;               // numA - 1
+    // PetscPointFunc subfieldKernels[7];
+    // subfieldKernels[0] = _thicknessFnKernel;          // 0
+    // subfieldKernels[1] = _porosityFnKernel;           // 1
+    // subfieldKernels[2] = _beta_pFnKernel;             // 2
+    // subfieldKernels[3] = _beta_sigmaFnKernel;         // 3
+    // subfieldKernels[4] = _fault_permeabilityFnKernel; // 4
+    // subfieldKernels[5] = _fluid_viscosityFnKernel;    // 6
+    // subfieldKernels[6] = _slipFnKernel;               // numA - 1
 
     PetscPointFunc slipSubfieldKernels[1];
     slipSubfieldKernels[0] = _slipFnKernel; // numA - 1
@@ -207,19 +210,19 @@ void pylith::faults::KinSrcPoro::updateSlip(PetscVec slipLocalVec,
     PYLITH_METHOD_END;
 } // updateSlip
 
+
 // ----------------------------------------------------------------------
 // Set slip rate values at time t.
-void pylith::faults::KinSrcPoro::updateSlipRate(PetscVec slipRateLocalVec,
-                                                pylith::topology::Field *faultAuxiliaryField,
-                                                const PylithScalar t,
-                                                const PylithScalar timeScale)
-{
+void
+pylith::faults::KinSrcPoro::updateSlipRate(PetscVec slipRateLocalVec,
+                                           pylith::topology::Field *faultAuxiliaryField,
+                                           const PylithScalar t,
+                                           const PylithScalar timeScale) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("updateSlipRate(slipRateLocalVec=" << slipRateLocalVec << ", faultAuxiliaryField=" << faultAuxiliaryField
                                                               << ", t=" << t << ", timeScale=" << timeScale << ")");
 
-    if (!_slipRateFnKernel || (t < _originTime))
-    {
+    if (!_slipRateFnKernel || (t < _originTime)) {
         PYLITH_METHOD_END;
     } // if
 
@@ -229,13 +232,13 @@ void pylith::faults::KinSrcPoro::updateSlipRate(PetscVec slipRateLocalVec,
     _setFEConstants(*faultAuxiliaryField); // Constants are attached to the auxiliary field for the slip rate vector.
 
     PetscPointFunc subfieldKernels[7];
-    subfieldKernels[0] = _thicknessFnKernel;          // 0
-    subfieldKernels[1] = _porosityFnKernel;           // 1
-    subfieldKernels[2] = _beta_pFnKernel;             // 2
-    subfieldKernels[3] = _beta_sigmaFnKernel;         // 3
+    subfieldKernels[0] = _thicknessFnKernel; // 0
+    subfieldKernels[1] = _porosityFnKernel; // 1
+    subfieldKernels[2] = _beta_pFnKernel; // 2
+    subfieldKernels[3] = _beta_sigmaFnKernel; // 3
     subfieldKernels[4] = _fault_permeabilityFnKernel; // 4
-    subfieldKernels[5] = _fluid_viscosityFnKernel;    // 6
-    subfieldKernels[6] = _slipRateFnKernel;           // numA - 1
+    subfieldKernels[5] = _fluid_viscosityFnKernel; // 6
+    subfieldKernels[6] = _slipRateFnKernel; // numA - 1
 
     // Create local vector for slip for this source.
     PetscErrorCode err = 0;
@@ -252,19 +255,19 @@ void pylith::faults::KinSrcPoro::updateSlipRate(PetscVec slipRateLocalVec,
     PYLITH_METHOD_END;
 } // updateSlipRate
 
+
 // ----------------------------------------------------------------------
 // Set slip acceleration values at time t.
-void pylith::faults::KinSrcPoro::updateSlipAcc(PetscVec slipAccLocalVec,
-                                               pylith::topology::Field *faultAuxiliaryField,
-                                               const PylithScalar t,
-                                               const PylithScalar timeScale)
-{
+void
+pylith::faults::KinSrcPoro::updateSlipAcc(PetscVec slipAccLocalVec,
+                                          pylith::topology::Field *faultAuxiliaryField,
+                                          const PylithScalar t,
+                                          const PylithScalar timeScale) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("updateSlipAcc(slipAccLocalVec=" << slipAccLocalVec << ", faultAuxiliaryField=" << faultAuxiliaryField
                                                             << ", t=" << t << ", timeScale=" << timeScale << ")");
 
-    if (!_slipAccFnKernel || (t < _originTime))
-    {
+    if (!_slipAccFnKernel || (t < _originTime)) {
         PYLITH_METHOD_END;
     } // if
 
@@ -274,13 +277,13 @@ void pylith::faults::KinSrcPoro::updateSlipAcc(PetscVec slipAccLocalVec,
     _setFEConstants(*faultAuxiliaryField); // Constants are attached to the auxiliary field for the slip rate vector.
 
     PetscPointFunc subfieldKernels[7];
-    subfieldKernels[0] = _thicknessFnKernel;          // 0
-    subfieldKernels[1] = _porosityFnKernel;           // 1
-    subfieldKernels[2] = _beta_pFnKernel;             // 2
-    subfieldKernels[3] = _beta_sigmaFnKernel;         // 3
+    subfieldKernels[0] = _thicknessFnKernel; // 0
+    subfieldKernels[1] = _porosityFnKernel; // 1
+    subfieldKernels[2] = _beta_pFnKernel; // 2
+    subfieldKernels[3] = _beta_sigmaFnKernel; // 3
     subfieldKernels[4] = _fault_permeabilityFnKernel; // 4
-    subfieldKernels[5] = _fluid_viscosityFnKernel;    // 5
-    subfieldKernels[6] = _slipAccFnKernel;            // numA - 1
+    subfieldKernels[5] = _fluid_viscosityFnKernel; // 5
+    subfieldKernels[6] = _slipAccFnKernel; // numA - 1
 
     // Create local vector for slip for this source.
     PetscErrorCode err = 0;
@@ -298,13 +301,14 @@ void pylith::faults::KinSrcPoro::updateSlipAcc(PetscVec slipAccLocalVec,
     PYLITH_METHOD_END;
 } // updateSlipAcc
 
+
 // TO DO:
 // Check whether one needs to call this _setFEConstants in every update function above
 // Check if numConstants should be one or not
 // ----------------------------------------------------------------------
 // Set constants used in finite-element integrations.
-void pylith::faults::KinSrcPoro::_setFEConstants(const pylith::topology::Field &faultAuxField) const
-{
+void
+pylith::faults::KinSrcPoro::_setFEConstants(const pylith::topology::Field &faultAuxField) const {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_setFEConstants(faultAuxField=" << faultAuxField.getLabel() << ")");
 
@@ -327,5 +331,6 @@ void pylith::faults::KinSrcPoro::_setFEConstants(const pylith::topology::Field &
 
     PYLITH_METHOD_END;
 } // _setFEConstants
+
 
 // End of file

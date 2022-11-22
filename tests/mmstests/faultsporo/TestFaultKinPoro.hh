@@ -111,7 +111,7 @@ public:
     int faultNumAuxSubfields; ///< Number of fault auxiliary subfields.
     const char** faultAuxSubfields; ///< Names of fault auxiliary subfields.
     pylith::topology::Field::Discretization* faultAuxDiscretizations; ///< Discretizations for fault aux subfields.
-    spatialdata::spatialdb::UserFunctionDB* faultAuxDB; ///< Spatial database for fault auxiliary field.
+    spatialdata::spatialdb::UserFunctionDB* ruptureAuxDB; ///< Spatial database for fault rupture auxiliary field.
 
 }; // TestFaultKinPoro_Data
 
