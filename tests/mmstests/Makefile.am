@@ -18,7 +18,7 @@
 SUBDIRS = \
 	linearelasticity \
 	incompressibleelasticity \
-	faults \ 
+	faults \
 	faultsporo
 
 
