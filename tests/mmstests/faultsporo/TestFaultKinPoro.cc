@@ -111,7 +111,7 @@ pylith::mmstests::TestFaultKinPoro::_initialize(void) {
         CPPUNIT_ASSERT(_data->kinsrcporo);
         CPPUNIT_ASSERT(_faults[iFault]);
         _faults[iFault]->adjustTopology(_mesh);
-        _faults[iFault]->setAuxiliaryFieldDB(_data->faultAuxDB);
+        // _faults[iFault]->setAuxiliaryFieldDB(_data->faultAuxDB);
         _data->kinsrcporo->auxFieldDB(_data->ruptureAuxDB);
 
         for (int i = 0; i < _data->faultNumAuxSubfields; ++i) {

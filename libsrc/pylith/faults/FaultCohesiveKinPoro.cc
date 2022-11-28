@@ -259,36 +259,25 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
     auxiliaryField->allocate();
     auxiliaryField->createOutputVector();
 
-    // We don't populate the auxiliary field for slip via a spatial database, because they will be set from the
-    // earthquake
-    // rupture.
+    // We don't populate the auxiliary field for slip via a spatial database, because they will be set from
+    // the earthquake rupture.
 
     // Initialize auxiliary fields for kinematic ruptures.
-    PetscErrorCode err = 0;
-    const char *slipFieldName = auxiliaryField->hasSubfield("slip") ? "slip" : "slip_rate";
-    const PetscInt slipIndex = auxiliaryField->getSubfieldInfo(slipFieldName).index;
-
     assert(auxiliaryField);
     const srcs_type::const_iterator rupturesEnd = _ruptures.end();
     for (srcs_type::iterator r_iter = _ruptures.begin(); r_iter != rupturesEnd; ++r_iter) {
-        KinSrcPoro *src = r_iter->second;
+        KinSrcPoro* src = r_iter->second;
         assert(src);
         src->initialize(*auxiliaryField, *_normalizer, solution.getMesh().getCoordSys());
     } // for
 
     // Create local PETSc vector to hold current slip.
-    DM slipDM;
-    err = DMCreateSubDM(auxiliaryField->getDM(), 1, &slipIndex, NULL, &slipDM);
+    PetscErrorCode err = 0;
+    err = DMCreateLocalVector(auxiliaryField->getDM(), &_slipVecRupture);PYLITH_CHECK_ERROR(err);
+    err = DMCreateLocalVector(auxiliaryField->getDM(), &_slipVecTotal);PYLITH_CHECK_ERROR(err);
 
-    PYLITH_CHECK_ERROR(err);
-    err = DMCreateLocalVector(slipDM, &_slipVecRupture);
-    PYLITH_CHECK_ERROR(err);
-    err = DMCreateLocalVector(slipDM, &_slipVecTotal);
-    PYLITH_CHECK_ERROR(err);
-    assert(_auxiliaryFactory);
-    _auxiliaryFactory->setValuesFromDB();
-    err = DMDestroy(&slipDM);
-    PYLITH_CHECK_ERROR(err);
+    // assert(_auxiliaryFactory);
+    // _auxiliaryFactory->setValuesFromDB();
 
     PYLITH_METHOD_RETURN(auxiliaryField);
 } // createAuxiliaryField

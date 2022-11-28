@@ -565,31 +565,34 @@ protected:
         _data->matAuxDB->addValue("isotropic_permeability", isotropic_permeability, isotropic_permeability_units());
         _data->matAuxDB->setCoordSys(*_data->cs);
 
-        _data->faultNumAuxSubfields = 7;
-        static const char* _faultAuxSubfields[7] = { "thickness", "porosity", "beta_p", "beta_sigma", "fault_permeability", "fluid_viscosity",  "slip" };
-        _data->faultAuxSubfields = _faultAuxSubfields;
-        static const pylith::topology::Field::Discretization _faultAuxDiscretizations[7] = {
-            pylith::topology::Field::Discretization(0, 1), // thickness
-            pylith::topology::Field::Discretization(0, 1), // porosity
-            pylith::topology::Field::Discretization(0, 1), // beta_p
-            pylith::topology::Field::Discretization(0, 1), // beta_sigma
-            pylith::topology::Field::Discretization(0, 1), // fault_permeability
-            pylith::topology::Field::Discretization(0, 1), // fluid_viscosity
-            pylith::topology::Field::Discretization(0, 1), // slip
-        };
-        _data->faultAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_faultAuxDiscretizations);
+        // _data->faultNumAuxSubfields = 7;
+        // static const char* _faultAuxSubfields[7] = { "thickness", "porosity", "beta_p", "beta_sigma",
+        // "fault_permeability", "fluid_viscosity",  "slip" };
+        // _data->faultAuxSubfields = _faultAuxSubfields;
+        // static const pylith::topology::Field::Discretization _faultAuxDiscretizations[7] = {
+        //     pylith::topology::Field::Discretization(0, 1), // thickness
+        //     pylith::topology::Field::Discretization(0, 1), // porosity
+        //     pylith::topology::Field::Discretization(0, 1), // beta_p
+        //     pylith::topology::Field::Discretization(0, 1), // beta_sigma
+        //     pylith::topology::Field::Discretization(0, 1), // fault_permeability
+        //     pylith::topology::Field::Discretization(0, 1), // fluid_viscosity
+        //     pylith::topology::Field::Discretization(0, 1), // slip
+        // };
+        // _data->faultAuxDiscretizations =
+        // const_cast<pylith::topology::Field::Discretization*>(_faultAuxDiscretizations);
 
-        CPPUNIT_ASSERT(_data->faultAuxDB);
-        _data->faultAuxDB->addValue("thickness", thickness, thickness_units());
-        _data->faultAuxDB->addValue("porosity", porosity, porosity_units());
-        _data->faultAuxDB->addValue("beta_p", beta_p, beta_p_units());
-        _data->faultAuxDB->addValue("beta_sigma", beta_sigma, beta_sigma_units());
-        _data->faultAuxDB->addValue("fault_permeability_xx", fault_permeability_xx, fault_permeability_units());
-        _data->faultAuxDB->addValue("fault_permeability_yy", fault_permeability_yy, fault_permeability_units());
-        _data->faultAuxDB->addValue("fault_permeability_zz", fault_permeability_zz, fault_permeability_units());
-        _data->faultAuxDB->addValue("fault_permeability_xy", fault_permeability_xy, fault_permeability_units());
-        _data->faultAuxDB->addValue("fluid_viscosity", fault_fluid_viscosity, fault_fluid_viscosity_units());
-        _data->faultAuxDB->setCoordSys(*_data->cs);
+        // CPPUNIT_ASSERT(_data->faultAuxDB);
+        // _data->faultAuxDB->addValue("thickness", thickness, thickness_units());
+        // _data->faultAuxDB->addValue("porosity", porosity, porosity_units());
+        // _data->faultAuxDB->addValue("beta_p", beta_p, beta_p_units());
+        // _data->faultAuxDB->addValue("beta_sigma", beta_sigma, beta_sigma_units());
+        // _data->faultAuxDB->addValue("fault_permeability_xx", fault_permeability_xx, fault_permeability_units());
+        // _data->faultAuxDB->addValue("fault_permeability_yy", fault_permeability_yy, fault_permeability_units());
+        // _data->faultAuxDB->addValue("fault_permeability_zz", fault_permeability_zz, fault_permeability_units());
+        // _data->faultAuxDB->addValue("fault_permeability_xy", fault_permeability_xy, fault_permeability_units());
+        // _data->faultAuxDB->addValue("fluid_viscosity", fault_fluid_viscosity, fault_fluid_viscosity_units());
+        // _data->faultAuxDB->setCoordSys(*_data->cs);
+
         CPPUNIT_ASSERT(!_data->kinsrcporo);
         _data->kinsrcporo = new pylith::faults::KinSrcPoroStep();CPPUNIT_ASSERT(_data->kinsrcporo);
         _data->kinsrcporo->originTime(0.0);
@@ -598,6 +601,15 @@ protected:
         _data->ruptureAuxDB->addValue("final_slip_opening", finalslip_opening, slip_units());
         _data->ruptureAuxDB->addValue("final_slip_left_lateral", finalslip_leftlateral, slip_units());
         _data->ruptureAuxDB->setCoordSys(*_data->cs);
+
+        // Single aux field for testing
+        _data->faultNumAuxSubfields = 1;
+        static const char* _faultAuxSubfields[1] = { "slip" };
+        _data->faultAuxSubfields = _faultAuxSubfields;
+        static const pylith::topology::Field::Discretization _faultAuxDiscretizations[1] = {
+            pylith::topology::Field::Discretization(0, 1), // slip
+        };
+        _data->faultAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_faultAuxDiscretizations);
 
         // Body MMS Kernels
         std::vector<ResidualKernels> mms_forcing_kernels;
@@ -734,6 +746,7 @@ protected:
 
         pylith::utils::PetscOptions options;
         options.add("-fieldsplit_displacement_pc_type", "lu");
+        options.add("-snes_test_jacoban_view", "");
         options.override ();
     } // setUp
 
@@ -757,8 +770,11 @@ protected:
         err = ISGetMinMax(is, &cohesiveCell, NULL);CPPUNIT_ASSERT(!err);
         err = ISDestroy(&is);CPPUNIT_ASSERT(!err);
         err = DMGetCellDS(dm, cohesiveCell, &prob);CPPUNIT_ASSERT(!err);
-        err = PetscDSSetExactSolution(prob, 0, solnkernel_lagrangemultiplier, NULL);CPPUNIT_ASSERT(!err);
-        err = PetscDSSetExactSolution(prob, 1, solnkernel_faultpressure, NULL);CPPUNIT_ASSERT(!err);
+        err = PetscDSSetExactSolution(prob, 0, solnkernel_disp, dm);CPPUNIT_ASSERT(!err);
+        err = PetscDSSetExactSolution(prob, 1, solnkernel_pres, dm);CPPUNIT_ASSERT(!err);
+        err = PetscDSSetExactSolution(prob, 2, solnkernel_tracestrain, dm);CPPUNIT_ASSERT(!err);
+        err = PetscDSSetExactSolution(prob, 3, solnkernel_lagrangemultiplier, dm);CPPUNIT_ASSERT(!err);
+        err = PetscDSSetExactSolution(prob, 4, solnkernel_faultpressure, dm);CPPUNIT_ASSERT(!err);
     } // _setExactSolution
 
 }; // TestFaultKinPoro2D_OneFaultSlip
@@ -819,13 +835,19 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip_TriP2 :
         };
         _data->matAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_matAuxDiscretizations);
 
-        static const pylith::topology::Field::Discretization _faultAuxDiscretizations[7] = {
-            pylith::topology::Field::Discretization(0, 2), // thickness
-            pylith::topology::Field::Discretization(0, 2), // porosity
-            pylith::topology::Field::Discretization(0, 2), // beta_p
-            pylith::topology::Field::Discretization(0, 2), // beta_sigma
-            pylith::topology::Field::Discretization(0, 2), // fault_permeability
-            pylith::topology::Field::Discretization(0, 2), // fluid_viscosity
+        // static const pylith::topology::Field::Discretization _faultAuxDiscretizations[7] = {
+        //     pylith::topology::Field::Discretization(0, 2), // thickness
+        //     pylith::topology::Field::Discretization(0, 2), // porosity
+        //     pylith::topology::Field::Discretization(0, 2), // beta_p
+        //     pylith::topology::Field::Discretization(0, 2), // beta_sigma
+        //     pylith::topology::Field::Discretization(0, 2), // fault_permeability
+        //     pylith::topology::Field::Discretization(0, 2), // fluid_viscosity
+        //     pylith::topology::Field::Discretization(0, 2), // slip
+        // };
+        // _data->faultAuxDiscretizations =
+        // const_cast<pylith::topology::Field::Discretization*>(_faultAuxDiscretizations);
+
+        static const pylith::topology::Field::Discretization _faultAuxDiscretizations[1] = {
             pylith::topology::Field::Discretization(0, 2), // slip
         };
         _data->faultAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_faultAuxDiscretizations);
@@ -872,13 +894,19 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip_TriP3 :
         };
         _data->matAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_matAuxDiscretizations);
 
-        static const pylith::topology::Field::Discretization _faultAuxDiscretizations[7] = {
-            pylith::topology::Field::Discretization(0, 3), // thickness
-            pylith::topology::Field::Discretization(0, 3), // porosity
-            pylith::topology::Field::Discretization(0, 3), // beta_p
-            pylith::topology::Field::Discretization(0, 3), // beta_sigma
-            pylith::topology::Field::Discretization(0, 3), // fault_permeability
-            pylith::topology::Field::Discretization(0, 3), // fluid_viscosity
+        // static const pylith::topology::Field::Discretization _faultAuxDiscretizations[7] = {
+        //     pylith::topology::Field::Discretization(0, 3), // thickness
+        //     pylith::topology::Field::Discretization(0, 3), // porosity
+        //     pylith::topology::Field::Discretization(0, 3), // beta_p
+        //     pylith::topology::Field::Discretization(0, 3), // beta_sigma
+        //     pylith::topology::Field::Discretization(0, 3), // fault_permeability
+        //     pylith::topology::Field::Discretization(0, 3), // fluid_viscosity
+        //     pylith::topology::Field::Discretization(0, 3), // slip
+        // };
+        // _data->faultAuxDiscretizations =
+        // const_cast<pylith::topology::Field::Discretization*>(_faultAuxDiscretizations);
+
+        static const pylith::topology::Field::Discretization _faultAuxDiscretizations[1] = {
             pylith::topology::Field::Discretization(0, 3), // slip
         };
         _data->faultAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_faultAuxDiscretizations);
@@ -925,13 +953,19 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip_TriP4 :
         };
         _data->matAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_matAuxDiscretizations);
 
-        static const pylith::topology::Field::Discretization _faultAuxDiscretizations[7] = {
-            pylith::topology::Field::Discretization(0, 4), // thickness
-            pylith::topology::Field::Discretization(0, 4), // porosity
-            pylith::topology::Field::Discretization(0, 4), // beta_p
-            pylith::topology::Field::Discretization(0, 4), // beta_sigma
-            pylith::topology::Field::Discretization(0, 4), // fault_permeability
-            pylith::topology::Field::Discretization(0, 4), // fluid_viscosity
+        // static const pylith::topology::Field::Discretization _faultAuxDiscretizations[7] = {
+        //     pylith::topology::Field::Discretization(0, 4), // thickness
+        //     pylith::topology::Field::Discretization(0, 4), // porosity
+        //     pylith::topology::Field::Discretization(0, 4), // beta_p
+        //     pylith::topology::Field::Discretization(0, 4), // beta_sigma
+        //     pylith::topology::Field::Discretization(0, 4), // fault_permeability
+        //     pylith::topology::Field::Discretization(0, 4), // fluid_viscosity
+        //     pylith::topology::Field::Discretization(0, 4), // slip
+        // };
+        // _data->faultAuxDiscretizations =
+        // const_cast<pylith::topology::Field::Discretization*>(_faultAuxDiscretizations);
+
+        static const pylith::topology::Field::Discretization _faultAuxDiscretizations[1] = {
             pylith::topology::Field::Discretization(0, 4), // slip
         };
         _data->faultAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_faultAuxDiscretizations);
@@ -1006,13 +1040,19 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip_QuadQ2 :
         };
         _data->matAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_matAuxDiscretizations);
 
-        static const pylith::topology::Field::Discretization _faultAuxDiscretizations[7] = {
-            pylith::topology::Field::Discretization(0, 2), // thickness
-            pylith::topology::Field::Discretization(0, 2), // porosity
-            pylith::topology::Field::Discretization(0, 2), // beta_p
-            pylith::topology::Field::Discretization(0, 2), // beta_sigma
-            pylith::topology::Field::Discretization(0, 2), // fault_permeability
-            pylith::topology::Field::Discretization(0, 2), // fluid_viscosity
+        // static const pylith::topology::Field::Discretization _faultAuxDiscretizations[7] = {
+        //     pylith::topology::Field::Discretization(0, 2), // thickness
+        //     pylith::topology::Field::Discretization(0, 2), // porosity
+        //     pylith::topology::Field::Discretization(0, 2), // beta_p
+        //     pylith::topology::Field::Discretization(0, 2), // beta_sigma
+        //     pylith::topology::Field::Discretization(0, 2), // fault_permeability
+        //     pylith::topology::Field::Discretization(0, 2), // fluid_viscosity
+        //     pylith::topology::Field::Discretization(0, 2), // slip
+        // };
+        // _data->faultAuxDiscretizations =
+        // const_cast<pylith::topology::Field::Discretization*>(_faultAuxDiscretizations);
+
+        static const pylith::topology::Field::Discretization _faultAuxDiscretizations[1] = {
             pylith::topology::Field::Discretization(0, 2), // slip
         };
         _data->faultAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_faultAuxDiscretizations);
@@ -1059,13 +1099,19 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip_QuadQ3 :
         };
         _data->matAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_matAuxDiscretizations);
 
-        static const pylith::topology::Field::Discretization _faultAuxDiscretizations[7] = {
-            pylith::topology::Field::Discretization(0, 3), // thickness
-            pylith::topology::Field::Discretization(0, 3), // porosity
-            pylith::topology::Field::Discretization(0, 3), // beta_p
-            pylith::topology::Field::Discretization(0, 3), // beta_sigma
-            pylith::topology::Field::Discretization(0, 3), // fault_permeability
-            pylith::topology::Field::Discretization(0, 3), // fluid_viscosity
+        // static const pylith::topology::Field::Discretization _faultAuxDiscretizations[7] = {
+        //     pylith::topology::Field::Discretization(0, 3), // thickness
+        //     pylith::topology::Field::Discretization(0, 3), // porosity
+        //     pylith::topology::Field::Discretization(0, 3), // beta_p
+        //     pylith::topology::Field::Discretization(0, 3), // beta_sigma
+        //     pylith::topology::Field::Discretization(0, 3), // fault_permeability
+        //     pylith::topology::Field::Discretization(0, 3), // fluid_viscosity
+        //     pylith::topology::Field::Discretization(0, 3), // slip
+        // };
+        // _data->faultAuxDiscretizations =
+        // const_cast<pylith::topology::Field::Discretization*>(_faultAuxDiscretizations);
+
+        static const pylith::topology::Field::Discretization _faultAuxDiscretizations[1] = {
             pylith::topology::Field::Discretization(0, 3), // slip
         };
         _data->faultAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_faultAuxDiscretizations);
@@ -1112,13 +1158,19 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip_QuadQ4 :
         };
         _data->matAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_matAuxDiscretizations);
 
-        static const pylith::topology::Field::Discretization _faultAuxDiscretizations[7] = {
-            pylith::topology::Field::Discretization(0, 4), // thickness
-            pylith::topology::Field::Discretization(0, 4), // porosity
-            pylith::topology::Field::Discretization(0, 4), // beta_p
-            pylith::topology::Field::Discretization(0, 4), // beta_sigma
-            pylith::topology::Field::Discretization(0, 4), // fault_permeability
-            pylith::topology::Field::Discretization(0, 4), // fluid_viscosity
+        // static const pylith::topology::Field::Discretization _faultAuxDiscretizations[7] = {
+        //     pylith::topology::Field::Discretization(0, 4), // thickness
+        //     pylith::topology::Field::Discretization(0, 4), // porosity
+        //     pylith::topology::Field::Discretization(0, 4), // beta_p
+        //     pylith::topology::Field::Discretization(0, 4), // beta_sigma
+        //     pylith::topology::Field::Discretization(0, 4), // fault_permeability
+        //     pylith::topology::Field::Discretization(0, 4), // fluid_viscosity
+        //     pylith::topology::Field::Discretization(0, 4), // slip
+        // };
+        // _data->faultAuxDiscretizations =
+        // const_cast<pylith::topology::Field::Discretization*>(_faultAuxDiscretizations);
+
+        static const pylith::topology::Field::Discretization _faultAuxDiscretizations[1] = {
             pylith::topology::Field::Discretization(0, 4), // slip
         };
         _data->faultAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_faultAuxDiscretizations);
