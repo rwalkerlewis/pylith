@@ -352,7 +352,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0u_neg(const PylithInt dim,
 } // f0u_neg
 
 // ----------------------------------------------------------------------
-// f0 function for elasticity equation: f0u = -\lambda (pos side), +\lambda (neg side).
+// f0 function for poroelasticity equation: f0u = -\lambda (pos side), +\lambda (neg side).
 void pylith::fekernels::FaultCohesiveKinPoro::f0u_pos(const PylithInt dim,
                                                       const PylithInt numS,
                                                       const PylithInt numA,
@@ -683,7 +683,7 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0l_u(const PylithInt dim,
     assert(f0);
 
     assert(numS >= 5);
-    assert(numA >= 5);
+    // assert(numA >= 5);
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
     const PylithInt i_slip = numA - 1;
@@ -878,11 +878,17 @@ void pylith::fekernels::FaultCohesiveKinPoro::f0p_fault(const PylithInt dim,
     const PylithInt i_fault_permeabilility = 4;
     const PylithInt i_fluid_viscosity = 5;
 
-    const PylithScalar porosity = a[aOff[i_porosity]];
-    const PylithScalar betaP = a[aOff[i_beta_p]];
-    const PylithScalar betaSigma = a[aOff[i_beta_sigma]];
-    const PylithScalar *faultPermeability = &a[aOff[i_fault_permeabilility]];
-    const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
+    // const PylithScalar porosity = a[aOff[i_porosity]];
+    // const PylithScalar betaP = a[aOff[i_beta_p]];
+    // const PylithScalar betaSigma = a[aOff[i_beta_sigma]];
+    // const PylithScalar *faultPermeability = &a[aOff[i_fault_permeabilility]];
+    // const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
+    // Hardcoded test values
+    const PylithScalar porosity = 0.1;
+    const PylithScalar betaP = 1.0;
+    const PylithScalar betaSigma = 1.0;
+    const PylithScalar faultPermeability[4] = {1.0, 1.0, 0.0, 0.0};
+
 
     // Pressure and pressure_t
     const PylithInt sOffpressureN = sOff[i_pressure];
@@ -1423,7 +1429,9 @@ void pylith::fekernels::FaultCohesiveKinPoro::f1p_fault(const PylithInt dim,
     const PylithInt i_fault_permeability = 4;
     const PylithInt i_fluid_viscosity = 5;
 
-    const PylithScalar *vectorPermeability = &a[aOff[i_fault_permeability]];
+    // const PylithScalar *vectorPermeability = &a[aOff[i_fault_permeability]];
+    const PylithScalar vectorPermeability[4] = {1.0, 1.0, 0.0, 0.0};
+
     PylithScalar tensorPermeability[spaceDim * spaceDim];
     switch (spaceDim)
     {
@@ -1451,7 +1459,9 @@ void pylith::fekernels::FaultCohesiveKinPoro::f1p_fault(const PylithInt dim,
         assert(0);
     } // switch
 
-    const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
+    // const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
+
+    const PylithScalar fluidViscosity = 1.0;
 
     // Pressure_x
     const PylithInt sOffPressureN = sOff[i_pressure];
@@ -1840,9 +1850,11 @@ void pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fp(const PylithInt dim,
     const PylithInt i_beta_p = 2;
     const PylithInt i_fluid_viscosity = 5;
 
-    const PylithScalar porosity = a[aOff[i_porosity]];
-    const PylithScalar betaP = a[aOff[i_beta_p]];
-    const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
+    // const PylithScalar porosity = a[aOff[i_porosity]];
+    // const PylithScalar betaP = a[aOff[i_beta_p]];
+    // const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
+    const PylithScalar porosity = 0.1;
+    const PylithScalar betaP = 1.0;
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
 
@@ -1894,7 +1906,9 @@ void pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp(const PylithInt dim,
     const PylithInt i_fault_permeability = 4;
     const PylithInt i_fluid_viscosity = 6;
 
-    const PylithScalar *vectorPermeability = &a[aOff[i_fault_permeability]];
+    // const PylithScalar *vectorPermeability = &a[aOff[i_fault_permeability]];
+    const PylithScalar vectorPermeability[4] = {1.0, 1.0, 0.0, 0.0};
+
     PylithScalar tensorPermeability[spaceDim * spaceDim];
     switch (spaceDim)
     {
