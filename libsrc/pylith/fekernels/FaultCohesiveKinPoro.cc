@@ -1809,9 +1809,9 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fp(const PylithInt dim,
     assert(n);
 
     // Index for auxiliary fields
-    const PylithInt i_porosity = 1;
-    const PylithInt i_beta_p = 2;
-    const PylithInt i_fluid_viscosity = 5;
+    // const PylithInt i_porosity = 1;
+    // const PylithInt i_beta_p = 2;
+    // const PylithInt i_fluid_viscosity = 5;
 
     // const PylithScalar porosity = a[aOff[i_porosity]];
     // const PylithScalar betaP = a[aOff[i_beta_p]];
