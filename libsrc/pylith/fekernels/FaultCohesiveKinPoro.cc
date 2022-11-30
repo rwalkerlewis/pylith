@@ -333,7 +333,7 @@ pylith::fekernels::FaultCohesiveKinPoro::f0u_neg(const PylithInt dim,
     const PylithScalar *lagrange = &s[sOffLagrange];
 
     for (PylithInt i = 0; i < spaceDim; ++i) {
-        f0[fOffN + i] += -lagrange[i];
+        f0[fOffN + i] += lagrange[i];
         if (f0[fOffN + i] != f0[fOffN + i]) {
             PetscPrintf(PETSC_COMM_WORLD, "Error in f0u_neg \n");
         }
@@ -378,7 +378,7 @@ pylith::fekernels::FaultCohesiveKinPoro::f0u_pos(const PylithInt dim,
     const PylithScalar *lagrange = &s[sOffLagrange];
 
     for (PylithInt i = 0; i < spaceDim; ++i) {
-        f0[fOffP + i] += +lagrange[i];
+        f0[fOffP + i] += -lagrange[i];
         if (f0[fOffP + i] != f0[fOffP + i]) {
             PetscPrintf(PETSC_COMM_WORLD, "Error in f0u_pos \n");
         }
@@ -692,7 +692,7 @@ pylith::fekernels::FaultCohesiveKinPoro::f0l_u(const PylithInt dim,
         const PylithScalar tanDir[2] = {n[1], -n[0]};
         for (PylithInt i = 0; i < _spaceDim; ++i) {
             const PylithScalar slipXY = n[i] * slip[0] + tanDir[i] * slip[1];
-            f0[fOffLagrange + i] += dispP[i] - dispN[i] - slipXY;
+            f0[fOffLagrange + i] += -dispP[i] + dispN[i] + slipXY;
             if (f0[fOffLagrange + i] != f0[fOffLagrange + i]) {
                 PetscPrintf(PETSC_COMM_WORLD, "Error in f0l_u \n");
             }
@@ -709,7 +709,7 @@ pylith::fekernels::FaultCohesiveKinPoro::f0l_u(const PylithInt dim,
 
         for (PylithInt i = 0; i < _spaceDim; ++i) {
             const PylithScalar slipXYZ = n[i] * slip[0] + tanDir1[i] * slip[1] + tanDir2[i] * slip[2];
-            f0[fOffLagrange + i] += dispP[i] - dispN[i] - slipXYZ;
+            f0[fOffLagrange + i] += -dispP[i] + dispN[i] + slipXYZ;
             if (f0[fOffLagrange + i] != f0[fOffLagrange + i]) {
                 PetscPrintf(PETSC_COMM_WORLD, "Error in f0l_u \n");
             }
@@ -772,7 +772,7 @@ pylith::fekernels::FaultCohesiveKinPoro::f0l_v(const PylithInt dim,
         const PylithScalar tanDir[2] = {-n[1], n[0]};
         for (PylithInt i = 0; i < _spaceDim; ++i) {
             const PylithScalar slipRateXY = n[i] * slipRate[0] + tanDir[i] * slipRate[1];
-            f0[fOffLagrange + i] += velP[i] - velN[i] - slipRateXY;
+            f0[fOffLagrange + i] += -velP[i] + velN[i] + slipRateXY;
             if (f0[fOffLagrange + i] != f0[fOffLagrange + i]) {
                 PetscPrintf(PETSC_COMM_WORLD, "Error in f0l_v \n");
             }
@@ -789,7 +789,7 @@ pylith::fekernels::FaultCohesiveKinPoro::f0l_v(const PylithInt dim,
 
         for (PylithInt i = 0; i < _spaceDim; ++i) {
             const PylithScalar slipRateXYZ = n[i] * slipRate[0] + tanDir1[i] * slipRate[1] + tanDir2[i] * slipRate[2];
-            f0[fOffLagrange + i] += velP[i] - velN[i] - slipRateXYZ;
+            f0[fOffLagrange + i] += -velP[i] + velN[i] + slipRateXYZ;
             if (f0[fOffLagrange + i] != f0[fOffLagrange + i]) {
                 PetscPrintf(PETSC_COMM_WORLD, "Error in f0l_v \n");
             }
@@ -1654,7 +1654,7 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0ul_neg(const PylithInt dim,
     const PylithInt ncols = spaceDim;
 
     for (PylithInt i = 0; i < spaceDim; ++i) {
-        Jf0[(gOffN + i) * ncols + i] += -1.0;
+        Jf0[(gOffN + i) * ncols + i] += 1.0;
         // Jf0[(gOffP + i) * ncols + i] += +1.0;
     } // for
 } // Jg0ul_neg
@@ -1702,7 +1702,7 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0ul_pos(const PylithInt dim,
 
     for (PylithInt i = 0; i < spaceDim; ++i) {
         // Jf0[(gOffN + i) * ncols + i] += -1.0;
-        Jf0[(gOffP + i) * ncols + i] += +1.0;
+        Jf0[(gOffP + i) * ncols + i] += -1.0;
     } // for
 } // Jg0ul_pos
 
@@ -1760,12 +1760,12 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0lu(const PylithInt dim,
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
 
     const PylithInt gOffN = 0;
-    const PylithInt gOffP = gOffN + spaceDim;
-    const PylithInt ncols = 2 * spaceDim;
+    const PylithInt gOffP = gOffN+spaceDim*spaceDim;
+    const PylithInt ncols = spaceDim;
 
     for (PylithInt i = 0; i < spaceDim; ++i) {
-        Jf0[i * ncols + gOffN + i] += -1.0;
-        Jf0[i * ncols + gOffP + i] += +1.0;
+        Jf0[gOffN+i*ncols+i] += +1.0;
+        Jf0[gOffP+i*ncols+i] += -1.0;
     } // for
 } // Jg0lu
 
