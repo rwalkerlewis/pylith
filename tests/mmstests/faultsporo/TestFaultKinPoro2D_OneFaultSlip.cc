@@ -804,10 +804,10 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip_TriP1 :
 
         _data->numSolnSubfields = 5;
         static const pylith::topology::Field::Discretization _solnDiscretizations[5] = {
-            pylith::topology::Field::Discretization(1, 1), // disp
+            pylith::topology::Field::Discretization(2, 1), // disp
             pylith::topology::Field::Discretization(1, 1), // pressure
             pylith::topology::Field::Discretization(1, 1), // trace_strain
-            pylith::topology::Field::Discretization(1, 1, 1, -1, true), // lagrange_multiplier_fault
+            pylith::topology::Field::Discretization(2, 1, 1, -1, true), // lagrange_multiplier_fault
             pylith::topology::Field::Discretization(1, 1, 1, -1, true), // fault_pressure
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
@@ -863,10 +863,10 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip_TriP2 :
 
         _data->numSolnSubfields = 5;
         static const pylith::topology::Field::Discretization _solnDiscretizations[5] = {
-            pylith::topology::Field::Discretization(2, 2), // disp
+            pylith::topology::Field::Discretization(3, 2), // disp
             pylith::topology::Field::Discretization(2, 2), // pressure
             pylith::topology::Field::Discretization(2, 2), // trace_strain
-            pylith::topology::Field::Discretization(2, 2, 1, -1, true), // lagrange_multiplier_fault
+            pylith::topology::Field::Discretization(3, 2, 1, -1, true), // lagrange_multiplier_fault
             pylith::topology::Field::Discretization(2, 2, 1, -1, true), // fault_pressure
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
@@ -922,10 +922,10 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip_TriP3 :
 
         _data->numSolnSubfields = 5;
         static const pylith::topology::Field::Discretization _solnDiscretizations[5] = {
-            pylith::topology::Field::Discretization(3, 3), // disp
+            pylith::topology::Field::Discretization(4, 3), // disp
             pylith::topology::Field::Discretization(3, 3), // pressure
             pylith::topology::Field::Discretization(3, 3), // trace_strain
-            pylith::topology::Field::Discretization(3, 3, 1, -1, true), // lagrange_multiplier_fault
+            pylith::topology::Field::Discretization(4, 3, 1, -1, true), // lagrange_multiplier_fault
             pylith::topology::Field::Discretization(3, 3, 1, -1, true), // fault_pressure
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
@@ -981,10 +981,10 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip_TriP4 :
 
         _data->numSolnSubfields = 5;
         static const pylith::topology::Field::Discretization _solnDiscretizations[5] = {
-            pylith::topology::Field::Discretization(4, 4), // disp
+            pylith::topology::Field::Discretization(5, 4), // disp
             pylith::topology::Field::Discretization(4, 4), // pressure
             pylith::topology::Field::Discretization(4, 4), // trace_strain
-            pylith::topology::Field::Discretization(4, 4, 1, -1, true), // lagrange_multiplier_fault
+            pylith::topology::Field::Discretization(5, 4, 1, -1, true), // lagrange_multiplier_fault
             pylith::topology::Field::Discretization(4, 4, 1, -1, true), // fault_pressure
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
@@ -1009,10 +1009,10 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip_QuadQ1 :
 
         _data->numSolnSubfields = 5;
         static const pylith::topology::Field::Discretization _solnDiscretizations[5] = {
-            pylith::topology::Field::Discretization(1, 1), // disp
+            pylith::topology::Field::Discretization(2, 1), // disp
             pylith::topology::Field::Discretization(1, 1), // pressure
             pylith::topology::Field::Discretization(1, 1), // trace_strain
-            pylith::topology::Field::Discretization(1, 1, 1, -1, true), // lagrange_multiplier_fault
+            pylith::topology::Field::Discretization(2, 1, 1, -1, true), // lagrange_multiplier_fault
             pylith::topology::Field::Discretization(1, 1, 1, -1, true), // fault_pressure
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
@@ -1068,10 +1068,10 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip_QuadQ2 :
 
         _data->numSolnSubfields = 5;
         static const pylith::topology::Field::Discretization _solnDiscretizations[5] = {
-            pylith::topology::Field::Discretization(2, 2), // disp
+            pylith::topology::Field::Discretization(3, 2), // disp
             pylith::topology::Field::Discretization(2, 2), // pressure
             pylith::topology::Field::Discretization(2, 2), // trace_strain
-            pylith::topology::Field::Discretization(2, 2, 1, -1, true), // lagrange_multiplier_fault
+            pylith::topology::Field::Discretization(3, 2, 1, -1, true), // lagrange_multiplier_fault
             pylith::topology::Field::Discretization(2, 2, 1, -1, true), // fault_pressure
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
@@ -1127,10 +1127,10 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip_QuadQ3 :
 
         _data->numSolnSubfields = 5;
         static const pylith::topology::Field::Discretization _solnDiscretizations[5] = {
-            pylith::topology::Field::Discretization(3, 3), // disp
+            pylith::topology::Field::Discretization(4, 3), // disp
             pylith::topology::Field::Discretization(3, 3), // pressure
             pylith::topology::Field::Discretization(3, 3), // trace_strain
-            pylith::topology::Field::Discretization(3, 3, 1, -1, true), // lagrange_multiplier_fault
+            pylith::topology::Field::Discretization(4, 3, 1, -1, true), // lagrange_multiplier_fault
             pylith::topology::Field::Discretization(3, 3, 1, -1, true), // fault_pressure
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
@@ -1186,10 +1186,10 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip_QuadQ4 :
 
         _data->numSolnSubfields = 5;
         static const pylith::topology::Field::Discretization _solnDiscretizations[5] = {
-            pylith::topology::Field::Discretization(4, 4), // disp
+            pylith::topology::Field::Discretization(5, 4), // disp
             pylith::topology::Field::Discretization(4, 4), // pressure
             pylith::topology::Field::Discretization(4, 4), // trace_strain
-            pylith::topology::Field::Discretization(4, 4, 1, -1, true), // lagrange_multiplier_fault
+            pylith::topology::Field::Discretization(5, 4, 1, -1, true), // lagrange_multiplier_fault
             pylith::topology::Field::Discretization(4, 4, 1, -1, true), // fault_pressure
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
