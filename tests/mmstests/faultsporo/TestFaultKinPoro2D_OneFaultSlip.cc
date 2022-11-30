@@ -522,9 +522,9 @@ protected:
         _data->cs->setSpaceDim(_data->spaceDim);
 
         CPPUNIT_ASSERT(_data->normalizer);
-        _data->normalizer->setLengthScale(1.0e+03);
-        _data->normalizer->setTimeScale(2.0);
-        _data->normalizer->setPressureScale(2.25e+10);
+        _data->normalizer->setLengthScale(1.0);
+        _data->normalizer->setTimeScale(1.0);
+        _data->normalizer->setPressureScale(1.0);
         _data->normalizer->computeDensityScale();
 
         _data->startTime = 0.0;
