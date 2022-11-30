@@ -89,6 +89,16 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
         return "kg/m**3";
     } // solid_density_units
 
+    // Porosity
+    static double porosity(const double x,
+                           const double y) {
+        return 0.1;
+    } // porosity
+
+    static const char* porosity_units(void) {
+        return "None";
+    } // porosity_units
+
     // Fluid viscosity
     static double fluid_viscosity(const double x,
                                   const double y) {
@@ -132,7 +142,7 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
     // Biot modulus
     static double biot_modulus(const double x,
                                const double y) {
-        return 6.25;
+        return 1.0;
     } // biot_coefficient
 
     static const char* biot_modulus_units(void) {
@@ -181,15 +191,15 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
         return "m";
     } // thickness_units
 
-    // Porosity
-    static double porosity(const double x,
-                           const double y) {
+    // Fault Porosity
+    static double fault_porosity(const double x,
+                                 const double y) {
         return 0.1;
-    } // porosity
+    } // fault_porosity
 
-    static const char* porosity_units(void) {
+    static const char* fault_porosity_units(void) {
         return "None";
-    } // porosity_units
+    } // fault_porosity_units
 
     // Beta p
     static double beta_p(const double x,
@@ -472,7 +482,7 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
         assert(s);
         assert(f0);
 
-        f0[0] = 0.16 * (x[0] * x[0] - 1) - 1.9 * t;
+        f0[0] = 1.0 * (x[0] * x[0] - 1) - 1.9 * t;
     } // f0p
 
     // ----------------------------------------------------------------------
@@ -528,15 +538,15 @@ protected:
         _data->normalizer->computeDensityScale();
 
         _data->startTime = 0.0;
-        _data->endTime = 0.1;
-        _data->timeStep = 0.05;
+        _data->endTime = 5.0;
+        _data->timeStep = 1.0;
 
         // solnDiscretizations set in derived class.
 
-        _data->matNumAuxSubfields = 10;
-        static const char* _matAuxSubfields[10] = {"solid_density", "fluid_density", "fluid_viscosity", "porosity", "shear_modulus", "drained_bulk_modulus", "biot_coefficient", "fluid_bulk_modulus", "solid_bulk_modulus", "isotropic_permeability"};
+        _data->matNumAuxSubfields = 9;
+        static const char *_matAuxSubfields[9] = {"solid_density", "fluid_density", "fluid_viscosity", "porosity", "shear_modulus", "drained_bulk_modulus", "biot_coefficient", "biot_modulus", "isotropic_permeability"};
         _data->matAuxSubfields = _matAuxSubfields;
-        static const pylith::topology::Field::Discretization _matAuxDiscretizations[10] = {
+        static const pylith::topology::Field::Discretization _matAuxDiscretizations[9] = {
             pylith::topology::Field::Discretization(0, 1), // solid_density
             pylith::topology::Field::Discretization(0, 1), // fluid_density
             pylith::topology::Field::Discretization(0, 1), // fluid_viscosity
@@ -544,8 +554,7 @@ protected:
             pylith::topology::Field::Discretization(0, 1), // shear_modulus
             pylith::topology::Field::Discretization(0, 1), // drained_bulk_modulus
             pylith::topology::Field::Discretization(0, 1), // biot_coefficient
-            pylith::topology::Field::Discretization(0, 1), // fluid_bulk_modulus
-            pylith::topology::Field::Discretization(0, 1), // solid_bulk_modulus
+            pylith::topology::Field::Discretization(0, 1), // biot_modulus
             pylith::topology::Field::Discretization(0, 1), // isotropic_permeability
         };
         _data->matAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_matAuxDiscretizations);
@@ -583,7 +592,7 @@ protected:
 
         // CPPUNIT_ASSERT(_data->faultAuxDB);
         // _data->faultAuxDB->addValue("thickness", thickness, thickness_units());
-        // _data->faultAuxDB->addValue("porosity", porosity, porosity_units());
+        // _data->faultAuxDB->addValue("porosity", fault_porosity, fault_porosity_units());
         // _data->faultAuxDB->addValue("beta_p", beta_p, beta_p_units());
         // _data->faultAuxDB->addValue("beta_sigma", beta_sigma, beta_sigma_units());
         // _data->faultAuxDB->addValue("fault_permeability_xx", fault_permeability_xx, fault_permeability_units());
