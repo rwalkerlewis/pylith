@@ -625,7 +625,7 @@ protected:
         mms_forcing_kernels.resize(3);
         mms_forcing_kernels[0] = ResidualKernels("displacement", pylith::feassemble::Integrator::LHS, f0u, NULL);
         mms_forcing_kernels[1] = ResidualKernels("pressure", pylith::feassemble::Integrator::LHS, f0p, NULL);
-        mms_forcing_kernels[2] = ResidualKernels("trace_strain", pylith::feassemble::Integrator::LHS, f0e, NULL);
+        mms_forcing_kernels[2] = ResidualKernels("trace_strain", pylith::feassemble::Integrator::LHS, NULL, NULL);
 
         // Materials
         _materials.resize(3);
