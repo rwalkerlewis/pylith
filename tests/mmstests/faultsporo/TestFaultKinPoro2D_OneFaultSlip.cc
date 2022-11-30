@@ -628,17 +628,18 @@ protected:
         mms_forcing_kernels[2] = ResidualKernels("trace_strain", pylith::feassemble::Integrator::LHS, NULL, NULL);
 
         // Materials
-        _materials.resize(3);
-        { // xneg
-            pylith::materials::Poroelasticity* material = new pylith::materials::Poroelasticity();assert(material);
-            material->setFormulation(pylith::problems::Physics::QUASISTATIC);
-            material->useBodyForce(false);
-            material->setDescription("Isotropic Linear Poroelasticity Plane Strain");
-            material->setLabelValue(10);
-            material->setBulkRheology(_data->rheology);
-            material->setMMSBodyForceKernels(mms_forcing_kernels);
-            _materials[0] = material;
-        } // xneg
+        // _materials.resize(3);
+        // { // xneg
+        //     pylith::materials::Poroelasticity* material = new pylith::materials::Poroelasticity();assert(material);
+        //     material->setFormulation(pylith::problems::Physics::QUASISTATIC);
+        //     material->useBodyForce(false);
+        //     material->setDescription("Isotropic Linear Poroelasticity Plane Strain");
+        //     material->setLabelValue(10);
+        //     material->setBulkRheology(_data->rheology);
+        //     material->setMMSBodyForceKernels(mms_forcing_kernels);
+        //     _materials[0] = material;
+        // } // xneg
+        _materials.resize(2);
         { // mid
             pylith::materials::Poroelasticity* material = new pylith::materials::Poroelasticity();assert(material);
             material->setFormulation(pylith::problems::Physics::QUASISTATIC);
@@ -647,7 +648,7 @@ protected:
             material->setLabelValue(20);
             material->setBulkRheology(_data->rheology);
             material->setMMSBodyForceKernels(mms_forcing_kernels);
-            _materials[1] = material;
+            _materials[0] = material;
         } // mid
         { // xpos
             pylith::materials::Poroelasticity* material = new pylith::materials::Poroelasticity();assert(material);
@@ -657,7 +658,7 @@ protected:
             material->setLabelValue(15);
             material->setBulkRheology(_data->rheology);
             material->setMMSBodyForceKernels(mms_forcing_kernels);
-            _materials[2] = material;
+            _materials[1] = material;
         } // xpos
 
         // Boundary conditions
