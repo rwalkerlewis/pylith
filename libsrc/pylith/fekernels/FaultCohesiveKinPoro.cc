@@ -1696,12 +1696,10 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0ul_pos(const PylithInt dim,
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
 
-    const PylithInt gOffN = 0;
-    const PylithInt gOffP = gOffN + spaceDim;
+    const PylithInt gOffP = 0;
     const PylithInt ncols = spaceDim;
 
     for (PylithInt i = 0; i < spaceDim; ++i) {
-        // Jf0[(gOffN + i) * ncols + i] += -1.0;
         Jf0[(gOffP + i) * ncols + i] += -1.0;
     } // for
 } // Jg0ul_pos
