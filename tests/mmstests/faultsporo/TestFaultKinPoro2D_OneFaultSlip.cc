@@ -755,10 +755,9 @@ protected:
             fault->setEqRuptures(ruptureNames, numRuptures, ruptures, numRuptures);
             _faults[0] = fault;
         } // xpos
-
         pylith::utils::PetscOptions options;
+        options.add("-pc_type", "jacobi");
         options.add("-fieldsplit_displacement_pc_type", "lu");
-        options.add("-snes_test_jacoban_view", "");
         options.override ();
     } // setUp
 
