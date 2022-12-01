@@ -230,12 +230,12 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
      * - numA - 2: source(1)
      * - numA - 1: slip(dim)
      */
-    // _auxiliaryFactory->addThickness(); // 0
-    // _auxiliaryFactory->addPorosity(); // 1
-    // _auxiliaryFactory->addBetaP(); // 2
-    // _auxiliaryFactory->addBetaSigma(); // 3
-    // _auxiliaryFactory->addFaultPermeability(); // 4
-    // _auxiliaryFactory->addFluidViscosity(); // 5
+    _auxiliaryFactory->addThickness(); // 0
+    _auxiliaryFactory->addPorosity(); // 1
+    _auxiliaryFactory->addBetaP(); // 2
+    _auxiliaryFactory->addBetaSigma(); // 3
+    _auxiliaryFactory->addFaultPermeability(); // 4
+    _auxiliaryFactory->addFluidViscosity(); // 5
 
     // :ATTENTION: The order for adding subfields must match the order of the auxiliary fields in the FE kernels.
 
@@ -277,7 +277,7 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
     err = DMCreateLocalVector(auxiliaryField->getDM(), &_slipVecTotal);PYLITH_CHECK_ERROR(err);
 
     // assert(_auxiliaryFactory);
-    // _auxiliaryFactory->setValuesFromDB();
+    _auxiliaryFactory->setValuesFromDB();
 
     PYLITH_METHOD_RETURN(auxiliaryField);
 } // createAuxiliaryField

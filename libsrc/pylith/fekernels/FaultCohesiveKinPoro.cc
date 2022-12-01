@@ -851,22 +851,23 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_fault(const PylithInt dim,
     const PylithInt i_fault_pressure = 4;
 
     // Index for auxiliary fields
-    // const PylithInt i_porosity = 1;
-    // const PylithInt i_beta_p = 2;
-    // const PylithInt i_beta_sigma = 3;
-    // const PylithInt i_fault_permeabilility = 4;
-    // const PylithInt i_fluid_viscosity = 5;
+    const PylithInt i_porosity = 1;
+    const PylithInt i_beta_p = 2;
+    const PylithInt i_beta_sigma = 3;
+    const PylithInt i_fault_permeabilility = 4;
+    const PylithInt i_fluid_viscosity = 5;
 
-    // const PylithScalar porosity = a[aOff[i_porosity]];
-    // const PylithScalar betaP = a[aOff[i_beta_p]];
-    // const PylithScalar betaSigma = a[aOff[i_beta_sigma]];
-    // const PylithScalar *faultPermeability = &a[aOff[i_fault_permeabilility]];
-    // const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
-    // Hardcoded test values
-    const PylithScalar porosity = 0.1;
-    const PylithScalar betaP = 1.0;
-    const PylithScalar betaSigma = 1.0;
-    const PylithScalar faultPermeability[4] = {1.0, 1.0, 0.0, 0.0};
+    const PylithScalar porosity = a[aOff[i_porosity]];
+    const PylithScalar betaP = a[aOff[i_beta_p]];
+    const PylithScalar betaSigma = a[aOff[i_beta_sigma]];
+    const PylithScalar *faultPermeability = &a[aOff[i_fault_permeabilility]];
+    const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
+
+    // // Hardcoded test values
+    // const PylithScalar porosity = 0.1;
+    // const PylithScalar betaP = 1.0;
+    // const PylithScalar betaSigma = 1.0;
+    // const PylithScalar faultPermeability[4] = {1.0, 1.0, 0.0, 0.0};
 
     // Pressure and pressure_t
     const PylithInt sOffpressureN = sOff[i_pressure];
@@ -1395,11 +1396,12 @@ pylith::fekernels::FaultCohesiveKinPoro::f1p_fault(const PylithInt dim,
     const PylithInt i_fault_pressure = 4;
 
     // Index for auxiliary fields
-    // const PylithInt i_fault_permeability = 4;
-    // const PylithInt i_fluid_viscosity = 5;
+    const PylithInt i_fault_permeability = 4;
+    const PylithInt i_fluid_viscosity = 5;
 
-    // const PylithScalar *vectorPermeability = &a[aOff[i_fault_permeability]];
-    const PylithScalar vectorPermeability[4] = {1.0, 1.0, 0.0, 0.0};
+    const PylithScalar *vectorPermeability = &a[aOff[i_fault_permeability]];
+    // const PylithScalar vectorPermeability[4] = {1.0, 1.0, 0.0, 0.0};
+    // const PylithScalar fluidViscosity = 1.0;
 
     PylithScalar tensorPermeability[spaceDim * spaceDim];
     switch (spaceDim) {
@@ -1427,9 +1429,7 @@ pylith::fekernels::FaultCohesiveKinPoro::f1p_fault(const PylithInt dim,
         assert(0);
     } // switch
 
-    // const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
-
-    const PylithScalar fluidViscosity = 1.0;
+    const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
 
     // Pressure_x
     const PylithInt sOffPressureN = sOff[i_pressure];
@@ -1688,7 +1688,7 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0ul_pos(const PylithInt dim,
                                                    const PylithScalar constants[],
                                                    PylithScalar Jf0[]) {
     assert(numS >= 5);
-    // assert(numA >= 5);
+    assert(numA >= 5);
     assert(Jf0);
     assert(sOff);
     assert(aOff);
@@ -1751,7 +1751,7 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0lu(const PylithInt dim,
                                                const PylithScalar constants[],
                                                PylithScalar Jf0[]) {
     assert(numS >= 5);
-    // assert(numA >= 5);
+    assert(numA >= 5);
     assert(Jf0);
     assert(sOff);
     assert(aOff);
@@ -1802,22 +1802,22 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fp(const PylithInt dim,
                                                  const PylithScalar constants[],
                                                  PylithScalar Jf0[]) {
     assert(numS >= 5);
-    // assert(numA >= 5);
+    assert(numA >= 5);
     assert(Jf0);
     assert(sOff);
     assert(aOff);
     assert(n);
 
     // Index for auxiliary fields
-    // const PylithInt i_porosity = 1;
-    // const PylithInt i_beta_p = 2;
-    // const PylithInt i_fluid_viscosity = 5;
+    const PylithInt i_porosity = 1;
+    const PylithInt i_beta_p = 2;
 
-    // const PylithScalar porosity = a[aOff[i_porosity]];
-    // const PylithScalar betaP = a[aOff[i_beta_p]];
-    // const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
-    const PylithScalar porosity = 0.1;
-    const PylithScalar betaP = 1.0;
+    const PylithScalar porosity = a[aOff[i_porosity]];
+    const PylithScalar betaP = a[aOff[i_beta_p]];
+
+    // Hardcoded test values
+    // const PylithScalar porosity = 0.1;
+    // const PylithScalar betaP = 1.0;
 
     const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
 
@@ -1858,16 +1858,17 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp(const PylithInt dim,
                                                  const PylithScalar constants[],
                                                  PylithScalar Jf3[]) {
     assert(numS >= 5);
-    // assert(numA >= 5);
+    assert(numA >= 5);
     assert(Jf3);
     // Index for auxiliary fields
-    // const PylithInt i_fault_permeability = 4;
-    // const PylithInt i_fluid_viscosity = 6;
+    const PylithInt i_fault_permeability = 4;
+    const PylithInt i_fluid_viscosity = 5;
 
     const PylithInt spaceDim = dim + 1;
 
-    // const PylithScalar *vectorPermeability = &a[aOff[i_fault_permeability]];
-    const PylithScalar vectorPermeability[4] = {1.0, 1.0, 0.0, 0.0};
+    const PylithScalar *vectorPermeability = &a[aOff[i_fault_permeability]];
+    // const PylithScalar vectorPermeability[4] = {1.0, 1.0, 0.0, 0.0};
+    // const PylithScalar fluidViscosity = 1.0;
 
     PylithScalar tensorPermeability[spaceDim * spaceDim];
     switch (spaceDim) {
@@ -1895,8 +1896,7 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp(const PylithInt dim,
         assert(0);
     } // switch
 
-    // const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
-    const PylithScalar fluidViscosity = 1.0;
+    const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
 
     const PylithInt gOffN = 0;
     const PylithInt gOffP = gOffN + spaceDim;
@@ -2000,7 +2000,7 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fl(const PylithInt dim,
                                                  PylithScalar Jf0[]) {
     // Check data fields
     assert(numS >= 5);
-    // assert(numA >= 5);
+    assert(numA >= 5);
     assert(Jf0);
     assert(sOff);
     assert(aOff);
@@ -2009,15 +2009,15 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fl(const PylithInt dim,
     const PylithInt spaceDim = dim + 1;
 
     // Index for auxiliary fields
-    // const PylithInt i_porosity = 1;
-    // const PylithInt i_beta_sigma = 3;
+    const PylithInt i_porosity = 1;
+    const PylithInt i_beta_sigma = 3;
 
-    // ** TO DO **
-    // const PylithScalar porosity = a[aOff[i_porosity]];
-    // const PylithScalar betaSigma = a[aOff[i_beta_sigma]];
+    const PylithScalar porosity = a[aOff[i_porosity]];
+    const PylithScalar betaSigma = a[aOff[i_beta_sigma]];
 
-    const PylithScalar porosity = 0.1;
-    const PylithScalar betaSigma = 1.0;
+    // Hardcoded test values
+    // const PylithScalar porosity = 0.1;
+    // const PylithScalar betaSigma = 1.0;
 
     for (PylithInt i = 0; i < spaceDim; ++i) {
         Jf0[i] += -betaSigma * porosity * s_tshift * n[i];
@@ -2054,7 +2054,7 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fp_f(const PylithInt dim,
                                                    PylithScalar Jf0[]) {
     // Check data fields
     assert(numS >= 5);
-    // assert(numA >= 5);
+    assert(numA >= 5);
     assert(Jf0);
     assert(sOff);
     assert(aOff);
@@ -2062,16 +2062,15 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fp_f(const PylithInt dim,
     const PylithInt gOff = 0;
 
     // Index for auxiliary fields
-    // const PylithInt i_porosity = 1;
-    // const PylithInt i_beta_p = 2;
-    // const PylithInt i_fluid_viscosity = 5;
+    const PylithInt i_porosity = 1;
+    const PylithInt i_beta_p = 2;
 
-    // const PylithScalar porosity = a[aOff[i_porosity]];
-    // const PylithScalar betaP = a[aOff[i_beta_p]];
-    // const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
+    const PylithScalar porosity = a[aOff[i_porosity]];
+    const PylithScalar betaP = a[aOff[i_beta_p]];
 
-    const PylithScalar porosity = 0.1;
-    const PylithScalar betaP = 1.0;
+    // Hardcoded test values
+    // const PylithScalar porosity = 0.1;
+    // const PylithScalar betaP = 1.0;
 
     Jf0[gOff] += (2.0 * porosity * betaP * s_tshift) / 4.0;
 
@@ -2107,7 +2106,7 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp_f(const PylithInt dim,
                                                    PylithScalar Jf3[]) {
     // Check data fields
     assert(numS >= 5);
-    // assert(numA >= 5);
+    assert(numA >= 5);
     assert(Jf3);
     assert(sOff);
     assert(aOff);
@@ -2117,11 +2116,14 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp_f(const PylithInt dim,
     const PylithInt spaceDim = dim + 1;
 
     // Index for auxiliary fields
-    // const PylithInt i_fault_permeability = 4;
-    // const PylithInt i_fluid_viscosity = 5;
+    const PylithInt i_fault_permeability = 4;
+    const PylithInt i_fluid_viscosity = 5;
 
-    // const PylithScalar *vectorPermeability = &a[aOff[i_fault_permeability]];
-    const PylithScalar vectorPermeability[4] = {1.0, 1.0, 0.0, 0.0};
+    const PylithScalar *vectorPermeability = &a[aOff[i_fault_permeability]];
+
+    // Hardcoded test values
+    // const PylithScalar vectorPermeability[4] = {1.0, 1.0, 0.0, 0.0};
+    // const PylithScalar fluidViscosity = 1.0;
 
     PylithScalar tensorPermeability[spaceDim * spaceDim];
     switch (spaceDim) {
@@ -2149,8 +2151,7 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp_f(const PylithInt dim,
         assert(0);
     } // switch
 
-    // const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
-    const PylithScalar fluidViscosity = 1.0;
+    const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
 
     const PylithInt ncols = spaceDim;
     const PylithScalar tempConst = 2.0 / (4.0 * fluidViscosity);
