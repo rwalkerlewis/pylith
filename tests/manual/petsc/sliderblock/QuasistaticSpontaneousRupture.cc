@@ -140,8 +140,8 @@ QuasistaticSpontaneousRupture::_computeLHSResidual(const PetscReal t,
     residualArray[0] = -2*_ka*u[0] + _ka*u[1];
     // residualArray[1] = +_ka*u[0] - _ka*u[1] + fc;
     // residualArray[2] = -_kb*u[2] + _kb*u[3] - fc;
-    residualArray[1] = +_ka*u[0] - _ka*u[1] + _eta*v[1] + fc;
-    residualArray[2] = -_kb*u[2] + _kb*u[3] - _eta*v[2] - fc;
+    residualArray[1] = +_ka*u[0] - _ka*u[1] + _xi*v[1] + fc;
+    residualArray[2] = -_kb*u[2] + _kb*u[3] - _xi*v[2] - fc;
     residualArray[3] = +_kb*u[2] - 2*_kb*u[3] + _kb*u4;
 
     residualArray[4] = uDot[0] - v[0];
@@ -191,7 +191,7 @@ QuasistaticSpontaneousRupture::_computeLHSJacobian(const PetscReal t,
     const PetscScalar slip = u[2] - u[1];
     const PetscScalar slipRate = v[2] - v[1];
     const PetscScalar df = _friction->jacobianSlip(fabs(slip));
-    const PetscScalar ddf = _friction->jacobianSlipRate(fabs(slipRate), _eta);
+    const PetscScalar ddf = _friction->jacobianSlipRate(fabs(slipRate), _xi);
     const PetscScalar d = _friction->lockedSlip();
 
     const PetscScalar lambda = solutionArray[_numDOFAll-1];

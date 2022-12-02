@@ -25,7 +25,7 @@ const double Formulation::_mb = 1.5;
 const double Formulation::_mu = 1.0e-4;
 const double Formulation::_cs = 1.0;
 
-const double Formulation::_eta = _mu / _cs;
+const double Formulation::_xi = _mu / _cs;
 
 const size_t Formulation::_numDOFDisp = 4;
 

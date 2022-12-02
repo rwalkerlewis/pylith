@@ -130,7 +130,7 @@ protected:
     static const double _mb;
     static const double _mu;
     static const double _cs;
-    static const double _eta;
+    static const double _xi;
 
     static const size_t _numDOFDisp;
 
