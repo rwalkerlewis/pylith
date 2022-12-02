@@ -547,15 +547,15 @@ protected:
         static const char *_matAuxSubfields[9] = {"solid_density", "fluid_density", "fluid_viscosity", "porosity", "shear_modulus", "drained_bulk_modulus", "biot_coefficient", "biot_modulus", "isotropic_permeability"};
         _data->matAuxSubfields = _matAuxSubfields;
         static const pylith::topology::Field::Discretization _matAuxDiscretizations[9] = {
-            pylith::topology::Field::Discretization(0, 1), // solid_density
-            pylith::topology::Field::Discretization(0, 1), // fluid_density
-            pylith::topology::Field::Discretization(0, 1), // fluid_viscosity
-            pylith::topology::Field::Discretization(0, 1), // porosity
-            pylith::topology::Field::Discretization(0, 1), // shear_modulus
-            pylith::topology::Field::Discretization(0, 1), // drained_bulk_modulus
-            pylith::topology::Field::Discretization(0, 1), // biot_coefficient
-            pylith::topology::Field::Discretization(0, 1), // biot_modulus
-            pylith::topology::Field::Discretization(0, 1), // isotropic_permeability
+            pylith::topology::Field::Discretization(0, 2), // solid_density
+            pylith::topology::Field::Discretization(0, 2), // fluid_density
+            pylith::topology::Field::Discretization(0, 2), // fluid_viscosity
+            pylith::topology::Field::Discretization(0, 2), // porosity
+            pylith::topology::Field::Discretization(0, 2), // shear_modulus
+            pylith::topology::Field::Discretization(0, 2), // drained_bulk_modulus
+            pylith::topology::Field::Discretization(0, 2), // biot_coefficient
+            pylith::topology::Field::Discretization(0, 2), // biot_modulus
+            pylith::topology::Field::Discretization(0, 2), // isotropic_permeability
         };
         _data->matAuxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_matAuxDiscretizations);
 
@@ -578,13 +578,13 @@ protected:
         static const char* _faultAuxSubfields[7] = { "thickness", "porosity", "beta_p", "beta_sigma", "fault_permeability", "fluid_viscosity",  "slip" };
         _data->faultAuxSubfields = _faultAuxSubfields;
         static const pylith::topology::Field::Discretization _faultAuxDiscretizations[7] = {
-            pylith::topology::Field::Discretization(0, 1), // thickness
-            pylith::topology::Field::Discretization(0, 1), // porosity
-            pylith::topology::Field::Discretization(0, 1), // beta_p
-            pylith::topology::Field::Discretization(0, 1), // beta_sigma
-            pylith::topology::Field::Discretization(0, 1), // fault_permeability
-            pylith::topology::Field::Discretization(0, 1), // fluid_viscosity
-            pylith::topology::Field::Discretization(0, 1), // slip
+            pylith::topology::Field::Discretization(0, 2), // thickness
+            pylith::topology::Field::Discretization(0, 2), // porosity
+            pylith::topology::Field::Discretization(0, 2), // beta_p
+            pylith::topology::Field::Discretization(0, 2), // beta_sigma
+            pylith::topology::Field::Discretization(0, 2), // fault_permeability
+            pylith::topology::Field::Discretization(0, 2), // fluid_viscosity
+            pylith::topology::Field::Discretization(0, 2), // slip
         };
         _data->faultAuxDiscretizations =
             const_cast<pylith::topology::Field::Discretization*>(_faultAuxDiscretizations);
@@ -806,11 +806,11 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip_TriP1 :
 
         _data->numSolnSubfields = 5;
         static const pylith::topology::Field::Discretization _solnDiscretizations[5] = {
-            pylith::topology::Field::Discretization(2, 1), // disp
-            pylith::topology::Field::Discretization(1, 1), // pressure
-            pylith::topology::Field::Discretization(1, 1), // trace_strain
-            pylith::topology::Field::Discretization(2, 1, 1, -1, true), // lagrange_multiplier_fault
-            pylith::topology::Field::Discretization(1, 1, 1, -1, true), // fault_pressure
+            pylith::topology::Field::Discretization(2, 2), // disp
+            pylith::topology::Field::Discretization(2, 2), // pressure
+            pylith::topology::Field::Discretization(1, 2), // trace_strain
+            pylith::topology::Field::Discretization(2, 2, 1, -1, true), // lagrange_multiplier_fault
+            pylith::topology::Field::Discretization(1, 2, 1, -1, true), // fault_pressure
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
 
