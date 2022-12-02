@@ -284,17 +284,27 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
     } // slip_units
 
     // Displacement
-    static double disp_x(const double x,
+    static double disp_x_neg(const double x,
                          const double y,
                          const double t) {
-        return (x > 0) ? 1 - x * x : x*x - 1;
-    } // disp_x
+        return x * x - 1;
+    } // disp_x_neg
+    static double disp_x_pos(const double x,
+                         const double y,
+                         const double t) {
+        return 1 - x * x;
+    } // disp_x_pos
 
-    static double disp_y(const double x,
+    static double disp_y_neg(const double x,
                          const double y,
                          const double t) {
-        return (x > 0) ? -x * x : x * x;
-    } // disp_y
+        return x * x;
+    } // disp_y_neg
+    static double disp_y_pos(const double x,
+                         const double y,
+                         const double t) {
+        return -x * x;
+    } // disp_y_pos
 
     static const char* disp_units(void) {
         return "m";
@@ -358,8 +368,17 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
         CPPUNIT_ASSERT(2 == numComponents);
         CPPUNIT_ASSERT(s);
 
-        s[0] = disp_x(x[0], x[1], t);
-        s[1] = disp_y(x[0], x[1], t);
+        // This is a HACK. We should make separate DSes for the two sides of the fault, which take separate exact solutions
+        DM dm = (DM) context;
+        PetscInt point;
+        DMPlexGetActivePoint(dm, &point);
+        if (point < 12) {
+          s[0] = disp_x_neg(x[0], x[1], t);
+          s[1] = disp_y_neg(x[0], x[1], t);
+        } else {
+          s[0] = disp_x_pos(x[0], x[1], t);
+          s[1] = disp_y_pos(x[0], x[1], t);
+        }
 
         return 0;
     } // solnkernel_disp
