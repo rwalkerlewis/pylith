@@ -152,7 +152,7 @@ pylith::feassemble::_ConstraintUserFn::setSolution(const pylith::topology::Field
     PetscDMLabel dmLabel = NULL;
     err = DMGetLabel(dmField, constraint._labelName.c_str(), &dmLabel);PYLITH_CHECK_ERROR(err);
 
-    void* context = NULL;
+    void* context = dmField;
     const int fieldIndex = field->getSubfieldInfo(constraint._subfieldName.c_str()).index;
     const PylithInt numConstrained = constraint._constrainedDOF.size();
     assert(field->getLocalVector());
