@@ -285,24 +285,26 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
 
     // Displacement
     static double disp_x_neg(const double x,
-                         const double y,
-                         const double t) {
+                             const double y,
+                             const double t) {
         return x * x - 1;
     } // disp_x_neg
+
     static double disp_x_pos(const double x,
-                         const double y,
-                         const double t) {
+                             const double y,
+                             const double t) {
         return 1 - x * x;
     } // disp_x_pos
 
     static double disp_y_neg(const double x,
-                         const double y,
-                         const double t) {
+                             const double y,
+                             const double t) {
         return x * x;
     } // disp_y_neg
+
     static double disp_y_pos(const double x,
-                         const double y,
-                         const double t) {
+                             const double y,
+                             const double t) {
         return -x * x;
     } // disp_y_pos
 
@@ -368,16 +370,17 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
         CPPUNIT_ASSERT(2 == numComponents);
         CPPUNIT_ASSERT(s);
 
-        // This is a HACK. We should make separate DSes for the two sides of the fault, which take separate exact solutions
+        // This is a HACK. We should make separate DSes for the two sides of the fault, which take separate exact
+        // solutions
         DM dm = (DM) context;
         PetscInt point;
         DMPlexGetActivePoint(dm, &point);
         if (point < 12) {
-          s[0] = disp_x_neg(x[0], x[1], t);
-          s[1] = disp_y_neg(x[0], x[1], t);
+            s[0] = disp_x_neg(x[0], x[1], t);
+            s[1] = disp_y_neg(x[0], x[1], t);
         } else {
-          s[0] = disp_x_pos(x[0], x[1], t);
-          s[1] = disp_y_pos(x[0], x[1], t);
+            s[0] = disp_x_pos(x[0], x[1], t);
+            s[1] = disp_y_pos(x[0], x[1], t);
         }
 
         return 0;
@@ -503,6 +506,35 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
 
         f0[0] = 1.0 * (x[0] * x[0] - 1) - 1.9 * t;
     } // f0p
+
+    // ----------------------------------------------------------------------
+    // f1 function for pressure forcing.
+    static void f1p(const PylithInt dim,
+                    const PylithInt numS,
+                    const PylithInt numA,
+                    const PylithInt sOff[],
+                    const PylithInt sOff_x[],
+                    const PylithScalar s[],
+                    const PylithScalar s_t[],
+                    const PylithScalar s_x[],
+                    const PylithInt aOff[],
+                    const PylithInt aOff_x[],
+                    const PylithScalar a[],
+                    const PylithScalar a_t[],
+                    const PylithScalar a_x[],
+                    const PylithReal t,
+                    const PylithScalar x[],
+                    const PylithInt numConstants,
+                    const PylithScalar constants[],
+                    PylithScalar f1[]) {
+        assert(sOff);
+        assert(s);
+        assert(f1);
+
+        // Hardcoding porosity value
+        f1[0] = (x[0] > 0) ? (t*x[0] + 4) * 0.1 : (-4 + t*x[0]) * 0.1;
+        f1[1] = (x[0] > 0) ? 1.0 * 0.1 : -1.0 * 0.1;
+    } // f1p
 
     // ----------------------------------------------------------------------
     // f0 function for trace strain forcing.
@@ -645,7 +677,7 @@ protected:
         std::vector<ResidualKernels> mms_forcing_kernels;
         mms_forcing_kernels.resize(3);
         mms_forcing_kernels[0] = ResidualKernels("displacement", pylith::feassemble::Integrator::LHS, f0u, NULL);
-        mms_forcing_kernels[1] = ResidualKernels("pressure", pylith::feassemble::Integrator::LHS, f0p, NULL);
+        mms_forcing_kernels[1] = ResidualKernels("pressure", pylith::feassemble::Integrator::LHS, f0p, f1p);
         mms_forcing_kernels[2] = ResidualKernels("trace_strain", pylith::feassemble::Integrator::LHS, NULL, NULL);
 
         // Materials
