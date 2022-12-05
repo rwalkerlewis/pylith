@@ -531,7 +531,14 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
         assert(s);
         assert(f1);
 
-        // Hardcoding porosity value
+        // // bulk porosity value
+        // const PylithInt i_porosity = 3;
+        // const PylithScalar porosity = a[aOff[i_porosity]];
+
+        // f1[0] = (x[0] > 0) ? (t*x[0] + 4) * porosity : (-4 + t*x[0]) * porosity;
+        // f1[1] = (x[0] > 0) ? 1.0 * porosity : -1.0 * porosity;
+
+        // hardcoding porosity
         f1[0] = (x[0] > 0) ? (t*x[0] + 4) * 0.1 : (-4 + t*x[0]) * 0.1;
         f1[1] = (x[0] > 0) ? 1.0 * 0.1 : -1.0 * 0.1;
     } // f1p
