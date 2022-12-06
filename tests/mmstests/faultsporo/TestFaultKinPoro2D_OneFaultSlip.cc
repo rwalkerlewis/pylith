@@ -276,7 +276,7 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
 
     static double finalslip_leftlateral(const double x,
                                         const double y) {
-        return 2.0;
+        return -2.0;
     } // slip_leftlateral
 
     static const char* slip_units(void) {
@@ -287,25 +287,25 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
     static double disp_x_neg(const double x,
                              const double y,
                              const double t) {
-        return x * x - 1;
+        return x * x;
     } // disp_x_neg
 
     static double disp_x_pos(const double x,
                              const double y,
                              const double t) {
-        return 1 - x * x;
+        return - x * x;
     } // disp_x_pos
 
     static double disp_y_neg(const double x,
                              const double y,
                              const double t) {
-        return x * x;
+        return x * x - 1;
     } // disp_y_neg
 
     static double disp_y_pos(const double x,
                              const double y,
                              const double t) {
-        return -x * x;
+        return 1 - x * x;
     } // disp_y_pos
 
     static const char* disp_units(void) {
@@ -316,6 +316,11 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
                            const double y,
                            const double t) {
         return t * (x * x - 1);
+    }
+    static double pressure_t(const double x,
+                             const double y,
+                             const double t) {
+        return (x * x - 1);
     }
 
     static const char* pressure_units(void) {
@@ -344,6 +349,11 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
                                         const double t) {
         return 0.5 * t;
     } // lagrange_multiplier_y
+    static double lagrange_multiplier_y_t(const double x,
+                                          const double y,
+                                          const double t) {
+        return 0.5;
+    } // lagrange_multiplier_y_t
 
     static const char* lagrange_multiplier_units(void) {
         return "None";
@@ -354,6 +364,11 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
                                  const double t) {
         return 5.5 * t + 0.25 * x * x;
     } // fault_pressure
+    static double fault_pressure_t(const double x,
+                                   const double y,
+                                   const double t) {
+        return 5.5;
+    } // fault_pressure_t
 
     static const char* fault_pressure(void) {
         return "Pa";
@@ -385,6 +400,22 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
 
         return 0;
     } // solnkernel_disp
+    static PetscErrorCode solnkernel_disp_t(PetscInt spaceDim,
+                                            PetscReal t,
+                                            const PetscReal x[],
+                                            PetscInt numComponents,
+                                            PetscScalar* s,
+                                            void* context) {
+        CPPUNIT_ASSERT(2 == spaceDim);
+        CPPUNIT_ASSERT(x);
+        CPPUNIT_ASSERT(2 == numComponents);
+        CPPUNIT_ASSERT(s);
+
+        s[0] = 0.0;
+        s[1] = 0.0;
+
+        return 0;
+    } // solnkernel_disp_t
 
     static PetscErrorCode solnkernel_pres(PetscInt spaceDim,
                                           PetscReal t,
@@ -401,6 +432,21 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
 
         return 0;
     } // solnkernel_pres
+    static PetscErrorCode solnkernel_pres_t(PetscInt spaceDim,
+                                            PetscReal t,
+                                            const PetscReal x[],
+                                            PetscInt numComponents,
+                                            PetscScalar* s,
+                                            void* context) {
+        CPPUNIT_ASSERT(2 == spaceDim);
+        CPPUNIT_ASSERT(x);
+        CPPUNIT_ASSERT(1 == numComponents);
+        CPPUNIT_ASSERT(s);
+
+        s[0] = pressure_t(x[0], x[1], t);
+
+        return 0;
+    } // solnkernel_pres_t
 
     static PetscErrorCode solnkernel_tracestrain(PetscInt spaceDim,
                                                  PetscReal t,
@@ -417,6 +463,21 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
 
         return 0;
     } // solnkernel_tracestrain
+    static PetscErrorCode solnkernel_tracestrain_t(PetscInt spaceDim,
+                                                   PetscReal t,
+                                                   const PetscReal x[],
+                                                   PetscInt numComponents,
+                                                   PetscScalar* s,
+                                                   void* context) {
+        CPPUNIT_ASSERT(2 == spaceDim);
+        CPPUNIT_ASSERT(x);
+        CPPUNIT_ASSERT(1 == numComponents);
+        CPPUNIT_ASSERT(s);
+
+        s[0] = 0.0;
+
+        return 0;
+    } // solnkernel_tracestrain_t
 
     static PetscErrorCode solnkernel_lagrangemultiplier(PetscInt spaceDim,
                                                         PetscReal t,
@@ -434,6 +495,22 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
 
         return 0;
     } // solnkernel_lagrangemultiplier
+    static PetscErrorCode solnkernel_lagrangemultiplier_t(PetscInt spaceDim,
+                                                          PetscReal t,
+                                                          const PetscReal x[],
+                                                          PetscInt numComponents,
+                                                          PetscScalar* s,
+                                                          void* context) {
+        CPPUNIT_ASSERT(2 == spaceDim);
+        CPPUNIT_ASSERT(x);
+        CPPUNIT_ASSERT(2 == numComponents);
+        CPPUNIT_ASSERT(s);
+
+        s[0] = 0.0;
+        s[1] = lagrange_multiplier_y_t(x[0], x[1], t);
+
+        return 0;
+    } // solnkernel_lagrangemultiplier_t
 
     static PetscErrorCode solnkernel_faultpressure(PetscInt spaceDim,
                                                    PetscReal t,
@@ -450,6 +527,21 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
 
         return 0;
     } // solnkernel_faultpressure
+    static PetscErrorCode solnkernel_faultpressure_t(PetscInt spaceDim,
+                                                     PetscReal t,
+                                                     const PetscReal x[],
+                                                     PetscInt numComponents,
+                                                     PetscScalar* s,
+                                                     void* context) {
+        CPPUNIT_ASSERT(2 == spaceDim);
+        CPPUNIT_ASSERT(x);
+        CPPUNIT_ASSERT(1 == numComponents);
+        CPPUNIT_ASSERT(s);
+
+        s[0] = fault_pressure_t(x[0], x[1], t);
+
+        return 0;
+    } // solnkernel_faultpressure_t
 
     // ----------------------------------------------------------------------
     // f0 function for displacement forcing.
@@ -504,7 +596,7 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
         assert(s);
         assert(f0);
 
-        f0[0] = 1.0 * (x[0] * x[0] - 1) - 1.9 * t;
+        f0[0] -= 1.0 * (x[0] * x[0] - 1) - 1.9 * t;
     } // f0p
 
     // ----------------------------------------------------------------------
@@ -539,8 +631,8 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
         // f1[1] = (x[0] > 0) ? 1.0 * porosity : -1.0 * porosity;
 
         // hardcoding porosity
-        f1[0] = (x[0] > 0) ? (t*x[0] + 4) * 0.1 : (-4 + t*x[0]) * 0.1;
-        f1[1] = (x[0] > 0) ? 1.0 * 0.1 : -1.0 * 0.1;
+        f1[0] -= (x[0] > 0) ? (t*x[0] + 4) * 0.1 : (-4 + t*x[0]) * 0.1;
+        f1[1] -= (x[0] > 0) ? 1.0 * 0.1 : -1.0 * 0.1;
     } // f1p
 
     // ----------------------------------------------------------------------
@@ -770,6 +862,7 @@ protected:
             bc->setLabelValue(1);
             bc->setConstrainedDOF(constrainedDOF_pres, numConstrained_pres);
             bc->setUserFn(solnkernel_pres);
+            bc->setUserFnDot(solnkernel_pres_t);
             _bcs[4] = bc;
         } // boundary_xneg_pres
         { // boundary_xpos_pres
@@ -779,6 +872,7 @@ protected:
             bc->setLabelValue(1);
             bc->setConstrainedDOF(constrainedDOF_pres, numConstrained_pres);
             bc->setUserFn(solnkernel_pres);
+            bc->setUserFnDot(solnkernel_pres_t);
             _bcs[5] = bc;
         } // boundary_xpos_disp
         { // boundary_yneg_disp
@@ -788,6 +882,7 @@ protected:
             bc->setLabelValue(1);
             bc->setConstrainedDOF(constrainedDOF_pres, numConstrained_pres);
             bc->setUserFn(solnkernel_pres);
+            bc->setUserFnDot(solnkernel_pres_t);
             _bcs[6] = bc;
         } // boundary_yneg_pres
         { // boundary_ypos_pres
@@ -797,6 +892,7 @@ protected:
             bc->setLabelValue(1);
             bc->setConstrainedDOF(constrainedDOF_pres, numConstrained_pres);
             bc->setUserFn(solnkernel_pres);
+            bc->setUserFnDot(solnkernel_pres_t);
             _bcs[7] = bc;
         } // boundary_ypos_pres
 
@@ -834,6 +930,9 @@ protected:
         err = PetscDSSetExactSolution(prob, 0, solnkernel_disp, dm);CPPUNIT_ASSERT(!err);
         err = PetscDSSetExactSolution(prob, 1, solnkernel_pres, dm);CPPUNIT_ASSERT(!err);
         err = PetscDSSetExactSolution(prob, 2, solnkernel_tracestrain, dm);CPPUNIT_ASSERT(!err);
+        err = PetscDSSetExactSolutionTimeDerivative(prob, 0, solnkernel_disp_t, dm);CPPUNIT_ASSERT(!err);
+        err = PetscDSSetExactSolutionTimeDerivative(prob, 1, solnkernel_pres_t, dm);CPPUNIT_ASSERT(!err);
+        err = PetscDSSetExactSolutionTimeDerivative(prob, 2, solnkernel_tracestrain_t, dm);CPPUNIT_ASSERT(!err);
         err = DMGetLabel(dm, pylith::topology::Mesh::cells_label_name, &label);CPPUNIT_ASSERT(!err);
         err = DMLabelGetStratumIS(label, _faults[0]->getCohesiveLabelValue(), &is);CPPUNIT_ASSERT(!err);
         err = ISGetMinMax(is, &cohesiveCell, NULL);CPPUNIT_ASSERT(!err);
@@ -844,6 +943,11 @@ protected:
         err = PetscDSSetExactSolution(prob, 2, solnkernel_tracestrain, dm);CPPUNIT_ASSERT(!err);
         err = PetscDSSetExactSolution(prob, 3, solnkernel_lagrangemultiplier, dm);CPPUNIT_ASSERT(!err);
         err = PetscDSSetExactSolution(prob, 4, solnkernel_faultpressure, dm);CPPUNIT_ASSERT(!err);
+        err = PetscDSSetExactSolutionTimeDerivative(prob, 0, solnkernel_disp_t, dm);CPPUNIT_ASSERT(!err);
+        err = PetscDSSetExactSolutionTimeDerivative(prob, 1, solnkernel_pres_t, dm);CPPUNIT_ASSERT(!err);
+        err = PetscDSSetExactSolutionTimeDerivative(prob, 2, solnkernel_tracestrain_t, dm);CPPUNIT_ASSERT(!err);
+        err = PetscDSSetExactSolutionTimeDerivative(prob, 3, solnkernel_lagrangemultiplier_t, dm);CPPUNIT_ASSERT(!err);
+        err = PetscDSSetExactSolutionTimeDerivative(prob, 4, solnkernel_faultpressure_t, dm);CPPUNIT_ASSERT(!err);
     } // _setExactSolution
 
 }; // TestFaultKinPoro2D_OneFaultSlip
@@ -868,7 +972,7 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip_TriP1 :
             pylith::topology::Field::Discretization(2, 2), // pressure
             pylith::topology::Field::Discretization(1, 2), // trace_strain
             pylith::topology::Field::Discretization(2, 2, 1, -1, true), // lagrange_multiplier_fault
-            pylith::topology::Field::Discretization(1, 2, 1, -1, true), // fault_pressure
+            pylith::topology::Field::Discretization(2, 2, 1, -1, true), // fault_pressure
         };
         _data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
 
