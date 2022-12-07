@@ -857,7 +857,7 @@ protected:
         static const PylithInt numConstrained_disp = 2;
         static const PylithInt constrainedDOF_pres[1] = {0};
         static const PylithInt numConstrained_pres = 1;
-        _bcs.resize(8);
+        _bcs.resize(9);
         { // boundary_xneg_disp
             pylith::bc::DirichletUserFn* bc = new pylith::bc::DirichletUserFn();
             bc->setSubfieldName("displacement");
@@ -934,6 +934,16 @@ protected:
             bc->setUserFnDot(solnkernel_pres_t);
             _bcs[7] = bc;
         } // boundary_ypos_pres
+        { // boundary_cohesive_interface
+            pylith::bc::DirichletUserFn* bc = new pylith::bc::DirichletUserFn();
+            bc->setSubfieldName("fault_pressure");
+            bc->setLabelName("boundary_cohesive_interface");
+            bc->setLabelValue(1);
+            bc->setConstrainedDOF(constrainedDOF_pres, numConstrained_pres);
+            bc->setUserFn(solnkernel_faultpressure);
+            bc->setUserFnDot(solnkernel_faultpressure_t);
+            _bcs[8] = bc;
+        }
 
         // Faults
         _faults.resize(1);
