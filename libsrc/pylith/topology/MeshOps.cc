@@ -131,7 +131,7 @@ pylith::topology::MeshOps::createLowerDimMesh(const pylith::topology::Mesh& mesh
     err = MPI_Allreduce(&maxConeSizeLocal, &maxConeSize, 1, MPI_INT, MPI_MAX,
                         PetscObjectComm((PetscObject) dmSubmesh));PYLITH_CHECK_ERROR(err);
 
-    if (maxConeSize <= 0) {
+    if (0 && maxConeSize <= 0) {
         err = DMDestroy(&dmSubmesh);PYLITH_CHECK_ERROR(err);
         std::ostringstream msg;
         msg << "Error while creating lower dimension mesh. Submesh '" << labelName
