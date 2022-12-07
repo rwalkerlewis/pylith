@@ -352,19 +352,19 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
     static double lagrange_multiplier_x(const double x,
                                         const double y,
                                         const double t) {
-        return 0;
+        return 0.5 * t;
     } // lagrange_multiplier_x
 
     static double lagrange_multiplier_y(const double x,
                                         const double y,
                                         const double t) {
-        return 0.5 * t;
+        return 0;
     } // lagrange_multiplier_y
-    static double lagrange_multiplier_y_t(const double x,
+    static double lagrange_multiplier_x_t(const double x,
                                           const double y,
                                           const double t) {
         return 0.5;
-    } // lagrange_multiplier_y_t
+    } // lagrange_multiplier_x_t
 
     static const char* lagrange_multiplier_units(void) {
         return "None";
@@ -373,7 +373,7 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
     static double fault_pressure(const double x,
                                  const double y,
                                  const double t) {
-        return 5.5 * t + 0.25 * x * x;
+        return 5.5 * t + 0.25 * y * y;
     } // fault_pressure
     static double fault_pressure_t(const double x,
                                    const double y,
@@ -381,7 +381,7 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
         return 5.5;
     } // fault_pressure_t
 
-    static const char* fault_pressure(void) {
+    static const char* fault_pressure_units(void) {
         return "Pa";
     } // fault_pressure
 
@@ -517,8 +517,8 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
         CPPUNIT_ASSERT(2 == numComponents);
         CPPUNIT_ASSERT(s);
 
-        s[0] = 0.0;
-        s[1] = lagrange_multiplier_y_t(x[0], x[1], t);
+        s[0] = lagrange_multiplier_x_t(x[0], x[1], t);
+        s[1] = 0.;
 
         return 0;
     } // solnkernel_lagrangemultiplier_t
