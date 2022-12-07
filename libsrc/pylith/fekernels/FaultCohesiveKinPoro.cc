@@ -1451,19 +1451,13 @@ pylith::fekernels::FaultCohesiveKinPoro::f1p_fault(const PylithInt dim,
         const PylithInt _spaceDim = 2;
         const PylithScalar tanDir[2] = {n[1], -n[0]};
 #if 1
-        const PylithScalar dpdx = pressureFault_x[0]*tanDir[0];
-        const PylithScalar dpdy = pressureFault_x[0]*tanDir[1];
+        const PylithScalar dpdx = pressureFault_x[0];
+        const PylithScalar dpdy = pressureFault_x[1];
         const PylithScalar bodyForceX = 0.; // porosity*0.0;
         const PylithScalar bodyForceY = 0.; // porosity*0.0;
 
-        //f1[fOffp_fault+0] += (tensorPermeability[0]/fluidViscosity) * (dpdx - bodyForceX) + (tensorPermeability[1]/fluidViscosity) * (dpdy - bodyForceY);
-        //f1[fOffp_fault+1] += (tensorPermeability[2]/fluidViscosity) * (dpdx - bodyForceX) + (tensorPermeability[3]/fluidViscosity) * (dpdy - bodyForceY);
-        // WRONG const PylithScalar dpds = pressureFault_x[0]*tanDir[0] + pressureFault_x[1]*tanDir[1];
-        const PylithScalar dpds = 0. * -0.5 * x[1];
-        const PylithScalar bodyForceS = 0.1 * 0.;
-
-        f1[fOffp_fault+0] += 0.;
-        f1[fOffp_fault+1] += (tensorPermeability[0]/fluidViscosity) * (dpds - bodyForceS);
+        f1[fOffp_fault+0] += (tensorPermeability[0]/fluidViscosity) * (dpdx - bodyForceX) + (tensorPermeability[1]/fluidViscosity) * (dpdy - bodyForceY);
+        f1[fOffp_fault+1] += (tensorPermeability[2]/fluidViscosity) * (dpdx - bodyForceX) + (tensorPermeability[3]/fluidViscosity) * (dpdy - bodyForceY);
 #else
         f1[fOffp_fault] += tensorPermeability[0] / (4.0 * fluidViscosity) * tanDir[0] * tanDir[0] * (pressureN_x[0] + 2. * pressureFault_x[0] + pressureP_x[0]) + tensorPermeability[1] / (4.0 * fluidViscosity) * tanDir[0] * tanDir[1] * (pressureN_x[1] + 2. * pressureFault_x[1] + pressureP_x[1]);
         f1[fOffp_fault + 1] += tensorPermeability[2] / (4.0 * fluidViscosity) * tanDir[1] * tanDir[0] * (pressureN_x[0] + 2. * pressureFault_x[0] + pressureP_x[0]) + tensorPermeability[3] / (4.0 * fluidViscosity) * tanDir[1] * tanDir[1] * (pressureN_x[1] + 2. * pressureFault_x[1] + pressureP_x[1]);
