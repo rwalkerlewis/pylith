@@ -18,8 +18,8 @@
 
 /** @file tests/mmstests/faults/TestFaultKinPoro2D_OneFaultSlip.cc
  *
- * Square domain of sides 12.0 km with a single through-going fault at y=+0 km.
- * Prescribed slip of two meters left lateral.
+ * Square domain of sides 12.0 km with a single through-going fault at x=+0 km.
+ * Prescribed slip of two meters right lateral.
  */
 
 #include <portinfo>
@@ -30,6 +30,7 @@
 #include "pylith/faults/KinSrcPoroStep.hh" // USES KinSrcPoroStep
 #include "pylith/problems/TimeDependent.hh" // USES TimeDependent
 #include "pylith/materials/Poroelasticity.hh" // USES Poroelasticity
+#include "pylith/feassemble/IntegratorInterface.hh" // USES IntegratorInterface::ResidualKernels
 #include "pylith/materials/IsotropicLinearPoroelasticity.hh" // USES IsotropicLinearPoroelasticity
 #include "pylith/bc/DirichletUserFn.hh" // USES DirichletUserFn
 #include "pylith/bc/NeumannUserFn.hh" // USES NeumannUserFn
@@ -60,6 +61,7 @@ namespace pylith {
 
 // ------------------------------------------------------------------------------------------------
 typedef pylith::feassemble::IntegratorDomain::ResidualKernels ResidualKernels;
+typedef pylith::feassemble::IntegratorInterface::ResidualKernels FaultResidualKernels;
 typedef pylith::feassemble::IntegratorDomain::JacobianKernels JacobianKernels;
 typedef pylith::feassemble::IntegratorDomain::ProjectKernels ProjectKernels;
 typedef pylith::feassemble::Integrator::EquationPart EquationPart;
@@ -312,10 +314,19 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
         return "m";
     } // disp_units
 
+    /* The integration by parts of \Delta p leaves a boundary integral over the fault of
+         \int_\Gamma \nabla p \cdot \hat n = \int_\Gamma <2 x t, 0> \cdot <\pm 1, 0>
+                                           = \pm \int_\Gamma 2 x t
+    */
     static double pressure(const double x,
                            const double y,
                            const double t) {
         return t * (x * x - 1);
+    }
+    static double pressure_x_x(const double x,
+                               const double y,
+                               const double t) {
+        return 2. * t * x;
     }
     static double pressure_t(const double x,
                              const double y,
@@ -635,6 +646,34 @@ class pylith::mmstests::TestFaultKinPoro2D_OneFaultSlip :
         f1[1] -= (x[0] > 0) ? 1.0 * 0.1 : -1.0 * 0.1;
     } // f1p
 
+    // f0 function for the pressure boundary integral
+    static void
+    f0p_neg_or_pos(const PylithInt dim,
+                   const PylithInt numS,
+                   const PylithInt numA,
+                   const PylithInt sOff[],
+                   const PylithInt sOff_x[],
+                   const PylithScalar s[],
+                   const PylithScalar s_t[],
+                   const PylithScalar s_x[],
+                   const PylithInt aOff[],
+                   const PylithInt aOff_x[],
+                   const PylithScalar a[],
+                   const PylithScalar a_t[],
+                   const PylithScalar a_x[],
+                   const PylithReal t,
+                   const PylithScalar x[],
+                   const PylithReal n[],
+                   const PylithInt numConstants,
+                   const PylithScalar constants[],
+                   PylithScalar f0[]) {
+        assert(numS >= 5);
+
+        const PylithInt fOffP = 0;
+
+        f0[fOffP] += pressure_x_x(x[0], x[1], t) * n[0];
+    } // f0p_neg_or_pos
+
     // ----------------------------------------------------------------------
     // f0 function for trace strain forcing.
     static void f0e(const PylithInt dim,
@@ -902,6 +941,14 @@ protected:
             pylith::faults::FaultCohesiveKinPoro* fault = new pylith::faults::FaultCohesiveKinPoro();
             fault->setCohesiveLabelValue(100);
             fault->setSurfaceLabelName("fault_xpos");
+
+#if 0
+            std::vector<FaultResidualKernels> mms_forcing_kernels;
+            mms_forcing_kernels.resize(3);
+            mms_forcing_kernels[0] = FaultResidualKernels("pressure", pylith::feassemble::Integrator::LHS, pylith::feassemble::IntegratorInterface::NEGATIVE_FACE, f0p_neg_or_pos, NULL);
+            mms_forcing_kernels[1] = FaultResidualKernels("pressure", pylith::feassemble::Integrator::LHS, pylith::feassemble::IntegratorInterface::POSITIVE_FACE, f0p_neg_or_pos, NULL);
+            fault->setMMSKernels(mms_forcing_kernels, _problem->getSolution());
+#endif
 
             const int numRuptures = 1;
             const char* ruptureNames[1] = { "rupture" };
