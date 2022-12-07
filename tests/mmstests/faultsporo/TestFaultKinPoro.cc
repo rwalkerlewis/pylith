@@ -120,6 +120,20 @@ pylith::mmstests::TestFaultKinPoro::_initialize(void) {
                                                                 _data->spaceDim-1, info.cellBasis, info.feSpace, info.isBasisContinuous);
         } // for
     } // for
+    {
+      PetscDM dm = _mesh->getDM();
+      PetscDMLabel label;
+      PetscInt pmin = 77, pmax = 80;
+      PetscErrorCode err = 0;
+
+      // Create label so we can fix fault pressure at the boundary
+      err = DMGetLabel(dm, "cohesive_interface", &label);CPPUNIT_ASSERT(!err);
+      //err = DMLabelGetBounds(label, &pmin, &pmax);CPPUNIT_ASSERT(!err);
+      err = DMCreateLabel(dm, "boundary_cohesive_interface");CPPUNIT_ASSERT(!err);
+      err = DMGetLabel(dm, "boundary_cohesive_interface", &label);CPPUNIT_ASSERT(!err);
+      err = DMLabelSetValue(label, pmin, 1);CPPUNIT_ASSERT(!err);
+      err = DMLabelSetValue(label, pmax, 1);CPPUNIT_ASSERT(!err);
+    }
 
     // Set up problem.
     CPPUNIT_ASSERT(_problem);
