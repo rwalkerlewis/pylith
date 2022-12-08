@@ -425,18 +425,19 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_neg(const PylithInt dim,
 
     const PylithInt i_fault_permeability = 4;
     const PylithInt i_fluid_viscosity = 5;
-    const PylithInt sOffPressureN = sOff[i_pressure];
+    const PylithInt sOffPressureN_x = sOff_x[i_pressure];
     const PylithInt sOffPressureFault = sOff[i_fault_pressure];
     const PylithInt fOffN = 0;
 
     const PylithScalar *faultPermeability = &a[aOff[i_fault_permeability]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
-    const PylithScalar pressureN = s[sOffPressureN];
+    const PylithScalar *pressureN_x = &s_x[sOffPressureN_x];
     // const PylithScalar pressureP = s[sOffPressureP];
     const PylithScalar pressureFault = s[sOffPressureFault];
 
+    f0[fOffN] += pressureN_x[0] * n[0] + pressureN_x[1] * n[1];
     // HACK: this should go a fault MMS kernel
-    f0[fOffN] -= (2. * t * x[0] - 0.1 * (-4. + t * x[0])) * n[0] + (-1.) * n[1];
+    f0[fOffN] += (0.1 * (-4. + t * x[0])) * n[0] + (0.1 * -1.) * n[1];
     if (f0[fOffN] != f0[fOffN]) {
         PetscPrintf(PETSC_COMM_WORLD, "Error in f0p_neg \n");
     }
@@ -486,7 +487,7 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_pos(const PylithInt dim,
 
     const PylithInt i_fault_permeability = 4;
     const PylithInt i_fluid_viscosity = 5;
-    const PylithInt sOffPressureP = sOff[i_pressure];
+    const PylithInt sOffPressureP_x = sOff_x[i_pressure];
     const PylithInt sOffPressureFault = sOff[i_fault_pressure];
 
     const PylithInt fOffP = 0;
@@ -494,12 +495,13 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_pos(const PylithInt dim,
     const PylithScalar *faultPermeability = &a[aOff[i_fault_permeability]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
     // const PylithScalar pressureN = s[sOffPressureN];
-    const PylithScalar pressureP = s[sOffPressureP];
+    const PylithScalar *pressureP_x = &s_x[sOffPressureP_x];
     const PylithScalar pressureFault = s[sOffPressureFault];
 
+    // The fault normal is only the outward normal for the negative side of the fault, so we flip the sign
+    f0[fOffP] -= pressureP_x[0] * n[0] + pressureP_x[1] * n[1];
     // HACK: this should go a fault MMS kernel
-    //   Also, the fault normal is only the outward normal for the negative side of the fault, so we flip the sign
-    f0[fOffP] += (2. * t * x[0] - 0.1 * (4. + t * x[0])) * n[0] + (1.) * n[1];
+    f0[fOffP] -= (0.1 * (4. + t * x[0])) * n[0] + (0.1 * 1.) * n[1];
     if (f0[fOffP] != f0[fOffP]) {
         PetscPrintf(PETSC_COMM_WORLD, "Error in f0p_pos \n");
     }
