@@ -423,8 +423,8 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_neg(const PylithInt dim,
     const PylithInt i_pressure = 1;
     const PylithInt i_fault_pressure = numS - 1;
 
-    const PylithInt i_fault_permeability = 4;
-    const PylithInt i_fluid_viscosity = 5;
+    const PylithInt i_fault_permeability = numA - 1;
+    const PylithInt i_fluid_viscosity = 2;
     const PylithInt sOffPressureN_x = sOff_x[i_pressure];
     const PylithInt sOffPressureFault = sOff[i_fault_pressure];
     const PylithInt fOffN = 0;
@@ -485,8 +485,8 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_pos(const PylithInt dim,
     const PylithInt i_pressure = 1;
     const PylithInt i_fault_pressure = 4;
 
-    const PylithInt i_fault_permeability = 4;
-    const PylithInt i_fluid_viscosity = 5;
+    const PylithInt i_fault_permeability = numA - 1;
+    const PylithInt i_fluid_viscosity = 2;
     const PylithInt sOffPressureP_x = sOff_x[i_pressure];
     const PylithInt sOffPressureFault = sOff[i_fault_pressure];
 
@@ -549,8 +549,8 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_body_neg(const PylithInt dim,
     const PylithInt i_pressure = 1;
     const PylithInt i_fault_pressure = 4;
 
-    const PylithInt i_fault_permeability = 4;
-    const PylithInt i_fluid_viscosity = 5;
+    const PylithInt i_fault_permeability = numA - 1;
+    const PylithInt i_fluid_viscosity = 2;
     const PylithInt i_body_force = numA - 3;
 
     const PylithInt fOffN = 0;
@@ -616,8 +616,8 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_body_pos(const PylithInt dim,
     const PylithInt i_pressure = 1;
     const PylithInt i_fault_pressure = 4;
 
-    const PylithInt i_fault_permeability = 4;
-    const PylithInt i_fluid_viscosity = 5;
+    const PylithInt i_fault_permeability = numA - 1;
+    const PylithInt i_fluid_viscosity = 2;
     const PylithInt i_body_force = numA - 3;
 
     const PylithInt fOffP = 0;
