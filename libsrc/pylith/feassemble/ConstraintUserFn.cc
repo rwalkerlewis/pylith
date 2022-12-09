@@ -97,11 +97,19 @@ pylith::feassemble::ConstraintUserFn::initialize(const pylith::topology::Field& 
     // :KLUDGE: Potentially we may have multiple PetscDS objects. This assumes that the first one (with a NULL
     // label) is the correct one.
     PetscErrorCode err = 0;
+    PetscInt Nf = 0;
     PetscDS prob = NULL;
     DMLabel label = NULL;
     void* context = NULL;
     err = DMGetDS(solution.getDM(), &prob);PYLITH_CHECK_ERROR(err);
     const PetscInt i_field = solution.getSubfieldInfo(_subfieldName.c_str()).index;
+    err = PetscDSGetNumFields(prob, &Nf);PYLITH_CHECK_ERROR(err);
+    if (i_field >= Nf) {
+      // We need the cohesive cell DS
+      err = DMGetRegionNumDS(solution.getDM(), 1, NULL, NULL, &prob);PYLITH_CHECK_ERROR(err);
+      err = PetscDSGetNumFields(prob, &Nf);PYLITH_CHECK_ERROR(err);
+      assert(i_field < Nf);
+    }
     err = DMGetLabel(solution.getDM(), _labelName.c_str(), &label);PYLITH_CHECK_ERROR(err);
     err = PetscDSAddBoundary(prob, DM_BC_ESSENTIAL, _labelName.c_str(), label, 1, &_labelValue, i_field,
                              _constrainedDOF.size(), &_constrainedDOF[0], (void (*)(void)) _fn, (void (*)(void)) _fnDot, context, NULL);
