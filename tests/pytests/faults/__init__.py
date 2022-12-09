@@ -1,5 +1,6 @@
 from .TestFaultCohesive import TestFaultCohesive
 from .TestFaultCohesiveKin import TestFaultCohesiveKin
+from .TestFaultCohesiveKinPoro import TestFaultCohesiveKinPoro
 from .TestFaultCohesiveImpulses import TestFaultCohesiveImpulses
 from .TestKinSrc import (
     TestKinSrc, 
@@ -9,6 +10,9 @@ from .TestKinSrc import (
     TestKinSrcBrune,
     TestKinSrcLiuCos,
     TestKinSrcTimeHistory)
+from .TestKinSrcPoro import (
+    TestKinSrcPoro, 
+    TestKinSrcPoroStep)    
 from .TestSingleRupture import TestSingleRupture
 
 
@@ -16,6 +20,7 @@ def test_classes():
     return [
         TestFaultCohesive,
         TestFaultCohesiveKin,
+        TestFaultCohesiveKinPoro,
         TestFaultCohesiveImpulses,
         TestKinSrc,
         TestKinSrcConstRate,
@@ -24,6 +29,8 @@ def test_classes():
         TestKinSrcBrune,
         TestKinSrcLiuCos,
         TestKinSrcTimeHistory,
+        TestKinSrcPoro,
+        TestKinSrcPoroStep,
         TestSingleRupture,
     ]
 

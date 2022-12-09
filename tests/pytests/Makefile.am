@@ -34,6 +34,7 @@ dist_noinst_PYTHON = \
 	faults/__init__.py \
 	faults/TestFaultCohesive.py \
 	faults/TestFaultCohesiveKin.py \
+	faults/TestFaultCohesiveKinPoro.py \
 	faults/TestFaultCohesiveImpulses.py \
 	faults/TestKinSrc.py \
 	faults/TestKinSrcConstRate.py \
@@ -42,6 +43,8 @@ dist_noinst_PYTHON = \
 	faults/TestKinSrcBrune.py \
 	faults/TestKinSrcLiuCos.py \
 	faults/TestKinSrcTimeHistory.py \
+	faults/TestKinSrcPoro.py \ 
+	faults/TestKinSrcPoroStep.py \
 	faults/TestSingleRupture.py \
 	materials/__init__.py \
 	materials/TestAuxiliarySubfields.py \
@@ -95,17 +98,23 @@ dist_noinst_PYTHON = \
 	problems/TestSolnDispLagrange.py \
 	problems/TestSolnDispPres.py \
 	problems/TestSolnDispPresLagrange.py \
-	problems/TestSolnDispTracStrain.py \
+	problems/TestSolnDispPresTracStrain.py \
+	problems/TestSolnDispPresTracStrainVelPdotTdot.py \	
+	problems/TestSolnDispPresTracStrainLagrange.py \
+	problems/TestSolnDispPresTracStrainLagrangeFaultPres.py \
 	problems/TestSolnDispVel.py \
 	problems/TestSolnDispVelLagrange.py \
 	problems/TestSolution.py \
 	problems/TestSolutionSubfield.py \
 	problems/TestSolutionSubfields.py \
 	problems/TestSubfieldDisplacement.py \
+	problems/TestSubfieldFaultPressure.py \
 	problems/TestSubfieldLagrangeFault.py \
 	problems/TestSubfieldPressure.py \
+	problems/TestSubfieldPressureDot.py \
 	problems/TestSubfieldTemperature.py \
 	problems/TestSubfieldTraceStrain.py \
+	problems/TestSubfieldTraceStrainDot.py \
 	problems/TestSubfieldVelocity.py \
 	problems/TestTimeDependent.py \
 	topology/__init__.py \

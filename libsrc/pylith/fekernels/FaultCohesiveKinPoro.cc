@@ -437,7 +437,7 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_neg(const PylithInt dim,
 
     f0[fOffN] += pressureN_x[0] * n[0] + pressureN_x[1] * n[1];
     // HACK: this should go a fault MMS kernel
-    f0[fOffN] += (0.1 * (-4. + t * x[0])) * n[0] + (0.1 * -1.) * n[1];
+    // f0[fOffN] += (0.1 * (-4. + t * x[0])) * n[0] + (0.1 * -1.) * n[1];
     if (f0[fOffN] != f0[fOffN]) {
         PetscPrintf(PETSC_COMM_WORLD, "Error in f0p_neg \n");
     }
@@ -501,7 +501,7 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_pos(const PylithInt dim,
     // The fault normal is only the outward normal for the negative side of the fault, so we flip the sign
     f0[fOffP] -= pressureP_x[0] * n[0] + pressureP_x[1] * n[1];
     // HACK: this should go a fault MMS kernel
-    f0[fOffP] -= (0.1 * (4. + t * x[0])) * n[0] + (0.1 * 1.) * n[1];
+    // f0[fOffP] -= (0.1 * (4. + t * x[0])) * n[0] + (0.1 * 1.) * n[1];
     if (f0[fOffP] != f0[fOffP]) {
         PetscPrintf(PETSC_COMM_WORLD, "Error in f0p_pos \n");
     }

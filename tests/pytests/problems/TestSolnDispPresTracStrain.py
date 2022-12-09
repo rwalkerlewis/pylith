@@ -26,12 +26,12 @@ from pylith.problems.SolnDispPresTracStrain import (SolnDispPresTracStrain, Solu
 
 
 class TestSolnDispPresTracStrain(TestAbstractComponent):
-    """Unit testing of SolnDispPresTracStrain object.
+    """Unit testing of SolnDispPres object.
     """
     _class = SolnDispPresTracStrain
 
 
-class TestSolutionDispTracStrain(TestAbstractComponent):
+class TestSolutionDispPresTracStrain(TestAbstractComponent):
     """Unit testing of Solution object.
     """
     _class = Solution
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     suite = unittest.TestSuite()
     classes = [
         TestSolnDispPresTracStrain,
-        TestSolutionDispTracStrain,
+        TestSolutionDispPresTracStrain,
     ]
     for cls in classes:
         suite.addTest(unittest.makeSuite(cls))

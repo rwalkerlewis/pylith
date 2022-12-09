@@ -120,6 +120,8 @@ EXTRA_DIST = \
 	problems/SolnDispPres.py \
 	problems/SolnDispPresLagrange.py \
 	problems/SolnDispPresTracStrain.py \
+	problems/SolnDispPresTracStrainLagrange.py \
+	problems/SolnDispPresTracStrainLagrangeFaultPres.py \
 	problems/SolnDispPresTracStrainVelPdotTdot.py \
 	problems/SolnDispPresVel.py \
 	problems/SolnDispVel.py \
@@ -128,6 +130,7 @@ EXTRA_DIST = \
 	problems/SolutionSubfield.py \
 	problems/SubfieldDisplacement.py \
 	problems/SubfieldLagrangeFault.py \
+	problems/SubfieldFaultPressure.py \
 	problems/SubfieldPressure.py \
 	problems/SubfieldPressureDot.py \
 	problems/SubfieldTemperature.py \

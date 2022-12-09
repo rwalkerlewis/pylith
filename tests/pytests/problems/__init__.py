@@ -13,15 +13,21 @@ from .TestSolnDisp import TestSolnDisp
 from .TestSolnDispLagrange import (TestSolnDispLagrange, TestSolutionDispLagrange)
 from .TestSolnDispPres import (TestSolnDispPres, TestSolutionDispPres)
 from .TestSolnDispLagrange import (TestSolnDispLagrange, TestSolutionDispLagrange)
-from .TestSolnDispTracStrain import (TestSolnDispPresTracStrain, TestSolutionDispTracStrain)
+from .TestSolnDispPresTracStrain import (TestSolnDispPresTracStrain, TestSolutionDispPresTracStrain)
+from .TestSolnDispPresTracStrainVelPdotTdot import (TestSolnDispPresTracStrainVelPdotTdot, TestSolutionDispPresTracStrainVelPdotTdot)
+from .TestSolnDispPresTracStrainLagrange import (TestSolnDispPresTracStrainLagrange, TestSolutionDispPresTracStrainLagrange)
+from .TestSolnDispPresTracStrainLagrangeFaultPres import (TestSolnDispPresTracStrainLagrangeFaultPres, TestSolutionDispPresTracStrainLagrangeFaultPres)
 from .TestSolnDispVel import (TestSolnDispVel, TestSolutionDispVel)
 from .TestSolnDispVelLagrange import (TestSolnDispVelLagrange, TestSolutionDispVelLagrange)
 from .TestSolutionSubfield import TestSolutionSubfield
 from .TestSubfieldDisplacement import TestSubfieldDisplacement
 from .TestSubfieldLagrangeFault import TestSubfieldLagrangeFault
+from .TestSubfieldFaultPressure import TestSubfieldFaultPressure
 from .TestSubfieldPressure import TestSubfieldPressure
+from .TestSubfieldPressureDot import TestSubfieldPressureDot
 from .TestSubfieldTemperature import TestSubfieldTemperature
 from .TestSubfieldTraceStrain import TestSubfieldTraceStrain
+from .TestSubfieldTraceStrainDot import TestSubfieldTraceStrainDot
 from .TestSubfieldVelocity import TestSubfieldVelocity
 
 
@@ -43,7 +49,15 @@ def test_classes():
         TestSolnDispLagrange,
         TestSolutionDispLagrange,
         TestSolnDispPresTracStrain, 
-        TestSolutionDispTracStrain,
+        TestSolutionDispPresTracStrain,
+        TestSolnDispPresTracStrainLagrange, 
+        TestSolutionDispPresTracStrainLagrange,
+        TestSolnDispPresTracStrainLagrangeFaultPres, 
+        TestSolutionDispPresTracStrainLagrangeFaultPres,
+        TestSolnDispPresTracStrainVelPdotTdot,
+        TestSolutionDispPresTracStrainVelPdotTdot,
+        TestSolnDispPresTracStrainLagrange, 
+        TestSolnDispPresTracStrainLagrange,         
         TestSolnDispVel, 
         TestSolutionDispVel,
         TestSolnDispVelLagrange, 
@@ -51,9 +65,12 @@ def test_classes():
         TestSolutionSubfield,
         TestSubfieldDisplacement,
         TestSubfieldLagrangeFault,
+        TestSubfieldFaultPressure,
         TestSubfieldPressure,
+        TestSubfieldPressureDot,
         TestSubfieldTemperature,
         TestSubfieldTraceStrain,
+        TestSubfieldTraceStrainDot,
         TestSubfieldVelocity,
     ]
     return classes
