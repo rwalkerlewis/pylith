@@ -432,19 +432,14 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_neg(const PylithInt dim,
     const PylithScalar *faultPermeability = &a[aOff[i_fault_permeability]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
     const PylithScalar *pressureN_x = &s_x[sOffPressureN_x];
-    // const PylithScalar pressureP = s[sOffPressureP];
     const PylithScalar pressureFault = s[sOffPressureFault];
 
     f0[fOffN] += pressureN_x[0] * n[0] + pressureN_x[1] * n[1];
     // HACK: this should go a fault MMS kernel
-    //f0[fOffN] += (0.1 * (-4. + t * x[0])) * n[0] + (0.1 * -1.) * n[1];
+    // f0[fOffN] += (0.1 * (-4. + t * x[0])) * n[0] + (0.1 * -1.) * n[1];
     if (f0[fOffN] != f0[fOffN]) {
         PetscPrintf(PETSC_COMM_WORLD, "Error in f0p_neg \n");
     }
-    // f0[fOffN] += permeabilityNormal / fluidViscosity *
-    //              ((pressureN - pressureFault) / thickness);
-    // f0[fOffP] += permeabilityNormal / fluidViscosity *
-    //             ((pressureP - pressureFault) / thickness);
 } // f0p_neg
 
 
@@ -494,21 +489,16 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_pos(const PylithInt dim,
 
     const PylithScalar *faultPermeability = &a[aOff[i_fault_permeability]];
     const PylithScalar fluidViscosity = a[aOff[i_fluid_viscosity]];
-    // const PylithScalar pressureN = s[sOffPressureN];
     const PylithScalar *pressureP_x = &s_x[sOffPressureP_x];
     const PylithScalar pressureFault = s[sOffPressureFault];
 
     // The fault normal is only the outward normal for the negative side of the fault, so we flip the sign
     f0[fOffP] -= pressureP_x[0] * n[0] + pressureP_x[1] * n[1];
     // HACK: this should go a fault MMS kernel
-    //f0[fOffP] -= (0.1 * (4. + t * x[0])) * n[0] + (0.1 * 1.) * n[1];
+    // f0[fOffP] -= (0.1 * (4. + t * x[0])) * n[0] + (0.1 * 1.) * n[1];
     if (f0[fOffP] != f0[fOffP]) {
         PetscPrintf(PETSC_COMM_WORLD, "Error in f0p_pos \n");
     }
-    // f0[fOffN] += permeabilityNormal / fluidViscosity *
-    //             ((pressureN - pressureFault) / thickness);
-    // f0[fOffP] += permeabilityNormal / fluidViscosity *
-    //              ((pressureP - pressureFault) / thickness);
 } // f0p_pos
 
 
@@ -1755,6 +1745,7 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf1pp_neg(const PylithInt dim,
     } // for
 } // Jf1pp_neg
 
+
 /* Jf1 function for integration of the pressure equation.
  *
  * Solution fields = [..., pressure, ...]
@@ -1796,6 +1787,7 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf1pp_pos(const PylithInt dim,
         Jf1[gOffP + i] -= n[i];
     } // for
 } // Jf1pp_pos
+
 
 // ----------------------------------------------------------------------
 // Jacobian Functions - JFE
