@@ -43,7 +43,7 @@ dist_noinst_PYTHON = \
 	faults/TestKinSrcBrune.py \
 	faults/TestKinSrcLiuCos.py \
 	faults/TestKinSrcTimeHistory.py \
-	faults/TestKinSrcPoro.py \ 
+	faults/TestKinSrcPoro.py \
 	faults/TestKinSrcPoroStep.py \
 	faults/TestSingleRupture.py \
 	materials/__init__.py \
@@ -99,7 +99,7 @@ dist_noinst_PYTHON = \
 	problems/TestSolnDispPres.py \
 	problems/TestSolnDispPresLagrange.py \
 	problems/TestSolnDispPresTracStrain.py \
-	problems/TestSolnDispPresTracStrainVelPdotTdot.py \	
+	problems/TestSolnDispPresTracStrainVelPdotTdot.py \
 	problems/TestSolnDispPresTracStrainLagrange.py \
 	problems/TestSolnDispPresTracStrainLagrangeFaultPres.py \
 	problems/TestSolnDispVel.py \
