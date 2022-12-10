@@ -437,7 +437,7 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_neg(const PylithInt dim,
 
     f0[fOffN] += pressureN_x[0] * n[0] + pressureN_x[1] * n[1];
     // HACK: this should go a fault MMS kernel
-    // f0[fOffN] += (0.1 * (-4. + t * x[0])) * n[0] + (0.1 * -1.) * n[1];
+    //f0[fOffN] += (0.1 * (-4. + t * x[0])) * n[0] + (0.1 * -1.) * n[1];
     if (f0[fOffN] != f0[fOffN]) {
         PetscPrintf(PETSC_COMM_WORLD, "Error in f0p_neg \n");
     }
@@ -501,7 +501,7 @@ pylith::fekernels::FaultCohesiveKinPoro::f0p_pos(const PylithInt dim,
     // The fault normal is only the outward normal for the negative side of the fault, so we flip the sign
     f0[fOffP] -= pressureP_x[0] * n[0] + pressureP_x[1] * n[1];
     // HACK: this should go a fault MMS kernel
-    // f0[fOffP] -= (0.1 * (4. + t * x[0])) * n[0] + (0.1 * 1.) * n[1];
+    //f0[fOffP] -= (0.1 * (4. + t * x[0])) * n[0] + (0.1 * 1.) * n[1];
     if (f0[fOffP] != f0[fOffP]) {
         PetscPrintf(PETSC_COMM_WORLD, "Error in f0p_pos \n");
     }
@@ -1408,7 +1408,7 @@ pylith::fekernels::FaultCohesiveKinPoro::f1p_fault(const PylithInt dim,
     // const PylithScalar vectorPermeability[4] = {1.0, 1.0, 0.0, 0.0};
     // const PylithScalar fluidViscosity = 1.0;
 
-    PylithScalar tensorPermeability[spaceDim * spaceDim];
+    PylithScalar tensorPermeability[9];
     switch (spaceDim) {
     case 1:
         tensorPermeability[0] = vectorPermeability[0];
@@ -1539,7 +1539,7 @@ pylith::fekernels::FaultCohesiveKinPoro::f1p_fault_body(const PylithInt dim,
     const PylithInt i_body_force = numA - 3;
 
     const PylithScalar *vectorPermeability = &a[aOff[i_fault_permeability]];
-    PylithScalar tensorPermeability[spaceDim * spaceDim];
+    PylithScalar tensorPermeability[9];
     switch (spaceDim) {
     case 1:
         tensorPermeability[0] = vectorPermeability[0];
@@ -1547,8 +1547,8 @@ pylith::fekernels::FaultCohesiveKinPoro::f1p_fault_body(const PylithInt dim,
     case 2:
         tensorPermeability[0] = vectorPermeability[0];
         tensorPermeability[1] = vectorPermeability[3];
-        tensorPermeability[2] = vectorPermeability[1];
-        tensorPermeability[3] = vectorPermeability[3];
+        tensorPermeability[2] = vectorPermeability[3];
+        tensorPermeability[3] = vectorPermeability[1];
         break;
     case 3:
         tensorPermeability[0] = vectorPermeability[0];
@@ -1713,6 +1713,89 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0ul_pos(const PylithInt dim,
 // ----------------------------------------------------------------------
 // Jacobian Functions - JFP
 // ----------------------------------------------------------------------
+/* Jf1 function for integration of the pressure equation.
+ *
+ * Solution fields = [..., pressure, ...]
+ * Auxiliary fields = None
+ */
+void
+pylith::fekernels::FaultCohesiveKinPoro::Jf1pp_neg(const PylithInt dim,
+                                                   const PylithInt numS,
+                                                   const PylithInt numA,
+                                                   const PylithInt sOff[],
+                                                   const PylithInt sOff_x[],
+                                                   const PylithScalar s[],
+                                                   const PylithScalar s_t[],
+                                                   const PylithScalar s_x[],
+                                                   const PylithInt aOff[],
+                                                   const PylithInt aOff_x[],
+                                                   const PylithScalar a[],
+                                                   const PylithScalar a_t[],
+                                                   const PylithScalar a_x[],
+                                                   const PylithReal t,
+                                                   const PylithReal s_tshift,
+                                                   const PylithScalar x[],
+                                                   const PylithReal n[],
+                                                   const PylithInt numConstants,
+                                                   const PylithScalar constants[],
+                                                   PylithScalar Jf1[]) {
+    assert(numS >= 5);
+    // assert(numA >= 5);
+    assert(Jf1);
+    assert(sOff);
+    assert(aOff);
+    assert(n);
+
+    const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
+
+    const PylithInt gOffN = 0;
+
+    for (PylithInt i = 0; i < spaceDim; ++i) {
+        Jf1[gOffN + i] += n[i];
+    } // for
+} // Jf1pp_neg
+
+/* Jf1 function for integration of the pressure equation.
+ *
+ * Solution fields = [..., pressure, ...]
+ * Auxiliary fields = None
+ */
+void
+pylith::fekernels::FaultCohesiveKinPoro::Jf1pp_pos(const PylithInt dim,
+                                                   const PylithInt numS,
+                                                   const PylithInt numA,
+                                                   const PylithInt sOff[],
+                                                   const PylithInt sOff_x[],
+                                                   const PylithScalar s[],
+                                                   const PylithScalar s_t[],
+                                                   const PylithScalar s_x[],
+                                                   const PylithInt aOff[],
+                                                   const PylithInt aOff_x[],
+                                                   const PylithScalar a[],
+                                                   const PylithScalar a_t[],
+                                                   const PylithScalar a_x[],
+                                                   const PylithReal t,
+                                                   const PylithReal s_tshift,
+                                                   const PylithScalar x[],
+                                                   const PylithReal n[],
+                                                   const PylithInt numConstants,
+                                                   const PylithScalar constants[],
+                                                   PylithScalar Jf1[]) {
+    assert(numS >= 5);
+    // assert(numA >= 5);
+    assert(Jf1);
+    assert(sOff);
+    assert(aOff);
+    assert(n);
+
+    const PylithInt spaceDim = dim + 1; // :KLUDGE: dim passed in is spaceDim-1
+
+    const PylithInt gOffP = 0;
+
+    for (PylithInt i = 0; i < spaceDim; ++i) {
+        Jf1[gOffP + i] -= n[i];
+    } // for
+} // Jf1pp_pos
 
 // ----------------------------------------------------------------------
 // Jacobian Functions - JFE
@@ -1873,7 +1956,7 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp(const PylithInt dim,
     // const PylithScalar vectorPermeability[4] = {1.0, 1.0, 0.0, 0.0};
     // const PylithScalar fluidViscosity = 1.0;
 
-    PylithScalar tensorPermeability[spaceDim * spaceDim];
+    PylithScalar tensorPermeability[9];
     switch (spaceDim) {
     case 1:
         tensorPermeability[0] = vectorPermeability[0];
@@ -1881,8 +1964,8 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp(const PylithInt dim,
     case 2:
         tensorPermeability[0] = vectorPermeability[0];
         tensorPermeability[1] = vectorPermeability[3];
-        tensorPermeability[2] = vectorPermeability[1];
-        tensorPermeability[3] = vectorPermeability[3];
+        tensorPermeability[2] = vectorPermeability[3];
+        tensorPermeability[3] = vectorPermeability[1];
         break;
     case 3:
         tensorPermeability[0] = vectorPermeability[0];
@@ -2075,7 +2158,7 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fp_f(const PylithInt dim,
     // const PylithScalar porosity = 0.1;
     // const PylithScalar betaP = 1.0;
 
-    Jf0[gOff] += (2.0 * porosity * betaP * s_tshift) / 4.0;
+    Jf0[gOff] += porosity * betaP * s_tshift;
 
 } // Jf0p_fp_f
 
@@ -2128,7 +2211,7 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp_f(const PylithInt dim,
     // const PylithScalar vectorPermeability[4] = {1.0, 1.0, 0.0, 0.0};
     // const PylithScalar fluidViscosity = 1.0;
 
-    PylithScalar tensorPermeability[spaceDim * spaceDim];
+    PylithScalar tensorPermeability[9];
     switch (spaceDim) {
     case 1:
         tensorPermeability[0] = vectorPermeability[0];
@@ -2136,8 +2219,8 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp_f(const PylithInt dim,
     case 2:
         tensorPermeability[0] = vectorPermeability[0];
         tensorPermeability[1] = vectorPermeability[3];
-        tensorPermeability[2] = vectorPermeability[1];
-        tensorPermeability[3] = vectorPermeability[3];
+        tensorPermeability[2] = vectorPermeability[3];
+        tensorPermeability[3] = vectorPermeability[1];
         break;
     case 3:
         tensorPermeability[0] = vectorPermeability[0];
@@ -2163,11 +2246,10 @@ pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp_f(const PylithInt dim,
     case 2:
     {
         const PylithInt _spaceDim = 2;
-        const PylithScalar tanDir[2] = {-n[1], n[0]};
-        Jf3[0 * ncols + 0] += tensorPermeability[0] * tempConst * tanDir[0] * tanDir[0];
-        Jf3[0 * ncols + 1] += tensorPermeability[1] * tempConst * tanDir[0] * tanDir[1];
-        Jf3[1 * ncols + 0] += tensorPermeability[2] * tempConst * tanDir[1] * tanDir[0];
-        Jf3[1 * ncols + 0] += tensorPermeability[3] * tempConst * tanDir[1] * tanDir[1];
+        Jf3[0 * ncols + 0] += tensorPermeability[0]/fluidViscosity;
+        Jf3[0 * ncols + 1] += tensorPermeability[1]/fluidViscosity;
+        Jf3[1 * ncols + 0] += tensorPermeability[2]/fluidViscosity;
+        Jf3[1 * ncols + 1] += tensorPermeability[3]/fluidViscosity;
         break;
     } // case 2
 

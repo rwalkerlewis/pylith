@@ -796,6 +796,15 @@ pylith::faults::FaultCohesiveKinPoro::_setKernelsJacobian(pylith::feassemble::In
         const PetscBdPointJac Jf3ul_pos = NULL;
 
         // Pressure
+        const PetscBdPointJac Jf0pp_neg = NULL;
+        const PetscBdPointJac Jf1pp_neg = NULL; //pylith::fekernels::FaultCohesiveKinPoro::Jf1pp_neg;
+        const PetscBdPointJac Jf2pp_neg = NULL;
+        const PetscBdPointJac Jf3pp_neg = NULL;
+
+        const PetscBdPointJac Jf0pp_pos = NULL;
+        const PetscBdPointJac Jf1pp_pos = NULL; //pylith::fekernels::FaultCohesiveKinPoro::Jf1pp_pos;
+        const PetscBdPointJac Jf2pp_pos = NULL;
+        const PetscBdPointJac Jf3pp_pos = NULL;
 
         // Trace Strain
 
@@ -806,10 +815,10 @@ pylith::faults::FaultCohesiveKinPoro::_setKernelsJacobian(pylith::feassemble::In
         const PetscBdPointJac Jf3lu = NULL;
 
         // Fault Pressure
-        const PetscBdPointJac Jf0p_fp = pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fp;
+        const PetscBdPointJac Jf0p_fp = NULL; //pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fp;
         const PetscBdPointJac Jf1p_fp = NULL;
         const PetscBdPointJac Jf2p_fp = NULL;
-        const PetscBdPointJac Jf3p_fp = pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp;
+        const PetscBdPointJac Jf3p_fp = NULL; //pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp;
 
         const PetscBdPointJac Jf0p_fl = pylith::fekernels::FaultCohesiveKinPoro::Jf0p_fl;
         const PetscBdPointJac Jf1p_fl = NULL;
@@ -821,7 +830,7 @@ pylith::faults::FaultCohesiveKinPoro::_setKernelsJacobian(pylith::feassemble::In
         const PetscBdPointJac Jf2p_fp_f = NULL;
         const PetscBdPointJac Jf3p_fp_f = pylith::fekernels::FaultCohesiveKinPoro::Jf3p_fp_f;
 
-        kernels.resize(6);
+        kernels.resize(8);
         const char *nameDisplacement = "displacement";
         const char *nameLagrangeMultiplier = "lagrange_multiplier_fault";
         const char *namePressure = "pressure";
@@ -832,13 +841,17 @@ pylith::faults::FaultCohesiveKinPoro::_setKernelsJacobian(pylith::feassemble::In
                                      integrator_t::NEGATIVE_FACE, Jf0ul_neg, Jf1ul_neg, Jf2ul_neg, Jf3ul_neg);
         kernels[1] = JacobianKernels(nameDisplacement, nameLagrangeMultiplier, integrator_t::LHS,
                                      integrator_t::POSITIVE_FACE, Jf0ul_pos, Jf1ul_pos, Jf2ul_pos, Jf3ul_pos);
-        kernels[2] = JacobianKernels(nameLagrangeMultiplier, nameDisplacement, integrator_t::LHS,
+        kernels[2] = JacobianKernels(namePressure, namePressure, integrator_t::LHS,
+                                     integrator_t::NEGATIVE_FACE, Jf0pp_neg, Jf1pp_neg, Jf2pp_neg, Jf3pp_neg);
+        kernels[3] = JacobianKernels(namePressure, namePressure, integrator_t::LHS,
+                                     integrator_t::POSITIVE_FACE, Jf0pp_pos, Jf1pp_pos, Jf2pp_pos, Jf3pp_pos);
+        kernels[4] = JacobianKernels(nameLagrangeMultiplier, nameDisplacement, integrator_t::LHS,
                                      integrator_t::FAULT_FACE, Jf0lu, Jf1lu, Jf2lu, Jf3lu);
-        kernels[3] = JacobianKernels(nameFaultPressure, namePressure, integrator_t::LHS,
+        kernels[5] = JacobianKernels(nameFaultPressure, namePressure, integrator_t::LHS,
                                      integrator_t::FAULT_FACE, Jf0p_fp, Jf1p_fp, Jf2p_fp, Jf3p_fp);
-        kernels[4] = JacobianKernels(nameFaultPressure, nameLagrangeMultiplier, integrator_t::LHS,
+        kernels[6] = JacobianKernels(nameFaultPressure, nameLagrangeMultiplier, integrator_t::LHS,
                                      integrator_t::FAULT_FACE, Jf0p_fl, Jf1p_fl, Jf2p_fl, Jf3p_fl);
-        kernels[5] = JacobianKernels(nameFaultPressure, nameFaultPressure, integrator_t::LHS,
+        kernels[7] = JacobianKernels(nameFaultPressure, nameFaultPressure, integrator_t::LHS,
                                      integrator_t::FAULT_FACE, Jf0p_fp_f, Jf1p_fp_f, Jf2p_fp_f, Jf3p_fp_f);
 
         break;
