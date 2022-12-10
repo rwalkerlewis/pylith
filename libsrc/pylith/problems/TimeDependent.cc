@@ -451,7 +451,9 @@ pylith::problems::TimeDependent::poststep(void) {
 
     // Update PyLith view of the solution.
     assert(_integrationData);
-    pylith::topology::Field* solution = _integrationData->getField(pylith::feassemble::IntegrationData::solution);assert(solution);
+    err = VecViewFromOptions(solutionVec, NULL, "-robert_sol_view");PYLITH_CHECK_ERROR(err);
+    pylith::topology::Field *solution = _integrationData->getField(pylith::feassemble::IntegrationData::solution);
+    assert(solution);
     solution->scatterVectorToLocal(solutionVec);
     solution->scatterLocalToOutput();
 
