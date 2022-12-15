@@ -140,8 +140,8 @@ QuasistaticSpontaneousRupture::_computeLHSResidual(const PetscReal t,
     residualArray[0] = -2*_ka*u[0] + _ka*u[1];
     // residualArray[1] = +_ka*u[0] - _ka*u[1] + fc;
     // residualArray[2] = -_kb*u[2] + _kb*u[3] - fc;
-    residualArray[1] = +_ka*u[0] - _ka*u[1] + _xi*v[1] + fc;
-    residualArray[2] = -_kb*u[2] + _kb*u[3] - _*v[2] - fc;
+    residualArray[1] = +_ka*u[0] - _ka*u[1] + _eta*v[1] + fc;
+    residualArray[2] = -_kb*u[2] + _kb*u[3] - _eta*v[2] - fc;
     residualArray[3] = +_kb*u[2] - 2*_kb*u[3] + _kb*u4;
 
     residualArray[4] = uDot[0] - v[0];
@@ -201,14 +201,14 @@ QuasistaticSpontaneousRupture::_computeLHSJacobian(const PetscReal t,
     jacobianArray[1][0] = +_ka;
     jacobianArray[1][1] = -_ka + (lambda > 0.0 ? 0.0 : -df);
     jacobianArray[1][2] = (lambda > 0.0 ? 0.0 : +df);
-    jacobianArray[1][5] = _xi_a + (lambda > 0.0 ? 0.0 : -ddf);
+    jacobianArray[1][5] = (lambda > 0.0 ? 0.0 : -ddf);
     jacobianArray[1][6] = (lambda > 0.0 ? 0.0 : +ddf);
     jacobianArray[1][8] = -1.0;
     jacobianArray[2][1] = (lambda > 0.0 ? 0.0 : +df);
     jacobianArray[2][2] = -_kb + (lambda > 0.0 ? 0.0 : -df);
     jacobianArray[2][3] = +_kb;
     jacobianArray[2][5] = (lambda > 0.0 ? 0.0 : +ddf);
-    jacobianArray[2][6] = -_xi_b + (lambda > 0.0 ? 0.0 : -ddf);
+    jacobianArray[2][6] = (lambda > 0.0 ? 0.0 : -ddf);
     jacobianArray[2][8] = +1.0;
     jacobianArray[3][2] = +_kb;
     jacobianArray[3][3] = -2.0*_kb;

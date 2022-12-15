@@ -273,7 +273,7 @@ RateStateFriction::jacobianSlipRate(const double slipRate,
                                     const double eta) {
     const double vlinear = _RateStateFriction::vLinear;
 
-    return (slipRate > vlinear) ? _a/slipRate + eta : _a/vlinear;
+    return (slipRate > vlinear) ? _a/slipRate - eta : _a/vlinear;
 }
 
 
