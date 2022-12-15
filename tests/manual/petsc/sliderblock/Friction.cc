@@ -1,6 +1,7 @@
 #include <portinfo>
 
 #include "Friction.hh"
+#include "petsc.h"
 
 #include <cmath>
 #include <strings.h>
@@ -213,7 +214,7 @@ namespace _RateStateFriction {
     // v2
     static const double aStable = 0.05;
     static const double aUnstable = 0.01;
-    static const double b = 0.02;
+    static const double b = 0.0;
     static const double l = 0.1;
 
     static const double v0 = 0.01;
@@ -287,11 +288,13 @@ RateStateFriction::updateState(const double slip,
         _lockedSlip = slip;
     } // if
 
-    if (slipRate*dt/l > 1.0e-5) {
-        _theta = _theta*exp(-slipRate*dt/l) + l/slipRate*(1.0-exp(-slipRate*dt/l));
-    } else {
-        _theta = _theta*exp(-slipRate*dt/l) + dt-0.5*slipRate*dt*dt/l;
-    } // if/else
+    // if (slipRate*dt/l > 1.0e-5) {
+    //     _theta = _theta*exp(-slipRate*dt/l) + l/slipRate*(1.0-exp(-slipRate*dt/l));
+    // } else {
+    //     _theta = _theta*exp(-slipRate*dt/l) + dt-0.5*slipRate*dt*dt/l;
+    // } // if/else
+    _theta += 0.0;
+    PetscPrintf(PETSC_COMM_SELF, "theta: %g\n",_theta);
 }
 
 
