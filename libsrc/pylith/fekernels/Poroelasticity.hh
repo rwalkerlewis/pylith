@@ -24,7 +24,7 @@
  *   \int_V \vec{\phi}_u \cdot \vec{f}(t) - \nabla \vec{\phi}_u : \tensor{\sigma}(\vec{u}) \, dV +
  *   \int_{S_\tau} \vec{\phi}_u \cdot \vec{\tau}(t) \, dS.
  *
- * /** Kernel interface.
+ *** Kernel interface.
  *
  * @param[in] dim Spatial dimension.
  * @param[in] numS Number of registered subfields in solution field.
@@ -1046,21 +1046,14 @@ public:
      * Solution fields: [disp(dim)]
      */
     static inline
-    void strain_asVector(const PylithInt dim,
-                         const PylithInt numS,
-                         const PylithInt sOff[],
-                         const PylithInt sOff_x[],
-                         const PylithScalar s[],
-                         const PylithScalar s_t[],
-                         const PylithScalar s_x[],
-                         const PylithScalar x[],
+    void strain_asVector(const StrainContext& context,
                          strainfn_type strainFn,
                          const TensorOps& tensorOps,
                          PylithScalar strainVector[]) {
         assert(strainVector);
 
         Tensor strain;
-        strainFn(dim, numS, sOff, sOff_x, s, s_t, s_x, x, &strain);
+        strainFn(context, &strain);
         tensorOps.toVector(strain, strainVector);
     } // infinitesimalStrain_asVector
 
@@ -1074,23 +1067,8 @@ public:
      * Solution fields: [disp(dim)]
      */
     static inline
-    void stress_asVector(const PylithInt dim,
-                         const PylithInt numS,
-                         const PylithInt numA,
-                         const PylithInt sOff[],
-                         const PylithInt sOff_x[],
-                         const PylithScalar s[],
-                         const PylithScalar s_t[],
-                         const PylithScalar s_x[],
-                         const PylithInt aOff[],
-                         const PylithInt aOff_x[],
-                         const PylithScalar a[],
-                         const PylithScalar a_t[],
-                         const PylithScalar a_x[],
-                         const PylithReal t,
-                         const PylithScalar x[],
-                         const PylithInt numConstants,
-                         const PylithScalar constants[],
+    void stress_asVector(const StrainContext& strainContext,
+                         void* rheologyContext,
                          strainfn_type strainFn,
                          stressfn_type stressFn,
                          const TensorOps& tensorOps,
@@ -1098,11 +1076,10 @@ public:
         assert(stressVector);
 
         Tensor strain;
-        strainFn(dim, numS, sOff, sOff_x, s, s_t, s_x, x, &strain);
+        strainFn(strainContext, &strain);
 
         Tensor stress;
-        stressFn(dim, numS, numA, sOff, sOff_x, s, s_t, s_x, aOff, aOff_x, a, a_t, a_x,
-                 t, x, numConstants, constants, strain, tensorOps, &stress);
+        stressFn(rheologyContext, strain, tensorOps, &stress);
 
         tensorOps.toVector(stress, stressVector);
     } // cauchyStress_asVector
@@ -1124,26 +1101,14 @@ public:
      * Solution fields: [disp(dim)]
      */
     static inline
-    void infinitesimalStrain(const PylithInt dim,
-                             const PylithInt numS,
-                             const PylithInt sOff[],
-                             const PylithInt sOff_x[],
-                             const PylithScalar s[],
-                             const PylithScalar s_t[],
-                             const PylithScalar s_x[],
-                             const PylithScalar x[],
+    void infinitesimalStrain(const pylith::fekernels::Poroelasticity::StrainContext& context,
                              pylith::fekernels::Tensor* strain) {
         const PylithInt _dim = 2;
 
-        assert(_dim == dim);
-        assert(numS >= 1);
-        assert(sOff_x);
-        assert(s_x);
+        assert(_dim == context.dim);
         assert(strain);
 
-        // Incoming solution field.
-        const PylithInt i_disp = 0;
-        const PylithScalar* disp_x = &s_x[sOff_x[i_disp]];
+        const PylithScalar* disp_x = context.disp_x;
 
         strain->xx = disp_x[0*_dim+0];
         strain->yy = disp_x[1*_dim+1];
@@ -1182,9 +1147,11 @@ public:
         const PylithInt _dim = 2;
         assert(_dim == dim);
 
-        Poroelasticity::strain_asVector(_dim, numS, sOff, sOff_x, s, s_t, s_x, x,
-                                        infinitesimalStrain, Tensor::ops2D, strainVector);
-    } // infinitesimalStrain_asVector3D
+        pylith::fekernels::Poroelasticity::StrainContext context;
+        pylith::fekernels::Poroelasticity::setStrainContext(&context, _dim, numS, sOff, sOff_x, s, s_t, s_x, x);
+
+        Poroelasticity::strain_asVector(context, infinitesimalStrain, Tensor::ops2D, strainVector);
+    } // infinitesimalStrain_asVectorPlaneStrain
 
 }; // PoroelasticityPlaneStrain
 
@@ -1202,26 +1169,14 @@ public:
      * Solution fields: [disp(dim)]
      */
     static inline
-    void infinitesimalStrain(const PylithInt dim,
-                             const PylithInt numS,
-                             const PylithInt sOff[],
-                             const PylithInt sOff_x[],
-                             const PylithScalar s[],
-                             const PylithScalar s_t[],
-                             const PylithScalar s_x[],
-                             const PylithScalar x[],
+    void infinitesimalStrain(const pylith::fekernels::Poroelasticity::StrainContext& context,
                              pylith::fekernels::Tensor* strain) {
         const PylithInt _dim = 3;
 
-        assert(_dim == dim);
-        assert(numS >= 1);
-        assert(sOff_x);
-        assert(s_x);
+        assert(_dim == context.dim);
         assert(strain);
 
-        // Incoming solution field.
-        const PylithInt i_disp = 0;
-        const PylithScalar* disp_x = &s_x[sOff_x[i_disp]];
+        const PylithScalar* disp_x = context.disp_x;
 
         strain->xx = disp_x[0*_dim+0];
         strain->yy = disp_x[1*_dim+1];
@@ -1260,9 +1215,11 @@ public:
         const PylithInt _dim = 3;
         assert(_dim == dim);
 
-        Poroelasticity::strain_asVector(_dim, numS, sOff, sOff_x, s, s_t, s_x, x,
-                                        infinitesimalStrain, Tensor::ops3D, strainVector);
-    } // infinitesimalStrain_asVector
+        pylith::fekernels::Poroelasticity::StrainContext context;
+        pylith::fekernels::Poroelasticity::setStrainContext(&context, _dim, numS, sOff, sOff_x, s, s_t, s_x, x);
+
+        Poroelasticity::strain_asVector(context, infinitesimalStrain, Tensor::ops3D, strainVector);
+    } // infinitesimalStrain_asVector3D
 
 }; // Poroelasticity3D
 

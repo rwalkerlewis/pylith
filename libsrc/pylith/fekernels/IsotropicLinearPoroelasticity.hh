@@ -45,7 +45,7 @@
  *
  ** Rheological fields
  * - numA - 5: addShearModulus(1)
- * - numA - 4: addBulkModulus(1)
+ * - numA - 4: addDrainedBulkModulus(1)
  * - numA - 3: addBiotCoefficient(1)
  * - numA - 2: addIsotropicPermeability(1)
  * - numA - 1: addFluidBulkModulus(1)
@@ -100,9 +100,14 @@ public:
 
     struct Context {
         PylithReal pressure;
+        PylithReal solidDensity;
+        PylithReal fluidDensity;
+        PylithReal fluidViscosity;
+        PylithReal porosity;
         PylithReal shearModulus;
         PylithReal drainedBulkModulus;
         PylithReal biotCoefficient;
+        PylithReal fluidBulkModulus;
         pylith::fekernels::Tensor refStress;
         pylith::fekernels::Tensor refStrain;
     };
@@ -136,9 +141,15 @@ public:
         // Incoming solution fields.
         const PylithInt i_pressure = 1;
         // Incoming auxiliary fields.
-        const PylithInt i_shearModulus = numA-5;
-        const PylithInt i_drainedBulkModulus = numA-4;
-        const PylithInt i_biotCoefficient = numA-3;
+        const PylithInt i_solidDensity = 0;
+        const PylithInt i_fluidDensity = 1;
+        const PylithInt i_porosity = 2;
+        const PylithInt i_fluidViscosity = 3;
+
+        const PylithInt i_shearModulus = numA - 5;
+        const PylithInt i_drainedBulkModulus = numA - 4;
+        const PylithInt i_biotCoefficient = numA - 3;
+        const PylithInt i_fluidBulkModulus = numA - 1;
 
         assert(numA >= 3); // also have density
         assert(a);
@@ -148,12 +159,19 @@ public:
         assert(aOff[i_biotCoefficient] >= 0);
         assert(s);
         assert(sOff);
-        assert(sOff[i_pressure])
+        assert(sOff[i_pressure]);
 
         context->pressure = s[sOff[i_pressure]];assert(context->pressure > 0.0);
+
+        context->solidDensity = a[aOff[i_solidDensity]];assert(context->solidDensity > 0.0);
+        context->fluidDensity = a[aOff[i_fluidDensity]];assert(context->fluidDensity > 0.0);
+        context->porosity = a[aOff[i_porosity]];assert(context->porosity >= 0.0);
+        context->fluidViscosity = a[aOff[i_fluidViscosity]];assert(context->fluidViscosity = 0.0);
+
         context->shearModulus = a[aOff[i_shearModulus]];assert(context->shearModulus > 0.0);
         context->drainedBulkModulus = a[aOff[i_drainedBulkModulus]];assert(context->drainedBulkModulus > 0.0);
         context->biotCoefficient = a[aOff[i_biotCoefficient]];assert(context->biotCoefficient > 0.0);
+        context->fluidBulkModulus = a[aOff[i_fluidBulkModulus]];assert(context->fluidBulkModulus > 0.0);
     } // setContext
 
     // --------------------------------------------------------------------------------------------
@@ -182,11 +200,17 @@ public:
         // Incoming solution fields.
         const PylithInt i_pressure = 1;
         // Incoming auxiliary fields.
+        const PylithInt i_solidDensity = 0;
+        const PylithInt i_fluidDensity = 1;
+        const PylithInt i_porosity = 2;
+        const PylithInt i_fluidViscosity = 3;
+
         const PylithInt i_refStress = numA-7;
         const PylithInt i_refStrain = numA-6;
         const PylithInt i_shearModulus = numA-5;
-        const PylithInt i_drainedBulkModulus = numA-4;
-        const PylithInt i_biotCoefficient = numA-3;
+        const PylithInt i_drainedBulkModulus = numA - 4;
+        const PylithInt i_biotCoefficient = numA - 3;
+        const PylithInt i_fluidBulkModulus = numA - 1;
 
         assert(numA >= 5); // also have density
         assert(a);
@@ -198,12 +222,19 @@ public:
         assert(aOff[i_biotCoefficient] >= 0);
         assert(s);
         assert(sOff);
-        assert(sOff[i_pressure])
+        assert(sOff[i_pressure]);
 
         context->pressure = s[sOff[i_pressure]];assert(context->pressure > 0.0);
+
+        context->solidDensity = a[aOff[i_solidDensity]];assert(context->solidDensity > 0.0);
+        context->fluidDensity = a[aOff[i_fluidDensity]];assert(context->fluidDensity > 0.0);
+        context->porosity = a[aOff[i_porosity]];assert(context->porosity >= 0.0);
+        context->fluidViscosity = a[aOff[i_fluidViscosity]];assert(context->fluidViscosity = 0.0);
+
         context->shearModulus = a[aOff[i_shearModulus]];assert(context->shearModulus > 0.0);
         context->drainedBulkModulus = a[aOff[i_drainedBulkModulus]];assert(context->drainedBulkModulus > 0.0);
         context->biotCoefficient = a[aOff[i_biotCoefficient]];assert(context->biotCoefficient > 0.0);
+        context->fluidBulkModulus = a[aOff[i_fluidBulkModulus]];assert(context->fluidBulkModulus > 0.0);
 
         tensorOps.fromVector(&a[aOff[i_refStress]], &context->refStress);
         tensorOps.fromVector(&a[aOff[i_refStrain]], &context->refStrain);
@@ -1090,8 +1121,8 @@ public:
         const PylithScalar *refStressVector = &a[aOff[i_rstress]]; // stress_xx, stress_yy, stress_zz, stress_xy
         const PylithScalar *refStrainVector = &a[aOff[i_rstrain]]; // strain_xx, strain_yy, strain_zz, strain_xy
 
-        const PylithScalar ref_trace_strain = refStrainVector[0] + refStrainVector[1] + refStrainVector[2];
-        const PylithScalar mean_ref_stress = (refStressVector[0] + refStressVector[1] + refStressVector[2]) / 3.0;
+        // const PylithScalar ref_trace_strain = refStrainVector[0] + refStrainVector[1] + refStrainVector[2];
+        // const PylithScalar mean_ref_stress = (refStressVector[0] + refStressVector[1] + refStressVector[2]) / 3.0;
 
         // Convert reference vectors to reference tensors (2D)
         PylithScalar refStressTensor[_dim * _dim];
@@ -2145,7 +2176,7 @@ public:
              const PylithScalar x[],
              const PylithInt numConstants,
              const PylithScalar constants[],
-             PylithScalar g0p[]) {
+             PylithScalar g0[]) {
         const PylithInt _dim = 2;
 
         // Incoming re-packed solution field.
@@ -2691,7 +2722,7 @@ public:
         const PylithScalar *refStrainVector = &a[aOff[i_rstrain]]; // strain_xx, strain_yy, strain_zz, strain_xy
 
         const PylithScalar ref_trace_strain = refStrainVector[0] + refStrainVector[1] + refStrainVector[2];
-        const PylithScalar mean_ref_stress = (refStressVector[0] + refStressVector[1] + refStressVector[2]) / 3.0;
+        // const PylithScalar mean_ref_stress = (refStressVector[0] + refStressVector[1] + refStressVector[2]) / 3.0;
 
         // Convert reference vectors to reference tensors (2D)
         PylithScalar refStressTensor[_dim * _dim];
@@ -2716,6 +2747,102 @@ public:
             g1[c * _dim + c] += biotCoefficient * pressure;
         } // for
     } // g1v_refstate
+
+    // ===========================================================================================
+    // Kernels for output
+    // ===========================================================================================
+
+    // --------------------------------------------------------------------------------------------
+    /** Entry function for calculating Cauchy stress for 3D isotropic linear poroelasticity with
+     * infinitesimal strain WITHOUT reference stress and strain.
+     *
+     * Used to output of Cauchy stress.
+     *
+     * Solution fields: [disp(dim)]
+     * Auxiliary fields: [..., biot_coefficient(1), shear_modulus(1), drained_bulk_modulus(1)]
+     */
+    static inline
+    void cauchyStress_infinitesimalStrain_asVector(const PylithInt dim,
+                                                   const PylithInt numS,
+                                                   const PylithInt numA,
+                                                   const PylithInt sOff[],
+                                                   const PylithInt sOff_x[],
+                                                   const PylithScalar s[],
+                                                   const PylithScalar s_t[],
+                                                   const PylithScalar s_x[],
+                                                   const PylithInt aOff[],
+                                                   const PylithInt aOff_x[],
+                                                   const PylithScalar a[],
+                                                   const PylithScalar a_t[],
+                                                   const PylithScalar a_x[],
+                                                   const PylithReal t,
+                                                   const PylithScalar x[],
+                                                   const PylithInt numConstants,
+                                                   const PylithScalar constants[],
+                                                   PylithScalar stressVector[]) {
+        const PylithInt _dim = 2;assert(_dim == dim);
+
+        pylith::fekernels::Poroelasticity::StrainContext strainContext;
+        pylith::fekernels::Poroelasticity::setStrainContext(&strainContext, _dim, numS, sOff, sOff_x, s, s_t, s_x, x);
+
+        pylith::fekernels::IsotropicLinearPoroelasticity::Context rheologyContext;
+        pylith::fekernels::IsotropicLinearPoroelasticity::setContext(
+            &rheologyContext, _dim, numS, numA, sOff, sOff_x, s, s_t, s_x, aOff, aOff_x, a, a_t, a_x,
+            t, x, numConstants, constants, pylith::fekernels::Tensor::ops2D);
+
+        pylith::fekernels::Poroelasticity::stress_asVector(
+            strainContext, &rheologyContext,
+            pylith::fekernels::PoroelasticityPlaneStrain::infinitesimalStrain,
+            pylith::fekernels::IsotropicLinearPoroelasticity::cauchyStress,
+            pylith::fekernels::Tensor::ops2D,
+            stressVector);
+
+    } // cauchyStress_infinitesimalStrain_asVector
+
+    // --------------------------------------------------------------------------------------------
+    /** Entry function for calculating Cauchy stress for 3D isotropic linear poroelasticity with
+     * infinitesimal strain WITH a reference stress and strain.
+     *
+     * Used to output of Cauchy stress.
+     *
+     * Solution fields: [disp(dim)]
+     * Auxiliary fields: [..., biot_coefficient(1), shear_modulus(1), drained_bulk_modulus(1)]
+     */
+    static inline
+    void cauchyStress_infinitesimalStrain_refState_asVector(const PylithInt dim,
+                                                            const PylithInt numS,
+                                                            const PylithInt numA,
+                                                            const PylithInt sOff[],
+                                                            const PylithInt sOff_x[],
+                                                            const PylithScalar s[],
+                                                            const PylithScalar s_t[],
+                                                            const PylithScalar s_x[],
+                                                            const PylithInt aOff[],
+                                                            const PylithInt aOff_x[],
+                                                            const PylithScalar a[],
+                                                            const PylithScalar a_t[],
+                                                            const PylithScalar a_x[],
+                                                            const PylithReal t,
+                                                            const PylithScalar x[],
+                                                            const PylithInt numConstants,
+                                                            const PylithScalar constants[],
+                                                            PylithScalar stressVector[]) {
+        const PylithInt _dim = 2;assert(_dim == dim);
+
+        pylith::fekernels::Poroelasticity::StrainContext strainContext;
+        pylith::fekernels::Poroelasticity::setStrainContext(&strainContext, _dim, numS, sOff, sOff_x, s, s_t, s_x, x);
+
+        pylith::fekernels::IsotropicLinearPoroelasticity::Context rheologyContext;
+        pylith::fekernels::IsotropicLinearPoroelasticity::setContext_refState(
+            &rheologyContext, _dim, numS, numA, sOff, sOff_x, s, s_t, s_x, aOff, aOff_x, a, a_t, a_x,
+            t, x, numConstants, constants, pylith::fekernels::Tensor::ops2D);
+
+        pylith::fekernels::Poroelasticity::stress_asVector(
+            strainContext, &rheologyContext,
+            pylith::fekernels::PoroelasticityPlaneStrain::infinitesimalStrain,
+            pylith::fekernels::IsotropicLinearPoroelasticity::cauchyStress_refState,
+            pylith::fekernels::Tensor::ops2D, stressVector);
+    } // cauchyStress_infinitesimalStrain_refState_asVector
 
     // ========================== Update Kernels ===================================
 
@@ -5229,7 +5356,7 @@ public:
         const PylithScalar *refStrainVector = &a[aOff[i_rstrain]]; // strain_xx, strain_yy, strain_zz, strain_xy
 
         const PylithScalar ref_trace_strain = refStrainVector[0] + refStrainVector[1] + refStrainVector[2];
-        const PylithScalar mean_ref_stress = (refStressVector[0] + refStressVector[1] + refStressVector[2]) / 3.0;
+        // const PylithScalar mean_ref_stress = (refStressVector[0] + refStressVector[1] + refStressVector[2]) / 3.0;
 
         // Convert reference vectors to refrence tensors
         PylithScalar refStressTensor[_dim * _dim];
@@ -5254,6 +5381,102 @@ public:
             g1[c * _dim + c] += biotCoefficient * pressure;
         } // for
     } // g1v_refstate
+
+    // ===========================================================================================
+    // Kernels for output
+    // ===========================================================================================
+
+    // --------------------------------------------------------------------------------------------
+    /** Entry function for calculating Cauchy stress for 3D isotropic linear poroelasticity with
+     * infinitesimal strain WITHOUT reference stress and strain.
+     *
+     * Used to output of Cauchy stress.
+     *
+     * Solution fields: [disp(dim)]
+     * Auxiliary fields: [..., biot_coefficient(1), shear_modulus(1), drained_bulk_modulus(1)]
+     */
+    static inline
+    void cauchyStress_infinitesimalStrain_asVector(const PylithInt dim,
+                                                   const PylithInt numS,
+                                                   const PylithInt numA,
+                                                   const PylithInt sOff[],
+                                                   const PylithInt sOff_x[],
+                                                   const PylithScalar s[],
+                                                   const PylithScalar s_t[],
+                                                   const PylithScalar s_x[],
+                                                   const PylithInt aOff[],
+                                                   const PylithInt aOff_x[],
+                                                   const PylithScalar a[],
+                                                   const PylithScalar a_t[],
+                                                   const PylithScalar a_x[],
+                                                   const PylithReal t,
+                                                   const PylithScalar x[],
+                                                   const PylithInt numConstants,
+                                                   const PylithScalar constants[],
+                                                   PylithScalar stressVector[]) {
+        const PylithInt _dim = 3;assert(_dim == dim);
+
+        pylith::fekernels::Poroelasticity::StrainContext strainContext;
+        pylith::fekernels::Poroelasticity::setStrainContext(&strainContext, _dim, numS, sOff, sOff_x, s, s_t, s_x, x);
+
+        pylith::fekernels::IsotropicLinearPoroelasticity::Context rheologyContext;
+        pylith::fekernels::IsotropicLinearPoroelasticity::setContext(
+            &rheologyContext, _dim, numS, numA, sOff, sOff_x, s, s_t, s_x, aOff, aOff_x, a, a_t, a_x,
+            t, x, numConstants, constants, pylith::fekernels::Tensor::ops3D);
+
+        pylith::fekernels::Poroelasticity::stress_asVector(
+            strainContext, &rheologyContext,
+            pylith::fekernels::Poroelasticity3D::infinitesimalStrain,
+            pylith::fekernels::IsotropicLinearPoroelasticity::cauchyStress,
+            pylith::fekernels::Tensor::ops3D,
+            stressVector);
+
+    } // cauchyStress_infinitesimalStrain_asVector
+
+    // --------------------------------------------------------------------------------------------
+    /** Entry function for calculating Cauchy stress for 3D isotropic linear poroelasticity with
+     * infinitesimal strain WITH a reference stress and strain.
+     *
+     * Used to output of Cauchy stress.
+     *
+     * Solution fields: [disp(dim)]
+     * Auxiliary fields: [..., biot_coefficient(1), shear_modulus(1), drained_bulk_modulus(1)]
+     */
+    static inline
+    void cauchyStress_infinitesimalStrain_refState_asVector(const PylithInt dim,
+                                                            const PylithInt numS,
+                                                            const PylithInt numA,
+                                                            const PylithInt sOff[],
+                                                            const PylithInt sOff_x[],
+                                                            const PylithScalar s[],
+                                                            const PylithScalar s_t[],
+                                                            const PylithScalar s_x[],
+                                                            const PylithInt aOff[],
+                                                            const PylithInt aOff_x[],
+                                                            const PylithScalar a[],
+                                                            const PylithScalar a_t[],
+                                                            const PylithScalar a_x[],
+                                                            const PylithReal t,
+                                                            const PylithScalar x[],
+                                                            const PylithInt numConstants,
+                                                            const PylithScalar constants[],
+                                                            PylithScalar stressVector[]) {
+        const PylithInt _dim = 3;assert(_dim == dim);
+
+        pylith::fekernels::Poroelasticity::StrainContext strainContext;
+        pylith::fekernels::Poroelasticity::setStrainContext(&strainContext, _dim, numS, sOff, sOff_x, s, s_t, s_x, x);
+
+        pylith::fekernels::IsotropicLinearPoroelasticity::Context rheologyContext;
+        pylith::fekernels::IsotropicLinearPoroelasticity::setContext_refState(
+            &rheologyContext, _dim, numS, numA, sOff, sOff_x, s, s_t, s_x, aOff, aOff_x, a, a_t, a_x,
+            t, x, numConstants, constants, pylith::fekernels::Tensor::ops3D);
+
+        pylith::fekernels::Poroelasticity::stress_asVector(
+            strainContext, &rheologyContext,
+            pylith::fekernels::Poroelasticity3D::infinitesimalStrain,
+            pylith::fekernels::IsotropicLinearPoroelasticity::cauchyStress_refState,
+            pylith::fekernels::Tensor::ops3D, stressVector);
+    } // cauchyStress_infinitesimalStrain_refState_asVector
 
     // ========================== Update Kernels ===================================
 
