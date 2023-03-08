@@ -29,6 +29,9 @@
 
 namespace pylith {
     namespace fekernels {
+        class Tensor;
+        class TensorOps;
+
         class Solution;
         class DispVel;
 

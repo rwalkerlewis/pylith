@@ -67,6 +67,7 @@ libpylith_la_SOURCES = \
 	feassemble/ConstraintUserFn.cc \
 	feassemble/ConstraintSimple.cc \
 	feassemble/AuxiliaryFactory.cc \
+	fekernels/Tensor.cc \
 	fekernels/BoundaryDirections.cc \
 	fekernels/Elasticity.cc \
 	fekernels/IsotropicLinearElasticity.cc \
@@ -76,8 +77,6 @@ libpylith_la_SOURCES = \
 	fekernels/IsotropicPowerLaw.cc \
 	fekernels/IncompressibleElasticity.cc \
 	fekernels/IsotropicLinearIncompElasticity.cc \
-	fekernels/Poroelasticity.cc \
-	fekernels/IsotropicLinearPoroelasticity.cc \
 	fekernels/Solution.cc \
 	fekernels/DispVel.cc \
 	fekernels/TimeDependentFn.cc \
