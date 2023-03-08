@@ -59,41 +59,55 @@
 #include <cassert> // USES assert()
 
 class pylith::fekernels::Poroelasticity {
+public:
+
+    struct StrainContext {
+        PylithInt dim;
+        const PylithReal* disp;
+        const PylithReal* disp_t;
+        const PylithReal* disp_x;
+        const PylithReal* x;
+    };
+
     // Interface for functions computing strain.
-    typedef void (*strainfn_type) (const PylithInt,
-                                   const PylithInt,
-                                   const PylithInt[],
-                                   const PylithInt[],
-                                   const PylithScalar[],
-                                   const PylithScalar[],
-                                   const PylithScalar[],
-                                   const PylithScalar[],
+    typedef void (*strainfn_type) (const StrainContext& context,
                                    pylith::fekernels::Tensor*);
 
     // Interface for functions computing stress.
-    typedef void (*stressfn_type) (const PylithInt,
-                                   const PylithInt,
-                                   const PylithInt,
-                                   const PylithInt[],
-                                   const PylithInt[],
-                                   const PylithScalar[],
-                                   const PylithScalar[],
-                                   const PylithScalar[],
-                                   const PylithInt[],
-                                   const PylithInt[],
-                                   const PylithScalar[],
-                                   const PylithScalar[],
-                                   const PylithScalar[],
-                                   const PylithReal t,
-                                   const PylithScalar[],
-                                   const PylithInt,
-                                   const PylithScalar[],
+    typedef void (*stressfn_type) (void*,
                                    const pylith::fekernels::Tensor&,
                                    const pylith::fekernels::TensorOps&,
                                    pylith::fekernels::Tensor*);
 
     // PUBLIC MEMBERS ///////////////////////////////////////////////////////
 public:
+
+    // --------------------------------------------------------------------------------------------
+    /** Set strain context.
+     */
+    static inline
+    void setStrainContext(StrainContext* context,
+                          const PylithInt dim,
+                          const PylithInt numS,
+                          const PylithInt sOff[],
+                          const PylithInt sOff_x[],
+                          const PylithScalar s[],
+                          const PylithScalar s_t[],
+                          const PylithScalar s_x[],
+                          const PylithScalar x[]) {
+        assert(context);
+        assert(numS >= 1);
+
+        const PylithInt i_disp = 0;
+
+        assert(sOff[i_disp] >= 0);
+
+        context->dim = dim;
+        context->disp = &s[sOff[i_disp]];
+        context->disp_t = &s_t[sOff[i_disp]];
+        context->disp_x = &s_x[sOff_x[i_disp]];
+        context->x = x;
+    }
 
     // =============================================================================
     // Displacement
@@ -505,9 +519,7 @@ public:
         for (PylithInt i = 0; i < dim; ++i) {
             g0[i] += bodyForce[i];
         } // for
-    }
-
-    g0v_grav_bodyforce
+    } // g0v_grav_bodyforce
 
     // =============================================================================
     // Pressure
