@@ -88,7 +88,7 @@ pylith::feassemble::DSLabelAccess::DSLabelAccess(const PetscDM dm,
     } else {
         err = ISCreateGeneral(PETSC_COMM_SELF, 0, NULL, PETSC_OWN_POINTER, &_pointsIS);PYLITH_CHECK_ERROR(err);
         _numPoints = 0;
-    }
+    } // if/else
 
     PYLITH_METHOD_END;
 }
