@@ -51,36 +51,44 @@ pylith::feassemble::DSLabelAccess::DSLabelAccess(const PetscDM dm,
             err = ISGetIndices(_pointsIS, &pointIndicesOrig);PYLITH_CHECK_ERROR(err);
             err = DMGetCellDS(dm, pointIndicesOrig[0], &_ds, NULL);PYLITH_CHECK_ERROR(err);assert(_ds);
             err = PetscDSGetWeakForm(_ds, &_weakForm);PYLITH_CHECK_ERROR(err);assert(_weakForm);
-            PetscInt numPointsNew = 0;
-            for (PetscInt iPoint = 0; iPoint < numPointsOrig; ++iPoint) {
-                const PetscInt point = pointIndicesOrig[iPoint];
-                PetscInt depth = 0;
-                err = DMPlexGetPointDepth(_dm, point, &depth);PYLITH_CHECK_ERROR(err);
-                if (depth == _dim) {
-                    ++numPointsNew;
-                } // if
-            } // for
+            if (_dim >= 0) {
+                // Count number of points over which to integrate.
+                PetscInt numPointsNew = 0;
+                for (PetscInt iPoint = 0; iPoint < numPointsOrig; ++iPoint) {
+                    const PetscInt point = pointIndicesOrig[iPoint];
+                    PetscInt depth = 0;
+                    err = DMPlexGetPointDepth(_dm, point, &depth);PYLITH_CHECK_ERROR(err);
+                    if (depth == _dim) {
+                        ++numPointsNew;
+                    } // if
+                } // for
 
-            // Create array with points over which to integrate.
-            PetscInt* pointIndicesNew = NULL;
-            err = PetscMalloc1(numPointsNew*sizeof(PetscInt), &pointIndicesNew);PYLITH_CHECK_ERROR(err);
-            for (PetscInt iPoint = 0, index = 0; iPoint < numPointsOrig; ++iPoint) {
-                const PetscInt point = pointIndicesOrig[iPoint];
-                PetscInt depth = 0;
-                err = DMPlexGetPointDepth(_dm, point, &depth);PYLITH_CHECK_ERROR(err);
-                if (depth == _dim) {
-                    pointIndicesNew[index++] = point;
-                } // if
-            } // for
+                // Create array with points over which to integrate.
+                PetscInt* pointIndicesNew = NULL;
+                err = PetscMalloc1(numPointsNew*sizeof(PetscInt), &pointIndicesNew);PYLITH_CHECK_ERROR(err);
+                for (PetscInt iPoint = 0, index = 0; iPoint < numPointsOrig; ++iPoint) {
+                    const PetscInt point = pointIndicesOrig[iPoint];
+                    PetscInt depth = 0;
+                    err = DMPlexGetPointDepth(_dm, point, &depth);PYLITH_CHECK_ERROR(err);
+                    if (depth == _dim) {
+                        pointIndicesNew[index++] = point;
+                    } // if
+                } // for
 
-            err = ISRestoreIndices(_pointsIS, &pointIndicesOrig);PYLITH_CHECK_ERROR(err);
-            err = ISDestroy(&_pointsIS);PYLITH_CHECK_ERROR(err);
-            err = ISCreateGeneral(PETSC_COMM_SELF, numPointsNew, pointIndicesNew, PETSC_OWN_POINTER, &_pointsIS);PYLITH_CHECK_ERROR(err);
-            _numPoints = numPointsNew;
+                err = ISRestoreIndices(_pointsIS, &pointIndicesOrig);PYLITH_CHECK_ERROR(err);
+                err = ISDestroy(&_pointsIS);PYLITH_CHECK_ERROR(err);
+                err = ISCreateGeneral(PETSC_COMM_SELF, numPointsNew, pointIndicesNew, PETSC_OWN_POINTER, &_pointsIS);PYLITH_CHECK_ERROR(err);
+                _numPoints = numPointsNew;
+            } else {
+                err = ISRestoreIndices(_pointsIS, &pointIndicesOrig);PYLITH_CHECK_ERROR(err);
+            } // if/else
         } else {
             err = ISDestroy(&_pointsIS);PYLITH_CHECK_ERROR(err);
         } // if/else
-    } // if
+    } else {
+        err = ISCreateGeneral(PETSC_COMM_SELF, 0, NULL, PETSC_OWN_POINTER, &_pointsIS);PYLITH_CHECK_ERROR(err);
+        _numPoints = 0;
+    }
 
     PYLITH_METHOD_END;
 }
