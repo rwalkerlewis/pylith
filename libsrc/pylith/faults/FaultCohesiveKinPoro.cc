@@ -192,6 +192,30 @@ pylith::faults::FaultCohesiveKinPoro::verifyConfiguration(const pylith::topology
 
 
 // ------------------------------------------------------------------------------------------------
+// Create integrator and set kernels.
+pylith::feassemble::Integrator*
+pylith::faults::FaultCohesiveKinPoro::createIntegrator(const pylith::topology::Field& solution,
+                                                       const std::vector<pylith::materials::Material*>& materials) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_COMPONENT_DEBUG("createIntegrator(solution="<<solution.getLabel()<<")");
+
+    pylith::feassemble::IntegratorInterface* integrator = new pylith::feassemble::IntegratorInterface(this);assert(integrator);
+    integrator->setLabelName(getCohesiveLabelName());
+    integrator->setLabelValue(getCohesiveLabelValue());
+    integrator->setSurfaceLabelName(getSurfaceLabelName());
+
+    pylith::feassemble::InterfacePatches* patches =
+        pylith::feassemble::InterfacePatches::createMaterialPairs(this, solution.getDM());
+    integrator->setIntegrationPatches(patches);
+
+    _setKernelsResidual(integrator, solution, materials);
+    _setKernelsJacobian(integrator, solution, materials);
+
+    PYLITH_METHOD_RETURN(integrator);
+} // createIntegrator
+
+
+// ------------------------------------------------------------------------------------------------
 // Create auxiliary field.
 pylith::topology::Field *
 pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topology::Field &solution,
@@ -262,7 +286,7 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
     // We don't populate the auxiliary field for slip via a spatial database, because they will be set from
     // the earthquake rupture.
 
-    // Initialize auxiliary fields for kinematic ruptures.
+    // Initialize auxiliary fields for kinematic ruptures and other things.
     assert(auxiliaryField);
     const srcs_type::const_iterator rupturesEnd = _ruptures.end();
     for (srcs_type::iterator r_iter = _ruptures.begin(); r_iter != rupturesEnd; ++r_iter) {
@@ -315,184 +339,6 @@ pylith::faults::FaultCohesiveKin::updateAuxiliaryField(pylith::topology::Field* 
 } // updateAuxiliaryField
 
 
-// // ------------------------------------------------------------------------------------------------
-// // Create constraint for buried fault edges and faces.
-// std::vector<pylith::feassemble::Constraint *>
-// pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::Field &solution) {
-//     PYLITH_METHOD_BEGIN;
-//     PYLITH_COMPONENT_DEBUG("createConstraints(solution=" << solution.getLabel() << ")");
-
-//     std::vector<pylith::feassemble::Constraint *> constraintArray;
-
-//     if (0 == strlen(getBuriedEdgesLabelName())) {
-//         std::vector<pylith::feassemble::Constraint *> constraintArray;
-//         PYLITH_METHOD_RETURN(constraintArray);
-//     } // if
-
-//     // Lagrange Multipliers
-//     const char *lagrangeName = "lagrange_multiplier_fault";
-//     PylithInt numComponents = solution.getSpaceDim();
-
-//     pylith::int_array constrainedDOFLagrange;
-//     constrainedDOFLagrange.resize(numComponents);
-//     for (int c = 0; c < numComponents; ++c) {
-//         constrainedDOFLagrange[c] = c;
-//     }
-//     // Make new label for cohesive edges and faces
-//     PetscDM dm = solution.getDM();
-//     PetscDMLabel buriedLabel = NULL;
-//     PetscDMLabel buriedCohesiveLabel = NULL;
-//     PetscIS pointIS = NULL;
-//     const PetscInt *points = NULL;
-//     PetscInt n;
-//     std::ostringstream labelstream;
-//     labelstream << getBuriedEdgesLabelName() << "_cohesive";
-//     std::string labelname = labelstream.str();
-//     PetscErrorCode err;
-
-//     err = DMCreateLabel(dm, labelname.c_str());
-//     PYLITH_CHECK_ERROR(err);
-//     err = DMGetLabel(dm, getBuriedEdgesLabelName(), &buriedLabel);
-//     PYLITH_CHECK_ERROR(err);
-//     err = DMGetLabel(dm, labelname.c_str(), &buriedCohesiveLabel);
-//     PYLITH_CHECK_ERROR(err);
-//     err = DMLabelGetStratumIS(buriedLabel, 1, &pointIS);
-//     PYLITH_CHECK_ERROR(err);
-//     err = ISGetLocalSize(pointIS, &n);
-//     PYLITH_CHECK_ERROR(err);
-//     err = ISGetIndices(pointIS, &points);
-//     PYLITH_CHECK_ERROR(err);
-//     for (int p = 0; p < n; ++p) {
-//         const PetscInt *support = NULL;
-//         PetscInt supportSize;
-
-//         err = DMPlexGetSupportSize(dm, points[p], &supportSize);
-//         PYLITH_CHECK_ERROR(err);
-//         err = DMPlexGetSupport(dm, points[p], &support);
-//         PYLITH_CHECK_ERROR(err);
-//         for (int s = 0; s < supportSize; ++s) {
-//             DMPolytopeType ct;
-//             const PetscInt spoint = support[s];
-
-//             err = DMPlexGetCellType(dm, spoint, &ct);
-//             PYLITH_CHECK_ERROR(err);
-//             if ((ct == DM_POLYTOPE_SEG_PRISM_TENSOR) || (ct == DM_POLYTOPE_POINT_PRISM_TENSOR)) {
-//                 const PetscInt *cone = NULL;
-//                 PetscInt coneSize;
-
-//                 err = DMPlexGetConeSize(dm, spoint, &coneSize);
-//                 PYLITH_CHECK_ERROR(err);
-//                 err = DMPlexGetCone(dm, spoint, &cone);
-//                 PYLITH_CHECK_ERROR(err);
-//                 for (int c = 0; c < coneSize; ++c) {
-//                     PetscInt val;
-//                     err = DMLabelGetValue(buriedLabel, cone[c], &val);
-//                     PYLITH_CHECK_ERROR(err);
-//                     if (val >= 0) {
-//                         err = DMLabelSetValue(buriedCohesiveLabel, spoint, 1);
-//                         PYLITH_CHECK_ERROR(err);
-//                         break;
-//                     }
-//                 } // for
-//             } // if
-//         } // for
-//     } // for
-
-//     pylith::feassemble::ConstraintSimple *constraintLagrange = new pylith::feassemble::ConstraintSimple(this);
-//     assert(constraintLagrange);
-//     constraintLagrange->setLabelName(labelname.c_str());
-//     err = PetscObjectViewFromOptions((PetscObject)buriedLabel, NULL, "-buried_edge_label_view");
-//     err = PetscObjectViewFromOptions((PetscObject)buriedCohesiveLabel, NULL, "-buried_cohesive_edge_label_view");
-//     constraintLagrange->setConstrainedDOF(&constrainedDOFLagrange[0], constrainedDOFLagrange.size());
-//     constraintLagrange->setSubfieldName(lagrangeName);
-//     constraintLagrange->setUserFn(_zero);
-
-//     // "Fault Pressure" multipliers
-//     const char *faultPressureName = "fault_pressure";
-//     numComponents = 1;
-//     pylith::int_array constrainedDOFFaultPressure;
-//     constrainedDOFFaultPressure.resize(numComponents);
-//     for (int c = numComponents; c < numComponents * 2; ++c) {
-//         constrainedDOFFaultPressure[c] = c;
-//     }
-//     // Make new label for cohesive edges and faces
-//     // PetscDM dm = solution.getDM();
-//     PetscDMLabel buriedLabelFaultPressure = NULL;
-//     PetscDMLabel buriedCohesiveLabelFaultPressure = NULL;
-//     PetscIS pointISFaultPressure = NULL;
-//     const PetscInt *pointsFaultPressure = NULL;
-//     PetscInt nFaultPressure;
-//     std::ostringstream labelstreamFaultPressure;
-//     labelstreamFaultPressure << getBuriedEdgesLabelName() << "_cohesive";
-//     std::string labelnameFaultPressure = labelstreamFaultPressure.str();
-//     // PetscErrorCode err;
-
-//     err = DMCreateLabel(dm, labelnameFaultPressure.c_str());
-//     PYLITH_CHECK_ERROR(err);
-//     err = DMGetLabel(dm, getBuriedEdgesLabelName(), &buriedLabelFaultPressure);
-//     PYLITH_CHECK_ERROR(err);
-//     err = DMGetLabel(dm, labelnameFaultPressure.c_str(), &buriedCohesiveLabelFaultPressure);
-//     PYLITH_CHECK_ERROR(err);
-//     err = DMLabelGetStratumIS(buriedLabelFaultPressure, 1, &pointISFaultPressure);
-//     PYLITH_CHECK_ERROR(err);
-//     err = ISGetLocalSize(pointISFaultPressure, &nFaultPressure);
-//     PYLITH_CHECK_ERROR(err);
-//     err = ISGetIndices(pointISFaultPressure, &pointsFaultPressure);
-//     PYLITH_CHECK_ERROR(err);
-//     for (int p = 0; p < nFaultPressure; ++p) {
-//         const PetscInt *supportFaultPressure = NULL;
-//         PetscInt supportSizeFaultPressure;
-
-//         err = DMPlexGetSupportSize(dm, pointsFaultPressure[p], &supportSizeFaultPressure);
-//         PYLITH_CHECK_ERROR(err);
-//         err = DMPlexGetSupport(dm, pointsFaultPressure[p], &supportFaultPressure);
-//         PYLITH_CHECK_ERROR(err);
-//         for (int s = 0; s < supportSizeFaultPressure; ++s) {
-//             DMPolytopeType ctFaultPressure;
-//             const PetscInt spointFaultPressure = supportFaultPressure[s];
-
-//             err = DMPlexGetCellType(dm, spointFaultPressure, &ctFaultPressure);
-//             PYLITH_CHECK_ERROR(err);
-//             if ((ctFaultPressure == DM_POLYTOPE_SEG_PRISM_TENSOR) || (ctFaultPressure ==
-//                                                                       DM_POLYTOPE_POINT_PRISM_TENSOR)) {
-//                 const PetscInt *coneFaultPressure = NULL;
-//                 PetscInt coneSizeFaultPressure;
-
-//                 err = DMPlexGetConeSize(dm, spointFaultPressure, &coneSizeFaultPressure);
-//                 PYLITH_CHECK_ERROR(err);
-//                 err = DMPlexGetCone(dm, spointFaultPressure, &coneFaultPressure);
-//                 PYLITH_CHECK_ERROR(err);
-//                 for (int c = 0; c < coneSizeFaultPressure; ++c) {
-//                     PetscInt valFaultPressure;
-//                     err = DMLabelGetValue(buriedLabelFaultPressure, coneFaultPressure[c], &valFaultPressure);
-//                     PYLITH_CHECK_ERROR(err);
-//                     if (valFaultPressure >= 0) {
-//                         err = DMLabelSetValue(buriedCohesiveLabelFaultPressure, spointFaultPressure, 1);
-//                         PYLITH_CHECK_ERROR(err);
-//                         break;
-//                     }
-//                 } // for
-//             } // if
-//         } // for
-//     } // for
-
-//     pylith::feassemble::ConstraintSimple *constraintFaultPressure = new pylith::feassemble::ConstraintSimple(this);
-//     assert(constraintFaultPressure);
-//     constraintFaultPressure->setLabelName(labelnameFaultPressure.c_str());
-//     err = PetscObjectViewFromOptions((PetscObject)buriedLabelFaultPressure, NULL, "-buried_edge_label_view");
-//     err = PetscObjectViewFromOptions((PetscObject)buriedCohesiveLabelFaultPressure, NULL,
-//                                      "-buried_cohesive_edge_label_view");
-//     constraintFaultPressure->setConstrainedDOF(&constrainedDOFFaultPressure[0], constrainedDOFFaultPressure.size());
-//     constraintFaultPressure->setSubfieldName(faultPressureName);
-//     constraintFaultPressure->setUserFn(_zero);
-
-//     // Package constraints and exit
-//     constraintArray.resize(2);
-//     constraintArray[0] = constraintLagrange;
-//     constraintArray[1] = constraintFaultPressure;
-//     PYLITH_METHOD_RETURN(constraintArray);
-// } // createConstraints
-
 // ------------------------------------------------------------------------------------------------
 // Get auxiliary factory associated with physics.
 pylith::feassemble::AuxiliaryFactory *
@@ -500,171 +346,6 @@ pylith::faults::FaultCohesiveKinPoro::_getAuxiliaryFactory(void) {
     return _auxiliaryFactory;
 } // _getAuxiliaryFactory
 
-
-// // ------------------------------------------------------------------------------------------------
-// // Update slip subfield in auxiliary field at beginning of time step.
-// void
-// pylith::faults::FaultCohesiveKinPoro::_updateSlip(pylith::topology::Field *auxiliaryField,
-//                                                   const double t) {
-//     PYLITH_METHOD_BEGIN;
-//     PYLITH_COMPONENT_DEBUG("updateSlip(auxiliaryField=" << auxiliaryField << ", t=" << t << ")");
-
-//     assert(auxiliaryField);
-//     assert(_normalizer);
-
-//     // Update slip subfield at current time step
-//     PetscErrorCode err = VecSet(_slipVecTotal, 0.0);
-//     PYLITH_CHECK_ERROR(err);
-//     const srcs_type::const_iterator rupturesEnd = _ruptures.end();
-//     for (srcs_type::iterator r_iter = _ruptures.begin(); r_iter != rupturesEnd; ++r_iter) {
-//         err = VecSet(_slipVecRupture, 0.0);
-//         PYLITH_CHECK_ERROR(err);
-
-//         KinSrcPoro *src = r_iter->second;
-//         assert(src);
-//         src->updateSlip(_slipVecRupture, auxiliaryField, t, _normalizer->getTimeScale());
-//         err = VecAYPX(_slipVecTotal, 1.0, _slipVecRupture);
-//     } // for
-
-//     // Transfer slip values from local PETSc slip vector to fault auxiliary field.
-//     PetscInt pStart = 0, pEnd = 0;
-//     err = PetscSectionGetChart(auxiliaryField->getLocalSection(), &pStart, &pEnd);
-//     PYLITH_CHECK_ERROR(err);
-
-//     pylith::topology::VecVisitorMesh auxiliaryVisitor(*auxiliaryField, "slip");
-//     PylithScalar *auxiliaryArray = auxiliaryVisitor.localArray();
-
-//     const PylithScalar *slipArray = NULL;
-//     err = VecGetArrayRead(_slipVecTotal, &slipArray);
-//     PYLITH_CHECK_ERROR(err);
-
-//     for (PetscInt p = pStart, iSlip = 0; p < pEnd; ++p) {
-//         const PetscInt slipDof = auxiliaryVisitor.sectionDof(p);
-//         const PetscInt slipOff = auxiliaryVisitor.sectionOffset(p);
-//         for (PetscInt iDof = 0; iDof < slipDof; ++iDof, ++iSlip) {
-//             auxiliaryArray[slipOff + iDof] = slipArray[iSlip];
-//         } // for
-//     } // for
-//     err = VecRestoreArrayRead(_slipVecTotal, &slipArray);
-//     PYLITH_CHECK_ERROR(err);
-
-//     pythia::journal::debug_t debug(pylith::utils::PyreComponent::getName());
-//     if (debug.state()) {
-//         auxiliaryField->view("Fault auxiliary field after setting slip.");
-//     } // if
-
-//     PYLITH_METHOD_END;
-// } // _updateSlip
-
-// // ------------------------------------------------------------------------------------------------
-// // Update slip rate subfield in auxiliary field at beginning of time step.
-// void
-// pylith::faults::FaultCohesiveKinPoro::_updateSlipRate(pylith::topology::Field *auxiliaryField,
-//                                                       const double t) {
-//     PYLITH_METHOD_BEGIN;
-//     PYLITH_COMPONENT_DEBUG("_updateSlipRate(auxiliaryField=" << auxiliaryField << ", t=" << t << ")");
-
-//     assert(auxiliaryField);
-//     assert(_normalizer);
-
-//     // Update slip rate subfield at current time step
-//     PetscErrorCode err = VecSet(_slipVecTotal, 0.0);
-//     PYLITH_CHECK_ERROR(err);
-//     const srcs_type::const_iterator rupturesEnd = _ruptures.end();
-//     for (srcs_type::iterator r_iter = _ruptures.begin(); r_iter != rupturesEnd; ++r_iter) {
-//         err = VecSet(_slipVecRupture, 0.0);
-//         PYLITH_CHECK_ERROR(err);
-
-//         KinSrcPoro *src = r_iter->second;
-//         assert(src);
-//         src->updateSlipRate(_slipVecRupture, auxiliaryField, t, _normalizer->getTimeScale());
-//         err = VecAYPX(_slipVecTotal, 1.0, _slipVecRupture);
-//     } // for
-
-//     // Transfer slip values from local PETSc slip vector to fault auxiliary field.
-//     PetscInt pStart = 0, pEnd = 0;
-//     err = PetscSectionGetChart(auxiliaryField->getLocalSection(), &pStart, &pEnd);
-//     PYLITH_CHECK_ERROR(err);
-
-//     pylith::topology::VecVisitorMesh auxiliaryVisitor(*auxiliaryField, "slip_rate");
-//     PylithScalar *auxiliaryArray = auxiliaryVisitor.localArray();
-
-//     const PylithScalar *slipRateArray = NULL;
-//     err = VecGetArrayRead(_slipVecTotal, &slipRateArray);
-//     PYLITH_CHECK_ERROR(err);
-
-//     for (PetscInt p = pStart, iSlipRate = 0; p < pEnd; ++p) {
-//         const PetscInt slipRateDof = auxiliaryVisitor.sectionDof(p);
-//         const PetscInt slipRateOff = auxiliaryVisitor.sectionOffset(p);
-//         for (PetscInt iDof = 0; iDof < slipRateDof; ++iDof, ++iSlipRate) {
-//             auxiliaryArray[slipRateOff + iDof] = slipRateArray[iSlipRate];
-//         } // for
-//     } // for
-//     err = VecRestoreArrayRead(_slipVecTotal, &slipRateArray);
-//     PYLITH_CHECK_ERROR(err);
-
-//     pythia::journal::debug_t debug(pylith::utils::PyreComponent::getName());
-//     if (debug.state()) {
-//         auxiliaryField->view("Fault auxiliary field after setting slip rate.");
-//     } // if
-
-//     PYLITH_METHOD_END;
-// } // _updateSlipRate
-
-// // ------------------------------------------------------------------------------------------------
-// // Update slip acceleration subfield in auxiliary field at beginning of time step.
-// void
-// pylith::faults::FaultCohesiveKinPoro::_updateSlipAcceleration(pylith::topology::Field *auxiliaryField,
-//                                                               const double t) {
-//     PYLITH_METHOD_BEGIN;
-//     PYLITH_COMPONENT_DEBUG("_updateSlipAcceleration(auxiliaryField=" << auxiliaryField << ", t=" << t << ")");
-
-//     assert(auxiliaryField);
-//     assert(_normalizer);
-
-//     // Update slip acceleration subfield at current time step
-//     PetscErrorCode err = VecSet(_slipVecTotal, 0.0);
-//     PYLITH_CHECK_ERROR(err);
-//     const srcs_type::const_iterator rupturesEnd = _ruptures.end();
-//     for (srcs_type::iterator r_iter = _ruptures.begin(); r_iter != rupturesEnd; ++r_iter) {
-//         err = VecSet(_slipVecRupture, 0.0);
-//         PYLITH_CHECK_ERROR(err);
-
-//         KinSrcPoro *src = r_iter->second;
-//         assert(src);
-//         src->updateSlipAcc(_slipVecRupture, auxiliaryField, t, _normalizer->getTimeScale());
-//         err = VecAYPX(_slipVecTotal, 1.0, _slipVecRupture);
-//     } // for
-
-//     // Transfer slip values from local PETSc slip vector to fault auxiliary field.
-//     PetscInt pStart = 0, pEnd = 0;
-//     err = PetscSectionGetChart(auxiliaryField->getLocalSection(), &pStart, &pEnd);
-//     PYLITH_CHECK_ERROR(err);
-
-//     pylith::topology::VecVisitorMesh auxiliaryVisitor(*auxiliaryField, "slip_acceleration");
-//     PylithScalar *auxiliaryArray = auxiliaryVisitor.localArray();
-
-//     const PylithScalar *slipAccArray = NULL;
-//     err = VecGetArrayRead(_slipVecTotal, &slipAccArray);
-//     PYLITH_CHECK_ERROR(err);
-
-//     for (PetscInt p = pStart, iSlipAcc = 0; p < pEnd; ++p) {
-//         const PetscInt slipAccDof = auxiliaryVisitor.sectionDof(p);
-//         const PetscInt slipAccOff = auxiliaryVisitor.sectionOffset(p);
-//         for (PetscInt iDof = 0; iDof < slipAccDof; ++iDof, ++iSlipAcc) {
-//             auxiliaryArray[slipAccOff + iDof] = slipAccArray[iSlipAcc];
-//         } // for
-//     } // for
-//     err = VecRestoreArrayRead(_slipVecTotal, &slipAccArray);
-//     PYLITH_CHECK_ERROR(err);
-
-//     pythia::journal::debug_t debug(pylith::utils::PyreComponent::getName());
-//     if (debug.state()) {
-//         auxiliaryField->view("Fault auxiliary field after setting slip acceleration.");
-//     } // if
-
-//     PYLITH_METHOD_END;
-// } // _updateSlipAcceleration
 
 // ------------------------------------------------------------------------------------------------
 // Update slip subfield in auxiliary field at beginning of time step.
@@ -832,7 +513,7 @@ pylith::faults::FaultCohesiveKinPoro::_setKernelsResidual(pylith::feassemble::In
     } // switch
 
     assert(integrator);
-    integrator->setKernels(kernels, solution, material);
+    integrator->setKernels(kernels, solution, materials);
 
     PYLITH_METHOD_END;
 } // _setKernelsResidual
