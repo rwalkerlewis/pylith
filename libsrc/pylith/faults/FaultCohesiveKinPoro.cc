@@ -315,184 +315,183 @@ pylith::faults::FaultCohesiveKin::updateAuxiliaryField(pylith::topology::Field* 
 } // updateAuxiliaryField
 
 
-// ------------------------------------------------------------------------------------------------
-// Create constraint for buried fault edges and faces.
-std::vector<pylith::feassemble::Constraint *>
-pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::Field &solution) {
-    PYLITH_METHOD_BEGIN;
-    PYLITH_COMPONENT_DEBUG("createConstraints(solution=" << solution.getLabel() << ")");
+// // ------------------------------------------------------------------------------------------------
+// // Create constraint for buried fault edges and faces.
+// std::vector<pylith::feassemble::Constraint *>
+// pylith::faults::FaultCohesiveKinPoro::createConstraints(const pylith::topology::Field &solution) {
+//     PYLITH_METHOD_BEGIN;
+//     PYLITH_COMPONENT_DEBUG("createConstraints(solution=" << solution.getLabel() << ")");
 
-    std::vector<pylith::feassemble::Constraint *> constraintArray;
+//     std::vector<pylith::feassemble::Constraint *> constraintArray;
 
-    if (0 == strlen(getBuriedEdgesLabelName())) {
-        std::vector<pylith::feassemble::Constraint *> constraintArray;
-        PYLITH_METHOD_RETURN(constraintArray);
-    } // if
+//     if (0 == strlen(getBuriedEdgesLabelName())) {
+//         std::vector<pylith::feassemble::Constraint *> constraintArray;
+//         PYLITH_METHOD_RETURN(constraintArray);
+//     } // if
 
-    // Lagrange Multipliers
-    const char *lagrangeName = "lagrange_multiplier_fault";
-    PylithInt numComponents = solution.getSpaceDim();
+//     // Lagrange Multipliers
+//     const char *lagrangeName = "lagrange_multiplier_fault";
+//     PylithInt numComponents = solution.getSpaceDim();
 
-    pylith::int_array constrainedDOFLagrange;
-    constrainedDOFLagrange.resize(numComponents);
-    for (int c = 0; c < numComponents; ++c) {
-        constrainedDOFLagrange[c] = c;
-    }
-    // Make new label for cohesive edges and faces
-    PetscDM dm = solution.getDM();
-    PetscDMLabel buriedLabel = NULL;
-    PetscDMLabel buriedCohesiveLabel = NULL;
-    PetscIS pointIS = NULL;
-    const PetscInt *points = NULL;
-    PetscInt n;
-    std::ostringstream labelstream;
-    labelstream << getBuriedEdgesLabelName() << "_cohesive";
-    std::string labelname = labelstream.str();
-    PetscErrorCode err;
+//     pylith::int_array constrainedDOFLagrange;
+//     constrainedDOFLagrange.resize(numComponents);
+//     for (int c = 0; c < numComponents; ++c) {
+//         constrainedDOFLagrange[c] = c;
+//     }
+//     // Make new label for cohesive edges and faces
+//     PetscDM dm = solution.getDM();
+//     PetscDMLabel buriedLabel = NULL;
+//     PetscDMLabel buriedCohesiveLabel = NULL;
+//     PetscIS pointIS = NULL;
+//     const PetscInt *points = NULL;
+//     PetscInt n;
+//     std::ostringstream labelstream;
+//     labelstream << getBuriedEdgesLabelName() << "_cohesive";
+//     std::string labelname = labelstream.str();
+//     PetscErrorCode err;
 
-    err = DMCreateLabel(dm, labelname.c_str());
-    PYLITH_CHECK_ERROR(err);
-    err = DMGetLabel(dm, getBuriedEdgesLabelName(), &buriedLabel);
-    PYLITH_CHECK_ERROR(err);
-    err = DMGetLabel(dm, labelname.c_str(), &buriedCohesiveLabel);
-    PYLITH_CHECK_ERROR(err);
-    err = DMLabelGetStratumIS(buriedLabel, 1, &pointIS);
-    PYLITH_CHECK_ERROR(err);
-    err = ISGetLocalSize(pointIS, &n);
-    PYLITH_CHECK_ERROR(err);
-    err = ISGetIndices(pointIS, &points);
-    PYLITH_CHECK_ERROR(err);
-    for (int p = 0; p < n; ++p) {
-        const PetscInt *support = NULL;
-        PetscInt supportSize;
+//     err = DMCreateLabel(dm, labelname.c_str());
+//     PYLITH_CHECK_ERROR(err);
+//     err = DMGetLabel(dm, getBuriedEdgesLabelName(), &buriedLabel);
+//     PYLITH_CHECK_ERROR(err);
+//     err = DMGetLabel(dm, labelname.c_str(), &buriedCohesiveLabel);
+//     PYLITH_CHECK_ERROR(err);
+//     err = DMLabelGetStratumIS(buriedLabel, 1, &pointIS);
+//     PYLITH_CHECK_ERROR(err);
+//     err = ISGetLocalSize(pointIS, &n);
+//     PYLITH_CHECK_ERROR(err);
+//     err = ISGetIndices(pointIS, &points);
+//     PYLITH_CHECK_ERROR(err);
+//     for (int p = 0; p < n; ++p) {
+//         const PetscInt *support = NULL;
+//         PetscInt supportSize;
 
-        err = DMPlexGetSupportSize(dm, points[p], &supportSize);
-        PYLITH_CHECK_ERROR(err);
-        err = DMPlexGetSupport(dm, points[p], &support);
-        PYLITH_CHECK_ERROR(err);
-        for (int s = 0; s < supportSize; ++s) {
-            DMPolytopeType ct;
-            const PetscInt spoint = support[s];
+//         err = DMPlexGetSupportSize(dm, points[p], &supportSize);
+//         PYLITH_CHECK_ERROR(err);
+//         err = DMPlexGetSupport(dm, points[p], &support);
+//         PYLITH_CHECK_ERROR(err);
+//         for (int s = 0; s < supportSize; ++s) {
+//             DMPolytopeType ct;
+//             const PetscInt spoint = support[s];
 
-            err = DMPlexGetCellType(dm, spoint, &ct);
-            PYLITH_CHECK_ERROR(err);
-            if ((ct == DM_POLYTOPE_SEG_PRISM_TENSOR) || (ct == DM_POLYTOPE_POINT_PRISM_TENSOR)) {
-                const PetscInt *cone = NULL;
-                PetscInt coneSize;
+//             err = DMPlexGetCellType(dm, spoint, &ct);
+//             PYLITH_CHECK_ERROR(err);
+//             if ((ct == DM_POLYTOPE_SEG_PRISM_TENSOR) || (ct == DM_POLYTOPE_POINT_PRISM_TENSOR)) {
+//                 const PetscInt *cone = NULL;
+//                 PetscInt coneSize;
 
-                err = DMPlexGetConeSize(dm, spoint, &coneSize);
-                PYLITH_CHECK_ERROR(err);
-                err = DMPlexGetCone(dm, spoint, &cone);
-                PYLITH_CHECK_ERROR(err);
-                for (int c = 0; c < coneSize; ++c) {
-                    PetscInt val;
-                    err = DMLabelGetValue(buriedLabel, cone[c], &val);
-                    PYLITH_CHECK_ERROR(err);
-                    if (val >= 0) {
-                        err = DMLabelSetValue(buriedCohesiveLabel, spoint, 1);
-                        PYLITH_CHECK_ERROR(err);
-                        break;
-                    }
-                } // for
-            } // if
-        } // for
-    } // for
+//                 err = DMPlexGetConeSize(dm, spoint, &coneSize);
+//                 PYLITH_CHECK_ERROR(err);
+//                 err = DMPlexGetCone(dm, spoint, &cone);
+//                 PYLITH_CHECK_ERROR(err);
+//                 for (int c = 0; c < coneSize; ++c) {
+//                     PetscInt val;
+//                     err = DMLabelGetValue(buriedLabel, cone[c], &val);
+//                     PYLITH_CHECK_ERROR(err);
+//                     if (val >= 0) {
+//                         err = DMLabelSetValue(buriedCohesiveLabel, spoint, 1);
+//                         PYLITH_CHECK_ERROR(err);
+//                         break;
+//                     }
+//                 } // for
+//             } // if
+//         } // for
+//     } // for
 
-    pylith::feassemble::ConstraintSimple *constraintLagrange = new pylith::feassemble::ConstraintSimple(this);
-    assert(constraintLagrange);
-    constraintLagrange->setLabelName(labelname.c_str());
-    err = PetscObjectViewFromOptions((PetscObject)buriedLabel, NULL, "-buried_edge_label_view");
-    err = PetscObjectViewFromOptions((PetscObject)buriedCohesiveLabel, NULL, "-buried_cohesive_edge_label_view");
-    constraintLagrange->setConstrainedDOF(&constrainedDOFLagrange[0], constrainedDOFLagrange.size());
-    constraintLagrange->setSubfieldName(lagrangeName);
-    constraintLagrange->setUserFn(_zero);
+//     pylith::feassemble::ConstraintSimple *constraintLagrange = new pylith::feassemble::ConstraintSimple(this);
+//     assert(constraintLagrange);
+//     constraintLagrange->setLabelName(labelname.c_str());
+//     err = PetscObjectViewFromOptions((PetscObject)buriedLabel, NULL, "-buried_edge_label_view");
+//     err = PetscObjectViewFromOptions((PetscObject)buriedCohesiveLabel, NULL, "-buried_cohesive_edge_label_view");
+//     constraintLagrange->setConstrainedDOF(&constrainedDOFLagrange[0], constrainedDOFLagrange.size());
+//     constraintLagrange->setSubfieldName(lagrangeName);
+//     constraintLagrange->setUserFn(_zero);
 
-    // "Fault Pressure" multipliers
-    const char *faultPressureName = "fault_pressure";
-    numComponents = 1;
-    pylith::int_array constrainedDOFFaultPressure;
-    constrainedDOFFaultPressure.resize(numComponents);
-    for (int c = numComponents; c < numComponents * 2; ++c) {
-        constrainedDOFFaultPressure[c] = c;
-    }
-    // Make new label for cohesive edges and faces
-    // PetscDM dm = solution.getDM();
-    PetscDMLabel buriedLabelFaultPressure = NULL;
-    PetscDMLabel buriedCohesiveLabelFaultPressure = NULL;
-    PetscIS pointISFaultPressure = NULL;
-    const PetscInt *pointsFaultPressure = NULL;
-    PetscInt nFaultPressure;
-    std::ostringstream labelstreamFaultPressure;
-    labelstreamFaultPressure << getBuriedEdgesLabelName() << "_cohesive";
-    std::string labelnameFaultPressure = labelstreamFaultPressure.str();
-    // PetscErrorCode err;
+//     // "Fault Pressure" multipliers
+//     const char *faultPressureName = "fault_pressure";
+//     numComponents = 1;
+//     pylith::int_array constrainedDOFFaultPressure;
+//     constrainedDOFFaultPressure.resize(numComponents);
+//     for (int c = numComponents; c < numComponents * 2; ++c) {
+//         constrainedDOFFaultPressure[c] = c;
+//     }
+//     // Make new label for cohesive edges and faces
+//     // PetscDM dm = solution.getDM();
+//     PetscDMLabel buriedLabelFaultPressure = NULL;
+//     PetscDMLabel buriedCohesiveLabelFaultPressure = NULL;
+//     PetscIS pointISFaultPressure = NULL;
+//     const PetscInt *pointsFaultPressure = NULL;
+//     PetscInt nFaultPressure;
+//     std::ostringstream labelstreamFaultPressure;
+//     labelstreamFaultPressure << getBuriedEdgesLabelName() << "_cohesive";
+//     std::string labelnameFaultPressure = labelstreamFaultPressure.str();
+//     // PetscErrorCode err;
 
-    err = DMCreateLabel(dm, labelnameFaultPressure.c_str());
-    PYLITH_CHECK_ERROR(err);
-    err = DMGetLabel(dm, getBuriedEdgesLabelName(), &buriedLabelFaultPressure);
-    PYLITH_CHECK_ERROR(err);
-    err = DMGetLabel(dm, labelnameFaultPressure.c_str(), &buriedCohesiveLabelFaultPressure);
-    PYLITH_CHECK_ERROR(err);
-    err = DMLabelGetStratumIS(buriedLabelFaultPressure, 1, &pointISFaultPressure);
-    PYLITH_CHECK_ERROR(err);
-    err = ISGetLocalSize(pointISFaultPressure, &nFaultPressure);
-    PYLITH_CHECK_ERROR(err);
-    err = ISGetIndices(pointISFaultPressure, &pointsFaultPressure);
-    PYLITH_CHECK_ERROR(err);
-    for (int p = 0; p < nFaultPressure; ++p) {
-        const PetscInt *supportFaultPressure = NULL;
-        PetscInt supportSizeFaultPressure;
+//     err = DMCreateLabel(dm, labelnameFaultPressure.c_str());
+//     PYLITH_CHECK_ERROR(err);
+//     err = DMGetLabel(dm, getBuriedEdgesLabelName(), &buriedLabelFaultPressure);
+//     PYLITH_CHECK_ERROR(err);
+//     err = DMGetLabel(dm, labelnameFaultPressure.c_str(), &buriedCohesiveLabelFaultPressure);
+//     PYLITH_CHECK_ERROR(err);
+//     err = DMLabelGetStratumIS(buriedLabelFaultPressure, 1, &pointISFaultPressure);
+//     PYLITH_CHECK_ERROR(err);
+//     err = ISGetLocalSize(pointISFaultPressure, &nFaultPressure);
+//     PYLITH_CHECK_ERROR(err);
+//     err = ISGetIndices(pointISFaultPressure, &pointsFaultPressure);
+//     PYLITH_CHECK_ERROR(err);
+//     for (int p = 0; p < nFaultPressure; ++p) {
+//         const PetscInt *supportFaultPressure = NULL;
+//         PetscInt supportSizeFaultPressure;
 
-        err = DMPlexGetSupportSize(dm, pointsFaultPressure[p], &supportSizeFaultPressure);
-        PYLITH_CHECK_ERROR(err);
-        err = DMPlexGetSupport(dm, pointsFaultPressure[p], &supportFaultPressure);
-        PYLITH_CHECK_ERROR(err);
-        for (int s = 0; s < supportSizeFaultPressure; ++s) {
-            DMPolytopeType ctFaultPressure;
-            const PetscInt spointFaultPressure = supportFaultPressure[s];
+//         err = DMPlexGetSupportSize(dm, pointsFaultPressure[p], &supportSizeFaultPressure);
+//         PYLITH_CHECK_ERROR(err);
+//         err = DMPlexGetSupport(dm, pointsFaultPressure[p], &supportFaultPressure);
+//         PYLITH_CHECK_ERROR(err);
+//         for (int s = 0; s < supportSizeFaultPressure; ++s) {
+//             DMPolytopeType ctFaultPressure;
+//             const PetscInt spointFaultPressure = supportFaultPressure[s];
 
-            err = DMPlexGetCellType(dm, spointFaultPressure, &ctFaultPressure);
-            PYLITH_CHECK_ERROR(err);
-            if ((ctFaultPressure == DM_POLYTOPE_SEG_PRISM_TENSOR) || (ctFaultPressure ==
-                                                                      DM_POLYTOPE_POINT_PRISM_TENSOR)) {
-                const PetscInt *coneFaultPressure = NULL;
-                PetscInt coneSizeFaultPressure;
+//             err = DMPlexGetCellType(dm, spointFaultPressure, &ctFaultPressure);
+//             PYLITH_CHECK_ERROR(err);
+//             if ((ctFaultPressure == DM_POLYTOPE_SEG_PRISM_TENSOR) || (ctFaultPressure ==
+//                                                                       DM_POLYTOPE_POINT_PRISM_TENSOR)) {
+//                 const PetscInt *coneFaultPressure = NULL;
+//                 PetscInt coneSizeFaultPressure;
 
-                err = DMPlexGetConeSize(dm, spointFaultPressure, &coneSizeFaultPressure);
-                PYLITH_CHECK_ERROR(err);
-                err = DMPlexGetCone(dm, spointFaultPressure, &coneFaultPressure);
-                PYLITH_CHECK_ERROR(err);
-                for (int c = 0; c < coneSizeFaultPressure; ++c) {
-                    PetscInt valFaultPressure;
-                    err = DMLabelGetValue(buriedLabelFaultPressure, coneFaultPressure[c], &valFaultPressure);
-                    PYLITH_CHECK_ERROR(err);
-                    if (valFaultPressure >= 0) {
-                        err = DMLabelSetValue(buriedCohesiveLabelFaultPressure, spointFaultPressure, 1);
-                        PYLITH_CHECK_ERROR(err);
-                        break;
-                    }
-                } // for
-            } // if
-        } // for
-    } // for
+//                 err = DMPlexGetConeSize(dm, spointFaultPressure, &coneSizeFaultPressure);
+//                 PYLITH_CHECK_ERROR(err);
+//                 err = DMPlexGetCone(dm, spointFaultPressure, &coneFaultPressure);
+//                 PYLITH_CHECK_ERROR(err);
+//                 for (int c = 0; c < coneSizeFaultPressure; ++c) {
+//                     PetscInt valFaultPressure;
+//                     err = DMLabelGetValue(buriedLabelFaultPressure, coneFaultPressure[c], &valFaultPressure);
+//                     PYLITH_CHECK_ERROR(err);
+//                     if (valFaultPressure >= 0) {
+//                         err = DMLabelSetValue(buriedCohesiveLabelFaultPressure, spointFaultPressure, 1);
+//                         PYLITH_CHECK_ERROR(err);
+//                         break;
+//                     }
+//                 } // for
+//             } // if
+//         } // for
+//     } // for
 
-    pylith::feassemble::ConstraintSimple *constraintFaultPressure = new pylith::feassemble::ConstraintSimple(this);
-    assert(constraintFaultPressure);
-    constraintFaultPressure->setLabelName(labelnameFaultPressure.c_str());
-    err = PetscObjectViewFromOptions((PetscObject)buriedLabelFaultPressure, NULL, "-buried_edge_label_view");
-    err = PetscObjectViewFromOptions((PetscObject)buriedCohesiveLabelFaultPressure, NULL,
-                                     "-buried_cohesive_edge_label_view");
-    constraintFaultPressure->setConstrainedDOF(&constrainedDOFFaultPressure[0], constrainedDOFFaultPressure.size());
-    constraintFaultPressure->setSubfieldName(faultPressureName);
-    constraintFaultPressure->setUserFn(_zero);
+//     pylith::feassemble::ConstraintSimple *constraintFaultPressure = new pylith::feassemble::ConstraintSimple(this);
+//     assert(constraintFaultPressure);
+//     constraintFaultPressure->setLabelName(labelnameFaultPressure.c_str());
+//     err = PetscObjectViewFromOptions((PetscObject)buriedLabelFaultPressure, NULL, "-buried_edge_label_view");
+//     err = PetscObjectViewFromOptions((PetscObject)buriedCohesiveLabelFaultPressure, NULL,
+//                                      "-buried_cohesive_edge_label_view");
+//     constraintFaultPressure->setConstrainedDOF(&constrainedDOFFaultPressure[0], constrainedDOFFaultPressure.size());
+//     constraintFaultPressure->setSubfieldName(faultPressureName);
+//     constraintFaultPressure->setUserFn(_zero);
 
-    // Package constraints and exit
-    constraintArray.resize(2);
-    constraintArray[0] = constraintLagrange;
-    constraintArray[1] = constraintFaultPressure;
-    PYLITH_METHOD_RETURN(constraintArray);
-} // createConstraints
-
+//     // Package constraints and exit
+//     constraintArray.resize(2);
+//     constraintArray[0] = constraintLagrange;
+//     constraintArray[1] = constraintFaultPressure;
+//     PYLITH_METHOD_RETURN(constraintArray);
+// } // createConstraints
 
 // ------------------------------------------------------------------------------------------------
 // Get auxiliary factory associated with physics.
@@ -736,24 +735,24 @@ pylith::faults::FaultCohesiveKin::_updateSlip(pylith::topology::Field* auxiliary
 // Set kernels for residual.
 void
 pylith::faults::FaultCohesiveKinPoro::_setKernelsResidual(pylith::feassemble::IntegratorInterface *integrator,
-                                                          const pylith::topology::Field &solution) const {
+                                                          const pylith::topology::Field &solution,
+                                                          const std::vector<pylith::materials::Material*>& materials) const {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_setKernelsResidual(integrator=" << integrator << ", solution=" << solution.getLabel() << ")");
     typedef pylith::feassemble::IntegratorInterface integrator_t;
 
     std::vector<ResidualKernels> kernels;
-
     switch (_formulation) {
     case QUASISTATIC:
     {
         // Current solution field is
         // [displacement, pressure, trace_strain, lagrange, fault_pressure]
 
-        // Elasticity equation (displacement/velocity).
+        // Elasticity equation (displacement) for negative side of the fault.
         const PetscBdPointFunc f0u_neg = pylith::fekernels::FaultCohesiveKinPoro::f0u_neg;
         const PetscBdPointFunc f1u_neg = NULL;
 
-        // Elasticity equation (displacement/velocity).
+        // Elasticity equation (displacement) for positive side of the fault.
         const PetscBdPointFunc f0u_pos = pylith::fekernels::FaultCohesiveKinPoro::f0u_pos;
         const PetscBdPointFunc f1u_pos = NULL;
 
@@ -761,12 +760,16 @@ pylith::faults::FaultCohesiveKinPoro::_setKernelsResidual(pylith::feassemble::In
         // const PetscBdPointFunc f0e = NULL;
         // const PetscBdPointFunc f1e = NULL;
 
-        // Pressure constraint and Fault_pressure constraint
+        // Pressure equation for positive side of the fault.
         PetscBdPointFunc f0p_neg = pylith::fekernels::FaultCohesiveKinPoro::f0p_neg;
-        PetscBdPointFunc f0p_pos = pylith::fekernels::FaultCohesiveKinPoro::f0p_pos;
-        PetscBdPointFunc f0p_fault = pylith::fekernels::FaultCohesiveKinPoro::f0p_fault;
         PetscBdPointFunc f1p_neg = NULL;
+
+        // Pressure equation for positive side of the fault.
+        PetscBdPointFunc f0p_pos = pylith::fekernels::FaultCohesiveKinPoro::f0p_pos;
         PetscBdPointFunc f1p_pos = NULL;
+
+        // Fault Pressure equation
+        PetscBdPointFunc f0p_fault = pylith::fekernels::FaultCohesiveKinPoro::f0p_fault;
         PetscBdPointFunc f1p_fault = pylith::fekernels::FaultCohesiveKinPoro::f1p_fault;
 
         // const int bitBodyForce = _useBodyForce ? 0x1 : 0x0;
@@ -814,7 +817,7 @@ pylith::faults::FaultCohesiveKinPoro::_setKernelsResidual(pylith::feassemble::In
                                      f0p_pos, f1p_pos);
         kernels[4] = ResidualKernels("lagrange_multiplier_fault", integrator_t::LHS, integrator_t::FAULT_FACE,
                                      f0l, f1l);
-        kernels[5] = ResidualKernels("fault_pressure", integrator_t::LHS, integrator_t::FAULT_FACE,
+        kernels[5] = ResidualKernels("pressure", integrator_t::LHS, integrator_t::FAULT_FACE,
                                      f0p_fault, f1p_fault);
         break;
     } // QUASISTATIC
@@ -829,7 +832,7 @@ pylith::faults::FaultCohesiveKinPoro::_setKernelsResidual(pylith::feassemble::In
     } // switch
 
     assert(integrator);
-    integrator->setKernelsResidual(kernels, solution);
+    integrator->setKernels(kernels, solution, material);
 
     PYLITH_METHOD_END;
 } // _setKernelsResidual
@@ -839,7 +842,8 @@ pylith::faults::FaultCohesiveKinPoro::_setKernelsResidual(pylith::feassemble::In
 // Set kernels for Jacobian.
 void
 pylith::faults::FaultCohesiveKinPoro::_setKernelsJacobian(pylith::feassemble::IntegratorInterface *integrator,
-                                                          const pylith::topology::Field &solution) const {
+                                                          const pylith::topology::Field &solution,
+                                                          const std::vector<pylith::materials::Material*>& materials) const {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("_setKernelsJacobian(integrator=" << integrator << ", solution=" << solution.getLabel() << ")");
     typedef pylith::feassemble::IntegratorInterface integrator_t;
@@ -902,7 +906,7 @@ pylith::faults::FaultCohesiveKinPoro::_setKernelsJacobian(pylith::feassemble::In
         const char *nameLagrangeMultiplier = "lagrange_multiplier_fault";
         const char *namePressure = "pressure";
         const char *nameTraceStrain = "trace_strain";
-        const char *nameFaultPressure = "fault_pressure";
+        const char *nameFaultPressure = "pressure";
 
         kernels[0] = JacobianKernels(nameDisplacement, nameLagrangeMultiplier, integrator_t::LHS,
                                      integrator_t::NEGATIVE_FACE, Jf0ul_neg, Jf1ul_neg, Jf2ul_neg, Jf3ul_neg);
@@ -934,7 +938,7 @@ pylith::faults::FaultCohesiveKinPoro::_setKernelsJacobian(pylith::feassemble::In
     } // switch
 
     assert(integrator);
-    integrator->setKernelsJacobian(kernels, solution);
+    integrator->setKernels(kernels, solution, materials);
 
     PYLITH_METHOD_END;
 } // _setKernelsJacobian
