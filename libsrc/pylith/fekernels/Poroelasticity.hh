@@ -611,9 +611,10 @@ public:
 
         const PylithScalar *displacement_t = poroelasticContext.displacement_t;
         const PylithScalar *velocity = poroelasticContext.velocity;
+        printf("f0u_explicit\n");
 
         for (PylithInt i = 0; i < dim; ++i) {
-            f0[i] += displacement_t[i] - velocity[i];
+            f0[i] += displacement_t[i];
         } // for
     } // f0u_explicit
 

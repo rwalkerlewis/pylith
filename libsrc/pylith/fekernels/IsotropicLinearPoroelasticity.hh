@@ -572,7 +572,7 @@ public:
         const PylithInt dim = poroelasticContext.dim;
         // Solution Variables
         const PylithScalar *pressure_x = poroelasticContext.pressure_x;
-        const PylithScalar *velocity_t = poroelasticContext.velocity_t;
+        // const PylithScalar *velocity_t = poroelasticContext.velocity_t;
 
         // Poroelastic Auxiliaries
         const PylithScalar fluidDensity = poroelasticContext.fluidDensity;
@@ -588,7 +588,9 @@ public:
 
         for (PylithInt i = 0; i < dim; ++i) {
             for (PylithInt j = 0; j < dim; j++) {
-                fluxRateVectorDynamic[i] += (tensorPermeability[i * dim + j] / fluidViscosity) * (pressure_x[j] + fluidDensity * velocity_t[j] - bodyForce[j] - fluidDensity * gravityField[j]);
+                // fluxRateVectorDynamic[i] += (tensorPermeability[i * dim + j] / fluidViscosity) * (pressure_x[j] +
+                // fluidDensity * velocity_t[j] - bodyForce[j] - fluidDensity * gravityField[j]);
+                fluxRateVectorDynamic[i] += (tensorPermeability[i * dim + j] / fluidViscosity) * (pressure_x[j] - bodyForce[j] - fluidDensity * gravityField[j]);
             } // for
         } // for
 
@@ -1858,8 +1860,7 @@ public:
 
         // Rheological Auxiliaries
 
-        g0[0] += pressure_t / biotModulus;
-        g0[0] += biotCoefficient * trace_strain_t;
+        g0[0] -= biotCoefficient * trace_strain_t;
     } // g0p_implicit
 
     // ----------------------------------------------------------------------
@@ -1912,9 +1913,8 @@ public:
         const PylithScalar source = poroelasticContext.sourceDensity;
 
         // Rheological Auxiliaries
-        g0[0] -= source;
-        g0[0] += pressure_t / biotModulus;
-        g0[0] += biotCoefficient * trace_strain_t;
+        g0[0] += source;
+        g0[0] -= biotCoefficient * trace_strain_t;
 
     } // g0p_source
 
@@ -1967,9 +1967,8 @@ public:
         // Poroelastic Auxiliaries
         const PylithScalar source = poroelasticContext.sourceDensity;
 
-        g0[0] -= source;
-        g0[0] += pressure_t / biotModulus;
-        g0[0] += biotCoefficient * trace_strain_t;
+        g0[0] += source;
+        g0[0] -= biotCoefficient * trace_strain_t;
 
     } // g0p_source_body
 
@@ -2022,9 +2021,8 @@ public:
         // Poroelastic Auxiliaries
         const PylithScalar source = poroelasticContext.sourceDensity;
 
-        g0[0] -= source;
-        g0[0] += pressure_t / biotModulus;
-        g0[0] += biotCoefficient * trace_strain_t;
+        g0[0] += source;
+        g0[0] -= biotCoefficient * trace_strain_t;
 
     } // g0p_source_grav
 
@@ -2077,9 +2075,8 @@ public:
         // Poroelastic Auxiliaries
         const PylithScalar source = poroelasticContext.sourceDensity;
 
-        g0[0] -= source;
-        g0[0] += pressure_t / biotModulus;
-        g0[0] += biotCoefficient * trace_strain_t;
+        g0[0] += source;
+        g0[0] -= biotCoefficient * trace_strain_t;
 
     } // g0p_source_grav_body
 
@@ -3920,8 +3917,7 @@ public:
         const PylithScalar biotModulus = rheologyContext.biotModulus;
 
         // Rheological Auxiliaries
-        g0[0] += pressure_t / biotModulus;
-        g0[0] += biotCoefficient * trace_strain_t;
+        g0[0] -= biotCoefficient * trace_strain_t;
 
     } // g0p_implicit
 
@@ -3974,9 +3970,8 @@ public:
         // Poroelastic Auxiliaries
         const PylithScalar source = poroelasticContext.sourceDensity;
 
-        g0[0] -= source;
-        g0[0] += pressure_t / biotModulus;
-        g0[0] += biotCoefficient * trace_strain_t;
+        g0[0] += source;
+        g0[0] -= biotCoefficient * trace_strain_t;
     } // g0p_source
 
     // ----------------------------------------------------------------------
@@ -4028,9 +4023,8 @@ public:
         // Poroelastic Auxiliaries
         const PylithScalar source = poroelasticContext.sourceDensity;
 
-        g0[0] -= source;
-        g0[0] += pressure_t / biotModulus;
-        g0[0] += biotCoefficient * trace_strain_t;
+        g0[0] += source;
+        g0[0] -= biotCoefficient * trace_strain_t;
 
     } // g0p_source_body
 
@@ -4083,9 +4077,8 @@ public:
         // Poroelastic Auxiliaries
         const PylithScalar source = poroelasticContext.sourceDensity;
 
-        g0[0] -= source;
-        g0[0] += pressure_t / biotModulus;
-        g0[0] += biotCoefficient * trace_strain_t;
+        g0[0] += source;
+        g0[0] -= biotCoefficient * trace_strain_t;
     } // g0p_source_grav
 
     // ----------------------------------------------------------------------
@@ -4137,9 +4130,8 @@ public:
         // Poroelastic Auxiliaries
         const PylithScalar source = poroelasticContext.sourceDensity;
 
-        g0[0] -= source;
-        g0[0] += pressure_t / biotModulus;
-        g0[0] += biotCoefficient * trace_strain_t;
+        g0[0] += source;
+        g0[0] -= biotCoefficient * trace_strain_t;
 
     } // g0p_source_grav_body
 
