@@ -22,6 +22,7 @@
 #include "pylith/materials/AuxiliaryFactoryPoroelastic.hh" // USES AuxiliaryFactory
 
 #include "pylith/fekernels/IsotropicLinearPoroelasticity.hh" // USES IsotropicLinearIncompElasticity kernels
+#include "pylith/fekernels/Poroelasticity.hh" // USES Poroelasticity kernels
 #include "pylith/fekernels/Elasticity.hh" // USES Elasticity kernels
 
 #include "pylith/utils/journals.hh" // USES PYLITH_COMPONENT_*
@@ -115,6 +116,15 @@ pylith::materials::IsotropicLinearPoroelasticity::addAuxiliarySubfields(void) {
     // :ATTENTION: The order for adding subfields must match the order of the auxiliary fields in the point-wise
     // functions (kernels).
 
+    switch (_formulation) { // Add velocity from previous step for first order approximation of acceleration
+    // for dynamic darcy's law
+    case QUASISTATIC:
+        break;
+    case DYNAMIC:
+    case DYNAMIC_IMEX:
+        _auxiliaryFactory->addPriorVelocity(); // numA - 8
+    } // switch
+
     if (_useReferenceState) {
         _auxiliaryFactory->addReferenceStress(); // numA - 7
         _auxiliaryFactory->addReferenceStrain(); // numA - 6
@@ -128,8 +138,6 @@ pylith::materials::IsotropicLinearPoroelasticity::addAuxiliarySubfields(void) {
     } else {
         _auxiliaryFactory->addIsotropicPermeability(); // k, numA - 1
     }
-
-    PYLITH_METHOD_END;
 } // addAuxiliarySubfields
 
 

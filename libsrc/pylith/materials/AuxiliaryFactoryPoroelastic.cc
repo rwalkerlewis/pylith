@@ -45,6 +45,43 @@ pylith::materials::AuxiliaryFactoryPoroelastic::~AuxiliaryFactoryPoroelastic(voi
 
 
 // ----------------------------------------------------------------------------
+// Add previous iteration velocity for first order acceleration approximation in
+// dynamic darcy's law.
+void
+pylith::materials::AuxiliaryFactoryPoroelastic::addPriorVelocity(void) { // priorVelocity
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addPriorVelocity(void)");
+
+    const char* subfieldName = "prior_velocity";
+    const char* componentNames[3] = {
+        "prior_velocity_x",
+        "prior_velocity_y",
+        "prior_velocity_z"
+    };
+    const PylithReal lengthScale = _normalizer->getLengthScale();
+    const PylithReal timeScale = _normalizer->getTimeScale();
+    const PylithReal velocityScale = lengthScale / timeScale;
+
+    pylith::topology::Field::Description description;
+    description.label = subfieldName;
+    description.alias = subfieldName;
+    description.vectorFieldType = pylith::topology::Field::VECTOR;
+    description.numComponents = _spaceDim;
+    description.componentNames.resize(_spaceDim);
+    for (int i = 0; i < _spaceDim; ++i) {
+        description.componentNames[i] = componentNames[i];
+    } // for
+    description.scale = velocityScale;
+    description.validator = NULL;
+
+    _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
+    this->setSubfieldQuery(subfieldName);
+
+    PYLITH_METHOD_END;
+} // addPriorVelocity
+
+
+// ----------------------------------------------------------------------------
 // Add isotropic permeability subfield to auxiliary fields.
 void
 pylith::materials::AuxiliaryFactoryPoroelastic::addIsotropicPermeability(void) { // isotropicPermeablity

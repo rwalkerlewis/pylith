@@ -112,6 +112,7 @@ public:
         PylithReal drainedBulkModulus;
         PylithReal biotCoefficient;
         PylithReal biotModulus;
+        PylithReal priorVelocity[3];
         pylith::fekernels::Tensor permeability;
         pylith::fekernels::Tensor refStress;
         pylith::fekernels::Tensor refStrain;
@@ -358,6 +359,40 @@ public:
     } // addContextTraceStrainDynamic
 
     // --------------------------------------------------------------------------------------------
+    static inline
+    void addContextPriorVelocity(Context* context,
+                                 const PylithInt dim,
+                                 const PylithInt numS,
+                                 const PylithInt numA,
+                                 const PylithInt sOff[],
+                                 const PylithInt sOff_x[],
+                                 const PylithScalar s[],
+                                 const PylithScalar s_t[],
+                                 const PylithScalar s_x[],
+                                 const PylithInt aOff[],
+                                 const PylithInt aOff_x[],
+                                 const PylithScalar a[],
+                                 const PylithScalar a_t[],
+                                 const PylithScalar a_x[],
+                                 const PylithReal t,
+                                 const PylithScalar x[],
+                                 const PylithInt numConstants,
+                                 const PylithScalar constants[],
+                                 const pylith::fekernels::TensorOps& tensorOps) {
+        assert(context);
+
+        // Incoming auxiliary fields.
+        const PylithInt i_priorVelocity = numA - 8;
+
+        // set prior velocity
+        const PylithScalar* priorVelocity = &a[aOff[i_priorVelocity]];
+        for (PylithInt i = 0; i < dim; ++i) {
+            context->priorVelocity[i] = priorVelocity[i];
+        } // for
+
+    } // addContextTensorPerm
+
+    // --------------------------------------------------------------------------------------------
     /** Helper function for calculating Cauchy stress for WITHOUT a reference stress and strain.
      *
      * ISA Poroelasticity::stressFn
@@ -504,8 +539,8 @@ public:
     /** Helper function for calculating darcy flux
      *
      * ISA Poroelasticity::fluxrateFn
-     *
-     * @param[in] rheologyContext IsotropicLinearElasticity context.
+     * @param[in] poroelasticContext Poroelasticity context.
+     * @param[in] rheologyContext IsotropicLinearPoroelasticity context.
      * @param[in] tensorOps Tensor operations.
      * @param[out] fluxRate darcy flux vector
      */
@@ -555,8 +590,8 @@ public:
     /** Helper function for calculating darcy flux for poroelastodynamics
      *
      * ISA Poroelasticity::fluxrateFn
-     *
-     * @param[in] rheologyContext IsotropicLinearElasticity context.
+     * @param[in] poroelasticContext Poroelasticity context.
+     * @param[in] rheologyContext IsotropicLinearPoroelasticity context.
      * @param[in] tensorOps Tensor operations.
      * @param[out] fluxRateDynamic darcy flux vector
      */
@@ -572,7 +607,7 @@ public:
         const PylithInt dim = poroelasticContext.dim;
         // Solution Variables
         const PylithScalar *pressure_x = poroelasticContext.pressure_x;
-        // const PylithScalar *velocity_t = poroelasticContext.velocity_t;
+        const PylithScalar *velocity = poroelasticContext.velocity;
 
         // Poroelastic Auxiliaries
         const PylithScalar fluidDensity = poroelasticContext.fluidDensity;
@@ -581,6 +616,7 @@ public:
         const PylithScalar *gravityField = poroelasticContext.gravityField;
 
         // Rheological Auxiliaries
+        const PylithScalar *priorVelocity = context.priorVelocity;
 
         PylithScalar tensorPermeability[9] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
         PylithScalar fluxRateVectorDynamic[3] = {0.0, 0.0, 0.0};
@@ -588,9 +624,10 @@ public:
 
         for (PylithInt i = 0; i < dim; ++i) {
             for (PylithInt j = 0; j < dim; j++) {
-                // fluxRateVectorDynamic[i] += (tensorPermeability[i * dim + j] / fluidViscosity) * (pressure_x[j] +
-                // fluidDensity * velocity_t[j] - bodyForce[j] - fluidDensity * gravityField[j]);
-                fluxRateVectorDynamic[i] += (tensorPermeability[i * dim + j] / fluidViscosity) * (pressure_x[j] - bodyForce[j] - fluidDensity * gravityField[j]);
+                fluxRateVectorDynamic[i] += (tensorPermeability[i * dim + j] / fluidViscosity) * (pressure_x[j] +
+                                                                                                  fluidDensity * velocity_t[j] - bodyForce[j] - fluidDensity * gravityField[j]);
+                // fluxRateVectorDynamic[i] += (tensorPermeability[i * dim + j] / fluidViscosity) * (pressure_x[j] -
+                // bodyForce[j] - fluidDensity * gravityField[j]);
             } // for
         } // for
 

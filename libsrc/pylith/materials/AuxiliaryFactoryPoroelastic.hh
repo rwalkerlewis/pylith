@@ -39,6 +39,10 @@ public:
     /// Destructor.
     virtual ~AuxiliaryFactoryPoroelastic(void);
 
+    /// Add previous iteration velocity for first order acceleration approximation in
+    /// dynamic darcy's law.
+    void addPriorVelocity(void);
+
     /// Add isotropic permeability subfield to auxiliary subfields.
     void addIsotropicPermeability(void);
 
