@@ -809,8 +809,10 @@ public:
         tensorOps.toTensor(fluxRate, fluxRateTensor);
         PylithInt dim = context.dim;
 
+        const PylithScalar fluidDensity = context.fluidDensity; // Fluid densitye
+
         for (PylithInt i = 0; i < dim; ++i) {
-            f1[i] += fluxRateTensor[i*dim+i];
+            f1[i] += fluxRateTensor[i*dim+i] * fluidDensity;
         } // for
     } // f1p
 

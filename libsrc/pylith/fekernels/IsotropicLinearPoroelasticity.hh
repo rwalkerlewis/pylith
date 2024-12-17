@@ -492,7 +492,7 @@ public:
 
     // ================================ Kernels ====================================
     // --------------------------------------------------------------------------------------------
-    /** Helper function for calculating Cauchy stress for WITHOUT a reference stress and strain.
+    /** Helper function for calculating Darcy flux for a single phase.
      *
      * ISA Poroelasticity::fluxrateFn
      *
@@ -532,6 +532,7 @@ public:
             } // for
         } // for
 
+        // Set Darcy velocity
         fluxRate->xx = fluxRateVector[0];
         fluxRate->yy = fluxRateVector[1];
         fluxRate->zz = fluxRateVector[2];
@@ -587,9 +588,10 @@ public:
         const PylithScalar pressure_t = poroelasticContext.pressure_t;
 
         // Rheological Auxiliaries
+        const PylithScalar fluidDensity = poroelasticContext.fluidDensity; // Fluid density
         const PylithScalar biotModulus = rheologyContext.biotModulus;
 
-        f0[0] += pressure_t / biotModulus;
+        f0[0] += pressure_t / biotModulus * fluidDensity;
     } // f0p_explicit
 
     // ----------------------------------------------------------------------
@@ -632,9 +634,10 @@ public:
         // Rheological Auxiliaries
         const PylithReal biotCoefficient = rheologyContext.biotCoefficient;
         const PylithReal biotModulus = rheologyContext.biotModulus;
+        const PylithScalar fluidDensity = poroelasticContext.fluidDensity; // Fluid density
 
-        f0[0] += s_t ? (biotCoefficient * trace_strain_t) : 0.0;
-        f0[0] += s_t ? (pressure_t / biotModulus) : 0.0;
+        f0[0] += s_t ? fluidDensity * (biotCoefficient * trace_strain_t) : 0.0;
+        f0[0] += s_t ? fluidDensity * (pressure_t / biotModulus) : 0.0;
 
     } // f0p_implicit
 
@@ -682,11 +685,12 @@ public:
         const PylithScalar source = poroelasticContext.sourceDensity;
 
         // Rheological Auxiliaries
+        const PylithScalar fluidDensity = poroelasticContext.fluidDensity; // Fluid density
         const PylithScalar biotCoefficient = rheologyContext.biotCoefficient;
         const PylithScalar biotModulus = rheologyContext.biotModulus;
 
-        f0[0] += biotCoefficient * trace_strain_t;
-        f0[0] += pressure_t / biotModulus;
+        f0[0] += fluidDensity * (biotCoefficient * trace_strain_t);
+        f0[0] += fluidDensity * (pressure_t / biotModulus);
         f0[0] -= source;
     } // f0p_implicit_source
 
