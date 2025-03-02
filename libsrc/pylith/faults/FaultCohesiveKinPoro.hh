@@ -1,31 +1,16 @@
-// -*- C++ -*-
+// =================================================================================================
+// This code is part of PyLith, developed through the Computational Infrastructure
+// for Geodynamics (https://github.com/geodynamics/pylith).
 //
-// ----------------------------------------------------------------------
+// Copyright (c) 2010-2025, University of California, Davis and the PyLith Development Team.
+// All rights reserved.
 //
-// Brad T. Aagaard, U.S. Geological Survey
-// Charles A. Williams, GNS Science
-// Matthew G. Knepley, University at Buffalo
-//
-// This code was developed as part of the Computational Infrastructure
-// for Geodynamics (http://geodynamics.org).
-//
-// Copyright (c) 2010-2021 University of California, Davis
-//
-// See LICENSE.md for license information.
-//
-// ----------------------------------------------------------------------
-//
-
-/** @file libsrc/faults/FaultCohesiveKinPoro.hh
- *
- * @brief C++ implementation for a poroelastic fault surface with kinematic
- * (prescribed) slip implemented with cohesive elements.
- */
-
-#if !defined(pylith_faults_faultcohesivekinporo_hh)
-#define pylith_faults_faultcohesivekinporo_hh
+// See https://mit-license.org/ and LICENSE.md and for license information.
+// =================================================================================================
+#pragma once
 
 #include "FaultCohesive.hh" // ISA FaultCohesive
+#include "pylith/materials/Material.hh" // USES Material
 
 #include <string> // HASA std::string
 #include <map> // HASA std::map
@@ -157,7 +142,5 @@ private:
     const FaultCohesiveKinPoro &operator=(const FaultCohesiveKinPoro &); ///< Not implemented.
 
 }; // class FaultCohesiveKinPoro
-
-#endif // pylith_faults_faultcohesivekinporo_hh
 
 // End of file

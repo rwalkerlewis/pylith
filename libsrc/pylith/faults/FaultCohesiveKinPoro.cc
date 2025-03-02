@@ -310,7 +310,7 @@ pylith::faults::FaultCohesiveKinPoro::createAuxiliaryField(const pylith::topolog
 // ------------------------------------------------------------------------------------------------
 // Update auxiliary fields at beginning of time step.
 void
-pylith::faults::FaultCohesiveKin::updateAuxiliaryField(pylith::topology::Field* auxiliaryField,
+pylith::faults::FaultCohesiveKinPoro::updateAuxiliaryField(pylith::topology::Field* auxiliaryField,
                                                        const double t) {
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("updateAuxiliaryField(auxiliaryField="<<auxiliaryField<<", t="<<t<<")");
@@ -350,7 +350,7 @@ pylith::faults::FaultCohesiveKinPoro::_getAuxiliaryFactory(void) {
 // ------------------------------------------------------------------------------------------------
 // Update slip subfield in auxiliary field at beginning of time step.
 void
-pylith::faults::FaultCohesiveKin::_updateSlip(pylith::topology::Field* auxiliaryField,
+pylith::faults::FaultCohesiveKinPoro::_updateSlip(pylith::topology::Field* auxiliaryField,
                                               const double t,
                                               const int bitSlipSubfields) {
     PYLITH_METHOD_BEGIN;

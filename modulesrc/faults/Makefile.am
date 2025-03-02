@@ -22,9 +22,12 @@ swig_sources = \
 	../problems/Physics.i \
 	FaultCohesive.i \
 	FaultCohesiveKin.i \
+	FaultCohesiveKinPoro.i \
 	FaultCohesiveImpulses.i \
 	KinSrc.i \
+	KinSrcPoro.i \
 	KinSrcStep.i \
+	KinSrcPoroStep.i \
 	KinSrcRamp.i \
 	KinSrcConstRate.i \
 	KinSrcBrune.i \

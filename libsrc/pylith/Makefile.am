@@ -37,18 +37,23 @@ libpylith_la_SOURCES = \
 	bc/AbsorbingDampersAuxiliaryFactory.cc \
 	faults/FaultCohesive.cc \
 	faults/FaultCohesiveKin.cc \
+	faults/FaultCohesiveKinPoro.cc \
 	faults/FaultCohesiveImpulses.cc \
 	faults/AuxiliaryFieldFactory.cc \
 	faults/DiagnosticFieldFactory.cc \
 	faults/DerivedFieldFactory.cc \
+	faults/AuxiliaryFactoryFactoryKinematicPoro.cc \
 	faults/KinSrc.cc \
+	faults/KinSrcPoro.cc \
 	faults/KinSrcStep.cc \
+	faults/KinSrcPoroStep.cc \
 	faults/KinSrcRamp.cc \
 	faults/KinSrcConstRate.cc \
 	faults/KinSrcBrune.cc \
 	faults/KinSrcLiuCos.cc \
 	faults/KinSrcTimeHistory.cc \
 	faults/KinSrcAuxiliaryFactory.cc \
+	faults/KinSrcPoroAuxiliaryFactory.cc \
 	faults/TopologyOps.cc \
 	faults/FaultOps.cc \
 	feassemble/PhysicsImplementation.cc \

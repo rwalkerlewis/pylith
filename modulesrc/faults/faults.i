@@ -14,9 +14,12 @@
 %{
 #include "pylith/faults/FaultCohesive.hh"
 #include "pylith/faults/FaultCohesiveKin.hh"
+#include "pylith/faults/FaultCohesiveKinPoro.hh"
 #include "pylith/faults/FaultCohesiveImpulses.hh"
 #include "pylith/faults/KinSrc.hh"
+#include "pylith/faults/KinSrcPoro.hh"
 #include "pylith/faults/KinSrcStep.hh"
+#include "pylith/faults/KinSrcPoroStep.hh"
 #include "pylith/faults/KinSrcRamp.hh"
 #include "pylith/faults/KinSrcConstRate.hh"
 #include "pylith/faults/KinSrcBrune.hh"
