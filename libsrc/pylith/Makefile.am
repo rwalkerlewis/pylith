@@ -42,7 +42,7 @@ libpylith_la_SOURCES = \
 	faults/AuxiliaryFieldFactory.cc \
 	faults/DiagnosticFieldFactory.cc \
 	faults/DerivedFieldFactory.cc \
-	faults/AuxiliaryFactoryFactoryKinematicPoro.cc \
+	faults/AuxiliaryFactoryKinematicPoro.cc \
 	faults/KinSrc.cc \
 	faults/KinSrcPoro.cc \
 	faults/KinSrcStep.cc \

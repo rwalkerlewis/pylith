@@ -18,10 +18,11 @@
 
 #include <portinfo>
 
-#include "FaultCohesiveKinPoro.hh" // implementation of object methods
+#include "pylith/faults/FaultCohesiveKinPoro.hh" // implementation of object methods
 
 #include "pylith/faults/KinSrcPoro.hh" // USES KinSrcPoro
 #include "pylith/faults/AuxiliaryFactoryKinematicPoro.hh" // USES AuxiliaryFactoryKinematicPoro
+#include "pylith/faults/DerivedFieldFactory.hh" // USES DerivedFieldFactory
 #include "pylith/feassemble/IntegratorInterface.hh" // USES IntegratorInterface
 #include "pylith/feassemble/InterfacePatches.hh" // USES InterfacePatches
 #include "pylith/feassemble/ConstraintSimple.hh" // USES ConstraintSimple
@@ -31,6 +32,7 @@
 #include "pylith/topology/FieldOps.hh" // USES FieldOps::checkDiscretization()
 #include "pylith/topology/VisitorMesh.hh" // USES VecVisitorMesh
 
+#include "pylith/fekernels/BoundaryDirections.hh" // USES BoundaryDirections
 #include "pylith/fekernels/FaultCohesiveKinPoro.hh" // USES FaultCohesiveKinPoro
 
 #include "pylith/utils/EventLogger.hh" // USES EventLogger
@@ -191,28 +193,28 @@ pylith::faults::FaultCohesiveKinPoro::verifyConfiguration(const pylith::topology
 } // verifyConfiguration
 
 
-// ------------------------------------------------------------------------------------------------
-// Create integrator and set kernels.
-pylith::feassemble::Integrator*
-pylith::faults::FaultCohesiveKinPoro::createIntegrator(const pylith::topology::Field& solution,
-                                                       const std::vector<pylith::materials::Material*>& materials) {
-    PYLITH_METHOD_BEGIN;
-    PYLITH_COMPONENT_DEBUG("createIntegrator(solution="<<solution.getLabel()<<")");
+// // ------------------------------------------------------------------------------------------------
+// // Create integrator and set kernels.
+// pylith::feassemble::Integrator*
+// pylith::faults::FaultCohesiveKinPoro::createIntegrator(const pylith::topology::Field& solution,
+//                                                        const std::vector<pylith::materials::Material*>& materials) {
+//     PYLITH_METHOD_BEGIN;
+//     PYLITH_COMPONENT_DEBUG("createIntegrator(solution="<<solution.getLabel()<<")");
 
-    pylith::feassemble::IntegratorInterface* integrator = new pylith::feassemble::IntegratorInterface(this);assert(integrator);
-    integrator->setLabelName(getCohesiveLabelName());
-    integrator->setLabelValue(getCohesiveLabelValue());
-    integrator->setSurfaceLabelName(getSurfaceLabelName());
+//     pylith::feassemble::IntegratorInterface* integrator = new pylith::feassemble::IntegratorInterface(this);assert(integrator);
+//     integrator->setLabelName(getCohesiveLabelName());
+//     integrator->setLabelValue(getCohesiveLabelValue());
+//     integrator->setSurfaceLabelName(getSurfaceLabelName());
 
-    pylith::feassemble::InterfacePatches* patches =
-        pylith::feassemble::InterfacePatches::createMaterialPairs(this, solution.getDM());
-    integrator->setIntegrationPatches(patches);
+//     pylith::feassemble::InterfacePatches* patches =
+//         pylith::feassemble::InterfacePatches::createMaterialPairs(this, solution.getDM());
+//     integrator->setIntegrationPatches(patches);
 
-    _setKernelsResidual(integrator, solution, materials);
-    _setKernelsJacobian(integrator, solution, materials);
+//     _setKernelsResidual(integrator, solution, materials);
+//     _setKernelsJacobian(integrator, solution, materials);
 
-    PYLITH_METHOD_RETURN(integrator);
-} // createIntegrator
+//     PYLITH_METHOD_RETURN(integrator);
+// } // createIntegrator
 
 
 // ------------------------------------------------------------------------------------------------
@@ -321,10 +323,10 @@ pylith::faults::FaultCohesiveKinPoro::updateAuxiliaryField(pylith::topology::Fie
     int bitSlipSubfields = 0x0;
     switch (_formulation) {
     case QUASISTATIC:
-        bitSlipSubfields = pylith::faults::KinSrc::GET_SLIP;
+        bitSlipSubfields = pylith::faults::KinSrcPoro::GET_SLIP;
         break;
     case DYNAMIC_IMEX:
-        bitSlipSubfields = pylith::faults::KinSrc::GET_SLIP | pylith::faults::KinSrc::GET_SLIP_ACC;
+        bitSlipSubfields = pylith::faults::KinSrcPoro::GET_SLIP | pylith::faults::KinSrcPoro::GET_SLIP_ACC;
         break;
     case DYNAMIC:
         PYLITH_COMPONENT_LOGICERROR("Fault implementation is incompatible with 'dynamic' formulation. Use 'dynamic_imex'.");
@@ -339,12 +341,12 @@ pylith::faults::FaultCohesiveKinPoro::updateAuxiliaryField(pylith::topology::Fie
 } // updateAuxiliaryField
 
 
-// ------------------------------------------------------------------------------------------------
-// Get auxiliary factory associated with physics.
-pylith::feassemble::AuxiliaryFactory *
-pylith::faults::FaultCohesiveKinPoro::_getAuxiliaryFactory(void) {
-    return _auxiliaryFactory;
-} // _getAuxiliaryFactory
+// // ------------------------------------------------------------------------------------------------
+// // Get auxiliary factory associated with physics.
+// pylith::feassemble::AuxiliaryFactory *
+// pylith::faults::FaultCohesiveKinPoro::_getAuxiliaryFactory(void) {
+//     return _auxiliaryFactory;
+// } // _getAuxiliaryFactory
 
 
 // ------------------------------------------------------------------------------------------------
@@ -365,7 +367,7 @@ pylith::faults::FaultCohesiveKinPoro::_updateSlip(pylith::topology::Field* auxil
     for (srcs_type::iterator r_iter = _ruptures.begin(); r_iter != rupturesEnd; ++r_iter) {
         err = VecSet(_slipVecRupture, 0.0);PYLITH_CHECK_ERROR(err);
 
-        KinSrc* src = r_iter->second;assert(src);
+        KinSrcPoro* src = r_iter->second;assert(src);
         src->getSlipSubfields(_slipVecRupture, auxiliaryField, t, _normalizer->getTimeScale(), bitSlipSubfields);
         err = VecAYPX(_slipVecTotal, 1.0, _slipVecRupture);
     } // for
@@ -375,13 +377,13 @@ pylith::faults::FaultCohesiveKinPoro::_updateSlip(pylith::topology::Field* auxil
     err = PetscSectionGetChart(auxiliaryField->getLocalSection(), &pStart, &pEnd);PYLITH_CHECK_ERROR(err);
     PetscInt subfieldIndices[3];
     PetscInt numSubfields = 0;
-    if (bitSlipSubfields & KinSrc::GET_SLIP) {
+    if (bitSlipSubfields & KinSrcPoro::GET_SLIP) {
         subfieldIndices[numSubfields++] = auxiliaryField->getSubfieldInfo("slip").index;
     } // if
-    if (bitSlipSubfields & KinSrc::GET_SLIP_RATE) {
+    if (bitSlipSubfields & KinSrcPoro::GET_SLIP_RATE) {
         subfieldIndices[numSubfields++] = auxiliaryField->getSubfieldInfo("slip_rate").index;
     } // if
-    if (bitSlipSubfields & KinSrc::GET_SLIP_ACC) {
+    if (bitSlipSubfields & KinSrcPoro::GET_SLIP_ACC) {
         subfieldIndices[numSubfields++] = auxiliaryField->getSubfieldInfo("slip_acceleration").index;
     } // if
 

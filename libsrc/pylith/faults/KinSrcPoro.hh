@@ -51,6 +51,14 @@
 class pylith::faults::KinSrcPoro : public pylith::utils::PyreComponent {
     friend class TestKinSrcPoro; // unit testing
 
+// PUBLIC MEMBERS /////////////////////////////////////////////////////////////////////////////
+public:
+
+static const int GET_SLIP;
+static const int GET_SLIP_RATE;
+static const int GET_SLIP_ACC;
+
+
     // PUBLIC METHODS /////////////////////////////////////////////////////
 public:
 
@@ -97,6 +105,22 @@ public:
     void initialize(const pylith::topology::Field& auxField,
                     const spatialdata::units::Nondimensional& normalizer,
                     const spatialdata::geocoords::CoordSys* cs);
+
+
+    /** Get requested slip subfields at time t.
+     *
+     * @param[inout] slipLocalVec Local PETSc vector for slip, slip rate, or slip accelerationvalues.
+     * @param[in] faultAuxiliaryField Auxiliary field for fault.
+     * @param[in] t Time t.
+     * @param[in] timeScale Time scale for nondimensionalization.
+     * @param[in] bitSlipSubfields Slip subfields to compute.
+     */
+    virtual
+    void getSlipSubfields(PetscVec slipLocalVec,
+                          pylith::topology::Field* faultAuxiliaryField,
+                          const PylithScalar t,
+                          const PylithScalar timeScale,
+                          const int bitSlipSubfields);
 
     // ** TO DO **
     // implement the following add* functions
