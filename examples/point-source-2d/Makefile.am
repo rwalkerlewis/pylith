@@ -8,11 +8,13 @@
 # See https://mit-license.org/ and LICENSE.md and for license information. 
 # =================================================================================================
 
-SUBDIRS = \
-	nofaults-2d \
-	nofaults-3d \
-	faults-2d \
-	pointsource-2d
+dist_noinst_DATA = \
+	README.md \
+	pylithapp.cfg \
+	step01_explosion.cfg \
+	step02_strikeslip.cfg \
+	step03_multiple.cfg \
+	step04_ramp.cfg \
+	step05_step.cfg
 
-
-# End of file 
+# End of file

@@ -48,6 +48,14 @@ def observerFactory(name):
     return facility(name, family="observer", factory=OutputSolnDomain)
 
 
+def pointSourceFactory(name):
+    """Factory for point source items."""
+    from pythia.pyre.inventory import facility
+    from pylith.sources.PointMomentTensor import PointMomentTensor
+
+    return facility(name, family="point_source", factory=PointMomentTensor)
+
+
 class Problem(PetscComponent, ModuleProblem):
     """
     Abstract base class for a problem.
@@ -133,10 +141,19 @@ class Problem(PetscComponent, ModuleProblem):
     )
     gravityField.meta["tip"] = "Database used for gravity field."
 
+    sources = pythia.pyre.inventory.facilityArray(
+        "sources", itemFactory=pointSourceFactory, factory=EmptyBin
+    )
+    sources.meta["tip"] = (
+        "Point sources for elastodynamics (e.g., moment tensor sources). "
+        "Used primarily for dynamic simulations."
+    )
+
     def __init__(self, name="problem"):
         """Constructor."""
         PetscComponent.__init__(self, name, facility="problem")
         self.mesh = None
+        self._sources = []  # Store point sources for access during simulation
 
     def preinitialize(self, mesh):
         """Do minimal initialization."""
@@ -191,6 +208,11 @@ class Problem(PetscComponent, ModuleProblem):
             interface.preinitialize(self)
         ModuleProblem.setInterfaces(self, self.interfaces.components())
 
+        # Preinitialize point sources
+        self._sources = list(self.sources.components())
+        for source in self._sources:
+            source.preinitialize(self)
+
         # Preinitialize observers.
         for observer in self.observers.components():
             observer.preinitialize(self)
@@ -235,18 +257,33 @@ class Problem(PetscComponent, ModuleProblem):
         """Save problem state for restart."""
         raise NotImplementedError("checkpoint() not implemented.")
 
+    def getPointSources(self):
+        """Get list of point sources.
+        
+        Returns:
+            list: List of point source objects.
+        """
+        return self._sources
+
     # PRIVATE METHODS ////////////////////////////////////////////////////
 
     def _printInfo(self):
         """Write overview of problem to info journal."""
-        msg = (
+        msg = [
             "Scales for nondimensionalization:",
             "    Length scale: {}".format(self.scales.getLengthScale()),
             "    Displacement scale: {}".format(self.scales.getDisplacementScale()),
             "    Time scale: {}".format(self.scales.getTimeScale()),
             "    Rigidity scale: {}".format(self.scales.getRigidityScale()),
             "    Temperature scale: {}".format(self.scales.getTemperatureScale()),
-        )
+        ]
+        
+        # Add point source information
+        if self._sources:
+            msg.append("Point sources:")
+            for source in self._sources:
+                msg.append(f"    {source.aliases[-1]}: location={source.location}, magnitude={source.magnitude}")
+        
         self._info.log("\n".join(msg))
 
     def _setupLogging(self):
