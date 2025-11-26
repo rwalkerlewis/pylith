@@ -57,6 +57,9 @@ namespace pylith {
         class FaultCohesive;
         class FaultCohesiveKin;
 
+        class PointForce2D;
+        class PointForce3D;
+
         class BoundaryDirections;
     } // fekernels
 } // pylith
