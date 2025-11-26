@@ -8,11 +8,15 @@
 # See https://mit-license.org/ and LICENSE.md and for license information. 
 # =================================================================================================
 
-SUBDIRS = \
-	nofaults-2d \
-	nofaults-3d \
-	faults-2d \
-	pointsource-2d
+subpackage = sources
+include $(top_srcdir)/modulesrc/module.am
 
+swig_sources = \
+	sources.i \
+	PointForce.i
 
-# End of file 
+swig_generated = \
+	sources_wrap.cxx \
+	sources.py
+
+# End of file
