@@ -25,5 +25,11 @@ dist_noinst_DATA = \
 	pointsource_strikeslip.cfg \
 	mesh/domain.geo
 
+export_datadir = $(abs_builddir)
+include $(top_srcdir)/tests/data.am
+
+clean-local: clean-data
+	$(RM) $(RM_FLAGS) -r output __pycache__
+
 
 # End of file

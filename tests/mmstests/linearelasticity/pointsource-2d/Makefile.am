@@ -12,28 +12,36 @@ include $(top_srcdir)/tests/check_catch2.am
 
 MMS_DRIVER = mmstest_linearelasticity_pointsource2d
 
-TESTS = run_$(MMS_DRIVER).sh
+TESTS = run_PointForceExplosion2D.sh
+
+check_SCRIPTS = $(TESTS)
 
 check_PROGRAMS = $(MMS_DRIVER)
 
 mmstest_linearelasticity_pointsource2d_SOURCES = \
+	$(top_srcdir)/tests/src/MMSTest.cc \
+	$(top_srcdir)/tests/src/driver_catch2.cc \
 	TestPointForce.cc \
-	TestPointForce.hh \
-	PointForceExplosion2D.cc \
-	PointForceExplosion2D.hh \
-	TestCases.cc
+	TestCases.cc \
+	PointForceExplosion2D.cc
 
-run_$(MMS_DRIVER).sh:
+run_%.sh:
 	echo "#!/bin/bash" > $@
-	echo "$(abs_builddir)/$(MMS_DRIVER) -v yes [TriP1]" >> $@
+	echo "$(abs_builddir)/$(MMS_DRIVER) [$*]" >> $@
 	chmod +x $@
+
+dist_noinst_HEADERS = \
+	TestPointForce.hh \
+	PointForceExplosion2D.hh
 
 dist_noinst_DATA = \
 	data/tri.mesh \
 	data/quad.mesh
 
+export_datadir = $(abs_builddir)
+include $(top_srcdir)/tests/data.am
 
-CLEANFILES = run_$(MMS_DRIVER).sh
+CLEANFILES = $(check_SCRIPTS)
 
 
 # End of file
