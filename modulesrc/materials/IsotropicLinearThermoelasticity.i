@@ -40,6 +40,88 @@ public:
              */
             bool useReferenceState(void) const;
 
+            /** Get auxiliary factory associated with physics.
+             *
+             * @return Auxiliary factory for physics object.
+             */
+            pylith::materials::AuxiliaryFactoryThermoelasticity* getAuxiliaryFactory(void);
+
+            /** Add rheology subfields to auxiliary field.
+             */
+            void addAuxiliarySubfields(void);
+
+            /** Get stress kernel for LHS residual.
+             *
+             * @param[in] coordsys Coordinate system.
+             *
+             * @return Stress kernel for LHS residual.
+             */
+            PetscPointFunc getKernelf1u_implicit(const spatialdata::geocoords::CoordSys* coordsys) const;
+
+            /** Get stress kernel for RHS residual.
+             *
+             * @param[in] coordsys Coordinate system.
+             *
+             * @return Stress kernel for RHS residual.
+             */
+            PetscPointFunc getKernelg1u_explicit(const spatialdata::geocoords::CoordSys* coordsys) const;
+
+            /** Get elastic constants kernel for LHS Jacobian.
+             *
+             * @param[in] coordsys Coordinate system.
+             *
+             * @return Elastic constants kernel for LHS Jacobian.
+             */
+            PetscPointJac getKernelJf3uu(const spatialdata::geocoords::CoordSys* coordsys) const;
+
+            /** Get coupling kernel Jf2_uT for stress-temperature coupling.
+             *
+             * @param[in] coordsys Coordinate system.
+             *
+             * @return Coupling kernel for LHS Jacobian.
+             */
+            PetscPointJac getKernelJf2uT(const spatialdata::geocoords::CoordSys* coordsys) const;
+
+            /** Get heat flux kernel for LHS residual (implicit).
+             *
+             * @param[in] coordsys Coordinate system.
+             *
+             * @return Heat flux kernel for LHS residual.
+             */
+            PetscPointFunc getKernelf1T_implicit(const spatialdata::geocoords::CoordSys* coordsys) const;
+
+            /** Get heat flux kernel for RHS residual (explicit).
+             *
+             * @param[in] coordsys Coordinate system.
+             *
+             * @return Heat flux kernel for RHS residual.
+             */
+            PetscPointFunc getKernelg1T_explicit(const spatialdata::geocoords::CoordSys* coordsys) const;
+
+            /** Get thermal conductivity kernel for LHS Jacobian.
+             *
+             * @param[in] coordsys Coordinate system.
+             *
+             * @return Thermal conductivity kernel for LHS Jacobian.
+             */
+            PetscPointJac getKernelJf3TT(const spatialdata::geocoords::CoordSys* coordsys) const;
+
+            /** Get stress kernel for derived field.
+             *
+             * @param[in] coordsys Coordinate system.
+             *
+             * @return Stress kernel for derived field.
+             */
+            PetscPointFunc getKernelCauchyStressVector(const spatialdata::geocoords::CoordSys* coordsys) const;
+
+            /** Get heat flux kernel for derived field.
+             *
+             * @param[in] coordsys Coordinate system.
+             *
+             * @return Heat flux kernel for derived field.
+             */
+            PetscPointFunc getKernelHeatFluxVector(const spatialdata::geocoords::CoordSys* coordsys) const;
+
         }; // class IsotropicLinearThermoelasticity
 
     } // materials

@@ -32,10 +32,10 @@ public:
      *
      * @return Auxiliary factory for physics object.
      */
-    pylith::materials::AuxiliaryFactoryHeat* getAuxiliaryFactory(void);
+    pylith::materials::AuxiliaryFactoryHeat* getAuxiliaryFactory(void) override;
 
     /// Add rheology subfields to auxiliary field.
-    void addAuxiliarySubfields(void);
+    void addAuxiliarySubfields(void) override;
 
     // ============================= LHS Residual ==================================== //
 
@@ -45,7 +45,7 @@ public:
      *
      * @return LHS residual kernel for heat flux (f1).
      */
-    PetscPointFn* getKernelf1T_implicit(const spatialdata::geocoords::CoordSys* coordsys) const;
+    PetscPointFn* getKernelf1T_implicit(const spatialdata::geocoords::CoordSys* coordsys) const override;
 
     // ============================= RHS Residual ==================================== //
 
@@ -55,7 +55,7 @@ public:
      *
      * @return RHS residual kernel for heat flux.
      */
-    PetscPointFn* getKernelg1T_explicit(const spatialdata::geocoords::CoordSys* coordsys) const;
+    PetscPointFn* getKernelg1T_explicit(const spatialdata::geocoords::CoordSys* coordsys) const override;
 
     // =============================== LHS Jacobian =================================== //
 
@@ -65,7 +65,7 @@ public:
      *
      * @return LHS Jacobian kernel for thermal conductivity.
      */
-    PetscPointJacFn* getKernelJf3TT(const spatialdata::geocoords::CoordSys* coordsys) const;
+    PetscPointJacFn* getKernelJf3TT(const spatialdata::geocoords::CoordSys* coordsys) const override;
 
     // ============================ DERIVED FIELDS ========================== //
 
@@ -75,7 +75,7 @@ public:
      *
      * @return Project kernel for computing heat flux subfield in derived field.
      */
-    PetscPointFn* getKernelHeatFluxVector(const spatialdata::geocoords::CoordSys* coordsys) const;
+    PetscPointFn* getKernelHeatFluxVector(const spatialdata::geocoords::CoordSys* coordsys) const override;
 
     // PRIVATE MEMBERS /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
