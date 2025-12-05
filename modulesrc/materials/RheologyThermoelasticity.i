@@ -1,0 +1,37 @@
+// =================================================================================================
+// This code is part of PyLith, developed through the Computational Infrastructure
+// for Geodynamics (https://github.com/geodynamics/pylith).
+//
+// Copyright (c) 2010-2025, University of California, Davis and the PyLith Development Team.
+// All rights reserved.
+//
+// See https://mit-license.org/ and LICENSE.md and for license information.
+// =================================================================================================
+
+/** @file modulesrc/materials/RheologyThermoelasticity.i
+ *
+ * Python interface to C++ RheologyThermoelasticity.
+ */
+
+namespace pylith {
+    namespace materials {
+        class RheologyThermoelasticity : public pylith::utils::PyreComponent {
+            // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////
+public:
+
+            /// Default constructor.
+            RheologyThermoelasticity(void);
+
+            /// Destructor.
+            virtual ~RheologyThermoelasticity(void);
+
+            /// Deallocate PETSc and local data structures.
+            virtual
+            void deallocate(void);
+
+        }; // class RheologyThermoelasticity
+
+    } // materials
+} // pylith
+
+// End of file

@@ -53,6 +53,9 @@ namespace pylith {
         class HeatEquation;
         class IsotropicHeat;
 
+        class Thermoelasticity;
+        class IsotropicLinearThermoelasticity;
+
         class TimeDependentFn;
         class NeumannTimeDependent;
         class AbsorbingDampers;

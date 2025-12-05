@@ -10,63 +10,62 @@
 #pragma once
 
 #include "pylith/materials/materialsfwd.hh" // forward declarations
-#include "pylith/utils/PyreComponent.hh" // ISA PyreComponent
+#include "pylith/materials/RheologyThermoelasticity.hh" // ISA RheologyThermoelasticity
 
-#include "pylith/topology/topologyfwd.hh" // USES Field
-#include "pylith/feassemble/feassemblefwd.hh" // USES AuxiliaryFactory
-#include "pylith/utils/petscfwd.h" // USES PetscPointFunc, PetscPointJac
-
-#include "spatialdata/geocoords/geocoordsfwd.hh" // USES CoordSys
-
-class pylith::materials::RheologyThermoelasticity : public pylith::utils::PyreComponent {
-    friend class TestRheologyThermoelasticity; // unit testing
+class pylith::materials::IsotropicLinearThermoelasticity : public pylith::materials::RheologyThermoelasticity {
+    friend class TestIsotropicLinearThermoelasticity; // unit testing
 
     // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////////////
 public:
 
     /// Default constructor.
-    RheologyThermoelasticity(void);
+    IsotropicLinearThermoelasticity(void);
 
     /// Destructor.
-    virtual ~RheologyThermoelasticity(void);
+    ~IsotropicLinearThermoelasticity(void);
 
     /// Deallocate PETSc and local data structures.
-    virtual
     void deallocate(void);
+
+    /** Include reference stress/strain?
+     *
+     * @param value Flag indicating to include reference stress/strain.
+     */
+    void useReferenceState(const bool value);
+
+    /** Include reference stress/strain?
+     *
+     * @returns True if including reference stress/strain, false otherwise.
+     */
+    bool useReferenceState(void) const;
 
     /** Get auxiliary factory associated with physics.
      *
      * @return Auxiliary factory for physics object.
      */
-    virtual
-    pylith::materials::AuxiliaryFactoryThermoelasticity* getAuxiliaryFactory(void) = 0;
+    pylith::materials::AuxiliaryFactoryThermoelasticity* getAuxiliaryFactory(void);
 
     /** Add rheology subfields to auxiliary field.
-     *
-     * @param[inout] auxiliaryField Auxiliary field.
      */
-    virtual
-    void addAuxiliarySubfields(void) = 0;
+    void addAuxiliarySubfields(void);
 
     // ============================= Displacement Equation =============================
 
-    /** Get stress kernel for LHS residual, F(t,s,\dot{s}).
+    /** Get stress kernel for LHS residual.
      *
      * @param[in] coordsys Coordinate system.
      *
      * @return Stress kernel for LHS residual.
      */
-    virtual
-    PetscPointFunc getKernelf1u_implicit(const spatialdata::geocoords::CoordSys* coordsys) const = 0;
+    PetscPointFunc getKernelf1u_implicit(const spatialdata::geocoords::CoordSys* coordsys) const;
 
-    /** Get stress kernel for RHS residual, G(t,s).
+    /** Get stress kernel for RHS residual.
      *
      * @param[in] coordsys Coordinate system.
      *
      * @return Stress kernel for RHS residual.
      */
-    virtual
-    PetscPointFunc getKernelg1u_explicit(const spatialdata::geocoords::CoordSys* coordsys) const = 0;
+    PetscPointFunc getKernelg1u_explicit(const spatialdata::geocoords::CoordSys* coordsys) const;
 
     /** Get elastic constants kernel for LHS Jacobian.
      *
@@ -74,17 +73,15 @@ public:
      *
      * @return Elastic constants kernel for LHS Jacobian.
      */
-    virtual
-    PetscPointJac getKernelJf3uu(const spatialdata::geocoords::CoordSys* coordsys) const = 0;
+    PetscPointJac getKernelJf3uu(const spatialdata::geocoords::CoordSys* coordsys) const;
 
-    /** Get coupling kernel for stress-temperature coupling (Jf2_uT).
+    /** Get coupling kernel Jf2_uT for stress-temperature coupling.
      *
      * @param[in] coordsys Coordinate system.
      *
      * @return Coupling kernel for LHS Jacobian.
      */
-    virtual
-    PetscPointJac getKernelJf2uT(const spatialdata::geocoords::CoordSys* coordsys) const = 0;
+    PetscPointJac getKernelJf2uT(const spatialdata::geocoords::CoordSys* coordsys) const;
 
     // ============================= Temperature Equation =============================
 
@@ -94,8 +91,7 @@ public:
      *
      * @return Heat flux kernel for LHS residual.
      */
-    virtual
-    PetscPointFunc getKernelf1T_implicit(const spatialdata::geocoords::CoordSys* coordsys) const = 0;
+    PetscPointFunc getKernelf1T_implicit(const spatialdata::geocoords::CoordSys* coordsys) const;
 
     /** Get heat flux kernel for RHS residual (explicit).
      *
@@ -103,8 +99,7 @@ public:
      *
      * @return Heat flux kernel for RHS residual.
      */
-    virtual
-    PetscPointFunc getKernelg1T_explicit(const spatialdata::geocoords::CoordSys* coordsys) const = 0;
+    PetscPointFunc getKernelg1T_explicit(const spatialdata::geocoords::CoordSys* coordsys) const;
 
     /** Get thermal conductivity kernel for LHS Jacobian.
      *
@@ -112,8 +107,7 @@ public:
      *
      * @return Thermal conductivity kernel for LHS Jacobian.
      */
-    virtual
-    PetscPointJac getKernelJf3TT(const spatialdata::geocoords::CoordSys* coordsys) const = 0;
+    PetscPointJac getKernelJf3TT(const spatialdata::geocoords::CoordSys* coordsys) const;
 
     // ============================= Derived Fields =============================
 
@@ -123,8 +117,7 @@ public:
      *
      * @return Stress kernel for derived field.
      */
-    virtual
-    PetscPointFunc getKernelCauchyStressVector(const spatialdata::geocoords::CoordSys* coordsys) const = 0;
+    PetscPointFunc getKernelCauchyStressVector(const spatialdata::geocoords::CoordSys* coordsys) const;
 
     /** Get heat flux kernel for derived field.
      *
@@ -132,24 +125,20 @@ public:
      *
      * @return Heat flux kernel for derived field.
      */
-    virtual
-    PetscPointFunc getKernelHeatFluxVector(const spatialdata::geocoords::CoordSys* coordsys) const = 0;
+    PetscPointFunc getKernelHeatFluxVector(const spatialdata::geocoords::CoordSys* coordsys) const;
 
-    /** Update kernel constants.
-     *
-     * @param[inout] kernelConstants Array of constants used in integration kernels.
-     * @param[in] dt Current time step.
-     */
-    virtual
-    void updateKernelConstants(pylith::real_array* kernelConstants,
-                               const PylithReal dt) const;
+    // PRIVATE MEMBERS /////////////////////////////////////////////////////////////////////////////////////////////////
+private:
+
+    pylith::materials::AuxiliaryFactoryThermoelasticity* _auxiliaryFactory; ///< Factory for auxiliary subfields.
+    bool _useReferenceState; ///< Flag to use reference stress/strain.
 
     // NOT IMPLEMENTED /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
 
-    RheologyThermoelasticity(const RheologyThermoelasticity &); ///< Not implemented.
-    const RheologyThermoelasticity& operator=(const RheologyThermoelasticity&); ///< Not implemented
+    IsotropicLinearThermoelasticity(const IsotropicLinearThermoelasticity &); ///< Not implemented.
+    const IsotropicLinearThermoelasticity& operator=(const IsotropicLinearThermoelasticity&); ///< Not implemented
 
-}; // class RheologyThermoelasticity
+}; // class IsotropicLinearThermoelasticity
 
 // End of file

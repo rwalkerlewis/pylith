@@ -8,12 +8,23 @@
 # See https://mit-license.org/ and LICENSE.md and for license information. 
 # =================================================================================================
 
-SUBDIRS = \
-	linearelasticity \
-	incompressibleelasticity \
-	poroelasticity \
-	heat \
-	thermoelasticity
+include $(top_srcdir)/tests/check_cppunit.am
+
+TESTS = test_pylith.py
+
+dist_check_SCRIPTS = test_pylith.py
+
+dist_noinst_PYTHON = \
+	meshes.py \
+	thermobar_soln.py \
+	TestThermoBar.py
+
+dist_noinst_DATA = \
+	mesh_tri.mesh \
+	mesh_quad.mesh \
+	pylithapp.cfg \
+	thermobar_tri.cfg \
+	thermobar_quad.cfg
 
 
-# End of file 
+# End of file

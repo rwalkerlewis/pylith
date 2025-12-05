@@ -47,6 +47,12 @@ namespace pylith {
         class RheologyHeat;
         class IsotropicHeat;
 
+        class Thermoelasticity;
+        class AuxiliaryFactoryThermoelasticity;
+
+        class RheologyThermoelasticity;
+        class IsotropicLinearThermoelasticity;
+
         class Query;
 
     } // materials

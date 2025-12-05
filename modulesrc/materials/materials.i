@@ -32,6 +32,10 @@
 #include "pylith/materials/RheologyHeat.hh"
 #include "pylith/materials/IsotropicHeat.hh"
 
+#include "pylith/materials/Thermoelasticity.hh"
+#include "pylith/materials/RheologyThermoelasticity.hh"
+#include "pylith/materials/IsotropicLinearThermoelasticity.hh"
+
 #include "pylith/utils/arrayfwd.hh"
 %}
 
@@ -79,5 +83,9 @@ import_array();
 %include "Heat.i"
 %include "RheologyHeat.i"
 %include "IsotropicHeat.i"
+
+%include "Thermoelasticity.i"
+%include "RheologyThermoelasticity.i"
+%include "IsotropicLinearThermoelasticity.i"
 
 // End of file

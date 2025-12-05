@@ -15,6 +15,7 @@ SUBDIRS = \
 	viscoelasticity \
 	poroelasticity \
 	heat \
+	thermoelasticity \
 	petsc \
 	eqinfo
 

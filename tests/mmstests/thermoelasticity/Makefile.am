@@ -8,12 +8,6 @@
 # See https://mit-license.org/ and LICENSE.md and for license information. 
 # =================================================================================================
 
-SUBDIRS = \
-	linearelasticity \
-	incompressibleelasticity \
-	poroelasticity \
-	heat \
-	thermoelasticity
+SUBDIRS = nofaults-2d
 
-
-# End of file 
+# End of file
