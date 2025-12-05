@@ -32,6 +32,9 @@ swig_sources = \
 	IsotropicLinearPoroelasticity.i \
 	RheologyPoroelasticity.i \
 	Poroelasticity.i \
+	Heat.i \
+	RheologyHeat.i \
+	IsotropicHeat.i \
 	../utils/PyreComponent.i
 
 swigincludedir = $(pkgdatadir)/swig/$(subpackage)
