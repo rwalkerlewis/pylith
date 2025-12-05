@@ -50,6 +50,15 @@ namespace pylith {
         class IsotropicLinearPoroelasticityPlaneStrain;
         class IsotropicLinearPoroelasticity3D;
 
+        class HeatEquation;
+        class IsotropicHeat;
+
+        class Thermoelasticity;
+        class IsotropicLinearThermoelasticity;
+
+        class Thermoporoelasticity;
+        class IsotropicLinearThermoporoelasticity;
+
         class TimeDependentFn;
         class NeumannTimeDependent;
         class AbsorbingDampers;
