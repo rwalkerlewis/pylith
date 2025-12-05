@@ -9,12 +9,6 @@
 # =================================================================================================
 
 SUBDIRS = \
-	linearelasticity \
-	incompressibleelasticity \
-	poroelasticity \
-	heat \
-	thermoelasticity \
-	thermoporoelasticity
+	nofaults-2d
 
-
-# End of file 
+# End of file

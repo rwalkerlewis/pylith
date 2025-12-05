@@ -44,6 +44,10 @@ __all__ = [
     "RheologyThermoelasticity",
     "IsotropicLinearThermoelasticity",
     "AuxSubfieldsThermoelasticity",
+    "Thermoporoelasticity",
+    "RheologyThermoporoelasticity",
+    "IsotropicLinearThermoporoelasticity",
+    "AuxSubfieldsThermoporoelasticity",
 ]
 
 

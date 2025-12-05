@@ -29,6 +29,8 @@ subpkginclude_HEADERS = \
 	IsotropicHeat.hh \
 	Thermoelasticity.hh \
 	IsotropicLinearThermoelasticity.hh \
+	Thermoporoelasticity.hh \
+	IsotropicLinearThermoporoelasticity.hh \
 	Solution.hh \
 	DispVel.hh \
 	TimeDependentFn.hh \

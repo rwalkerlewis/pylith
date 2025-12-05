@@ -8,13 +8,18 @@
 # See https://mit-license.org/ and LICENSE.md and for license information. 
 # =================================================================================================
 
-SUBDIRS = \
-	linearelasticity \
-	incompressibleelasticity \
-	poroelasticity \
-	heat \
-	thermoelasticity \
-	thermoporoelasticity
+include $(top_srcdir)/tests/check_catch2.am
+
+TESTS = 
+
+noinst_HEADERS = \
+	TestThermoporoelasticity.hh
+
+# Note: TestCases.cc is intentionally omitted until tests are complete
+
+dist_noinst_DATA = \
+	data/tri.mesh \
+	data/quad.mesh
 
 
-# End of file 
+# End of file

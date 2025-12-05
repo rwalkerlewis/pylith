@@ -38,6 +38,10 @@ subpkginclude_HEADERS = \
 	RheologyThermoelasticity.hh \
 	AuxiliaryFactoryThermoelasticity.hh \
 	IsotropicLinearThermoelasticity.hh \
+	Thermoporoelasticity.hh \
+	RheologyThermoporoelasticity.hh \
+	AuxiliaryFactoryThermoporoelasticity.hh \
+	IsotropicLinearThermoporoelasticity.hh \
 	AuxiliaryFactoryElastic.hh \
 	AuxiliaryFactoryViscoelastic.hh \
 	IncompressibleElasticity.hh \
