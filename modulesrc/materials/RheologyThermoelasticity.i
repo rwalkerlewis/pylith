@@ -10,17 +10,16 @@
 
 /** @file modulesrc/materials/RheologyThermoelasticity.i
  *
- * Python interface to C++ RheologyThermoelasticity.
+ * Python interface to C++ abstract base class RheologyThermoelasticity.
  */
 
 namespace pylith {
     namespace materials {
+        // RheologyThermoelasticity is an abstract base class - no constructor exposed.
+        // Concrete implementations (e.g., IsotropicLinearThermoelasticity) are used instead.
         class RheologyThermoelasticity : public pylith::utils::PyreComponent {
             // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////
 public:
-
-            /// Default constructor.
-            RheologyThermoelasticity(void);
 
             /// Destructor.
             virtual ~RheologyThermoelasticity(void);
@@ -28,6 +27,26 @@ public:
             /// Deallocate PETSc and local data structures.
             virtual
             void deallocate(void);
+
+            /** Get auxiliary factory associated with physics.
+             *
+             * @return Auxiliary factory for physics object.
+             */
+            virtual
+            pylith::materials::AuxiliaryFactoryThermoelasticity* getAuxiliaryFactory(void) = 0;
+
+            /// Add rheology subfields to auxiliary field.
+            virtual
+            void addAuxiliarySubfields(void) = 0;
+
+            /** Update kernel constants.
+             *
+             * @param[inout] kernelConstants Array of constants used in integration kernels.
+             * @param[in] dt Current time step.
+             */
+            virtual
+            void updateKernelConstants(pylith::real_array* kernelConstants,
+                                       const PylithReal dt) const;
 
         }; // class RheologyThermoelasticity
 
