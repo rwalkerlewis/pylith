@@ -32,6 +32,7 @@ __all__ = [
     "SolnDispPresVel",
     "SolnTemp",
     "SolnDispTemp",
+    "SolnDispVelTemp",
     "SolnDispPresTemp",
     "SolnPresTemp",
     "SolutionSubfield",

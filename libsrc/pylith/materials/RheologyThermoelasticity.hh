@@ -115,6 +115,39 @@ public:
     virtual
     PetscPointJac getKernelJf3TT(const spatialdata::geocoords::CoordSys* coordsys) const = 0;
 
+    // ============================= Two-Way Coupling Kernels =============================
+
+    /** Get thermoelastic heating kernel for temperature equation (f0).
+     *
+     * For two-way coupling: f0_T includes -T α 3K ∇·v term.
+     *
+     * @param[in] coordsys Coordinate system.
+     *
+     * @return Thermoelastic heating kernel for LHS residual.
+     */
+    virtual
+    PetscPointFunc getKernelf0T_thermoelastic(const spatialdata::geocoords::CoordSys* coordsys) const;
+
+    /** Get Jacobian kernel for temperature-velocity coupling (Jf3_Tv).
+     *
+     * For two-way coupling: ∂f0_T/∂(∇v) = -T α 3K I
+     *
+     * @param[in] coordsys Coordinate system.
+     *
+     * @return Coupling kernel for temperature-velocity Jacobian.
+     */
+    virtual
+    PetscPointJac getKernelJf3Tv(const spatialdata::geocoords::CoordSys* coordsys) const;
+
+    /** Get Jacobian kernel for temperature equation with thermoelastic effect (Jf0_TT).
+     *
+     * @param[in] coordsys Coordinate system.
+     *
+     * @return Jacobian kernel for temperature-temperature with thermoelastic effect.
+     */
+    virtual
+    PetscPointJac getKernelJf0TT_thermoelastic(const spatialdata::geocoords::CoordSys* coordsys) const;
+
     // ============================= Derived Fields =============================
 
     /** Get stress kernel for derived field.

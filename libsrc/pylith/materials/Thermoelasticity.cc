@@ -21,6 +21,7 @@
 #include "pylith/topology/FieldOps.hh" // USES FieldOps
 
 #include "pylith/fekernels/Thermoelasticity.hh" // USES Thermoelasticity kernels
+#include "pylith/fekernels/DispVel.hh" // USES DispVel kernels
 
 #include "pylith/utils/error.hh" // USES PYLITH_METHOD_*
 #include "pylith/utils/journals.hh" // USES PYLITH_COMPONENT_*
@@ -136,9 +137,11 @@ pylith::materials::Thermoelasticity::verifyConfiguration(const pylith::topology:
 
     switch (_formulation) {
     case QUASISTATIC:
+        // Quasistatic uses displacement and temperature
         break;
     case DYNAMIC:
     case DYNAMIC_IMEX:
+        // Dynamic formulation requires velocity for two-way thermoelastic coupling
         requiredFields[numRequired++] = "velocity";
         break;
     } // switch
@@ -343,11 +346,13 @@ pylith::materials::Thermoelasticity::_setKernelsResidual(pylith::feassemble::Int
 
     switch (_formulation) {
     case QUASISTATIC: {
-        // Displacement equation
+        // Displacement equation: ∇·σ = 0 where σ includes thermal strain
+        // One-way coupling: temperature affects stress
         PetscPointFn* f0u = NULL; // No body force for now
         PetscPointFn* f1u = _rheology->getKernelf1u_implicit(coordsys);
 
-        // Temperature equation
+        // Temperature equation: ρc ∂T/∂t - ∇·(k∇T) = Q
+        // One-way coupling for quasistatic (no thermoelastic heating in slow processes)
         PetscPointFn* f0T = NULL; // No heat source for now
         PetscPointFn* f1T = _rheology->getKernelf1T_implicit(coordsys);
 
@@ -358,23 +363,28 @@ pylith::materials::Thermoelasticity::_setKernelsResidual(pylith::feassemble::Int
     } // QUASISTATIC
     case DYNAMIC:
     case DYNAMIC_IMEX: {
-        // Displacement equation with inertia
-        PetscPointFn* f0u = pylith::fekernels::Thermoelasticity::f0u_inertia;
+        // Dynamic formulation with two-way thermoelastic coupling
+        // Solution fields: [displacement, velocity, temperature]
+
+        // Displacement equation: u_t = v (kinematic relation)
+        PetscPointFn* f0u = pylith::fekernels::DispVel::f0u;
         PetscPointFn* f1u = NULL;
-        PetscPointFn* g0u = NULL;
-        PetscPointFn* g1u = NULL; // Would need explicit stress kernel
 
-        // Temperature equation
-        PetscPointFn* f0T = pylith::fekernels::Thermoelasticity::f0T_timedep;
-        PetscPointFn* f1T = NULL;
-        PetscPointFn* g0T = NULL;
-        PetscPointFn* g1T = NULL; // Would need explicit heat flux kernel
+        // Velocity equation: ρv_t = ∇·σ + f (momentum balance)
+        // σ includes thermal strain: σ = C:(ε - α(T-Tref)I)
+        PetscPointFn* f0v = pylith::fekernels::Thermoelasticity::f0u_inertia;
+        PetscPointFn* f1v = _rheology->getKernelf1u_implicit(coordsys);
 
-        kernels.resize(4);
+        // Temperature equation with two-way coupling:
+        // ρc ∂T/∂t - ∇·(k∇T) = Q + T α 3K ∇·v
+        // The thermoelastic heating term provides two-way coupling
+        PetscPointFn* f0T = _rheology->getKernelf0T_thermoelastic(coordsys);
+        PetscPointFn* f1T = _rheology->getKernelf1T_implicit(coordsys);
+
+        kernels.resize(3);
         kernels[0] = ResidualKernels("displacement", pylith::feassemble::Integrator::LHS, f0u, f1u);
-        kernels[1] = ResidualKernels("displacement", pylith::feassemble::Integrator::RHS, g0u, g1u);
+        kernels[1] = ResidualKernels("velocity", pylith::feassemble::Integrator::LHS, f0v, f1v);
         kernels[2] = ResidualKernels("temperature", pylith::feassemble::Integrator::LHS, f0T, f1T);
-        kernels[3] = ResidualKernels("temperature", pylith::feassemble::Integrator::RHS, g0T, g1T);
         break;
     } // DYNAMIC
     default:
@@ -415,13 +425,13 @@ pylith::materials::Thermoelasticity::_setKernelsJacobian(pylith::feassemble::Int
         PetscPointJacFn* Jf2uu = NULL;
         PetscPointJacFn* Jf3uu = _rheology->getKernelJf3uu(coordsys);
 
-        // Displacement-temperature block (thermal coupling)
+        // Displacement-temperature block (thermal coupling: stress depends on T)
         PetscPointJacFn* Jf0uT = NULL;
         PetscPointJacFn* Jf1uT = NULL;
         PetscPointJacFn* Jf2uT = _rheology->getKernelJf2uT(coordsys);
         PetscPointJacFn* Jf3uT = NULL;
 
-        // Temperature-displacement block (typically zero for one-way coupling)
+        // Temperature-displacement block (zero for quasistatic one-way coupling)
         PetscPointJacFn* Jf0Tu = NULL;
         PetscPointJacFn* Jf1Tu = NULL;
         PetscPointJacFn* Jf2Tu = NULL;
@@ -444,21 +454,54 @@ pylith::materials::Thermoelasticity::_setKernelsJacobian(pylith::feassemble::Int
     case DYNAMIC_IMEX: {
         const EquationPart equationPart = pylith::feassemble::Integrator::LHS;
 
-        // Displacement-displacement block (mass matrix)
-        PetscPointJacFn* Jf0uu = pylith::fekernels::Thermoelasticity::Jf0uu_inertia;
-        PetscPointJacFn* Jf1uu = NULL;
-        PetscPointJacFn* Jf2uu = NULL;
-        PetscPointJacFn* Jf3uu = NULL;
+        // === Two-way thermoelastic coupling for dynamic formulation ===
+        // Solution: [displacement, velocity, temperature]
 
-        // Temperature-temperature block (heat capacity)
-        PetscPointJacFn* Jf0TT = pylith::fekernels::Thermoelasticity::Jf0TT_timedep;
+        // Displacement-velocity block: ∂(u_t - v)/∂v = -I * s_tshift (kinematic)
+        PetscPointJacFn* Jf0uv = pylith::fekernels::DispVel::Jf0uv;
+        PetscPointJacFn* Jf1uv = NULL;
+        PetscPointJacFn* Jf2uv = NULL;
+        PetscPointJacFn* Jf3uv = NULL;
+
+        // Velocity-velocity block: mass matrix (ρ * s_tshift)
+        PetscPointJacFn* Jf0vv = pylith::fekernels::Thermoelasticity::Jf0uu_inertia;
+        PetscPointJacFn* Jf1vv = NULL;
+        PetscPointJacFn* Jf2vv = NULL;
+        PetscPointJacFn* Jf3vv = NULL;
+
+        // Velocity-displacement block: elastic stiffness
+        PetscPointJacFn* Jf0vu = NULL;
+        PetscPointJacFn* Jf1vu = NULL;
+        PetscPointJacFn* Jf2vu = NULL;
+        PetscPointJacFn* Jf3vu = _rheology->getKernelJf3uu(coordsys);
+
+        // Velocity-temperature block: thermal strain coupling (∂σ/∂T = -3Kα I)
+        PetscPointJacFn* Jf0vT = NULL;
+        PetscPointJacFn* Jf1vT = NULL;
+        PetscPointJacFn* Jf2vT = _rheology->getKernelJf2uT(coordsys);
+        PetscPointJacFn* Jf3vT = NULL;
+
+        // Temperature-temperature block: heat capacity with thermoelastic effect
+        PetscPointJacFn* Jf0TT = _rheology->getKernelJf0TT_thermoelastic(coordsys);
         PetscPointJacFn* Jf1TT = NULL;
         PetscPointJacFn* Jf2TT = NULL;
-        PetscPointJacFn* Jf3TT = NULL;
+        PetscPointJacFn* Jf3TT = _rheology->getKernelJf3TT(coordsys);
 
-        kernels.resize(2);
-        kernels[0] = JacobianKernels("displacement", "displacement", equationPart, Jf0uu, Jf1uu, Jf2uu, Jf3uu);
-        kernels[1] = JacobianKernels("temperature", "temperature", equationPart, Jf0TT, Jf1TT, Jf2TT, Jf3TT);
+        // Temperature-velocity block: thermoelastic heating coupling (∂(Tα3K∇·v)/∂(∇v))
+        PetscPointJacFn* Jf0Tv = NULL;
+        PetscPointJacFn* Jf1Tv = NULL;
+        PetscPointJacFn* Jf2Tv = NULL;
+        PetscPointJacFn* Jf3Tv = _rheology->getKernelJf3Tv(coordsys);
+
+        kernels.resize(7);
+        kernels[0] = JacobianKernels("displacement", "velocity", equationPart, Jf0uv, Jf1uv, Jf2uv, Jf3uv);
+        kernels[1] = JacobianKernels("velocity", "velocity", equationPart, Jf0vv, Jf1vv, Jf2vv, Jf3vv);
+        kernels[2] = JacobianKernels("velocity", "displacement", equationPart, Jf0vu, Jf1vu, Jf2vu, Jf3vu);
+        kernels[3] = JacobianKernels("velocity", "temperature", equationPart, Jf0vT, Jf1vT, Jf2vT, Jf3vT);
+        kernels[4] = JacobianKernels("temperature", "temperature", equationPart, Jf0TT, Jf1TT, Jf2TT, Jf3TT);
+        kernels[5] = JacobianKernels("temperature", "velocity", equationPart, Jf0Tv, Jf1Tv, Jf2Tv, Jf3Tv);
+        // Displacement equation only depends on velocity (kinematic)
+        kernels[6] = JacobianKernels("displacement", "displacement", equationPart, NULL, NULL, NULL, NULL);
         break;
     } // DYNAMIC
     default:

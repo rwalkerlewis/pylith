@@ -12,6 +12,8 @@
 
 #include "pylith/materials/RheologyThermoelasticity.hh" // implementation of object methods
 
+#include "pylith/fekernels/Thermoelasticity.hh" // USES Thermoelasticity kernels
+
 #include "pylith/utils/error.hh" // USES PYLITH_METHOD_*
 #include "pylith/utils/journals.hh" // USES PYLITH_JOURNAL_*
 
@@ -43,6 +45,30 @@ pylith::materials::RheologyThermoelasticity::updateKernelConstants(pylith::real_
                                                                    const PylithReal dt) const {
     // Default is to do nothing.
 } // updateKernelConstants
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Get thermoelastic heating kernel for temperature equation.
+PetscPointFunc
+pylith::materials::RheologyThermoelasticity::getKernelf0T_thermoelastic(const spatialdata::geocoords::CoordSys* coordsys) const {
+    return pylith::fekernels::Thermoelasticity::f0T_thermoelastic_twoway;
+} // getKernelf0T_thermoelastic
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Get Jacobian kernel for temperature-velocity coupling.
+PetscPointJac
+pylith::materials::RheologyThermoelasticity::getKernelJf3Tv(const spatialdata::geocoords::CoordSys* coordsys) const {
+    return pylith::fekernels::Thermoelasticity::Jf3Tv_thermoelastic;
+} // getKernelJf3Tv
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Get Jacobian kernel for temperature equation with thermoelastic effect.
+PetscPointJac
+pylith::materials::RheologyThermoelasticity::getKernelJf0TT_thermoelastic(const spatialdata::geocoords::CoordSys* coordsys) const {
+    return pylith::fekernels::Thermoelasticity::Jf0TT_thermoelastic;
+} // getKernelJf0TT_thermoelastic
 
 
 // End of file

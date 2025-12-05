@@ -16,14 +16,22 @@ from .IsotropicLinearThermoelasticity import IsotropicLinearThermoelasticity
 
 class Thermoelasticity(Material, ModuleThermoelasticity):
     """
-    Material behavior governed by coupled thermoelasticity.
+    Material behavior governed by coupled thermoelasticity with two-way coupling.
 
-    This material couples:
-    - Elasticity equation (momentum balance)
-    - Heat equation (energy balance)
-    
-    With thermal coupling via thermal strain:
-    stress = C:(strain - alpha*(T - T_ref)*I)
+    This material provides full two-way thermoelastic coupling:
+
+    **Quasistatic formulation** (solution = SolnDispTemp):
+    - Temperature → Stress: thermal strain σ = C:(ε - α(T-Tref)I)
+    - One-way coupling (thermoelastic heating negligible for slow processes)
+
+    **Dynamic formulation** (solution = SolnDispVelTemp):
+    - Temperature → Stress: thermal strain
+    - Velocity → Temperature: thermoelastic heating ρc Ṫ = k∇²T + Tα3K∇·v
+    - Full two-way coupling for adiabatic heating/cooling
+
+    The thermoelastic heating term represents:
+    - Compression (∇·v < 0): material heats up
+    - Expansion (∇·v > 0): material cools down
 
     Implements `Material`.
     """
