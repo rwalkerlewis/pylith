@@ -29,7 +29,7 @@ def runPyLith(args, logFilename):
 # ----------------------------------------------------------------------
 for materialNum in range(len(materials)):
   material = materials[materialNum]
-  print "Testing material %s:" % material
+  print("Testing material %s:" % material)
   meshCfg = "quad.cfg "
   if (materialNum > 3):
     meshCfg = "hex.cfg "

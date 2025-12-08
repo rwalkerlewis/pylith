@@ -26,8 +26,8 @@ slipNincr2 = slipN2 - slipNp
 slipN = slipN1 + slipN2
 slipNincr = slipNincr1 + slipNincr2
 
-print "%13.11f, %13.11f, %13.11f" % \
-      (slipN1*finalSlip[0], slipN1*finalSlip[1], slipN1*finalSlip[2])
+print("%13.11f, %13.11f, %13.11f" %
+      (slipN1*finalSlip[0], slipN1*finalSlip[1], slipN1*finalSlip[2]))
 
-print "%13.11f, %13.11f, %13.11f" % \
-      (slipNincr*finalSlip[0], slipNincr*finalSlip[1], slipNincr*finalSlip[2])
+print("%13.11f, %13.11f, %13.11f" %
+      (slipNincr*finalSlip[0], slipNincr*finalSlip[1], slipNincr*finalSlip[2]))

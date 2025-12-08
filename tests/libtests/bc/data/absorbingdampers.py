@@ -52,16 +52,16 @@ def calcTri3():
                 dampingConsts[0]*j10, dampingConsts[1]*j10,
                 dampingConsts[0]*j11, dampingConsts[1]*j11]
 
-    print "Absorbing boundary for tri3 mesh"
-    print "damping constants:"
+    print("Absorbing boundary for tri3 mesh")
+    print("damping constants:")
     for v in dampingConsts:
-        print "  %16.8e" % v
-    print "values for residual:"
+        print("  %16.8e" % v)
+    print("values for residual:")
     for v in residual:
-        print "  %16.8e" % v
-    print "values for jacobian:"
+        print("  %16.8e" % v)
+    print("values for jacobian:")
     for j in jacobian:
-        print "  %16.8e" % j
+        print("  %16.8e" % j)
 
 
 # ----------------------------------------------------------------------
@@ -113,19 +113,19 @@ def calcQuad4():
                 dampingConsts[2]*j01, dampingConsts[3]*j01,
                 dampingConsts[2]*j10, dampingConsts[3]*j10,
                 dampingConsts[2]*j11, dampingConsts[3]*j11]
-    print "Absorbing boundary for quad4mesh"
-    print "damping constants:"
+    print("Absorbing boundary for quad4mesh")
+    print("damping constants:")
     for v in dampingConsts:
-        print "  %16.8e" % v
-    print "vel:"
-    print "  vel1: ", vel1X, "  ", vel1Y
-    print "  vel2: ", vel2X, "  ", vel2Y
-    print "values for residual:"
+        print("  %16.8e" % v)
+    print("vel:")
+    print("  vel1: ", vel1X, "  ", vel1Y)
+    print("  vel2: ", vel2X, "  ", vel2Y)
+    print("values for residual:")
     for v in residual:
-        print "  %16.8e" % v
-    print "values for jacobian:"
+        print("  %16.8e" % v)
+    print("values for jacobian:")
     for j in jacobian:
-        print "  %16.8e" % j
+        print("  %16.8e" % j)
 
 
 # ----------------------------------------------------------------------
@@ -194,16 +194,16 @@ def calcTet4():
                 j21, dampingConsts[2]*j21,
                 dampingConsts[0]*j22, dampingConsts[1]*j22, dampingConsts[2]*j22]
 
-    print "Absorbing boundary for hex8 mesh"
-    print "damping constants:"
+    print("Absorbing boundary for hex8 mesh")
+    print("damping constants:")
     for v in dampingConsts:
-        print "  %16.8e" % v
-    print "values for residual:"
+        print("  %16.8e" % v)
+    print("values for residual:")
     for v in residual:
-        print "  %16.8e" % v
-    print "values for jacobian:"
+        print("  %16.8e" % v)
+    print("values for jacobian:")
     for j in jacobian:
-        print "  %16.8e" % j
+        print("  %16.8e" % j)
 
 
 # ----------------------------------------------------------------------
@@ -387,16 +387,16 @@ def calcHex8():
                              2] += numpy.array(jj[index+2])
                     index += 3
 
-    print "Absorbing boundary for hex8 mesh"
-    print "damping constants:"
+    print("Absorbing boundary for hex8 mesh")
+    print("damping constants:")
     for v in dampingConsts:
-        print "  %16.8e" % v
-    print "values for residual:"
+        print("  %16.8e" % v)
+    print("values for residual:")
     for v in numpy.ravel(residual):
-        print "  %16.8e," % v
-    print "values for jacobian:"
+        print("  %16.8e," % v)
+    print("values for jacobian:")
     for j in numpy.ravel(jacobian):
-        print "  %16.8e" % j
+        print("  %16.8e" % j)
 
 
 # ----------------------------------------------------------------------

@@ -44,9 +44,9 @@ class Ramp():
     def ticks(self):
         return (
             (0, "$t_r$"),
-            (IMPULSE_DURATION, "$t_r+t_\mathit{acc}$"),
-            (RISE_TIME-IMPULSE_DURATION, "$t_\mathit{rise}-t_\mathit{acc}$"),
-            (RISE_TIME, "$t_\mathit{rise}$"),
+            (IMPULSE_DURATION, r"$t_r+t_\mathit{acc}$"),
+            (RISE_TIME-IMPULSE_DURATION, r"$t_\mathit{rise}-t_\mathit{acc}$"),
+            (RISE_TIME, r"$t_\mathit{rise}$"),
             )
     
     def slipfn(self, t):
@@ -109,7 +109,7 @@ class Brune():
     NAME = "brune"
     
     def ticks(self):
-        return ((0, "$t_r$"), (RISE_TIME, "$t_\mathit{rise}$"))
+        return ((0, "$t_r$"), (RISE_TIME, r"$t_\mathit{rise}$"))
     
     def slipfn(self, t):
         tau = 0.21081916 * RISE_TIME
@@ -120,7 +120,7 @@ class LiuCos():
     NAME = "liucos"
     
     def ticks(self):
-        return ((0, "$t_r$"), (RISE_TIME, "$t_\mathit{rise}$"))
+        return ((0, "$t_r$"), (RISE_TIME, r"$t_\mathit{rise}$"))
     
     def slipfn(self, t):
         tau = RISE_TIME
