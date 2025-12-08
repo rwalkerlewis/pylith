@@ -22,6 +22,8 @@ import pylith.materials.AuxSubfieldsIsotropicLinearGenMaxwell
 import pylith.materials.AuxSubfieldsIsotropicPowerLaw
 import pylith.materials.AuxSubfieldsPoroelasticity
 import pylith.materials.AuxSubfieldsIsotropicLinearPoroelasticity
+import pylith.materials.AuxSubfieldsThermoelasticity
+import pylith.materials.AuxSubfieldsThermoporoelasticity
 
 
 class TestAuxSubfieldsElasticity(TestComponent):
@@ -73,6 +75,20 @@ class TestAuxSubfieldsIsotropicLinearPoroelasticity(TestComponent):
     _factory = pylith.materials.AuxSubfieldsIsotropicLinearPoroelasticity.auxiliary_subfields
 
 
+class TestAuxSubfieldsThermoelasticity(TestComponent):
+    """Unit testing of AuxSubfieldsThermoelasticity object.
+    """
+    _class = pylith.materials.AuxSubfieldsThermoelasticity.AuxSubfieldsThermoelasticity
+    _factory = pylith.materials.AuxSubfieldsThermoelasticity.auxiliary_subfields
+
+
+class TestAuxSubfieldsThermoporoelasticity(TestComponent):
+    """Unit testing of AuxSubfieldsThermoporoelasticity object.
+    """
+    _class = pylith.materials.AuxSubfieldsThermoporoelasticity.AuxSubfieldsThermoporoelasticity
+    _factory = pylith.materials.AuxSubfieldsThermoporoelasticity.auxiliary_subfields
+
+
 def load_tests(loader, tests, pattern):
     TEST_CLASSES = [
         TestAuxSubfieldsElasticity,
@@ -82,6 +98,8 @@ def load_tests(loader, tests, pattern):
         TestAuxSubfieldsIsotropicPowerLaw,
         TestAuxSubfieldsPoroelasticity,
         TestAuxSubfieldsIsotropicLinearPoroelasticity,
+        TestAuxSubfieldsThermoelasticity,
+        TestAuxSubfieldsThermoporoelasticity,
         ]
     return make_suite(TEST_CLASSES, loader)
 
