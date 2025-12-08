@@ -272,16 +272,16 @@ if cell == "tri3" or cell == "tri3d" or cell == "quad4":
     tractionShear = abs(fieldTpdt[:, 0])
     tractionNormal = fieldTpdt[:, 1]
 
-    print "tractionShear", tractionShear
-    print "tractionNormal", tractionNormal
+    print("tractionShear", tractionShear)
+    print("tractionNormal", tractionNormal)
 
     friction = -0.6 * tractionNormal;
 
-    print "friction", friction
+    print("friction", friction)
 
     dlagrange0 = (friction - tractionShear) * fieldTpdt[:, 0] / tractionShear
   
-    print "dlagrange0", dlagrange0
+    print("dlagrange0", dlagrange0)
 
     if testCase == "slip": 
         dLagrange = numpy.vstack((dlagrange0, dlagrange1))
@@ -291,11 +291,11 @@ if cell == "tri3" or cell == "tri3d" or cell == "quad4":
         dLagrange = numpy.reshape(disp+dispIncr, n)
         dLagrange = -dLagrange[indexL]
 
-    print "dLagrange \n", dLagrange
+    print("dLagrange \n", dLagrange)
 
     L /= lengthScale**1
     RHS = numpy.dot(numpy.transpose(L), dLagrange)
-    print "RHS", RHS
+    print("RHS", RHS)
     duN = numpy.dot(inv(jacobianN), RHS)
     duP = -numpy.dot(inv(jacobianP), RHS)
     
@@ -309,14 +309,14 @@ if cell == "tri3" or cell == "tri3d" or cell == "quad4":
     slipVertex = globalToFault(slipVertex, C)
     mask = slipVertex[:, 1] < 0.0
     #slipVertex[:,1] = 0
-    print "slip", slipVertex
+    print("slip", slipVertex)
     slipVertex = faultToGlobal(slipVertex, C)
     slipVertex = numpy.reshape(slipVertex, m)
     disp = numpy.reshape(disp, n)
     slipIncrVertex = slipVertex - (disp[indexP] - disp[indexN])
 
-    print "duN \n", duN
-    print "duP \n", duP
+    print("duN \n", duN)
+    print("duP \n", duP)
 
     dispIncrE = dispIncr
     dispIncrE = numpy.reshape(dispIncrE, n)
@@ -328,8 +328,8 @@ if cell == "tri3" or cell == "tri3d" or cell == "quad4":
     slipVertex = numpy.reshape(slipVertex, (m/DOF, DOF))
     slipVertex = globalToFault(slipVertex, C)
 
-    print "dispIncrE\n", printdata(dispIncrE)
-    print "slipVertexE\n", printdata(slipVertex)
+    print("dispIncrE\n", printdata(dispIncrE))
+    print("slipVertexE\n", printdata(slipVertex))
 
 
 # ----------------------------------------------------------------------
@@ -576,18 +576,18 @@ elif cell == "tet4" or cell == "hex8":
     tractionShear = (fieldTpdt[:, 0]**2 + fieldTpdt[:, 1]**2)**0.5
     tractionNormal = fieldTpdt[:, 2]
 
-    print "tractionShear", tractionShear
-    print "tractionNormal", tractionNormal
+    print("tractionShear", tractionShear)
+    print("tractionNormal", tractionNormal)
 
     friction = -0.6 * tractionNormal;
 
-    print "friction", friction
+    print("friction", friction)
 
     dlagrange0 = (friction - tractionShear) * fieldTpdt[:, 0] / tractionShear
     dlagrange1 = (friction - tractionShear) * fieldTpdt[:, 1] / tractionShear
                            
-    print "dlagrange0", dlagrange0
-    print "dlagrange1", dlagrange1
+    print("dlagrange0", dlagrange0)
+    print("dlagrange1", dlagrange1)
 
     if testCase == "slip": 
         dLagrange = numpy.vstack((dlagrange0, dlagrange1, dlagrange2))
@@ -597,11 +597,11 @@ elif cell == "tet4" or cell == "hex8":
         dLagrange = numpy.reshape(disp+dispIncr, n)
         dLagrange = -dLagrange[indexL]
 
-    print "dLagrange \n", dLagrange
+    print("dLagrange \n", dLagrange)
 
     L /= lengthScale**2
     RHS = numpy.dot(numpy.transpose(L), dLagrange)
-    print "RHS", RHS
+    print("RHS", RHS)
     duN = numpy.dot(inv(jacobianN), RHS)
     duP = -numpy.dot(inv(jacobianP), RHS)
     
@@ -622,8 +622,8 @@ elif cell == "tet4" or cell == "hex8":
     disp = numpy.reshape(disp, n)
     slipIncrVertex = slipVertex - (disp[indexP] - disp[indexN])
 
-    print "duN \n", duN
-    print "duP \n", duP
+    print("duN \n", duN)
+    print("duP \n", duP)
 
     dispIncrE = dispIncr
     dispIncrE = numpy.reshape(dispIncrE, n)
@@ -636,5 +636,5 @@ elif cell == "tet4" or cell == "hex8":
     slipVertex = numpy.reshape(slipVertex, (m/DOF, DOF))
     slipVertex = globalToFault(slipVertex, C)
 
-    print "dispIncrE\n", printdata(dispIncrE)
-    print "slipVertexE\n", printdata(slipVertex)
+    print("dispIncrE\n", printdata(dispIncrE))
+    print("slipVertexE\n", printdata(slipVertex))
