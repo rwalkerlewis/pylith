@@ -38,6 +38,8 @@ dist_noinst_PYTHON = \
 	materials/TestIncompressibleElasticity.py \
 	materials/TestMaterial.py \
 	materials/TestPoroelasticity.py \
+	materials/TestThermoelasticity.py \
+	materials/TestThermoporoelasticity.py \
 	materials/TestRheologies.py \
 	meshio/__init__.py \
 	meshio/TestDataWriter.py \
