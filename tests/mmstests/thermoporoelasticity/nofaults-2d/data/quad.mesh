@@ -5,22 +5,22 @@ mesh = {
     dimension = 2
     count = 16
     coordinates = {
-             0     -4.0e+3  -4.0e+3
-             1     -4.0e+3  -2.0e+3
-             2     -4.0e+3  +2.0e+3
-             3     -4.0e+3  +4.0e+3
-             4     -2.0e+3  -4.0e+3
-             5     -2.0e+3  -2.0e+3
-             6     -2.0e+3  +2.0e+3
-             7     -2.0e+3  +4.0e+3
-             8     +2.0e+3  -4.0e+3
-             9     +2.0e+3  -2.0e+3
-            10     +2.0e+3  +2.0e+3
-            11     +2.0e+3  +4.0e+3
-            12     +4.0e+3  -4.0e+3
-            13     +4.0e+3  -2.0e+3
-            14     +4.0e+3  +2.0e+3
-            15     +4.0e+3  +4.0e+3
+             0     -0.0e+3  -4.0e+3
+             1     -0.0e+3  -2.0e+3
+             2     -0.0e+3  +2.0e+3
+             3     -0.0e+3  +4.0e+3
+             4     +2.0e+3  -4.0e+3
+             5     +2.0e+3  -2.0e+3
+             6     +2.0e+3  +2.0e+3
+             7     +2.0e+3  +4.0e+3
+             8     +6.0e+3  -4.0e+3
+             9     +6.0e+3  -2.0e+3
+            10     +6.0e+3  +2.0e+3
+            11     +6.0e+3  +4.0e+3
+            12     +8.0e+3  -4.0e+3
+            13     +8.0e+3  -2.0e+3
+            14     +8.0e+3  +2.0e+3
+            15     +8.0e+3  +4.0e+3
     }
   }
   cells = {
@@ -50,29 +50,68 @@ mesh = {
     }
   }
   vertex-group = {
-    name = boundary_vertices
-    count = 12
+    name = vertices_xneg
+    count = 4
     indices = {
-      0  1  2  3  4  7  8 11 12 13 14 15
+      0  1  2  3
+    }
+  }
+  vertex-group = {
+    name = vertices_xpos
+    count = 4
+    indices = {
+      12 13 14 15
+    }
+  }
+  vertex-group = {
+    name = vertices_yneg
+    count = 4
+    indices = {
+      0  4  8 12
+    }
+  }
+  vertex-group = {
+    name = vertices_ypos
+    count = 4
+    indices = {
+      3  7  11 15
+    }
+  }
+  
+  face-group = {
+    name = boundary_xneg
+    count = 3
+    indices = {
+      0    0   1
+      1    1   2
+      2    2   3
     }
   }
   face-group = {
-    name = boundary
-    count = 12
+    name = boundary_xpos
+    count = 3
     indices = {
-      0    0   1
-      0    0   4
-      1    1   2
-      2    2   3
-      2    3   7
-      3    4   8
-      5    7  11
-      6    8  12
       6   12  13
       7   13  14
       8   14  15
+    }
+  }
+  face-group = {
+    name = boundary_yneg
+    count = 3
+    indices = {
+      0    0   4
+      3    4   8
+      6    8  12
+    }
+  }
+  face-group = {
+    name = boundary_ypos
+    count = 3
+    indices = {
+      2    3   7
+      5    7  11
       8   11  15
     }
   }
-
 }

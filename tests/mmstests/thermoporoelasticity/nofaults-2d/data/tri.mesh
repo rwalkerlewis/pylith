@@ -5,18 +5,18 @@ mesh = {
     dimension = 2
     count = 12
     coordinates = {
-             0     -4.0e+3  -4.0e+3
-             1     -4.0e+3   0.0e+3
-             2     -4.0e+3  +4.0e+3
-             3     -2.0e+3  -2.0e+3
-             4     -2.0e+3  +2.0e+3
-             5      0.0e+3  -4.0e+3
-             6      0.0e+3  +4.0e+3
-             7     +2.0e+3  -2.0e+3
-             8     +2.0e+3  +2.0e+3
-             9     +4.0e+3  -4.0e+3
-            10     +4.0e+3   0.0e+3
-            11     +4.0e+3  +4.0e+3
+             0     -0.0e+3  -4.0e+3
+             1     -0.0e+3   0.0e+3
+             2     -0.0e+3  +4.0e+3
+             3     +2.0e+3  -2.0e+3
+             4     +2.0e+3  +2.0e+3
+             5      4.0e+3  -4.0e+3
+             6      4.0e+3  +4.0e+3
+             7     +6.0e+3  -2.0e+3
+             8     +6.0e+3  +2.0e+3
+             9     +8.0e+3  -4.0e+3
+            10     +8.0e+3   0.0e+3
+            11     +8.0e+3  +4.0e+3
     }
   }
   cells = {
@@ -56,25 +56,64 @@ mesh = {
     }
   }
   vertex-group = {
-    name = boundary_vertices
-    count = 8
+    name = vertices_xneg
+    count = 3
     indices = {
-      0  1  2  5  6  9 10 11
+      0  1  2
     }
   }
+  vertex-group = {
+    name = vertices_xpos
+    count = 3
+    indices = {
+      9 10 11
+    }
+  }
+  vertex-group = {
+    name = vertices_yneg
+    count = 3
+    indices = {
+      0  5  9
+    }
+  }
+  vertex-group = {
+    name = vertices_ypos
+    count = 3
+    indices = {
+      2  6  11
+    }
+  }
+  
   face-group = {
-    name = boundary
-    count = 8
+    name = boundary_xneg
+    count = 2
     indices = {
       0    0  1
       2    1  2
-      3    0  5
-      4    2  6
-      9    5  9
-      10   6 11
+    }
+  }
+  face-group = {
+    name = boundary_xpos
+    count = 2
+    indices = {
       11   9 10
       13  10 11
     }
   }
-  
+  face-group = {
+    name = boundary_yneg
+    count = 2
+    indices = {
+      3    0  5
+      9    5  9
+    }
+  }
+  face-group = {
+    name = boundary_ypos
+    count = 2
+    indices = {
+      4    2  6
+     10    6 11
+    }
+  }
 }

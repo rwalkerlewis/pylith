@@ -8,6 +8,6 @@
 # See https://mit-license.org/ and LICENSE.md and for license information. 
 # =================================================================================================
 
-SUBDIRS = nofaults-2d
+SUBDIRS = nofaults-2d faults-2d
 
 # End of file

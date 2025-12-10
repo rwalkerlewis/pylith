@@ -11,10 +11,10 @@
 
 #include "tests/src/MMSTest.hh" // ISA MMSTEST
 
-#include "pylith/materials/Thermoporoelasticity.hh" // USES Thermoporoelasticity
-#include "pylith/materials/IsotropicLinearThermoporoelasticity.hh" // USES IsotropicLinearThermoporoelasticity
+#include "pylith/faults/faultsfwd.hh" // HOLDSA FaultCohesiveKin
+#include "pylith/materials/Thermoelasticity.hh" // USES Thermoelasticity
+#include "pylith/materials/IsotropicLinearThermoelasticity.hh" // USES IsotropicLinearThermoelasticity
 #include "pylith/bc/DirichletUserFn.hh" // USES DirichletUserFn
-#include "pylith/bc/NeumannUserFn.hh" // USES NeumannUserFn
 
 #include "spatialdata/spatialdb/UserFunctionDB.hh" // USES UserFunctionDB
 #include "spatialdata/geocoords/CSCart.hh" // USES CSCart
@@ -24,12 +24,11 @@
 #include "pylith/topology/Field.hh" // HASA FieldBase::Discretization
 
 namespace pylith {
-    class TestThermoporoelasticity;
-    class TestThermoporoelasticity_Data;
-}
+    class TestFaultKinThermoelasticity;
+    class TestFaultKinThermoelasticity_Data;
+} // pylith
 
-/// C++ class for testing thermoporoelasticity using a variety of MMS tests.
-class pylith::TestThermoporoelasticity : public pylith::testing::MMSTest {
+class pylith::TestFaultKinThermoelasticity : public pylith::testing::MMSTest {
     // PUBLIC METHODS /////////////////////////////////////////////////////////////////////////////
 public:
 
@@ -37,10 +36,10 @@ public:
      *
      * @param[in] data Data for MMS test.
      */
-    TestThermoporoelasticity(TestThermoporoelasticity_Data* data);
+    TestFaultKinThermoelasticity(TestFaultKinThermoelasticity_Data* data);
 
     /// Destructor.
-    ~TestThermoporoelasticity(void);
+    ~TestFaultKinThermoelasticity(void);
 
     // PROTECTED METHODS //////////////////////////////////////////////////////////////////////////
 protected:
@@ -54,20 +53,20 @@ protected:
     // PROTECTED MEMBERS //////////////////////////////////////////////////////////////////////////
 protected:
 
-    TestThermoporoelasticity_Data* _data; ///< Test parameters.
+    TestFaultKinThermoelasticity_Data* _data; ///< Test parameters.
 
-}; // class TestThermoporoelasticity
+}; // class TestFaultKinThermoelasticity
 
 // ================================================================================================
-class pylith::TestThermoporoelasticity_Data {
+class pylith::TestFaultKinThermoelasticity_Data {
     // PUBLIC METHODS /////////////////////////////////////////////////////////////////////////////
 public:
 
     /// Constructor
-    TestThermoporoelasticity_Data(void);
+    TestFaultKinThermoelasticity_Data(void);
 
     /// Destructor
-    ~TestThermoporoelasticity_Data(void);
+    ~TestFaultKinThermoelasticity_Data(void);
 
     // PUBLIC MEMBERS /////////////////////////////////////////////////////////////////////////////
 public:
@@ -90,26 +89,37 @@ public:
     pylith::scales::Scales scales; ///< Scales for nondimensionalization.
     pylith::problems::Physics::FormulationEnum formulation; ///< Time stepping formulation
 
-    pylith::materials::Thermoporoelasticity material; ///< Thermoporoelasticity material.
-    pylith::materials::IsotropicLinearThermoporoelasticity rheology; ///< Bulk rheology for materials.
-    std::vector<pylith::bc::BoundaryCondition*> bcs; ///< Boundary conditions.
+    std::vector<pylith::materials::Material*> materials; ///< Materials.
+    pylith::materials::IsotropicLinearThermoelasticity rheology; ///< Bulk rheology for materials.
+    std::vector<pylith::bc::BoundaryCondition*> bcs; ///< Dirichlet boundary condition.
+    std::vector<pylith::faults::FaultCohesive*> faults; ///< Fault interface conditions.
+    spatialdata::spatialdb::GravityField* gravityField; ///< Gravity field.
 
     // Solution field.
-    size_t numSolnSubfields; ///< Number of solution fields.
+    size_t numSolnSubfieldsDomain; ///< Number of solution fields for domain.
+    size_t numSolnSubfieldsFault; ///< Number of solution fields for fault.
     pylith::topology::Field::Discretization const* solnDiscretizations; ///< Discretizations for solution fields.
 
-    /// Array of functions providing exact solution (displacement, pressure, trace_strain, temperature).
+    /// Array of functions providing exact solution.
     pylith::testing::MMSTest::solution_fn* exactSolnFns;
 
     /// Array of functions providing exact solution time derivative.
     pylith::testing::MMSTest::solution_fn* exactSolnDotFns;
 
     // Material auxiliary fields.
-    size_t numAuxSubfields; ///< Number of auxiliary subfields for materials.
-    const char** auxSubfields; ///< Names of auxiliary subfields for materials.
-    pylith::topology::Field::Discretization const* auxDiscretizations; ///< Discretizations for auxiliary subfields.
-    spatialdata::spatialdb::UserFunctionDB auxDB; ///< Spatial database for auxiliary field.
+    size_t matNumAuxSubfields;
+    const char** matAuxSubfields;
+    pylith::topology::Field::Discretization const* matAuxDiscretizations;
+    spatialdata::spatialdb::UserFunctionDB matAuxDB;
 
-}; // TestThermoporoelasticity_Data
+    // Fault auxiliary fields.
+    size_t faultNumAuxSubfields;
+    const char** faultAuxSubfields;
+    pylith::topology::Field::Discretization const* faultAuxDiscretizations;
+    spatialdata::spatialdb::UserFunctionDB faultAuxDB;
+
+    pylith::faults::KinSrc* kinSrc;
+
+}; // TestFaultKinThermoelasticity_Data
 
 // End of file
