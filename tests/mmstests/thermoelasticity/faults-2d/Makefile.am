@@ -8,23 +8,25 @@
 # See https://mit-license.org/ and LICENSE.md and for license information. 
 # =================================================================================================
 
+
 include $(top_srcdir)/tests/check_catch2.am
 
-MMS_DRIVER = mmstest_thermoporoelasticity_nofaults2d
+MMS_DRIVER = mmstest_thermoelasticity_faults2d
 
 TESTS = \
-	run_PressureGradientTemp.sh
+	run_TwoBlocksStaticThermal.sh
 
 check_SCRIPTS = $(TESTS)
 
-check_PROGRAMS = $(MMS_DRIVER)
+check_PROGRAMS =  $(MMS_DRIVER)
 
-mmstest_thermoporoelasticity_nofaults2d_SOURCES = \
+
+mmstest_thermoelasticity_faults2d_SOURCES = \
 	$(top_srcdir)/tests/src/MMSTest.cc \
 	$(top_srcdir)/tests/src/driver_catch2.cc \
-	TestThermoporoelasticity.cc \
+	TestFaultKinThermoelasticity.cc \
 	TestCases.cc \
-	PressureGradientTemp.cc
+	TwoBlocksStaticThermal.cc
 
 run_%.sh:
 	echo "#!/bin/bash" > $@
@@ -32,13 +34,14 @@ run_%.sh:
 	chmod +x $@
 
 dist_noinst_HEADERS = \
-	TestThermoporoelasticity.hh	\
-	PressureGradientTemp.hh
+	TestFaultKinThermoelasticity.hh \
+	TwoBlocksStaticThermal.hh
 
 
 dist_noinst_DATA = \
 	data/tri.mesh \
 	data/quad.mesh
+
 
 export_datadir = $(abs_builddir)
 include $(top_srcdir)/tests/data.am

@@ -12,83 +12,187 @@
 
 #include "TestThermoporoelasticity.hh" // Implementation of class methods
 
-#include "pylith/materials/Thermoporoelasticity.hh" // USES Thermoporoelasticity
-#include "pylith/materials/IsotropicLinearThermoporoelasticity.hh" // USES IsotropicLinearThermoporoelasticity
-
-#include "pylith/topology/Mesh.hh" // USES Mesh
-#include "pylith/topology/Field.hh" // USES Field
-#include "pylith/meshio/MeshIOAscii.hh" // USES MeshIOAscii
 #include "pylith/problems/TimeDependent.hh" // USES TimeDependent
 
-#include "spatialdata/spatialdb/UserFunctionDB.hh" // USES UserFunctionDB
-#include "spatialdata/units/Nondimensional.hh" // USES Nondimensional
-#include "spatialdata/geocoords/CSCart.hh" // USES CSCart
+#include "pylith/materials/Query.hh" // USES Query
+
+#include "pylith/topology/Mesh.hh" // USES Mesh
+#include "pylith/topology/MeshOps.hh" // USES MeshOps::nondimensionalize()
+#include "pylith/topology/Field.hh" // USES Field
+#include "pylith/topology/VisitorMesh.hh" // USES VecVisitorMesh
+#include "pylith/topology/FieldQuery.hh" // USES FieldQuery
+#include "pylith/feassemble/AuxiliaryFactory.hh" // USES AuxiliaryFactory
+#include "pylith/problems/SolutionFactory.hh" // USES SolutionFactory
+#include "pylith/meshio/MeshIOAscii.hh" // USES MeshIOAscii
+#include "pylith/meshio/MeshIOPetsc.hh" // USES MeshIOPetsc
+#include "pylith/utils/error.hh" // USES PYLITH_METHOD_BEGIN/END
+#include "pylith/utils/journals.hh" // pythia::journal
+
+#include "spatialdata/spatialdb/GravityField.hh" // USES GravityField
+#include "pylith/scales/ElasticityScales.hh" // USES ElasticityScales
+
+// ------------------------------------------------------------------------------------------------
+// Constructor.
+pylith::TestThermoporoelasticity::TestThermoporoelasticity(TestThermoporoelasticity_Data* data) :
+    _data(data) {
+    assert(_data);
+
+    GenericComponent::setName(_data->journalName);
+    _jacobianConvergenceRate = _data->jacobianConvergenceRate;
+    _tolerance = _data->tolerance;
+    _isJacobianLinear = _data->isJacobianLinear;
+    _allowZeroResidual = _data->allowZeroResidual;
+} // constructor
+
+
+// ------------------------------------------------------------------------------------------------
+// Destructor.
+pylith::TestThermoporoelasticity::~TestThermoporoelasticity(void) {
+    delete _data;_data = NULL;
+} // destructor
+
+
+// ------------------------------------------------------------------------------------------------
+// Initialize objects for test.
+void
+pylith::TestThermoporoelasticity::_initialize(void) {
+    PYLITH_METHOD_BEGIN;
+    assert(_mesh);
+    assert(_data);
+
+    PetscErrorCode err = 0;
+
+    if (_data->useAsciiMesh) {
+        pylith::meshio::MeshIOAscii iohandler;
+        iohandler.setFilename(_data->meshFilename);
+        iohandler.read(_mesh);assert(_mesh);
+    } else {
+        if (_data->meshOptions) {
+            err = PetscOptionsInsertString(NULL, _data->meshOptions);PYLITH_CHECK_ERROR(err);
+        } // if
+        pylith::meshio::MeshIOPetsc iohandler;
+        iohandler.setFilename(_data->meshFilename);
+        iohandler.read(_mesh);assert(_mesh);
+    } // if/else
+
+    assert(pylith::topology::MeshOps::getNumCells(*_mesh) > 0);
+    assert(pylith::topology::MeshOps::getNumVertices(*_mesh) > 0);
+
+    // Set up coordinates.
+    _mesh->setCoordSys(&_data->cs);
+    pylith::topology::MeshOps::nondimensionalize(_mesh, _data->scales);
+
+    // Set up material
+    _data->material.setBulkRheology(&_data->rheology);
+    _data->material.setAuxiliaryFieldDB(&_data->auxDB);
+
+    for (size_t i = 0; i < _data->numAuxSubfields; ++i) {
+        const pylith::topology::FieldBase::Discretization& info = _data->auxDiscretizations[i];
+        _data->material.setAuxiliarySubfieldDiscretization(_data->auxSubfields[i], info.basisOrder, info.quadOrder,
+                                                           _data->spaceDim, pylith::topology::FieldBase::DEFAULT_BASIS,
+                                                           info.feSpace, info.isBasisContinuous);
+    } // for
+
+    // Set up problem.
+    assert(_problem);
+    _problem->setScales(_data->scales);
+    pylith::materials::Material* materials[1] = { &_data->material };
+    _problem->setMaterials(materials, 1);
+    _problem->setBoundaryConditions(_data->bcs.data(), _data->bcs.size());
+    _problem->setStartTime(_data->t);
+    _problem->setEndTime(_data->t+_data->dt);
+    _problem->setInitialTimeStep(_data->dt);
+    _problem->setFormulation(_data->formulation);
+
+    // Set up solution field.
+    assert(!_solution);
+    _solution = new pylith::topology::Field(*_mesh);assert(_solution);
+    _solution->setLabel("solution");
+    pylith::problems::SolutionFactory factory(*_solution, _data->scales);
+    factory.addDisplacement(_data->solnDiscretizations[0]);
+    factory.addPressure(_data->solnDiscretizations[1]);
+    factory.addTraceStrain(_data->solnDiscretizations[2]);
+    factory.addTemperature(_data->solnDiscretizations[3]);
+    if (pylith::problems::Physics::QUASISTATIC == _data->formulation) {
+        if (8 == _data->numSolnSubfields) {
+            factory.addVelocity(_data->solnDiscretizations[4]);
+            factory.addPressureDot(_data->solnDiscretizations[5]);
+            factory.addTraceStrainDot(_data->solnDiscretizations[6]);
+            factory.addTemperatureDot(_data->solnDiscretizations[7]);
+        } else {
+            assert(4 == _data->numSolnSubfields);
+        } // if/else
+    } else {
+        PYLITH_JOURNAL_LOGICERROR("MMS test only implemented for quasistatic formulation.");
+    } // if/else
+    _problem->setSolution(_solution);
+
+    pylith::testing::MMSTest::_initialize();
+
+    PYLITH_METHOD_END;
+} // _initialize
+
+
+// ------------------------------------------------------------------------------------------------
+// Set functions for computing the exact solution and its time derivative.
+void
+pylith::TestThermoporoelasticity::_setExactSolution(void) {
+    assert(_data->exactSolnFns);
+
+    const pylith::topology::Field* solution = _problem->getSolution();assert(solution);
+
+    PetscErrorCode err = 0;
+    PetscDS ds = NULL;
+    err = DMGetDS(solution->getDM(), &ds);PYLITH_CHECK_ERROR(err);
+    for (size_t i = 0; i < _data->numSolnSubfields; ++i) {
+        err = PetscDSSetExactSolution(ds, i, _data->exactSolnFns[i], NULL);PYLITH_CHECK_ERROR(err);
+        if (_data->exactSolnDotFns) {
+            err = PetscDSSetExactSolutionTimeDerivative(ds, i, _data->exactSolnDotFns[i], NULL);PYLITH_CHECK_ERROR(err);
+        } // if
+    } // for
+} // _setExactSolution
+
 
 // ------------------------------------------------------------------------------------------------
 // Constructor
 pylith::TestThermoporoelasticity_Data::TestThermoporoelasticity_Data(void) :
+    spaceDim(2),
     meshFilename(NULL),
-    lengthScale(1.0e+3),
-    pressureScale(2.25e+10),
-    timeScale(2.0),
-    densityScale(3.0e+3),
-    temperatureScale(1.0),
-    solidDensity(2500.0),
-    fluidDensity(1000.0),
-    fluidViscosity(1.0e-3),
-    porosity(0.1),
-    biotCoefficient(0.8),
-    biotModulus(1.0e+10),
-    drainedBulkModulus(5.0e+9),
-    shearModulus(3.0e+9),
-    isotropicPermeability(1.0e-15),
-    referenceTemperature(293.0),
-    thermalExpansionCoeff(1.0e-5),
-    fluidThermalExpansion(2.1e-4),
-    thermalConductivity(3.0),
-    specificHeat(800.0),
-    bcLabel("boundary"),
-    bcLabelId(1),
-    solnExactDisp(NULL),
-    solnExactPres(NULL),
-    solnExactTemp(NULL),
-    bodyForceFn(NULL),
-    sourceDensityFn(NULL),
-    heatSourceFn(NULL) {}
+    meshOptions(NULL),
+    boundaryLabel(NULL),
+    useAsciiMesh(true),
+
+    jacobianConvergenceRate(1.0),
+    tolerance(4.0e-9),
+    isJacobianLinear(true),
+    allowZeroResidual(false),
+
+    t(0.0),
+    dt(0.0),
+    formulation(pylith::problems::Physics::QUASISTATIC),
+
+    numSolnSubfields(0),
+    solnDiscretizations(NULL),
+
+    numAuxSubfields(0),
+    auxSubfields(NULL),
+    auxDiscretizations(NULL) {
+    auxDB.setDescription("material auxiliary field spatial database");
+    cs.setSpaceDim(spaceDim);
+
+    const double lengthScale = 8.0e+3;
+    pylith::scales::ElasticityScales::setQuasistaticPoroelasticity(&scales, lengthScale);
+    dt = 0.05*scales.getTimeScale();
+} // constructor
 
 
 // ------------------------------------------------------------------------------------------------
 // Destructor
-pylith::TestThermoporoelasticity_Data::~TestThermoporoelasticity_Data(void) {}
-
-
-// ------------------------------------------------------------------------------------------------
-// Setup testing data.
-void
-pylith::TestThermoporoelasticity::setUp(void) {
-    MMSTest::setUp();
-
-    _data = NULL;
-} // setUp
-
-
-// ------------------------------------------------------------------------------------------------
-// Deallocate testing data.
-void
-pylith::TestThermoporoelasticity::tearDown(void) {
-    delete _data;_data = NULL;
-
-    MMSTest::tearDown();
-} // tearDown
-
-
-// ------------------------------------------------------------------------------------------------
-// Set exact solution in domain.
-void
-pylith::TestThermoporoelasticity::setExactSolution(void) {
-    // Placeholder for exact solution setup
-    // Will be implemented in specific test cases
-} // setExactSolution
+pylith::TestThermoporoelasticity_Data::~TestThermoporoelasticity_Data(void) {
+    for (size_t i = 0; i < bcs.size(); ++i) {
+        delete bcs[i];bcs[i] = NULL;
+    } // for
+} // destructor
 
 
 // End of file
