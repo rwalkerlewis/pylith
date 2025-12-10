@@ -1,0 +1,59 @@
+#SPATIAL_GRID.ascii 1
+SimpleGridDB {
+  num-x = 5
+  num-y = 5
+  num-z = 0
+  space-dim = 2
+  num-values = 1
+  value-names = temperature
+  value-units = K
+  cs-data = cartesian {
+    to-meters = 1.0e+3
+    space-dim = 2
+  }
+}
+// x-coordinates (km) - includes points near fault for temperature anomaly
+-20.0  -1.0  0.0  1.0  20.0
+// y-coordinates (km) - depth (negative below surface)
+-20.0  -15.0  -10.0  -5.0  0.0
+// z-coordinates (none for 2D)
+
+// data: x, y, temperature
+// This represents the temperature field after an earthquake with shear heating.
+// There is an elevated temperature anomaly near the fault (x=0) at depth,
+// where the slip and shear stress were highest.
+//
+// Background geothermal gradient: 15 K/km
+// Surface temperature: 300 K, Bottom (20 km): 600 K
+// Near-fault anomaly: +20 K at 7.5-10 km depth
+//
+// Row 1: y = -20 km (bottom)
+-20.0  -20.0   600.0
+ -1.0  -20.0   600.0
+  0.0  -20.0   600.0
+  1.0  -20.0   600.0
+ 20.0  -20.0   600.0
+// Row 2: y = -15 km (just below fault tip)
+-20.0  -15.0   525.0
+ -1.0  -15.0   525.0
+  0.0  -15.0   525.0
+  1.0  -15.0   525.0
+ 20.0  -15.0   525.0
+// Row 3: y = -10 km (mid-fault, elevated temperature from shear heating)
+-20.0  -10.0   450.0
+ -1.0  -10.0   465.0
+  0.0  -10.0   480.0
+  1.0  -10.0   465.0
+ 20.0  -10.0   450.0
+// Row 4: y = -5 km (shallow fault, moderate heating)
+-20.0   -5.0   375.0
+ -1.0   -5.0   385.0
+  0.0   -5.0   395.0
+  1.0   -5.0   385.0
+ 20.0   -5.0   375.0
+// Row 5: y = 0 km (surface, fixed at 300 K)
+-20.0    0.0   300.0
+ -1.0    0.0   300.0
+  0.0    0.0   300.0
+  1.0    0.0   300.0
+ 20.0    0.0   300.0

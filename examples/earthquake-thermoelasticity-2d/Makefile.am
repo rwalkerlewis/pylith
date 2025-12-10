@@ -9,23 +9,17 @@
 # =================================================================================================
 
 dist_noinst_DATA = \
-	README.md
+	README.md \
+	pylithapp.cfg \
+	step01_coseismic.cfg \
+	step02_postseismic.cfg \
+	generate_gmsh.py \
+	fault_slip.spatialdb \
+	initial_temperature.spatialdb \
+	initial_temperature_heated.spatialdb
 
-SUBDIRS = \
-	barwaves-2d \
-	box-2d \
-	box-3d \
-	meshing-cubit \
-	reverse-2d \
-	strikeslip-2d \
-	crustal-strikeslip-2d \
-	crustal-strikeslip-3d \
-	subduction-2d \
-	subduction-3d \
-	magma-2d \
-	poroelastic-outerrise-2d \
-	earthquake-thermoelasticity-2d \
-	troubleshooting-2d
+noinst_DATA = \
+	mesh_tri.msh
 
 
-# End of file 
+# End of file

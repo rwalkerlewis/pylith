@@ -1,0 +1,36 @@
+// This spatial database specifies the distribution of coseismic slip on the
+// fault surface. The slip has a maximum of 2 m at 7.5 km depth and tapers
+// to zero at the surface and at 15 km depth (fault tip).
+//
+// Shear heating is proportional to slip × shear stress, so the maximum
+// heat generation occurs where slip is largest.
+#SPATIAL.ascii 1
+SimpleDB {
+  num-values = 3
+  value-names =  final_slip_left_lateral  final_slip_opening  initiation_time
+  value-units =  m  m  s
+  num-locs = 9
+  data-dim = 1 // Data is specified along the fault (1D line in 2D domain)
+  space-dim = 2
+  cs-data = cartesian {
+    to-meters = 1.0e+3 // Specify coordinates in km for convenience.
+    space-dim = 2
+  } // cs-data
+} // SimpleDB
+// Columns are:
+// (1) x coordinate (km) - fault is at x=0
+// (2) y coordinate (km) - depth (negative = below surface)
+// (3) left-lateral slip (m) - negative = right-lateral
+// (4) fault-opening (m)
+// (5) initiation time (s)
+//
+// Slip distribution: maximum at 7.5 km depth, tapering to zero at surface and tip
+0.0     0.0       0.0    0.0   0.0
+0.0    -2.5      -1.0    0.0   0.0
+0.0    -5.0      -1.8    0.0   0.0
+0.0    -7.5      -2.0    0.0   0.0
+0.0   -10.0      -1.8    0.0   0.0
+0.0   -12.5      -1.0    0.0   0.0
+0.0   -14.5      -0.2    0.0   0.0
+0.0   -15.0       0.0    0.0   0.0
+0.0   -20.0       0.0    0.0   0.0
