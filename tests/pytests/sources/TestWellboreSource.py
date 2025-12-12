@@ -17,24 +17,23 @@
 #
 # @file tests/pytests/sources/TestWellboreSource.py
 #
-# @brief Unit testing of Python TestWellboreSource object.
+# @brief Unit testing of Python TimeHistoryWavelet source time function.
 
 import unittest
 
 from pylith.testing.UnitTestApp import TestComponent
-from pylith.sources.Source import (WellboreSource, source)
+from pylith.sources.TimeHistoryWavelet import (TimeHistoryWavelet, momenttensorforce_sourcetimefunction)
 
 
-class TestWellboreSource(TestComponent):
-    """Unit testing of WellboreSource object.
-    """
-    _class = WellboreSource
-    _factory = source
+class TestTimeHistoryWavelet(TestComponent):
+    """Unit testing of TimeHistoryWavelet source time function."""
+    _class = TimeHistoryWavelet
+    _factory = momenttensorforce_sourcetimefunction
 
 
 if __name__ == "__main__":
     suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(TestWellboreSource))
+    suite.addTest(unittest.makeSuite(TestTimeHistoryWavelet))
     unittest.TextTestRunner(verbosity=2).run(suite)
 
 

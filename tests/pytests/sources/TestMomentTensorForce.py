@@ -22,7 +22,7 @@
 import unittest
 
 from pylith.testing.UnitTestApp import TestComponent
-from pylith.sources.Source import (MomentTensorForce, source)
+from pylith.sources.MomentTensorForce import (MomentTensorForce, source)
 
 
 class TestMomentTensorForce(TestComponent):

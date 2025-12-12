@@ -17,17 +17,14 @@
 #
 # @brief Python source time functiof for a ricker wavelet.
 #
-# Factory: pointforce_sourcetimefunction
+# Factory: `momenttensorforce_sourcetimefunction`
 
 from .SourceTimeFunctionMomentTensorForce import SourceTimeFunctionMomentTensorForce
 from .sources import RickerWavelet as ModuleRickerWavelet
 
 
 class RickerWavelet(SourceTimeFunctionMomentTensorForce, ModuleRickerWavelet):
-    """Python source time function for ricker source.
-
-    FACTORY: pointforce_sourcetimefunction
-    """
+    """Ricker wavelet source time function for moment-tensor sources."""
 
     import pythia.pyre.inventory
 

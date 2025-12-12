@@ -150,6 +150,7 @@ EXTRA_DIST = \
 	sources/TimeHistoryWavelet.py \
 	sources/__init__.py \
 	testing/FullTestApp.py \
+	testing/UnitTestApp.py \
 	testing/SolutionPoints.py \
 	testing/TestCases.py \
 	testing/__init__.py \

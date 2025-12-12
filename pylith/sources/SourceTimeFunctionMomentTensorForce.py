@@ -1,34 +1,25 @@
-# ----------------------------------------------------------------------
+# =================================================================================================
+# This code is part of PyLith, developed through the Computational Infrastructure
+# for Geodynamics (https://github.com/geodynamics/pylith).
 #
-# Brad T. Aagaard, U.S. Geological Survey
-# Charles A. Williams, GNS Science
-# Matthew G. Knepley, University at Buffalo
+# Copyright (c) 2010-2025, University of California, Davis and the PyLith Development Team.
+# All rights reserved.
 #
-# This code was developed as part of the Computational Infrastructure
-# for Geodynamics (http://geodynamics.org).
-#
-# Copyright (c) 2010-2021 University of California, Davis
-#
-# See LICENSE.md for license information.
-#
-# ----------------------------------------------------------------------
+# See https://mit-license.org/ and LICENSE.md and for license information.
+# =================================================================================================
 #
 # @file pylith/sources/SourceTimeFunctionMomentTensorForce.py
 #
-# @brief Python material for isotropic, linearly elastic, plane
-# strain material.
+# @brief Python base class for moment-tensor source time functions.
 #
-# Factory: momenttensorforce_sourcetimefunction
+# Factory: `momenttensorforce_sourcetimefunction`
 
 from pylith.utils.PetscComponent import PetscComponent
 from .sources import SourceTimeFunctionMomentTensorForce as ModuleSourceTimeFunction
 
 
 class SourceTimeFunctionMomentTensorForce(PetscComponent, ModuleSourceTimeFunction):
-    """Python object for sourcetimefunction of a momenttensor source.
-
-    FACTORY: momenttensorforce_sourcetimefunction
-    """
+    """Base class for moment-tensor source time functions."""
     import pythia.pyre.inventory
 
     from pylith.topology.Subfield import subfieldFactory

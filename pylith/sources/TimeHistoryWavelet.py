@@ -17,7 +17,7 @@
 #
 # @brief Python source time function for a user defined wavelet.
 #
-# Factory: pointforce_sourcetimefunction
+# Factory: `momenttensorforce_sourcetimefunction`
 
 from .SourceTimeFunctionMomentTensorForce import SourceTimeFunctionMomentTensorForce
 from .sources import TimeHistoryWavelet as ModuleTimeHistoryWavelet
@@ -25,10 +25,7 @@ from pylith.utils.NullComponent import NullComponent
 
 
 class TimeHistoryWavelet(SourceTimeFunctionMomentTensorForce, ModuleTimeHistoryWavelet):
-    """Python source time function for time history source.
-
-    FACTORY: pointforce_sourcetimefunction
-    """
+    """Time history wavelet source time function for moment-tensor sources."""
 
     import pythia.pyre.inventory
 
@@ -57,7 +54,7 @@ class TimeHistoryWavelet(SourceTimeFunctionMomentTensorForce, ModuleTimeHistoryW
         from pylith.mpi.Communicator import mpi_is_root
         if mpi_is_root():
             self._info.log(
-                "Performing minimal initialization of time-dependent Neumann boundary condition '%s'." % self.aliases[-1])
+                "Performing minimal initialization of time history wavelet source time function '%s'." % self.aliases[-1])
         
         
         SourceTimeFunctionMomentTensorForce.preinitialize(self, problem)

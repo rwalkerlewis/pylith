@@ -1,23 +1,18 @@
-# ----------------------------------------------------------------------
+# =================================================================================================
+# This code is part of PyLith, developed through the Computational Infrastructure
+# for Geodynamics (https://github.com/geodynamics/pylith).
 #
-# Brad T. Aagaard, U.S. Geological Survey
-# Charles A. Williams, GNS Science
-# Matthew G. Knepley, University of Chicago
+# Copyright (c) 2010-2025, University of California, Davis and the PyLith Development Team.
+# All rights reserved.
 #
-# This code was developed as part of the Computational Infrastructure
-# for Geodynamics (http://geodynamics.org).
-#
-# Copyright (c) 2010-2016 University of California, Davis
-#
-# See COPYING for license information.
-#
-# ----------------------------------------------------------------------
+# See https://mit-license.org/ and LICENSE.md and for license information.
+# =================================================================================================
 #
 # @file pylith/sources/MomentTensorForce.py
 #
-# @brief Python object for solving the momenttensorforce equation.
+# @brief Python component for a moment-tensor point source.
 #
-# Factory: source
+# Factory: `source`
 
 from pylith.sources.TimeHistoryWavelet import TimeHistoryWavelet
 from .Source import Source
@@ -25,10 +20,7 @@ from .sources import MomentTensorForce as ModuleMomentTensorForce
 
 
 class MomentTensorForce(Source, ModuleMomentTensorForce):
-    """Python source property manager.
-
-    FACTORY: source
-    """
+    """Moment-tensor point source."""
 
     import pythia.pyre.inventory
 

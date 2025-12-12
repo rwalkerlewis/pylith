@@ -17,17 +17,14 @@
 #
 # @brief Python source time functiof for a square wavelet.
 #
-# Factory: pointforce_sourcetimefunction
+# Factory: `momenttensorforce_sourcetimefunction`
 
 from .SourceTimeFunctionMomentTensorForce import SourceTimeFunctionMomentTensorForce
 from .sources import SquareWavelet as ModuleSquareWavelet
 
 
 class SquareWavelet(SourceTimeFunctionMomentTensorForce, ModuleSquareWavelet):
-    """Python source time function for square source.
-
-    FACTORY: pointforce_sourcetimefunction
-    """
+    """Square wavelet source time function for moment-tensor sources."""
 
     import pythia.pyre.inventory
 

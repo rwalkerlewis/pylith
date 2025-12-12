@@ -24,7 +24,7 @@ from .sources import GaussianWavelet as ModuleGaussianWavelet
 
 
 class GaussianWavelet(SourceTimeFunctionMomentTensorForce, ModuleGaussianWavelet):
-    """Python source time function for ricker source.
+    """Gaussian wavelet source time function for moment-tensor sources.
 
     FACTORY: momenttensorforce_sourcetimefunction
     """

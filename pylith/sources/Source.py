@@ -1,24 +1,18 @@
-# ----------------------------------------------------------------------
+# =================================================================================================
+# This code is part of PyLith, developed through the Computational Infrastructure
+# for Geodynamics (https://github.com/geodynamics/pylith).
 #
-# Brad T. Aagaard, U.S. Geological Survey
-# Charles A. Williams, GNS Science
-# Matthew G. Knepley, University of Chicago
+# Copyright (c) 2010-2025, University of California, Davis and the PyLith Development Team.
+# All rights reserved.
 #
-# This code was developed as part of the Computational Infrastructure
-# for Geodynamics (http://geodynamics.org).
-#
-# Copyright (c) 2010-2016 University of California, Davis
-#
-# See COPYING for license information.
-#
-# ----------------------------------------------------------------------
+# See https://mit-license.org/ and LICENSE.md and for license information.
+# =================================================================================================
 #
 # @file pylith/sources/Source.py
 #
-# @brief Python abstract base class for managing input and out put
-# sources not necessarily pertaining to domain boundaries
+# @brief Python abstract base class for configuring sources.
 #
-# Factory: source
+# Factory: `source`
 
 from pylith.problems.Physics import Physics
 from .sources import Source as ModuleSource
@@ -28,31 +22,29 @@ def validateDescription(value):
     """Validate description.
     """
     if 0 == len(value):
-        raise ValueError("Description for material not specified.")
+        raise ValueError("Description for source not specified.")
     return value
 
 
 class Source(Physics, ModuleSource):
-    """Python source property manager.
-
-    FACTORY: source
-    """
+    """Python abstract base class for configuring sources."""
 
     import pythia.pyre.inventory
 
     field = pythia.pyre.inventory.str("field", default="displacement")
-    field.meta['tip'] = "Solution subfield associated with boundary condition."
+    field.meta['tip'] = "Solution subfield associated with source."
 
     description = pythia.pyre.inventory.str(
         "description", default="", validator=validateDescription)
-    description.meta['tip'] = "Descriptive label for material."
+    description.meta['tip'] = "Descriptive label for source."
 
-    # labelName = pythia.pyre.inventory.str("label", default="source-id", validator=pythia.pyre.inventory.choice(["source-id"]))
-    labelName = pythia.pyre.inventory.str("label", default="source-id")
-    labelName.meta['tip'] = "Name of label for source. Currently only 'source-id' is allowed."
+    labelName = pythia.pyre.inventory.str(
+        "label", default="source-id",
+        validator=pythia.pyre.inventory.choice(["source-id"]))
+    labelName.meta['tip'] = "Name of label for source points."
 
     labelValue = pythia.pyre.inventory.int("label_value", default=1)
-    labelValue.meta['tip'] = "Value of label identifying source."
+    labelValue.meta['tip'] = "Value of label identifying source points."
 
     from pylith.meshio.PointsList import PointsList
     reader = pythia.pyre.inventory.facility(
@@ -84,8 +76,7 @@ class Source(Physics, ModuleSource):
         if hasattr(problem.normalizer, 'lengthScale'):
             sourceCoords /= problem.normalizer.lengthScale.value
         else:
-            sourceCoords /= (problem.normalizer.shearWaveSpeed.value *
-                             problem.normalizer.wavePeriod.value)
+            sourceCoords /= (problem.normalizer.shearWaveSpeed.value * problem.normalizer.wavePeriod.value)
 
         ModuleSource.setPoints(self, sourceCoords, sourceNames)
         return

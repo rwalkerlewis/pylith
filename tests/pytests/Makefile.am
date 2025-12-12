@@ -74,6 +74,13 @@ dist_noinst_PYTHON = \
 	problems/TestSolution.py \
 	problems/TestSolutionSubfields.py \
 	problems/TestTimeDependent.py \
+	sources/__init__.py \
+	sources/TestSource.py \
+	sources/TestMomentTensorForce.py \
+	sources/TestPointForce.py \
+	sources/TestWellboreSource.py \
+	sources/TestSquareWavelet.py \
+	sources/TestGaussianWavelet.py \
 	topology/__init__.py \
 	topology/TestDistributor.py \
 	topology/TestField.py \

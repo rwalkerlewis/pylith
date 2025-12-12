@@ -17,24 +17,23 @@
 #
 # @file tests/pytests/sources/TestPointForce.py
 #
-# @brief Unit testing of Python TestPointForce object.
+# @brief Unit testing of Python RickerWavelet source time function.
 
 import unittest
 
 from pylith.testing.UnitTestApp import TestComponent
-from pylith.sources.Source import (PointForce, source)
+from pylith.sources.RickerWavelet import (RickerWavelet, momenttensorforce_sourcetimefunction)
 
 
-class TestPointForce(TestComponent):
-    """Unit testing of PointForce object.
-    """
-    _class = PointForce
-    _factory = source
+class TestRickerWavelet(TestComponent):
+    """Unit testing of RickerWavelet source time function."""
+    _class = RickerWavelet
+    _factory = momenttensorforce_sourcetimefunction
 
 
 if __name__ == "__main__":
     suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(TestPointForce))
+    suite.addTest(unittest.makeSuite(TestRickerWavelet))
     unittest.TextTestRunner(verbosity=2).run(suite)
 
 
