@@ -14,6 +14,8 @@ SUBDIRS = \
 	incompressibleelasticity \
 	viscoelasticity \
 	poroelasticity \
+	heat \
+	thermoelasticity \
 	sources \
 	petsc \
 	eqinfo

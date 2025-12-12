@@ -28,6 +28,18 @@
 #include "pylith/materials/RheologyPoroelasticity.hh"
 #include "pylith/materials/IsotropicLinearPoroelasticity.hh"
 
+#include "pylith/materials/Heat.hh"
+#include "pylith/materials/RheologyHeat.hh"
+#include "pylith/materials/IsotropicHeat.hh"
+
+#include "pylith/materials/Thermoelasticity.hh"
+#include "pylith/materials/RheologyThermoelasticity.hh"
+#include "pylith/materials/IsotropicLinearThermoelasticity.hh"
+
+#include "pylith/materials/Thermoporoelasticity.hh"
+#include "pylith/materials/RheologyThermoporoelasticity.hh"
+#include "pylith/materials/IsotropicLinearThermoporoelasticity.hh"
+
 #include "pylith/utils/arrayfwd.hh"
 %}
 
@@ -71,5 +83,17 @@ import_array();
 %include "Poroelasticity.i"
 %include "RheologyPoroelasticity.i"
 %include "IsotropicLinearPoroelasticity.i"
+
+%include "Heat.i"
+%include "RheologyHeat.i"
+%include "IsotropicHeat.i"
+
+%include "Thermoelasticity.i"
+%include "RheologyThermoelasticity.i"
+%include "IsotropicLinearThermoelasticity.i"
+
+%include "Thermoporoelasticity.i"
+%include "RheologyThermoporoelasticity.i"
+%include "IsotropicLinearThermoporoelasticity.i"
 
 // End of file

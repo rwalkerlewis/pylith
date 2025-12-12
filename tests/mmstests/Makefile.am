@@ -12,6 +12,9 @@ SUBDIRS = \
 	linearelasticity \
 	incompressibleelasticity \
 	poroelasticity \
+	heat \
+	thermoelasticity \
+	thermoporoelasticity \
 	sources
 
 
