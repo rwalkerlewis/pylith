@@ -18,19 +18,19 @@ make coverage-libtests.info
 if [ $? != 0 ]; then exit 1; fi
 
 if [ -r coverage-libtests.info ]; then
-  curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring --keyring trustedkeys.gpg --import
-  curl -Os https://uploader.codecov.io/latest/linux/codecov
-  curl -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM
-  curl -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM.sig
-  gpgv codecov.SHA256SUM.sig codecov.SHA256SUM
-  if [ $? != 0 ]; then exit 1; fi
-  shasum -a 256 -c codecov.SHA256SUM
-  if [ $? != 0 ]; then exit 1; fi
-  chmod +x codecov
-  pushd ${SRC_DIR} && \
-      ${BUILD_DIR}/codecov -C ${BUILD_SOURCEVERSION} -r geodynamics/spatialdata -f ${BUILD_DIR}/coverage-libtests.info -F libtests -y ci-config/codecov.yml \
-	  || echo "Codecov did not collect coverage reports." && \
-      popd
+  (
+    curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring --keyring trustedkeys.gpg --import
+    curl -Os https://uploader.codecov.io/latest/linux/codecov
+    curl -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM
+    curl -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM.sig
+    gpgv codecov.SHA256SUM.sig codecov.SHA256SUM
+    shasum -a 256 -c codecov.SHA256SUM
+    chmod +x codecov
+    pushd ${SRC_DIR} && \
+        ${BUILD_DIR}/codecov -C ${BUILD_SOURCEVERSION} -r geodynamics/spatialdata -f ${BUILD_DIR}/coverage-libtests.info -F libtests -y ci-config/codecov.yml \
+        || echo "Codecov did not collect coverage reports." && \
+        popd
+  ) || echo "WARNING: Skipping Codecov upload for libtests (network/verification failure)."
 fi
 
 
@@ -44,10 +44,12 @@ make coverage-mmstests.info
 if [ $? != 0 ]; then exit 1; fi
 
 if [ -r coverage-mmstests.info ]; then
-  pushd ${SRC_DIR} && \
-      ${BUILD_DIR}/codecov -C ${BUILD_SOURCEVERSION} -r geodynamics/spatialdata -f ${BUILD_DIR}/coverage-mmstests.info -F mmstests -y ci-config/codecov.yml \
-	  || echo "Codecov did not collect coverage reports." && \
-      popd
+  (
+    pushd ${SRC_DIR} && \
+        ${BUILD_DIR}/codecov -C ${BUILD_SOURCEVERSION} -r geodynamics/spatialdata -f ${BUILD_DIR}/coverage-mmstests.info -F mmstests -y ci-config/codecov.yml \
+        || echo "Codecov did not collect coverage reports." && \
+        popd
+  ) || echo "WARNING: Skipping Codecov upload for mmstests."
 fi
 
 
@@ -61,10 +63,12 @@ make coverage-pytests.xml
 if [ $? != 0 ]; then exit 1; fi
 
 if [ -r coverage-pytests.xml ]; then
-  pushd ${SRC_DIR} && \
-      ${BUILD_DIR}/codecov -C ${BUILD_SOURCEVERSION} -r geodynamics/spatialdata -f ${BUILD_DIR}/coverage-pytests.xml -F pytests -y ci-config/codecov.yml \
-	  || echo "Codecov did not collect coverage reports." && \
-      popd
+  (
+    pushd ${SRC_DIR} && \
+        ${BUILD_DIR}/codecov -C ${BUILD_SOURCEVERSION} -r geodynamics/spatialdata -f ${BUILD_DIR}/coverage-pytests.xml -F pytests -y ci-config/codecov.yml \
+        || echo "Codecov did not collect coverage reports." && \
+        popd
+  ) || echo "WARNING: Skipping Codecov upload for pytests."
 fi
 
 
@@ -78,10 +82,12 @@ make coverage-fullscale.info
 if [ $? != 0 ]; then exit 1; fi
 
 if [ -r coverage-fullscale.info ]; then
-  pushd ${SRC_DIR} && \
-      ${BUILD_DIR}/codecov -C ${BUILD_SOURCEVERSION} -r geodynamics/spatialdata -f ${BUILD_DIR}/coverage-fullscale.info -F fullscale -y ci-config/codecov.yml \
-	  || echo "Codecov did not collect coverage reports." && \
-      popd
+  (
+    pushd ${SRC_DIR} && \
+        ${BUILD_DIR}/codecov -C ${BUILD_SOURCEVERSION} -r geodynamics/spatialdata -f ${BUILD_DIR}/coverage-fullscale.info -F fullscale -y ci-config/codecov.yml \
+        || echo "Codecov did not collect coverage reports." && \
+        popd
+  ) || echo "WARNING: Skipping Codecov upload for fullscale."
 fi
 
 

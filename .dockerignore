@@ -4,3 +4,7 @@
 autom4te.cache
 aux-config
 build
+
+# Core dumps
+core
+core.*
