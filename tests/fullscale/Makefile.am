@@ -14,6 +14,7 @@ SUBDIRS = \
 	incompressibleelasticity \
 	viscoelasticity \
 	poroelasticity \
+	thermoporoelasticity \
 	heat \
 	thermoelasticity \
 	petsc \
