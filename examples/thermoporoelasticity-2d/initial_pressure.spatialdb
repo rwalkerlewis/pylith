@@ -1,0 +1,39 @@
+#SPATIAL_GRID.ascii 1
+SimpleGridDB {
+  num-x = 3
+  num-y = 5
+  num-z = 0
+  space-dim = 2
+  num-values = 1
+  value-names = pressure
+  value-units = Pa
+  cs-data = cartesian {
+    to-meters = 1.0e+3
+    space-dim = 2
+  }
+}
+// x-coordinates (km)
+-10.0  0.0  10.0
+// y-coordinates (km) - depth (negative below surface)
+-10.0  -7.5  -5.0  -2.5  0.0
+// z-coordinates (none for 2D)
+
+// data: x, y, pressure
+// Hydrostatic pressure: p = rho_f * g * depth
+// rho_f = 1000 kg/m^3, g = 10 m/s^2
+// Gradient: 10 MPa/km = 10e6 Pa/km
+-10.0  -10.0   100.0e+6
+  0.0  -10.0   100.0e+6
+ 10.0  -10.0   100.0e+6
+-10.0   -7.5    75.0e+6
+  0.0   -7.5    75.0e+6
+ 10.0   -7.5    75.0e+6
+-10.0   -5.0    50.0e+6
+  0.0   -5.0    50.0e+6
+ 10.0   -5.0    50.0e+6
+-10.0   -2.5    25.0e+6
+  0.0   -2.5    25.0e+6
+ 10.0   -2.5    25.0e+6
+-10.0    0.0     0.0
+  0.0    0.0     0.0
+ 10.0    0.0     0.0

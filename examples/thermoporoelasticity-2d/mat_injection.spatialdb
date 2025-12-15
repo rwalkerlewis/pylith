@@ -1,0 +1,55 @@
+#SPATIAL_GRID.ascii 1
+SimpleGridDB {
+  num-x = 5
+  num-y = 5
+  num-z = 0
+  space-dim = 2
+  num-values = 15
+  value-names = solid_density fluid_density fluid_viscosity porosity shear_modulus drained_bulk_modulus biot_coefficient biot_modulus isotropic_permeability specific_heat thermal_conductivity reference_temperature thermal_expansion_coefficient fluid_thermal_expansion source_density
+  value-units = kg/m**3 kg/m**3 Pa*s none GPa GPa none GPa m**2 J/(kg*K) W/(m*K) K 1/K 1/K kg/(m**3*s)
+  cs-data = cartesian {
+    to-meters = 1.0e+3
+    space-dim = 2
+  }
+}
+// x-coordinates (km)
+-10.0  -2.0  0.0  2.0  10.0
+// y-coordinates (km) - depth (negative below surface)
+-10.0  -7.5  -5.0  -2.5  0.0
+// z-coordinates (none for 2D)
+
+// data: x, y, solid_density, fluid_density, fluid_viscosity, porosity, shear_modulus, drained_bulk_modulus, biot_coefficient, biot_modulus, isotropic_permeability, specific_heat, thermal_conductivity, reference_temperature, thermal_expansion_coefficient, fluid_thermal_expansion, source_density
+// Uniform material properties with localized fluid injection at x=0, y=-5 km
+// source_density units: kg/(m^3*s) - mass injection rate per unit volume
+// Injection rate: 1e-6 kg/(m^3*s) at injection location, 0 elsewhere
+//
+// Row 1: y = -10 km (bottom)
+-10.0  -10.0   2700.0  1000.0  0.001  0.1  6.0  10.0  0.8  10.0  1.0e-15  900.0  3.0  300.0  2.4e-5  2.1e-4  0.0
+ -2.0  -10.0   2700.0  1000.0  0.001  0.1  6.0  10.0  0.8  10.0  1.0e-15  900.0  3.0  300.0  2.4e-5  2.1e-4  0.0
+  0.0  -10.0   2700.0  1000.0  0.001  0.1  6.0  10.0  0.8  10.0  1.0e-15  900.0  3.0  300.0  2.4e-5  2.1e-4  0.0
+  2.0  -10.0   2700.0  1000.0  0.001  0.1  6.0  10.0  0.8  10.0  1.0e-15  900.0  3.0  300.0  2.4e-5  2.1e-4  0.0
+ 10.0  -10.0   2700.0  1000.0  0.001  0.1  6.0  10.0  0.8  10.0  1.0e-15  900.0  3.0  300.0  2.4e-5  2.1e-4  0.0
+// Row 2: y = -7.5 km
+-10.0   -7.5   2700.0  1000.0  0.001  0.1  6.0  10.0  0.8  10.0  1.0e-15  900.0  3.0  300.0  2.4e-5  2.1e-4  0.0
+ -2.0   -7.5   2700.0  1000.0  0.001  0.1  6.0  10.0  0.8  10.0  1.0e-15  900.0  3.0  300.0  2.4e-5  2.1e-4  0.0
+  0.0   -7.5   2700.0  1000.0  0.001  0.1  6.0  10.0  0.8  10.0  1.0e-15  900.0  3.0  300.0  2.4e-5  2.1e-4  0.0
+  2.0   -7.5   2700.0  1000.0  0.001  0.1  6.0  10.0  0.8  10.0  1.0e-15  900.0  3.0  300.0  2.4e-5  2.1e-4  0.0
+ 10.0   -7.5   2700.0  1000.0  0.001  0.1  6.0  10.0  0.8  10.0  1.0e-15  900.0  3.0  300.0  2.4e-5  2.1e-4  0.0
+// Row 3: y = -5 km (injection location at x=0)
+-10.0   -5.0   2700.0  1000.0  0.001  0.1  6.0  10.0  0.8  10.0  1.0e-15  900.0  3.0  300.0  2.4e-5  2.1e-4  0.0
+ -2.0   -5.0   2700.0  1000.0  0.001  0.1  6.0  10.0  0.8  10.0  1.0e-15  900.0  3.0  300.0  2.4e-5  2.1e-4  0.0
+  0.0   -5.0   2700.0  1000.0  0.001  0.1  6.0  10.0  0.8  10.0  1.0e-15  900.0  3.0  300.0  2.4e-5  2.1e-4  1.0e-6
+  2.0   -5.0   2700.0  1000.0  0.001  0.1  6.0  10.0  0.8  10.0  1.0e-15  900.0  3.0  300.0  2.4e-5  2.1e-4  0.0
+ 10.0   -5.0   2700.0  1000.0  0.001  0.1  6.0  10.0  0.8  10.0  1.0e-15  900.0  3.0  300.0  2.4e-5  2.1e-4  0.0
+// Row 4: y = -2.5 km
+-10.0   -2.5   2700.0  1000.0  0.001  0.1  6.0  10.0  0.8  10.0  1.0e-15  900.0  3.0  300.0  2.4e-5  2.1e-4  0.0
+ -2.0   -2.5   2700.0  1000.0  0.001  0.1  6.0  10.0  0.8  10.0  1.0e-15  900.0  3.0  300.0  2.4e-5  2.1e-4  0.0
+  0.0   -2.5   2700.0  1000.0  0.001  0.1  6.0  10.0  0.8  10.0  1.0e-15  900.0  3.0  300.0  2.4e-5  2.1e-4  0.0
+  2.0   -2.5   2700.0  1000.0  0.001  0.1  6.0  10.0  0.8  10.0  1.0e-15  900.0  3.0  300.0  2.4e-5  2.1e-4  0.0
+ 10.0   -2.5   2700.0  1000.0  0.001  0.1  6.0  10.0  0.8  10.0  1.0e-15  900.0  3.0  300.0  2.4e-5  2.1e-4  0.0
+// Row 5: y = 0 km (surface)
+-10.0    0.0   2700.0  1000.0  0.001  0.1  6.0  10.0  0.8  10.0  1.0e-15  900.0  3.0  300.0  2.4e-5  2.1e-4  0.0
+ -2.0    0.0   2700.0  1000.0  0.001  0.1  6.0  10.0  0.8  10.0  1.0e-15  900.0  3.0  300.0  2.4e-5  2.1e-4  0.0
+  0.0    0.0   2700.0  1000.0  0.001  0.1  6.0  10.0  0.8  10.0  1.0e-15  900.0  3.0  300.0  2.4e-5  2.1e-4  0.0
+  2.0    0.0   2700.0  1000.0  0.001  0.1  6.0  10.0  0.8  10.0  1.0e-15  900.0  3.0  300.0  2.4e-5  2.1e-4  0.0
+ 10.0    0.0   2700.0  1000.0  0.001  0.1  6.0  10.0  0.8  10.0  1.0e-15  900.0  3.0  300.0  2.4e-5  2.1e-4  0.0

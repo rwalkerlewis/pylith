@@ -1,0 +1,55 @@
+#SPATIAL_GRID.ascii 1
+SimpleGridDB {
+  num-x = 5
+  num-y = 5
+  num-z = 0
+  space-dim = 2
+  num-values = 1
+  value-names = pressure
+  value-units = Pa
+  cs-data = cartesian {
+    to-meters = 1.0e+3
+    space-dim = 2
+  }
+}
+// x-coordinates (km)
+-10.0  -2.0  0.0  2.0  10.0
+// y-coordinates (km) - depth (negative below surface)
+-10.0  -7.5  -5.0  -2.5  0.0
+// z-coordinates (none for 2D)
+
+// data: x, y, pressure
+// Hydrostatic pressure with an overpressure perturbation at x=0, y=-5 km
+// Background: 10 MPa/km hydrostatic gradient
+// Perturbation: +10 MPa at center (overpressured zone)
+//
+// Row 1: y = -10 km (bottom)
+-10.0  -10.0   100.0e+6
+ -2.0  -10.0   100.0e+6
+  0.0  -10.0   100.0e+6
+  2.0  -10.0   100.0e+6
+ 10.0  -10.0   100.0e+6
+// Row 2: y = -7.5 km
+-10.0   -7.5    75.0e+6
+ -2.0   -7.5    80.0e+6
+  0.0   -7.5    82.5e+6
+  2.0   -7.5    80.0e+6
+ 10.0   -7.5    75.0e+6
+// Row 3: y = -5 km (center of overpressure)
+-10.0   -5.0    50.0e+6
+ -2.0   -5.0    55.0e+6
+  0.0   -5.0    60.0e+6
+  2.0   -5.0    55.0e+6
+ 10.0   -5.0    50.0e+6
+// Row 4: y = -2.5 km
+-10.0   -2.5    25.0e+6
+ -2.0   -2.5    27.5e+6
+  0.0   -2.5    30.0e+6
+  2.0   -2.5    27.5e+6
+ 10.0   -2.5    25.0e+6
+// Row 5: y = 0 km (surface, fixed at 0)
+-10.0    0.0     0.0
+ -2.0    0.0     0.0
+  0.0    0.0     0.0
+  2.0    0.0     0.0
+ 10.0    0.0     0.0
