@@ -37,6 +37,7 @@ __all__ = [
     "SolnDispPresTemp",
     "SolnPresTemp",
     "SolnDispPresTracStrainTemp",
+    "SolnDispPresTracStrainTempLagrange",
     "SolutionSubfield",
     "SubfieldDisplacement",
     "SubfieldLagrangeFault",

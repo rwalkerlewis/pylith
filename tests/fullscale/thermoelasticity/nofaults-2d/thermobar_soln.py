@@ -109,9 +109,12 @@ class AnalyticalSolution:
             numpy.ndarray: Temperature at points [npts, 1].
         """
         x = pts[:, 0]
+        npts = pts.shape[0]
         # Linear temperature profile from T_LEFT to T_RIGHT
         T = T_LEFT + (T_RIGHT - T_LEFT) * (x - XLEFT) / LENGTH
-        return T.reshape(-1, 1)
+        temperature = np.zeros((1, npts, 1), dtype=np.float64)
+        temperature[0, :, 0] = T
+        return temperature
 
     def displacement(self, pts):
         """Compute displacement field.
@@ -136,7 +139,7 @@ class AnalyticalSolution:
         npts = pts.shape[0]
         dim = pts.shape[1]
         
-        disp = np.zeros((npts, dim))
+        disp = np.zeros((npts, dim), dtype=np.float64)
         
         # For linear temperature: T(x) = T_LEFT + slope * (x - XLEFT)
         # where slope = (T_RIGHT - T_LEFT) / LENGTH
@@ -153,7 +156,9 @@ class AnalyticalSolution:
         disp[:, 0] = THERMAL_EXPANSION_COEFF * T_avg_minus_ref * delta_x
         disp[:, 1] = 0.0  # No y-displacement for 1D thermal expansion with free boundaries
         
-        return disp
+        disp3 = np.zeros((1, npts, dim), dtype=np.float64)
+        disp3[0, :, :] = disp
+        return disp3
 
 
 # Create solution instance for use by test framework
@@ -210,17 +215,23 @@ def bc_xneg_displacement(pts):
     """Get displacement BC on left boundary."""
     npts = pts.shape[0]
     dim = pts.shape[1]
-    return np.zeros((npts, dim))
+    return np.zeros((1, npts, dim), dtype=np.float64)
 
 
 def bc_xneg_temperature(pts):
     """Get temperature BC on left boundary."""
-    return T_LEFT * np.ones((pts.shape[0], 1))
+    npts = pts.shape[0]
+    field = np.zeros((1, npts, 1), dtype=np.float64)
+    field[0, :, 0] = T_LEFT
+    return field
 
 
 def bc_xpos_temperature(pts):
     """Get temperature BC on right boundary."""
-    return T_RIGHT * np.ones((pts.shape[0], 1))
+    npts = pts.shape[0]
+    field = np.zeros((1, npts, 1), dtype=np.float64)
+    field[0, :, 0] = T_RIGHT
+    return field
 
 
 # End of file

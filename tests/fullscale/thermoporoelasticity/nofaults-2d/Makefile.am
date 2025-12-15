@@ -5,7 +5,7 @@
 # Copyright (c) 2010-2025, University of California, Davis and the PyLith Development Team.
 # All rights reserved.
 #
-# See https://mit-license.org/ and LICENSE.md and for license information. 
+# See https://mit-license.org/ and LICENSE.md and for license information.
 # =================================================================================================
 
 TESTS = test_pylith.py
@@ -14,19 +14,18 @@ dist_check_SCRIPTS = test_pylith.py
 
 dist_noinst_PYTHON = \
 	meshes.py \
-	thermobar_soln.py \
-	TestThermoBar.py
+	thermoporo_soln.py \
+	TestThermoporo.py
 
 dist_noinst_DATA = \
-	mesh_tri.mesh \
-	mesh_quad.mesh \
+	mesh_tri.msh \
+	mesh_quad.msh \
 	pylithapp.cfg \
-	thermobar_tri.cfg \
-	thermobar_quad.cfg
-
+	thermoporo.cfg \
+	thermoporo_tri.cfg \
+	thermoporo_quad.cfg
 
 noinst_TMP =
-
 
 export_datadir = $(abs_builddir)
 include $(top_srcdir)/tests/data.am
