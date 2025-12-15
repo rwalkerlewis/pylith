@@ -14,9 +14,13 @@ import unittest
 from pylith.testing.FullTestApp import TestDriver, FullTestCase
 
 import TestThermoporo
+import TestSlipTemp
 
 
-TEST_MODULES = (TestThermoporo,)
+TEST_MODULES = (
+    TestThermoporo,
+    TestSlipTemp,
+)
 
 
 class TestApp(TestDriver):

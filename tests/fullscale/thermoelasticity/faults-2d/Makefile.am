@@ -15,7 +15,9 @@ dist_check_SCRIPTS = test_pylith.py
 dist_noinst_PYTHON = \
 	meshes.py \
 	thermoelastic_soln.py \
-	TestThermoFault.py
+	TestThermoFault.py \
+	slipthermal_soln.py \
+	TestSlipThermal.py
 
 dist_noinst_DATA = \
 	mesh_tri.msh \
@@ -23,7 +25,10 @@ dist_noinst_DATA = \
 	pylithapp.cfg \
 	thermofault.cfg \
 	thermofault_tri.cfg \
-	thermofault_quad.cfg
+	thermofault_quad.cfg \
+	slipthermal.cfg \
+	slipthermal_tri.cfg \
+	slipthermal_quad.cfg
 
 noinst_TMP =
 

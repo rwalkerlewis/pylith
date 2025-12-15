@@ -15,7 +15,9 @@ dist_check_SCRIPTS = test_pylith.py
 dist_noinst_PYTHON = \
 	meshes.py \
 	thermoporo_soln.py \
-	TestThermoporo.py
+	TestThermoporo.py \
+	sliptemp_soln.py \
+	TestSlipTemp.py
 
 dist_noinst_DATA = \
 	mesh_tet.msh \
@@ -23,7 +25,10 @@ dist_noinst_DATA = \
 	pylithapp.cfg \
 	thermoporo.cfg \
 	thermoporo_tet.cfg \
-	thermoporo_hex.cfg
+	thermoporo_hex.cfg \
+	sliptemp.cfg \
+	sliptemp_tet.cfg \
+	sliptemp_hex.cfg
 
 noinst_TMP =
 
