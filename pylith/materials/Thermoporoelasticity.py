@@ -62,10 +62,11 @@ class Thermoporoelasticity(Material, ModuleThermoporoelasticity):
         Material.__init__(self, name)
 
     def _defaults(self):
-        self.auxiliarySubfields.subfields.solid_density.basis_order = 0
-        self.auxiliarySubfields.subfields.fluid_density.basis_order = 0
-        self.auxiliarySubfields.subfields.fluid_viscosity.basis_order = 0
-        self.auxiliarySubfields.subfields.porosity.basis_order = 0
+        from .AuxSubfieldsThermoporoelasticity import AuxSubfieldsThermoporoelasticity
+        self.auxiliarySubfields = AuxSubfieldsThermoporoelasticity("auxiliary_subfields")
+
+        from .DerivedSubfieldsPoroelasticity import DerivedSubfieldsPoroelasticity
+        self.derivedSubfields = DerivedSubfieldsPoroelasticity("derived_subfields")
 
     def preinitialize(self, problem):
         """Setup material.
