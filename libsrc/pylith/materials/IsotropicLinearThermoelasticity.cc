@@ -16,7 +16,7 @@
 #include "pylith/fekernels/IsotropicLinearThermoelasticity.hh" // USES IsotropicLinearThermoelasticity kernels
 
 #include "pylith/utils/error.hh" // USES PYLITH_METHOD_*
-#include "pylith/utils/journals.hh" // USES PYLITH_JOURNAL_*
+#include "pylith/utils/journals.hh" // USES PYLITH_COMPONENT_*
 
 #include "spatialdata/geocoords/CoordSys.hh" // USES CoordSys
 
@@ -51,7 +51,7 @@ pylith::materials::IsotropicLinearThermoelasticity::deallocate(void) {
 // Use reference stress and strain in computation of stress and strain?
 void
 pylith::materials::IsotropicLinearThermoelasticity::useReferenceState(const bool value) {
-    PYLITH_JOURNAL_DEBUG("useReferenceState(value="<<value<<")");
+    PYLITH_COMPONENT_DEBUG("useReferenceState(value="<<value<<")");
 
     _useReferenceState = value;
 } // useReferenceState
@@ -78,7 +78,7 @@ pylith::materials::IsotropicLinearThermoelasticity::getAuxiliaryFactory(void) {
 void
 pylith::materials::IsotropicLinearThermoelasticity::addAuxiliarySubfields(void) {
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("addAuxiliarySubfields(void)");
+    PYLITH_COMPONENT_DEBUG("addAuxiliarySubfields(void)");
 
     assert(_auxiliaryFactory);
 
@@ -96,7 +96,7 @@ pylith::materials::IsotropicLinearThermoelasticity::addAuxiliarySubfields(void) 
 PetscPointFunc
 pylith::materials::IsotropicLinearThermoelasticity::getKernelf1u_implicit(const spatialdata::geocoords::CoordSys* coordsys) const {
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("getKernelf1u_implicit(coordsys="<<coordsys<<")");
+    PYLITH_COMPONENT_DEBUG("getKernelf1u_implicit(coordsys="<<coordsys<<")");
 
     assert(coordsys);
     const int spaceDim = coordsys->getSpaceDim();
@@ -110,7 +110,7 @@ pylith::materials::IsotropicLinearThermoelasticity::getKernelf1u_implicit(const 
         kernel = pylith::fekernels::IsotropicLinearThermoelasticity::f1u_3D;
         break;
     default:
-        PYLITH_JOURNAL_LOGICERROR("Unknown spatial dimension ("<<spaceDim<<").");
+        PYLITH_COMPONENT_LOGICERROR("Unknown spatial dimension ("<<spaceDim<<").");
     } // switch
 
     PYLITH_METHOD_RETURN(kernel);
@@ -122,7 +122,7 @@ pylith::materials::IsotropicLinearThermoelasticity::getKernelf1u_implicit(const 
 PetscPointFunc
 pylith::materials::IsotropicLinearThermoelasticity::getKernelg1u_explicit(const spatialdata::geocoords::CoordSys* coordsys) const {
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("getKernelg1u_explicit(coordsys="<<coordsys<<")");
+    PYLITH_COMPONENT_DEBUG("getKernelg1u_explicit(coordsys="<<coordsys<<")");
 
     // For explicit, we need the negative of the implicit stress kernel
     // In practice, this is often handled by negating in the integrator
@@ -136,7 +136,7 @@ pylith::materials::IsotropicLinearThermoelasticity::getKernelg1u_explicit(const 
 PetscPointJac
 pylith::materials::IsotropicLinearThermoelasticity::getKernelJf3uu(const spatialdata::geocoords::CoordSys* coordsys) const {
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("getKernelJf3uu(coordsys="<<coordsys<<")");
+    PYLITH_COMPONENT_DEBUG("getKernelJf3uu(coordsys="<<coordsys<<")");
 
     assert(coordsys);
     const int spaceDim = coordsys->getSpaceDim();
@@ -150,7 +150,7 @@ pylith::materials::IsotropicLinearThermoelasticity::getKernelJf3uu(const spatial
         kernel = pylith::fekernels::IsotropicLinearThermoelasticity::Jf3uu_3D;
         break;
     default:
-        PYLITH_JOURNAL_LOGICERROR("Unknown spatial dimension ("<<spaceDim<<").");
+        PYLITH_COMPONENT_LOGICERROR("Unknown spatial dimension ("<<spaceDim<<").");
     } // switch
 
     PYLITH_METHOD_RETURN(kernel);
@@ -162,7 +162,7 @@ pylith::materials::IsotropicLinearThermoelasticity::getKernelJf3uu(const spatial
 PetscPointJac
 pylith::materials::IsotropicLinearThermoelasticity::getKernelJf2uT(const spatialdata::geocoords::CoordSys* coordsys) const {
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("getKernelJf2uT(coordsys="<<coordsys<<")");
+    PYLITH_COMPONENT_DEBUG("getKernelJf2uT(coordsys="<<coordsys<<")");
 
     assert(coordsys);
     const int spaceDim = coordsys->getSpaceDim();
@@ -176,7 +176,7 @@ pylith::materials::IsotropicLinearThermoelasticity::getKernelJf2uT(const spatial
         kernel = pylith::fekernels::IsotropicLinearThermoelasticity::Jf2uT_3D;
         break;
     default:
-        PYLITH_JOURNAL_LOGICERROR("Unknown spatial dimension ("<<spaceDim<<").");
+        PYLITH_COMPONENT_LOGICERROR("Unknown spatial dimension ("<<spaceDim<<").");
     } // switch
 
     PYLITH_METHOD_RETURN(kernel);
@@ -188,7 +188,7 @@ pylith::materials::IsotropicLinearThermoelasticity::getKernelJf2uT(const spatial
 PetscPointFunc
 pylith::materials::IsotropicLinearThermoelasticity::getKernelf1T_implicit(const spatialdata::geocoords::CoordSys* coordsys) const {
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("getKernelf1T_implicit(coordsys="<<coordsys<<")");
+    PYLITH_COMPONENT_DEBUG("getKernelf1T_implicit(coordsys="<<coordsys<<")");
 
     PYLITH_METHOD_RETURN(pylith::fekernels::IsotropicLinearThermoelasticity::f1T);
 } // getKernelf1T_implicit
@@ -199,7 +199,7 @@ pylith::materials::IsotropicLinearThermoelasticity::getKernelf1T_implicit(const 
 PetscPointFunc
 pylith::materials::IsotropicLinearThermoelasticity::getKernelg1T_explicit(const spatialdata::geocoords::CoordSys* coordsys) const {
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("getKernelg1T_explicit(coordsys="<<coordsys<<")");
+    PYLITH_COMPONENT_DEBUG("getKernelg1T_explicit(coordsys="<<coordsys<<")");
 
     // Return NULL for now - explicit time integration not fully implemented
     PYLITH_METHOD_RETURN(NULL);
@@ -211,7 +211,7 @@ pylith::materials::IsotropicLinearThermoelasticity::getKernelg1T_explicit(const 
 PetscPointJac
 pylith::materials::IsotropicLinearThermoelasticity::getKernelJf3TT(const spatialdata::geocoords::CoordSys* coordsys) const {
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("getKernelJf3TT(coordsys="<<coordsys<<")");
+    PYLITH_COMPONENT_DEBUG("getKernelJf3TT(coordsys="<<coordsys<<")");
 
     PYLITH_METHOD_RETURN(pylith::fekernels::IsotropicLinearThermoelasticity::Jf3TT);
 } // getKernelJf3TT
@@ -222,7 +222,7 @@ pylith::materials::IsotropicLinearThermoelasticity::getKernelJf3TT(const spatial
 PetscPointFunc
 pylith::materials::IsotropicLinearThermoelasticity::getKernelCauchyStressVector(const spatialdata::geocoords::CoordSys* coordsys) const {
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("getKernelCauchyStressVector(coordsys="<<coordsys<<")");
+    PYLITH_COMPONENT_DEBUG("getKernelCauchyStressVector(coordsys="<<coordsys<<")");
 
     assert(coordsys);
     const int spaceDim = coordsys->getSpaceDim();
@@ -237,7 +237,7 @@ pylith::materials::IsotropicLinearThermoelasticity::getKernelCauchyStressVector(
         kernel = NULL;
         break;
     default:
-        PYLITH_JOURNAL_LOGICERROR("Unknown spatial dimension ("<<spaceDim<<").");
+        PYLITH_COMPONENT_LOGICERROR("Unknown spatial dimension ("<<spaceDim<<").");
     } // switch
 
     PYLITH_METHOD_RETURN(kernel);
@@ -249,7 +249,7 @@ pylith::materials::IsotropicLinearThermoelasticity::getKernelCauchyStressVector(
 PetscPointFunc
 pylith::materials::IsotropicLinearThermoelasticity::getKernelHeatFluxVector(const spatialdata::geocoords::CoordSys* coordsys) const {
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("getKernelHeatFluxVector(coordsys="<<coordsys<<")");
+    PYLITH_COMPONENT_DEBUG("getKernelHeatFluxVector(coordsys="<<coordsys<<")");
 
     PYLITH_METHOD_RETURN(pylith::fekernels::IsotropicLinearThermoelasticity::heatFlux_asVector);
 } // getKernelHeatFluxVector
