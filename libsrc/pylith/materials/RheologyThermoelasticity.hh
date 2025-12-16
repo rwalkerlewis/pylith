@@ -14,6 +14,7 @@
 
 #include "pylith/topology/topologyfwd.hh" // USES Field
 #include "pylith/feassemble/feassemblefwd.hh" // USES AuxiliaryFactory
+#include "pylith/utils/arrayfwd.hh" // USES real_array
 #include "pylith/utils/petscfwd.h" // USES PetscPointFunc, PetscPointJac
 
 #include "spatialdata/geocoords/geocoordsfwd.hh" // USES CoordSys
