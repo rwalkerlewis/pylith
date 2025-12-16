@@ -250,6 +250,14 @@ AC_CONFIG_FILES([Makefile
 		tests/mmstests/incompressibleelasticity/nofaults-2d/Makefile
 		tests/mmstests/poroelasticity/Makefile
 		tests/mmstests/poroelasticity/nofaults-2d/Makefile
+		tests/mmstests/heat/Makefile
+		tests/mmstests/heat/nofaults-2d/Makefile
+		tests/mmstests/thermoelasticity/Makefile
+		tests/mmstests/thermoelasticity/nofaults-2d/Makefile
+		tests/mmstests/thermoelasticity/faults-2d/Makefile		
+		tests/mmstests/thermoporoelasticity/Makefile
+		tests/mmstests/thermoporoelasticity/nofaults-2d/Makefile
+		tests/mmstests/thermoporoelasticity/faults-2d/Makefile		
 		tests/fullscale/Makefile
 		tests/fullscale/cornercases/Makefile
 		tests/fullscale/cornercases/nofaults-2d/Makefile
@@ -306,6 +314,9 @@ AC_CONFIG_FILES([Makefile
 		examples/meshing-cubit/Makefile
 		examples/meshing-cubit/surface-nurbs/Makefile
 		examples/meshing-cubit/cellsize/Makefile
+		examples/earthquake-thermoelasticity-2d
+		examples/thermoelasticity-2d/Makefile
+		examples/thermoporoelasticity-2d/Makefile
 		templates/Makefile
 		share/Makefile
 		])
