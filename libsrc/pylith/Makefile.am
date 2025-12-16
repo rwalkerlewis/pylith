@@ -91,8 +91,7 @@ libpylith_la_SOURCES = \
 	materials/AuxiliaryFactoryPoroelasticity.cc \
 	materials/AuxiliaryFactoryPoroelastic.cc \
 	materials/AuxiliaryFactoryThermoelasticity.cc \
-	materials/AuxiliaryFactoryThermoporoelasticity \
-	materials/IsotropicHeat.cc \
+	materials/AuxiliaryFactoryThermoporoelasticity.cc \
 	materials/IsotropicLinearThermoelasticity.cc \
 	materials/IsotropicLinearThermoporoelasticity.cc \
 	materials/Heat.cc \
