@@ -19,6 +19,7 @@
 
 #include "spatialdata/spatialdb/GravityField.hh" // USES GravityField
 #include "pylith/scales/Scales.hh" // USES Scales
+#include "pylith/scales/ElasticityScales.hh" // USES ElasticityScales
 
 #include "pylith/utils/error.hh" // USES PYLITH_METHOD*
 #include "pylith/utils/journals.hh" // USES PYLITH_JOURNAL*
@@ -42,10 +43,10 @@ pylith::materials::AuxiliaryFactoryThermoelasticity::~AuxiliaryFactoryThermoelas
 void
 pylith::materials::AuxiliaryFactoryThermoelasticity::addDensity(void) {
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("addDensity(void)");
+    PYLITH_COMPONENT_DEBUG("addDensity(void)");
 
     const char* subfieldName = "density";
-    const PylithReal densityScale = _scales->getDensityScale();
+    const PylithReal densityScale = pylith::scales::ElasticityScales::getDensityScale(*_scales);
 
     pylith::topology::Field::Description description;
     description.label = subfieldName;
@@ -69,12 +70,12 @@ pylith::materials::AuxiliaryFactoryThermoelasticity::addDensity(void) {
 void
 pylith::materials::AuxiliaryFactoryThermoelasticity::addBodyForce(void) {
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("addBodyForce(void)");
+    PYLITH_COMPONENT_DEBUG("addBodyForce(void)");
 
     const char* subfieldName = "body_force";
     const char* componentNames[3] = { "body_force_x", "body_force_y", "body_force_z" };
 
-    const PylithReal forceScale = _scales->getDensityScale() * _scales->getLengthScale() /
+    const PylithReal forceScale = pylith::scales::ElasticityScales::getDensityScale(*_scales) * _scales->getLengthScale() /
                                   (_scales->getTimeScale() * _scales->getTimeScale());
 
     pylith::topology::Field::Description description;
@@ -101,7 +102,7 @@ pylith::materials::AuxiliaryFactoryThermoelasticity::addBodyForce(void) {
 void
 pylith::materials::AuxiliaryFactoryThermoelasticity::addGravityField(spatialdata::spatialdb::GravityField* gf) {
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("addGravityField(gf="<<gf<<")");
+    PYLITH_COMPONENT_DEBUG("addGravityField(gf="<<gf<<")");
 
     const char* subfieldName = "gravitational_acceleration";
     const char* componentNames[3] = { "gravitational_acceleration_x", "gravitational_acceleration_y", "gravitational_acceleration_z" };
@@ -121,7 +122,7 @@ pylith::materials::AuxiliaryFactoryThermoelasticity::addGravityField(spatialdata
     description.validator = NULL;
 
     _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
-    pylith::materials::Query::gravityFieldFromDB(subfieldName, this, gf);
+    pylith::materials::Query::gravityFieldFromDB(subfieldName, this, gf, _spaceDim);
 
     PYLITH_METHOD_END;
 } // addGravityField
@@ -132,12 +133,12 @@ pylith::materials::AuxiliaryFactoryThermoelasticity::addGravityField(spatialdata
 void
 pylith::materials::AuxiliaryFactoryThermoelasticity::addSpecificHeat(void) {
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("addSpecificHeat(void)");
+    PYLITH_COMPONENT_DEBUG("addSpecificHeat(void)");
 
     const char* subfieldName = "specific_heat";
-    const PylithReal pressureScale = _scales->getPressureScale();
+    const PylithReal pressureScale = pylith::scales::ElasticityScales::getStressScale(*_scales);
     const PylithReal temperatureScale = _scales->getTemperatureScale();
-    const PylithReal specificHeatScale = pressureScale / (_scales->getDensityScale() * temperatureScale);
+    const PylithReal specificHeatScale = pressureScale / (pylith::scales::ElasticityScales::getDensityScale(*_scales) * temperatureScale);
 
     pylith::topology::Field::Description description;
     description.label = subfieldName;
@@ -161,10 +162,10 @@ pylith::materials::AuxiliaryFactoryThermoelasticity::addSpecificHeat(void) {
 void
 pylith::materials::AuxiliaryFactoryThermoelasticity::addThermalConductivity(void) {
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("addThermalConductivity(void)");
+    PYLITH_COMPONENT_DEBUG("addThermalConductivity(void)");
 
     const char* subfieldName = "thermal_conductivity";
-    const PylithReal pressureScale = _scales->getPressureScale();
+    const PylithReal pressureScale = pylith::scales::ElasticityScales::getStressScale(*_scales);
     const PylithReal lengthScale = _scales->getLengthScale();
     const PylithReal timeScale = _scales->getTimeScale();
     const PylithReal temperatureScale = _scales->getTemperatureScale();
@@ -192,10 +193,10 @@ pylith::materials::AuxiliaryFactoryThermoelasticity::addThermalConductivity(void
 void
 pylith::materials::AuxiliaryFactoryThermoelasticity::addHeatSource(void) {
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("addHeatSource(void)");
+    PYLITH_COMPONENT_DEBUG("addHeatSource(void)");
 
     const char* subfieldName = "heat_source";
-    const PylithReal pressureScale = _scales->getPressureScale();
+    const PylithReal pressureScale = pylith::scales::ElasticityScales::getStressScale(*_scales);
     const PylithReal timeScale = _scales->getTimeScale();
     const PylithReal heatSourceScale = pressureScale / timeScale;
 
@@ -221,7 +222,7 @@ pylith::materials::AuxiliaryFactoryThermoelasticity::addHeatSource(void) {
 void
 pylith::materials::AuxiliaryFactoryThermoelasticity::addReferenceTemperature(void) {
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("addReferenceTemperature(void)");
+    PYLITH_COMPONENT_DEBUG("addReferenceTemperature(void)");
 
     const char* subfieldName = "reference_temperature";
     const PylithReal temperatureScale = _scales->getTemperatureScale();
@@ -248,7 +249,7 @@ pylith::materials::AuxiliaryFactoryThermoelasticity::addReferenceTemperature(voi
 void
 pylith::materials::AuxiliaryFactoryThermoelasticity::addThermalExpansionCoeff(void) {
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("addThermalExpansionCoeff(void)");
+    PYLITH_COMPONENT_DEBUG("addThermalExpansionCoeff(void)");
 
     const char* subfieldName = "thermal_expansion_coefficient";
     // Thermal expansion coefficient has units of 1/K (per Kelvin)
@@ -277,10 +278,10 @@ pylith::materials::AuxiliaryFactoryThermoelasticity::addThermalExpansionCoeff(vo
 void
 pylith::materials::AuxiliaryFactoryThermoelasticity::addShearModulus(void) {
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("addShearModulus(void)");
+    PYLITH_COMPONENT_DEBUG("addShearModulus(void)");
 
     const char* subfieldName = "shear_modulus";
-    const PylithReal pressureScale = _scales->getPressureScale();
+    const PylithReal pressureScale = pylith::scales::ElasticityScales::getStressScale(*_scales);
 
     pylith::topology::Field::Description description;
     description.label = subfieldName;
@@ -293,7 +294,7 @@ pylith::materials::AuxiliaryFactoryThermoelasticity::addShearModulus(void) {
     description.validator = pylith::topology::FieldQuery::validatorPositive;
 
     _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
-    pylith::materials::Query::dbQueryVs(subfieldName, this);
+    pylith::materials::Query::shearModulusFromVM(subfieldName, this);
 
     PYLITH_METHOD_END;
 } // addShearModulus
@@ -304,7 +305,7 @@ pylith::materials::AuxiliaryFactoryThermoelasticity::addShearModulus(void) {
 void
 pylith::materials::AuxiliaryFactoryThermoelasticity::addBulkModulus(void) {
     PYLITH_METHOD_BEGIN;
-    PYLITH_JOURNAL_DEBUG("addBulkModulus(void)");
+    PYLITH_COMPONENT_DEBUG("addBulkModulus(void)");
 
     const char* subfieldName = "bulk_modulus";
     const PylithReal pressureScale = _scales->getPressureScale();
@@ -320,7 +321,7 @@ pylith::materials::AuxiliaryFactoryThermoelasticity::addBulkModulus(void) {
     description.validator = pylith::topology::FieldQuery::validatorPositive;
 
     _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
-    pylith::materials::Query::dbQueryBulkModulus(subfieldName, this);
+    pylith::materials::Query::bulkModulusFromVM(subfieldName, this);
 
     PYLITH_METHOD_END;
 } // addBulkModulus
