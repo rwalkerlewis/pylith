@@ -87,8 +87,15 @@ libpylith_la_SOURCES = \
 	materials/Poroelasticity.cc \
 	materials/RheologyPoroelasticity.cc \
 	materials/IsotropicLinearPoroelasticity.cc \
+	materials/IsotropicHeat.cc \
 	materials/AuxiliaryFactoryPoroelasticity.cc \
 	materials/AuxiliaryFactoryPoroelastic.cc \
+	materials/AuxiliaryFactoryThermoelasticity.cc \
+	materials/AuxiliaryFactoryThermoporoelasticity \
+	materials/IsotropicHeat.cc \
+	materials/IsotropicLinearThermoelasticity.cc \
+	materials/IsotropicLinearThermoporoelasticity.cc \
+	materials/Heat.cc \
 	materials/Query.cc \
 	meshio/BinaryIO.cc \
 	meshio/MeshBuilder.cc \

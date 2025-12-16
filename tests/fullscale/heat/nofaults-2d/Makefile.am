@@ -8,8 +8,6 @@
 # See https://mit-license.org/ and LICENSE.md and for license information. 
 # =================================================================================================
 
-include $(top_srcdir)/tests/check_pylith.am
-
 TESTS = test_pylith.py
 
 dist_check_SCRIPTS = test_pylith.py
