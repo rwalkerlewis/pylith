@@ -17,6 +17,7 @@
 
 #include "spatialdata/units/Nondimensional.hh" // USES Nondimensional
 #include "spatialdata/spatialdb/GravityField.hh" // USES GravityField
+#include "pylith/scales/Scales.hh" // USES Scales
 
 #include "pylith/utils/error.hh" // USES PYLITH_METHOD*
 #include "pylith/utils/journals.hh" // USES PYLITH_JOURNAL*
@@ -596,7 +597,7 @@ pylith::materials::AuxiliaryFactoryThermoporoelasticity::addReferenceStress(void
 void
 pylith::materials::AuxiliaryFactoryThermoporoelasticity::addReferenceStrain(void) {
     PYLITH_METHOD_BEGIN;
-    PYLITH_COMPONENT_DEBUG("addReferenceStrain(void)");
+    PYLITH_JOURNAL_DEBUG("addReferenceStrain(void)");
 
     const char* subfieldName = "reference_strain";
     const char* componentNames[6] = {
