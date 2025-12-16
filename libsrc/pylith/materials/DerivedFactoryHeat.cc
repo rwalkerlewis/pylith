@@ -17,6 +17,7 @@
 #include "pylith/topology/FieldQuery.hh" // HOLDSA FieldQuery
 
 #include "pylith/scales/Scales.hh" // USES Scales
+#include "pylith/scales/ElasticityScales.hh" // USES ElasticityScales
 
 #include "pylith/utils/error.hh" // USES PYLITH_METHOD*
 #include "pylith/utils/journals.hh" // USES PYLITH_JOURNAL*
@@ -50,8 +51,8 @@ pylith::materials::DerivedFactoryHeat::addHeatFlux(void) {
     };
 
     // Heat flux scale: Power / Area = M / T^3
-    // Using pressure_scale * length_scale / time_scale
-    const PylithReal pressureScale = _scales->getPressureScale();
+    // Using stress (pressure) scale * length_scale / time_scale
+    const PylithReal pressureScale = pylith::scales::ElasticityScales::getStressScale(*_scales);
     const PylithReal lengthScale = _scales->getLengthScale();
     const PylithReal timeScale = _scales->getTimeScale();
     const PylithReal heatFluxScale = pressureScale * lengthScale / timeScale;

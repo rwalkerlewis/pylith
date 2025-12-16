@@ -18,6 +18,7 @@
 #include "pylith/topology/FieldQuery.hh" // HOLDSA FieldQuery
 
 #include "pylith/scales/Scales.hh" // USES Scales
+#include "pylith/scales/ElasticityScales.hh" // USES ElasticityScales
 
 #include "pylith/utils/error.hh" // USES PYLITH_METHOD*
 #include "pylith/utils/journals.hh" // USES PYLITH_JOURNAL*
@@ -45,7 +46,7 @@ pylith::materials::AuxiliaryFactoryHeat::addDensity(void) {
 
     const char* subfieldName = "density";
     // Density scale: M / L^3
-    const PylithReal densityScale = _scales->getDensityScale();
+    const PylithReal densityScale = pylith::scales::ElasticityScales::getDensityScale(*_scales);
 
     pylith::topology::Field::Description description;
     description.label = subfieldName;
@@ -73,10 +74,10 @@ pylith::materials::AuxiliaryFactoryHeat::addSpecificHeat(void) {
 
     const char* subfieldName = "specific_heat";
     // Specific heat scale: L^2 / (T^2 * Theta), where Theta is temperature
-    // Using pressure scale / (density * temperature) = L^2 / (t^2 * Theta)
-    const PylithReal pressureScale = _scales->getPressureScale();
+    // Using stress (pressure) scale / (density * temperature) = L^2 / (t^2 * Theta)
+    const PylithReal pressureScale = pylith::scales::ElasticityScales::getStressScale(*_scales);
     const PylithReal temperatureScale = _scales->getTemperatureScale();
-    const PylithReal specificHeatScale = pressureScale / (_scales->getDensityScale() * temperatureScale);
+    const PylithReal specificHeatScale = pressureScale / (pylith::scales::ElasticityScales::getDensityScale(*_scales) * temperatureScale);
 
     pylith::topology::Field::Description description;
     description.label = subfieldName;
@@ -104,8 +105,8 @@ pylith::materials::AuxiliaryFactoryHeat::addThermalConductivity(void) {
 
     const char* subfieldName = "thermal_conductivity";
     // Thermal conductivity scale: M * L / (T^3 * Theta)
-    // Using pressure_scale * length_scale / (time_scale * temperature_scale)
-    const PylithReal pressureScale = _scales->getPressureScale();
+    // Using stress (pressure) scale * length_scale / (time_scale * temperature_scale)
+    const PylithReal pressureScale = pylith::scales::ElasticityScales::getStressScale(*_scales);
     const PylithReal lengthScale = _scales->getLengthScale();
     const PylithReal timeScale = _scales->getTimeScale();
     const PylithReal temperatureScale = _scales->getTemperatureScale();
@@ -137,8 +138,8 @@ pylith::materials::AuxiliaryFactoryHeat::addHeatSource(void) {
 
     const char* subfieldName = "heat_source";
     // Heat source scale: Power / Volume = M / (L * T^3)
-    // Using pressure_scale / time_scale
-    const PylithReal pressureScale = _scales->getPressureScale();
+    // Using stress (pressure) scale / time_scale
+    const PylithReal pressureScale = pylith::scales::ElasticityScales::getStressScale(*_scales);
     const PylithReal timeScale = _scales->getTimeScale();
     const PylithReal heatSourceScale = pressureScale / timeScale;
 
