@@ -344,7 +344,7 @@ pylith::materials::Thermoporoelasticity::_setKernelsResidual(pylith::feassemble:
 
     // Displacement equation
     // f1u: stress
-    const PetscPointFn f1u = _rheology->getKernelf1u_implicit(coordsys);
+    PetscPointFn* f1u = _rheology->getKernelf1u_implicit(coordsys);
     kernels.resize(1);
     kernels[0] = ResidualKernels("displacement", pylith::feassemble::Integrator::LHS, NULL, f1u);
     integrator->setKernelsResidual(kernels, solution);
@@ -352,8 +352,8 @@ pylith::materials::Thermoporoelasticity::_setKernelsResidual(pylith::feassemble:
     // Pressure equation
     // f0p: fluid content time derivative
     // f1p: Darcy flux
-    const PetscPointFn f0p = _rheology->getKernelf0p_implicit(coordsys, _useSourceDensity);
-    const PetscPointFn f1p = _rheology->getKernelf1p_implicit(coordsys, hasGravityField);
+    PetscPointFn* f0p = _rheology->getKernelf0p_implicit(coordsys, _useSourceDensity);
+    PetscPointFn* f1p = _rheology->getKernelf1p_implicit(coordsys, hasGravityField);
     kernels.resize(1);
     kernels[0] = ResidualKernels("pressure", pylith::feassemble::Integrator::LHS, f0p, f1p);
     integrator->setKernelsResidual(kernels, solution);
@@ -369,8 +369,8 @@ pylith::materials::Thermoporoelasticity::_setKernelsResidual(pylith::feassemble:
     // Temperature equation
     // f0T: heat capacity term
     // f1T: heat flux
-    const PetscPointFn f0T = _rheology->getKernelf0T_implicit(coordsys, _useHeatSource);
-    const PetscPointFn f1T = _rheology->getKernelf1T_implicit(coordsys);
+    PetscPointFn* f0T = _rheology->getKernelf0T_implicit(coordsys, _useHeatSource);
+    PetscPointFn* f1T = _rheology->getKernelf1T_implicit(coordsys);
     kernels.resize(1);
     kernels[0] = ResidualKernels("temperature", pylith::feassemble::Integrator::LHS, f0T, f1T);
     integrator->setKernelsResidual(kernels, solution);
@@ -393,29 +393,29 @@ pylith::materials::Thermoporoelasticity::_setKernelsJacobian(pylith::feassemble:
     std::vector<JacobianKernels> kernels;
 
     // Displacement-displacement (elastic stiffness)
-    const PetscPointJacFn Jf3uu = _rheology->getKernelJf3uu(coordsys);
+    PetscPointJacFn* Jf3uu = _rheology->getKernelJf3uu(coordsys);
     kernels.resize(1);
     kernels[0] = JacobianKernels("displacement", "displacement", pylith::feassemble::Integrator::LHS,
                                  NULL, NULL, NULL, Jf3uu);
     integrator->setKernelsJacobian(kernels, solution);
 
     // Displacement-pressure (Biot coupling)
-    const PetscPointJacFn Jf2up = _rheology->getKernelJf2up(coordsys);
+    PetscPointJacFn* Jf2up = _rheology->getKernelJf2up(coordsys);
     kernels.resize(1);
     kernels[0] = JacobianKernels("displacement", "pressure", pylith::feassemble::Integrator::LHS,
                                  NULL, NULL, Jf2up, NULL);
     integrator->setKernelsJacobian(kernels, solution);
 
     // Displacement-temperature (thermal coupling)
-    const PetscPointJacFn Jf2uT = _rheology->getKernelJf2uT(coordsys);
+    PetscPointJacFn* Jf2uT = _rheology->getKernelJf2uT(coordsys);
     kernels.resize(1);
     kernels[0] = JacobianKernels("displacement", "temperature", pylith::feassemble::Integrator::LHS,
                                  NULL, NULL, Jf2uT, NULL);
     integrator->setKernelsJacobian(kernels, solution);
 
     // Pressure-pressure (storage + Darcy)
-    const PetscPointJacFn Jf0pp = _rheology->getKernelJf0pp(coordsys);
-    const PetscPointJacFn Jf3pp = _rheology->getKernelJf3pp(coordsys);
+    PetscPointJacFn* Jf0pp = _rheology->getKernelJf0pp(coordsys);
+    PetscPointJacFn* Jf3pp = _rheology->getKernelJf3pp(coordsys);
     kernels.resize(1);
     kernels[0] = JacobianKernels("pressure", "pressure", pylith::feassemble::Integrator::LHS,
                                  Jf0pp, NULL, NULL, Jf3pp);
@@ -423,7 +423,7 @@ pylith::materials::Thermoporoelasticity::_setKernelsJacobian(pylith::feassemble:
 
     // Pressure-trace_strain (Biot coupling)
     if (solution.hasSubfield("trace_strain")) {
-        const PetscPointJacFn Jf0pe = _rheology->getKernelJf0pe(coordsys);
+        PetscPointJacFn* Jf0pe = _rheology->getKernelJf0pe(coordsys);
         kernels.resize(1);
         kernels[0] = JacobianKernels("pressure", "trace_strain", pylith::feassemble::Integrator::LHS,
                                      Jf0pe, NULL, NULL, NULL);
@@ -431,7 +431,7 @@ pylith::materials::Thermoporoelasticity::_setKernelsJacobian(pylith::feassemble:
     } // if
 
     // Pressure-temperature (thermal coupling in fluid content)
-    const PetscPointJacFn Jf0pT = _rheology->getKernelJf0pT(coordsys);
+    PetscPointJacFn* Jf0pT = _rheology->getKernelJf0pT(coordsys);
     kernels.resize(1);
     kernels[0] = JacobianKernels("pressure", "temperature", pylith::feassemble::Integrator::LHS,
                                  Jf0pT, NULL, NULL, NULL);
@@ -442,19 +442,19 @@ pylith::materials::Thermoporoelasticity::_setKernelsJacobian(pylith::feassemble:
         // trace_strain - displacement
         kernels.resize(1);
         kernels[0] = JacobianKernels("trace_strain", "displacement", pylith::feassemble::Integrator::LHS,
-                                     NULL, ThermoporoelasticityKernels::Jf1eu, NULL, NULL);
+                         NULL, ThermoporoelasticityKernels::Jf1eu, NULL, NULL);
         integrator->setKernelsJacobian(kernels, solution);
 
         // trace_strain - trace_strain
         kernels.resize(1);
         kernels[0] = JacobianKernels("trace_strain", "trace_strain", pylith::feassemble::Integrator::LHS,
-                                     ThermoporoelasticityKernels::Jf0ee, NULL, NULL, NULL);
+                         ThermoporoelasticityKernels::Jf0ee, NULL, NULL, NULL);
         integrator->setKernelsJacobian(kernels, solution);
     } // if
 
     // Temperature-temperature (heat capacity + conductivity)
-    const PetscPointJacFn Jf0TT = _rheology->getKernelJf0TT(coordsys);
-    const PetscPointJacFn Jf3TT = _rheology->getKernelJf3TT(coordsys);
+    PetscPointJacFn* Jf0TT = _rheology->getKernelJf0TT(coordsys);
+    PetscPointJacFn* Jf3TT = _rheology->getKernelJf3TT(coordsys);
     kernels.resize(1);
     kernels[0] = JacobianKernels("temperature", "temperature", pylith::feassemble::Integrator::LHS,
                                  Jf0TT, NULL, NULL, Jf3TT);
