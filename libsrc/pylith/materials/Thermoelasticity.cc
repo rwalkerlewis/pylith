@@ -458,7 +458,7 @@ pylith::materials::Thermoelasticity::_setKernelsJacobian(pylith::feassemble::Int
         // Solution: [displacement, velocity, temperature]
 
         // Displacement-velocity block: ∂(u_t - v)/∂v = -I * s_tshift (kinematic)
-        PetscPointJacFn* Jf0uv = pylith::fekernels::DispVel::Jf0uv;
+        PetscPointJacFn* Jf0uv = pylith::fekernels::DispVel::Jg0uv;
         PetscPointJacFn* Jf1uv = NULL;
         PetscPointJacFn* Jf2uv = NULL;
         PetscPointJacFn* Jf3uv = NULL;

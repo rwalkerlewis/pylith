@@ -21,6 +21,8 @@
 #include "pylith/topology/Field.hh" // USES Field
 #include "pylith/topology/FieldOps.hh" // USES FieldOps
 
+#include "pylith/scales/Scales.hh" // USES Scales
+
 #include "pylith/utils/error.hh" // USES PYLITH_METHOD*
 #include "pylith/utils/journals.hh" // USES PYLITH_COMPONENT*
 
@@ -213,8 +215,8 @@ pylith::materials::Thermoporoelasticity::createAuxiliaryField(const pylith::topo
     pylith::topology::Field* auxiliaryField = new pylith::topology::Field(domainMesh);assert(auxiliaryField);
     auxiliaryField->setLabel("Thermoporoelasticity auxiliary field");
 
-    assert(_normalizer);
-    auxiliaryFactory->initialize(auxiliaryField, *_normalizer, domainMesh.getDimension());
+    assert(_scales);
+    auxiliaryFactory->initialize(auxiliaryField, *_scales, domainMesh.getDimension());
 
     // Add base poroelastic subfields
     auxiliaryFactory->addSolidDensity();
@@ -268,8 +270,8 @@ pylith::materials::Thermoporoelasticity::createDerivedField(const pylith::topolo
     pylith::topology::Field* derivedField = new pylith::topology::Field(domainMesh);assert(derivedField);
     derivedField->setLabel("Thermoporoelasticity derived field");
 
-    assert(_normalizer);
-    _derivedFactory->initialize(derivedField, *_normalizer, domainMesh.getDimension());
+    assert(_scales);
+    _derivedFactory->initialize(derivedField, *_scales, domainMesh.getDimension());
     _derivedFactory->addSubfields();
 
     derivedField->subfieldsSetup();
@@ -345,7 +347,7 @@ pylith::materials::Thermoporoelasticity::_setKernelsResidual(pylith::feassemble:
     const PetscPointFn f1u = _rheology->getKernelf1u_implicit(coordsys);
     kernels.resize(1);
     kernels[0] = ResidualKernels("displacement", pylith::feassemble::Integrator::LHS, NULL, f1u);
-    integrator->setKernelsResidual(kernels);
+    integrator->setKernelsResidual(kernels, solution);
 
     // Pressure equation
     // f0p: fluid content time derivative
@@ -354,14 +356,14 @@ pylith::materials::Thermoporoelasticity::_setKernelsResidual(pylith::feassemble:
     const PetscPointFn f1p = _rheology->getKernelf1p_implicit(coordsys, hasGravityField);
     kernels.resize(1);
     kernels[0] = ResidualKernels("pressure", pylith::feassemble::Integrator::LHS, f0p, f1p);
-    integrator->setKernelsResidual(kernels);
+    integrator->setKernelsResidual(kernels, solution);
 
     // Trace strain equation (if present)
     if (solution.hasSubfield("trace_strain")) {
         kernels.resize(1);
         kernels[0] = ResidualKernels("trace_strain", pylith::feassemble::Integrator::LHS, 
                                      ThermoporoelasticityKernels::f0e, NULL);
-        integrator->setKernelsResidual(kernels);
+        integrator->setKernelsResidual(kernels, solution);
     } // if
 
     // Temperature equation
@@ -371,7 +373,7 @@ pylith::materials::Thermoporoelasticity::_setKernelsResidual(pylith::feassemble:
     const PetscPointFn f1T = _rheology->getKernelf1T_implicit(coordsys);
     kernels.resize(1);
     kernels[0] = ResidualKernels("temperature", pylith::feassemble::Integrator::LHS, f0T, f1T);
-    integrator->setKernelsResidual(kernels);
+    integrator->setKernelsResidual(kernels, solution);
 
     PYLITH_METHOD_END;
 } // _setKernelsResidual
@@ -395,21 +397,21 @@ pylith::materials::Thermoporoelasticity::_setKernelsJacobian(pylith::feassemble:
     kernels.resize(1);
     kernels[0] = JacobianKernels("displacement", "displacement", pylith::feassemble::Integrator::LHS,
                                  NULL, NULL, NULL, Jf3uu);
-    integrator->setKernelsJacobian(kernels);
+    integrator->setKernelsJacobian(kernels, solution);
 
     // Displacement-pressure (Biot coupling)
     const PetscPointJacFn Jf2up = _rheology->getKernelJf2up(coordsys);
     kernels.resize(1);
     kernels[0] = JacobianKernels("displacement", "pressure", pylith::feassemble::Integrator::LHS,
                                  NULL, NULL, Jf2up, NULL);
-    integrator->setKernelsJacobian(kernels);
+    integrator->setKernelsJacobian(kernels, solution);
 
     // Displacement-temperature (thermal coupling)
     const PetscPointJacFn Jf2uT = _rheology->getKernelJf2uT(coordsys);
     kernels.resize(1);
     kernels[0] = JacobianKernels("displacement", "temperature", pylith::feassemble::Integrator::LHS,
                                  NULL, NULL, Jf2uT, NULL);
-    integrator->setKernelsJacobian(kernels);
+    integrator->setKernelsJacobian(kernels, solution);
 
     // Pressure-pressure (storage + Darcy)
     const PetscPointJacFn Jf0pp = _rheology->getKernelJf0pp(coordsys);
@@ -417,7 +419,7 @@ pylith::materials::Thermoporoelasticity::_setKernelsJacobian(pylith::feassemble:
     kernels.resize(1);
     kernels[0] = JacobianKernels("pressure", "pressure", pylith::feassemble::Integrator::LHS,
                                  Jf0pp, NULL, NULL, Jf3pp);
-    integrator->setKernelsJacobian(kernels);
+    integrator->setKernelsJacobian(kernels, solution);
 
     // Pressure-trace_strain (Biot coupling)
     if (solution.hasSubfield("trace_strain")) {
@@ -425,7 +427,7 @@ pylith::materials::Thermoporoelasticity::_setKernelsJacobian(pylith::feassemble:
         kernels.resize(1);
         kernels[0] = JacobianKernels("pressure", "trace_strain", pylith::feassemble::Integrator::LHS,
                                      Jf0pe, NULL, NULL, NULL);
-        integrator->setKernelsJacobian(kernels);
+        integrator->setKernelsJacobian(kernels, solution);
     } // if
 
     // Pressure-temperature (thermal coupling in fluid content)
@@ -433,7 +435,7 @@ pylith::materials::Thermoporoelasticity::_setKernelsJacobian(pylith::feassemble:
     kernels.resize(1);
     kernels[0] = JacobianKernels("pressure", "temperature", pylith::feassemble::Integrator::LHS,
                                  Jf0pT, NULL, NULL, NULL);
-    integrator->setKernelsJacobian(kernels);
+    integrator->setKernelsJacobian(kernels, solution);
 
     // Trace_strain equation Jacobians (if present)
     if (solution.hasSubfield("trace_strain")) {
@@ -441,13 +443,13 @@ pylith::materials::Thermoporoelasticity::_setKernelsJacobian(pylith::feassemble:
         kernels.resize(1);
         kernels[0] = JacobianKernels("trace_strain", "displacement", pylith::feassemble::Integrator::LHS,
                                      NULL, ThermoporoelasticityKernels::Jf1eu, NULL, NULL);
-        integrator->setKernelsJacobian(kernels);
+        integrator->setKernelsJacobian(kernels, solution);
 
         // trace_strain - trace_strain
         kernels.resize(1);
         kernels[0] = JacobianKernels("trace_strain", "trace_strain", pylith::feassemble::Integrator::LHS,
                                      ThermoporoelasticityKernels::Jf0ee, NULL, NULL, NULL);
-        integrator->setKernelsJacobian(kernels);
+        integrator->setKernelsJacobian(kernels, solution);
     } // if
 
     // Temperature-temperature (heat capacity + conductivity)
@@ -456,7 +458,7 @@ pylith::materials::Thermoporoelasticity::_setKernelsJacobian(pylith::feassemble:
     kernels.resize(1);
     kernels[0] = JacobianKernels("temperature", "temperature", pylith::feassemble::Integrator::LHS,
                                  Jf0TT, NULL, NULL, Jf3TT);
-    integrator->setKernelsJacobian(kernels);
+    integrator->setKernelsJacobian(kernels, solution);
 
     PYLITH_METHOD_END;
 } // _setKernelsJacobian
