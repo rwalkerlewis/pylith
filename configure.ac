@@ -314,7 +314,7 @@ AC_CONFIG_FILES([Makefile
 		examples/meshing-cubit/Makefile
 		examples/meshing-cubit/surface-nurbs/Makefile
 		examples/meshing-cubit/cellsize/Makefile
-		examples/earthquake-thermoelasticity-2d
+		examples/earthquake-thermoelasticity-2d/Makefile
 		examples/thermoelasticity-2d/Makefile
 		examples/thermoporoelasticity-2d/Makefile
 		templates/Makefile
