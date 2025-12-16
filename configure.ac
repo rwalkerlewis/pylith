@@ -290,6 +290,8 @@ AC_CONFIG_FILES([Makefile
 		tests/fullscale/thermoelasticity/Makefile
 		tests/fullscale/thermoelasticity/nofaults-2d/Makefile
 		tests/fullscale/thermoelasticity/faults-2d/Makefile
+		tests/fullscale/heat/Makefile
+		tests/fullscale/heat/nofaults-2d/Makefile
 		tests/fullscale/petsc/Makefile
 		tests/fullscale/eqinfo/Makefile
 		tests/manual/Makefile
