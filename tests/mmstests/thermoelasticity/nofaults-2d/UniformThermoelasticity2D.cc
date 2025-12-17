@@ -112,9 +112,10 @@ pylith::UniformThermoelasticity2D::createData(void) {
     // Scales
     data->scales.setLengthScale(LENGTHSCALE);
     data->scales.setTimeScale(TIMESCALE);
-    data->scales.setPressureScale(PRESSURESCALE);
+    // New scales API: set base scales so derived pressure/density scales are correct.
+    data->scales.setDisplacementScale(1.0);
+    data->scales.setRigidityScale(PRESSURESCALE * data->scales.getLengthScale() / 1.0);
     data->scales.setTemperatureScale(TEMPERATURESCALE);
-    data->scales.computeDensityScale();
 
     // Test parameters
     data->t = 0.0;

@@ -164,10 +164,13 @@ pylith::TestHeat_Data::TestHeat_Data(void) :
     cs.setSpaceDim(spaceDim);
 
     // Use SI units with no scaling for thermal problems
-    scales.setDensityScale(1.0);
+    // Scales API changed: set density/pressure scales are not direct setters.
+    // Set the available base scales so derived scales (density, pressure)
+    // computed from these will be 1.0 as well.
+    scales.setDisplacementScale(1.0);
+    scales.setRigidityScale(1.0);
     scales.setLengthScale(1.0);
     scales.setTimeScale(1.0);
-    scales.setPressureScale(1.0);
     scales.setTemperatureScale(1.0);
 } // constructor
 

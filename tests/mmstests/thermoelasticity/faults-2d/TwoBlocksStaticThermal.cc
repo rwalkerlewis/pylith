@@ -255,7 +255,7 @@ public:
         data->scales.setTimeScale(TIME_SCALE);
         data->scales.setRigidityScale(RIGIDITY_SCALE);
         data->scales.setTemperatureScale(TEMPERATURE_SCALE);
-        data->scales.computeDensityScale();
+        // Density scale is derived from rigidity/length/time via ElasticityScales helper.
 
         // solnDiscretizations set in derived class.
 

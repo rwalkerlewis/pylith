@@ -54,9 +54,11 @@ pylith::TestThermoelasticity::_initialize(void) {
     // Scales for nondimensionalization
     _data->scales.setLengthScale(1.0e+3);      // 1 km
     _data->scales.setTimeScale(1.0e+3);        // 1000 s
-    _data->scales.setPressureScale(1.0e+9);    // 1 GPa
+    // Old API had explicit pressure/density setters; new API uses base scales
+    // (displacement, rigidity) from which pressure and density are derived.
+    _data->scales.setDisplacementScale(1.0);
+    _data->scales.setRigidityScale(1.0e+9 * _data->scales.getLengthScale() / 1.0); // set rigidity to match 1 GPa pressure scale
     _data->scales.setTemperatureScale(1.0e+3); // 1000 K
-    _data->scales.computeDensityScale();
 
     // Create mesh
     pylith::topology::Mesh* mesh = new pylith::topology::Mesh;
