@@ -104,7 +104,7 @@ class pylith::_TwoBlocksStaticThermal {
     } // thermal_conductivity
 
     static const char* thermal_conductivity_units(void) {
-        return "W m**-1 K**-1";
+        return "W*m**-1*K**-1";
     } // thermal_conductivity_units
 
     static double specific_heat(const double x,

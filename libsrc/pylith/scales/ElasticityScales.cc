@@ -159,7 +159,7 @@ pylith::scales::ElasticityScales::getViscosityScale(const pylith::scales::Scales
 
 
 // ------------------------------------------------------------------------------------------------
-// Get value to nondimensionalize permability.
+// Get value to nondimensionalize permeability.
 double
 pylith::scales::ElasticityScales::getPermeabilityScale(const pylith::scales::Scales& scales) {
     const double length = scales.getLengthScale();
