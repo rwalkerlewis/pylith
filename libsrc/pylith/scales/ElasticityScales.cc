@@ -49,6 +49,25 @@ pylith::scales::ElasticityScales::setDynamicElasticity(pylith::scales::Scales* s
 
 
 // ------------------------------------------------------------------------------------------------
+// Set defaults scales for dynamic poroelasticity.
+void
+pylith::scales::ElasticityScales::setDynamicPoroelasticity(pylith::scales::Scales* scales,
+                                                               const double lengthScale,
+                                                               const double velocityScale,
+                                                               const double permeability,
+                                                               const double viscosity,
+                                                               const double rigidity) {
+    const double displacement = 1.0;
+    const double time = lengthScale / velocityScale;
+
+    scales->setLengthScale(lengthScale);
+    scales->setDisplacementScale(displacement);
+    scales->setRigidityScale(rigidity);
+    scales->setTimeScale(time);
+}
+
+
+// ------------------------------------------------------------------------------------------------
 // Set defaults scales for quasi-static poroelasticity.
 void
 pylith::scales::ElasticityScales::setQuasistaticPoroelasticity(pylith::scales::Scales* scales,
@@ -76,6 +95,84 @@ pylith::scales::ElasticityScales::computePoroelasticityTimeScale(const double vi
                                                                      const double rigidity) {
     return (viscosity / permeability) * (length * length / rigidity);
 } // computePoroelasticityTimeScale
+
+
+// ------------------------------------------------------------------------------------------------
+// Set defaults scales for quasi-static thermoelasticity.
+void
+pylith::scales::ElasticityScales::setQuasistaticThermoelasticity(pylith::scales::Scales* scales,
+                                                                    const double lengthScale,
+                                                                    const double thermalConductivity,
+                                                                    const double density,
+                                                                    const double specificHeat) {
+    const double length = lengthScale;
+    const double displacement = 1.0;
+    const double rigidity = 2.5e+10;
+    const double time = computeThermoelasticityTimeScale(length, thermalConductivity, density, specificHeat);
+    const double temperature = 1.0; // Temperature scale in Kelvin
+
+    scales->setLengthScale(length);
+    scales->setDisplacementScale(displacement);
+    scales->setRigidityScale(rigidity);
+    scales->setTimeScale(time);
+    scales->setTemperatureScale(temperature);
+}
+
+
+// ------------------------------------------------------------------------------------------------
+// Compute time scale for thermoelasticity.
+double
+pylith::scales::ElasticityScales::computeThermoelasticityTimeScale(const double lengthScale,
+                                                                       const double thermalConductivity,
+                                                                       const double density,
+                                                                       const double specificHeat) {
+    // Thermal diffusion time scale: t = rho * c * L^2 / k
+    return (density * specificHeat * lengthScale * lengthScale) / thermalConductivity;
+} // computeThermoelasticityTimeScale
+
+
+// ------------------------------------------------------------------------------------------------
+// Set defaults scales for quasi-static thermoporoelasticity.
+void
+pylith::scales::ElasticityScales::setQuasistaticThermoporoelasticity(pylith::scales::Scales* scales,
+                                                                         const double lengthScale,
+                                                                         const double permeability,
+                                                                         const double viscosity,
+                                                                         const double rigidity,
+                                                                         const double thermalConductivity,
+                                                                         const double density,
+                                                                         const double specificHeat) {
+    const double length = lengthScale;
+    const double displacement = 1.0;
+    const double time = computeThermoporoelasticityTimeScale(length, permeability, viscosity, rigidity,
+                                                              thermalConductivity, density, specificHeat);
+    const double temperature = 1.0; // Temperature scale in Kelvin
+
+    scales->setLengthScale(length);
+    scales->setDisplacementScale(displacement);
+    scales->setRigidityScale(rigidity);
+    scales->setTimeScale(time);
+    scales->setTemperatureScale(temperature);
+}
+
+
+// ------------------------------------------------------------------------------------------------
+// Compute time scale for thermoporoelasticity.
+double
+pylith::scales::ElasticityScales::computeThermoporoelasticityTimeScale(const double lengthScale,
+                                                                           const double permeability,
+                                                                           const double viscosity,
+                                                                           const double rigidity,
+                                                                           const double thermalConductivity,
+                                                                           const double density,
+                                                                           const double specificHeat) {
+    // Compute both time scales
+    const double t_poro = computePoroelasticityTimeScale(viscosity, permeability, lengthScale, rigidity);
+    const double t_thermal = computeThermoelasticityTimeScale(lengthScale, thermalConductivity, density, specificHeat);
+    
+    // Use minimum of the two time scales (fastest diffusion process)
+    return (t_poro < t_thermal) ? t_poro : t_thermal;
+} // computeThermoporoelasticityTimeScale
 
 
 // ------------------------------------------------------------------------------------------------
@@ -164,6 +261,33 @@ double
 pylith::scales::ElasticityScales::getPermeabilityScale(const pylith::scales::Scales& scales) {
     const double length = scales.getLengthScale();
     return length * length;
+}
+
+
+// ------------------------------------------------------------------------------------------------
+// Get value to nondimensionalize temperature.
+double
+pylith::scales::ElasticityScales::getTemperatureScale(const pylith::scales::Scales& scales) {
+    return scales.getTemperatureScale();
+}
+
+
+// ------------------------------------------------------------------------------------------------
+// Get value to nondimensionalize heat flux.
+double
+pylith::scales::ElasticityScales::getHeatFluxScale(const pylith::scales::Scales& scales) {
+    // Heat flux scale: q = k * T / L
+    const double temperature = scales.getTemperatureScale();
+    const double length = scales.getLengthScale();
+    const double rigidity = scales.getRigidityScale();
+    const double time = scales.getTimeScale();
+    const double displacement = scales.getDisplacementScale();
+    
+    // Thermal conductivity scale: k = rho * c * L^2 / t
+    const double density = (rigidity * time * time) / (length * length);
+    const double thermalConductivity = (density * length * length) / time;
+    
+    return (thermalConductivity * temperature) / length;
 }
 
 
