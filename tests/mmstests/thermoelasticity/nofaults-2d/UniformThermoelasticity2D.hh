@@ -85,7 +85,7 @@ protected:
     }
 
     static const char* thermal_conductivity_units(void) {
-        return "W m^-1 K^-1";
+        return "W m**-1 K**-1";
     }
 
     // Reference temperature
