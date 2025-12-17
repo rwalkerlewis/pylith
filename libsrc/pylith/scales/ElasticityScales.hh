@@ -141,6 +141,21 @@ public:
                                             const double density=2500.0,
                                             const double specificHeat=1000.0);
 
+    /** Set defaults scales for heat transfer.
+     *
+     * @param[inout] Scales for nondimensionalization.
+     * @param[in] lengthScale Default length scale in meters.
+     * @param[in] thermalConductivity Default thermal conductivity in W/(m*K).
+     * @param[in] density Default density in kg/m^3.
+     * @param[in] specificHeat Default specific heat capacity in J/(kg*K).
+     */
+    static
+    void setHeat(pylith::scales::Scales* scales,
+                 const double lengthScale=100.0e+3,
+                 const double thermalConductivity=2.5,
+                 const double density=2500.0,
+                 const double specificHeat=1000.0);
+
     /** Compute time scale for thermoporoelasticity.
      *
      * Chooses minimum of poroelastic and thermal diffusion time scales.

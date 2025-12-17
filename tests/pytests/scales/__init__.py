@@ -6,6 +6,7 @@ from . import (
     TestDynamicPoroelasticity,
     TestQuasistaticThermoelasticity,
     TestQuasistaticThermoporoelasticity,
+    TestHeat,
 )
 
 def test_modules():
@@ -17,4 +18,5 @@ def test_modules():
         TestDynamicPoroelasticity,
         TestQuasistaticThermoelasticity,
         TestQuasistaticThermoporoelasticity,
+        TestHeat,
     ]

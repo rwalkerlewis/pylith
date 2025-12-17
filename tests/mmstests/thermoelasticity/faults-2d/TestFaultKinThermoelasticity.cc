@@ -228,7 +228,7 @@ pylith::TestFaultKinThermoelasticity_Data::TestFaultKinThermoelasticity_Data(voi
     cs.setSpaceDim(spaceDim);
 
     const double lengthScale = 12.0e+3;
-    pylith::scales::ElasticityScales::setQuasistaticElasticity(&scales, lengthScale);
+    pylith::scales::ElasticityScales::setQuasistaticThermoelasticity(&scales, lengthScale);
 } // constructor
 
 

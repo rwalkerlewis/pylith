@@ -20,7 +20,8 @@ noinst_PYTHON = \
 	TestQuasistaticPoroelasticity.py \
 	TestDynamicPoroelasticity.py \
 	TestQuasistaticThermoelasticity.py \
-	TestQuasistaticThermoporoelasticity.py
+	TestQuasistaticThermoporoelasticity.py \
+	TestHeat.py
 
 
 # End of file 

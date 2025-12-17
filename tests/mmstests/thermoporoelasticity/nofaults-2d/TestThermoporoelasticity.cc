@@ -181,7 +181,7 @@ pylith::TestThermoporoelasticity_Data::TestThermoporoelasticity_Data(void) :
     cs.setSpaceDim(spaceDim);
 
     const double lengthScale = 8.0e+3;
-    pylith::scales::ElasticityScales::setQuasistaticPoroelasticity(&scales, lengthScale);
+    pylith::scales::ElasticityScales::setQuasistaticThermoporoelasticity(&scales, lengthScale);
     dt = 0.05*scales.getTimeScale();
 } // constructor
 

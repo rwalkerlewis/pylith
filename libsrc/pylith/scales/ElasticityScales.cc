@@ -157,6 +157,24 @@ pylith::scales::ElasticityScales::setQuasistaticThermoporoelasticity(pylith::sca
 
 
 // ------------------------------------------------------------------------------------------------
+// Set defaults scales for heat transfer.
+void
+pylith::scales::ElasticityScales::setHeat(pylith::scales::Scales* scales,
+                                           const double lengthScale,
+                                           const double thermalConductivity,
+                                           const double density,
+                                           const double specificHeat) {
+    const double length = lengthScale;
+    const double time = computeThermoelasticityTimeScale(length, thermalConductivity, density, specificHeat);
+    const double temperature = 1.0; // Temperature scale in Kelvin
+
+    scales->setLengthScale(length);
+    scales->setTimeScale(time);
+    scales->setTemperatureScale(temperature);
+}
+
+
+// ------------------------------------------------------------------------------------------------
 // Compute time scale for thermoporoelasticity.
 double
 pylith::scales::ElasticityScales::computeThermoporoelasticityTimeScale(const double lengthScale,

@@ -20,6 +20,7 @@ __all__ = [
     "DynamicPoroelasticity",
     "QuasistaticThermoelasticity",
     "QuasistaticThermoporoelasticity",
+    "Heat",
 ]
 
 

@@ -25,6 +25,7 @@
 #include "pylith/problems/SolutionFactory.hh" // USES SolutionFactory
 #include "pylith/meshio/MeshIOAscii.hh" // USES MeshIOAscii
 #include "pylith/meshio/MeshIOPetsc.hh" // USES MeshIOPetsc
+#include "pylith/scales/ElasticityScales.hh" // USES ElasticityScales
 #include "pylith/utils/error.hh" // USES PYLITH_METHOD_BEGIN/END
 #include "pylith/utils/journals.hh" // pythia::journal
 
@@ -164,14 +165,13 @@ pylith::TestHeat_Data::TestHeat_Data(void) :
     cs.setSpaceDim(spaceDim);
 
     // Use SI units with no scaling for thermal problems
-    // Scales API changed: set density/pressure scales are not direct setters.
-    // Set the available base scales so derived scales (density, pressure)
-    // computed from these will be 1.0 as well.
-    scales.setDisplacementScale(1.0);
-    scales.setRigidityScale(1.0);
-    scales.setLengthScale(1.0);
-    scales.setTimeScale(1.0);
-    scales.setTemperatureScale(1.0);
+    // Set appropriate scales for heat transfer
+    const double lengthScale = 1.0; // meters
+    const double thermalConductivity = 1.0; // W/(m*K)
+    const double density = 1.0; // kg/m^3
+    const double specificHeat = 1.0; // J/(kg*K)
+    
+    pylith::scales::ElasticityScales::setHeat(&scales, lengthScale, thermalConductivity, density, specificHeat);
 } // constructor
 
 

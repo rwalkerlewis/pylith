@@ -131,6 +131,22 @@ class ElasticityScales(ModuleElasticityScales):
         )
 
     @staticmethod
+    def setHeat(
+        scales,
+        lengthScale=100.0 * km,
+        thermalConductivity=2.5 * watt / (meter * kelvin),
+        density=2500.0 * kg / meter**3,
+        specificHeat=1000.0 * joule / (kg * kelvin),
+    ):
+        ModuleElasticityScales.setHeat(
+            scales,
+            lengthScale.value,
+            thermalConductivity.value,
+            density.value,
+            specificHeat.value,
+        )
+
+    @staticmethod
     def computeThermoporoelasticityTimeScale(
         lengthScale,
         permeability,
