@@ -50,7 +50,7 @@ private:
     } // thermal_conductivity
 
     static const char* thermal_conductivity_units(void) {
-        return "W/(m*K)";
+        return "W m^-1 K^-1";
     } // thermal_conductivity_units
 
     // Solution subfields.
