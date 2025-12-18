@@ -109,14 +109,6 @@ pylith::UniformThermoelasticity2D::createData(void) {
     data->boundaryLabel = "boundary";
     data->useAsciiMesh = true;
 
-    // Scales
-    data->scales.setLengthScale(LENGTHSCALE);
-    data->scales.setTimeScale(TIMESCALE);
-    // New scales API: set base scales so derived pressure/density scales are correct.
-    data->scales.setDisplacementScale(1.0);
-    data->scales.setRigidityScale(PRESSURESCALE * data->scales.getLengthScale() / 1.0);
-    data->scales.setTemperatureScale(TEMPERATURESCALE);
-
     // Test parameters
     data->t = 0.0;
     data->dt = 0.05;
@@ -127,6 +119,7 @@ pylith::UniformThermoelasticity2D::createData(void) {
     data->formulation = pylith::problems::Physics::QUASISTATIC;
 
     // Solution discretizations: displacement (P1), temperature (P1)
+    // Note: Will be overridden in child class test cases
     static const pylith::topology::Field::Discretization _solnDiscretizations[2] = {
         pylith::topology::Field::Discretization(1, 1), // displacement
         pylith::topology::Field::Discretization(1, 1), // temperature
@@ -179,6 +172,40 @@ pylith::UniformThermoelasticity2D::createData(void) {
     data->auxDB.addValue("thermal_expansion_coefficient", _UniformThermoelasticity2D::thermal_expansion_coefficient, _UniformThermoelasticity2D::thermal_expansion_coefficient_units());
     data->auxDB.addValue("vs", _UniformThermoelasticity2D::vs, _UniformThermoelasticity2D::vs_units());
     data->auxDB.addValue("vp", _UniformThermoelasticity2D::vp, _UniformThermoelasticity2D::vp_units());
+    data->auxDB.setCoordSys(data->cs);
+
+    // Material configuration
+    data->material.setFormulation(pylith::problems::Physics::QUASISTATIC);
+    data->material.setDescription("thermoelastic material");
+    data->material.setLabelName("material-id");
+    data->material.setLabelValue(24);
+
+    // Boundary conditions
+    // For this MMS test, we constrain displacement and temperature on the boundary
+    static const PylithInt constrainedDispDOF[2] = {0, 1};
+    static const PylithInt numConstrainedDisp = 2;
+    static const PylithInt constrainedTempDOF[1] = {0};
+    static const PylithInt numConstrainedTemp = 1;
+
+    data->bcs.resize(2);
+    { // Displacement BC on boundary
+        pylith::bc::DirichletUserFn* bc = new pylith::bc::DirichletUserFn();assert(bc);
+        bc->setSubfieldName("displacement");
+        bc->setLabelName("boundary");
+        bc->setLabelValue(1);
+        bc->setConstrainedDOF(constrainedDispDOF, numConstrainedDisp);
+        bc->setUserFn(solnkernel_disp);
+        data->bcs[0] = bc;
+    }
+    { // Temperature BC on boundary
+        pylith::bc::DirichletUserFn* bc = new pylith::bc::DirichletUserFn();assert(bc);
+        bc->setSubfieldName("temperature");
+        bc->setLabelName("boundary");
+        bc->setLabelValue(1);
+        bc->setConstrainedDOF(constrainedTempDOF, numConstrainedTemp);
+        bc->setUserFn(solnkernel_temp);
+        data->bcs[1] = bc;
+    }
 
     return data;
 } // createData
