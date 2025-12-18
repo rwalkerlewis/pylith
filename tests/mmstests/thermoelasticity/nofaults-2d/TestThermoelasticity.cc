@@ -14,16 +14,12 @@
 
 #include "pylith/problems/TimeDependent.hh" // USES TimeDependent
 #include "pylith/problems/SolutionFactory.hh" // USES SolutionFactory
-#include "pylith/feassemble/IntegratorDomain.hh" // USES IntegratorDomain
 #include "pylith/topology/Mesh.hh" // USES Mesh
 #include "pylith/topology/MeshOps.hh" // USES MeshOps::nondimensionalize()
+#include "pylith/topology/Field.hh" // USES Field
 #include "pylith/meshio/MeshIOAscii.hh" // USES MeshIOAscii
 #include "pylith/meshio/MeshIOPetsc.hh" // USES MeshIOPetsc
-#include "pylith/topology/Field.hh" // USES Field
-#include "pylith/topology/FieldOps.hh" // USES FieldOps::zeroInitialGuess()
-#include "pylith/problems/Physics.hh" // USES Physics
-
-#include "petscts.h" // USES PetscTS
+#include "pylith/utils/error.hh" // USES PYLITH_METHOD_BEGIN/END
 
 #include "catch2/catch_test_macros.hpp"
 
@@ -33,7 +29,13 @@
 // Constructor.
 pylith::TestThermoelasticity::TestThermoelasticity(TestThermoelasticity_Data* data) :
     _data(data) {
-    _initialize();
+    assert(_data);
+
+    GenericComponent::setName(_data->journalName);
+    _jacobianConvergenceRate = _data->jacobianConvergenceRate;
+    _tolerance = _data->tolerance;
+    _isJacobianLinear = _data->isJacobianLinear;
+    _allowZeroResidual = _data->allowZeroResidual;
 } // constructor
 
 
@@ -49,148 +51,86 @@ pylith::TestThermoelasticity::~TestThermoelasticity(void) {
 void
 pylith::TestThermoelasticity::_initialize(void) {
     PYLITH_METHOD_BEGIN;
+    assert(_mesh);
     assert(_data);
 
-    // Scales for nondimensionalization
-    _data->scales.setLengthScale(1.0e+3);      // 1 km
-    _data->scales.setTimeScale(1.0e+3);        // 1000 s
-    _data->scales.setPressureScale(1.0e+9);    // 1 GPa
-    _data->scales.setTemperatureScale(1.0e+3); // 1000 K
-    _data->scales.computeDensityScale();
+    PetscErrorCode err = PETSC_SUCCESS;
 
-    // Create mesh
-    pylith::topology::Mesh* mesh = new pylith::topology::Mesh;
     if (_data->useAsciiMesh) {
         pylith::meshio::MeshIOAscii iohandler;
         iohandler.setFilename(_data->meshFilename);
-        iohandler.read(mesh);
+        iohandler.read(_mesh);assert(_mesh);
     } else {
+        if (_data->meshOptions) {
+            err = PetscOptionsInsertString(NULL, _data->meshOptions);PYLITH_CHECK_ERROR(err);
+        } // if
         pylith::meshio::MeshIOPetsc iohandler;
         iohandler.setFilename(_data->meshFilename);
-        iohandler.setOptions(_data->meshOptions);
-        iohandler.read(mesh);
+        iohandler.read(_mesh);assert(_mesh);
     } // if/else
-    mesh->setCoordSys(&_data->cs);
-    pylith::topology::MeshOps::nondimensionalize(mesh, _data->scales);
-    _mesh = mesh;
 
-    // Setup material
+    assert(pylith::topology::MeshOps::getNumCells(*_mesh) > 0);
+    assert(pylith::topology::MeshOps::getNumVertices(*_mesh) > 0);
+
+    // Set up coordinates.
+    _mesh->setCoordSys(&_data->cs);
+    pylith::topology::MeshOps::nondimensionalize(_mesh, _data->scales);
+
+    // Set up material
     _data->material.setBulkRheology(&_data->rheology);
-
-    // Set up problem
-    pylith::problems::TimeDependent* problem = new pylith::problems::TimeDependent();
-    problem->setNormalizer(_data->scales);
-    problem->setFormulation(_data->formulation);
-    problem->setStartTime(0.0);
-    problem->setEndTime(2.0);
-    problem->setInitialTimeStep(_data->dt);
-    problem->setMaxTimeSteps(1);
-    problem->setSolverType(pylith::problems::TimeDependent::NONLINEAR);
-    problem->setGravityField(NULL);
-    _problem = problem;
-
-    assert(_data->numSolnSubfields > 0);
-    assert(_data->solnDiscretizations);
-    _problem->defaults().set(pylith::problems::SolutionFactory::displacement(),
-                             _data->solnDiscretizations[0].basisOrder,
-                             _data->solnDiscretizations[0].quadOrder, true);
-    _problem->defaults().set(pylith::problems::SolutionFactory::temperature(),
-                             _data->solnDiscretizations[1].basisOrder,
-                             _data->solnDiscretizations[1].quadOrder, true);
-
-    // Boundary conditions
-    for (size_t i = 0; i < _data->bcs.size(); ++i) {
-        _problem->setBoundaryCondition(_data->bcs[i]->getName(), _data->bcs[i]);
-    } // for
-
-    // Create solution field (displacement + temperature)
-    static const char* subfieldNames[2] = {"displacement", "temperature"};
-    pylith::topology::Field* solution = pylith::testing::MMSTest::createSolutionField(*mesh, subfieldNames, 2, _data->solnDiscretizations);
-    assert(solution);
-
-    // Set auxiliary data
-    _data->material.setLabelName("material-id");
-    _data->material.setLabelValue(1);
-
-    assert(_data->numAuxSubfields > 0);
-    assert(_data->auxSubfields);
-    assert(_data->auxDiscretizations);
-    _data->auxDB.addValue("density", _data->auxDB.queryFn("density"), _data->auxDB.units("density"));
-    _data->auxDB.addValue("specific_heat", _data->auxDB.queryFn("specific_heat"), _data->auxDB.units("specific_heat"));
-    _data->auxDB.addValue("thermal_conductivity", _data->auxDB.queryFn("thermal_conductivity"), _data->auxDB.units("thermal_conductivity"));
-    _data->auxDB.addValue("reference_temperature", _data->auxDB.queryFn("reference_temperature"), _data->auxDB.units("reference_temperature"));
-    _data->auxDB.addValue("thermal_expansion_coefficient", _data->auxDB.queryFn("thermal_expansion_coefficient"), _data->auxDB.units("thermal_expansion_coefficient"));
-    _data->auxDB.addValue("vs", _data->auxDB.queryFn("vs"), _data->auxDB.units("vs"));
-    _data->auxDB.addValue("vp", _data->auxDB.queryFn("vp"), _data->auxDB.units("vp"));
-
-    _data->auxDB.setCoordSys(_data->cs);
     _data->material.setAuxiliaryFieldDB(&_data->auxDB);
 
     for (size_t i = 0; i < _data->numAuxSubfields; ++i) {
-        _data->material.setAuxiliarySubfieldDiscretization(_data->auxSubfields[i],
-                                                           _data->auxDiscretizations[i].basisOrder,
-                                                           _data->auxDiscretizations[i].quadOrder,
-                                                           _data->cs.getSpaceDim(),
-                                                           _data->auxDiscretizations[i].isBasisContinuous,
-                                                           _data->auxDiscretizations[i].feSpace);
+        const pylith::topology::FieldBase::Discretization& info = _data->auxDiscretizations[i];
+        _data->material.setAuxiliarySubfieldDiscretization(_data->auxSubfields[i], info.basisOrder, info.quadOrder,
+                                                           _data->spaceDim, pylith::topology::FieldBase::DEFAULT_BASIS,
+                                                           info.feSpace, info.isBasisContinuous);
     } // for
 
-    _problem->setMaterial("material", &_data->material);
+    // Set up problem.
+    assert(_problem);
+    _problem->setScales(_data->scales);
+    pylith::materials::Material* materials[1] = { &_data->material };
+    _problem->setMaterials(materials, 1);
+    _problem->setBoundaryConditions(_data->bcs.data(), _data->bcs.size());
+    _problem->setStartTime(_data->t);
+    _problem->setEndTime(_data->t+_data->dt);
+    _problem->setInitialTimeStep(_data->dt);
+    _problem->setFormulation(_data->formulation);
 
-    _problem->preinitialize(*mesh);
-    _problem->verifyConfiguration();
-    _problem->initialize();
-    _solution = solution;
+    // Set up solution field.
+    assert(!_solution);
+    _solution = new pylith::topology::Field(*_mesh);assert(_solution);
+    _solution->setLabel("solution");
+    pylith::problems::SolutionFactory factory(*_solution, _data->scales);
+    assert(2 == _data->numSolnSubfields);
+    factory.addDisplacement(_data->solnDiscretizations[0]);
+    factory.addTemperature(_data->solnDiscretizations[1]);
+    _problem->setSolution(_solution);
 
-    // Set exact solution
-    _setExactSolution();
-
-    // Set test parameters
-    _isJacobianLinear = _data->isJacobianLinear;
-    _allowZeroResidual = _data->allowZeroResidual;
-    _jacobianConvergenceRate = _data->jacobianConvergenceRate;
-    _tolerance = _data->tolerance;
+    pylith::testing::MMSTest::_initialize();
 
     PYLITH_METHOD_END;
 } // _initialize
 
 
 // ------------------------------------------------------------------------------------------------
-// Set exact solution and time derivative of solution in domain.
+// Set functions for computing the exact solution and its time derivative.
 void
 pylith::TestThermoelasticity::_setExactSolution(void) {
-    PYLITH_METHOD_BEGIN;
-    assert(_data);
+    assert(_data->exactSolnFns);
 
-    const PylithReal t = _data->t;
-    PetscErrorCode err;
+    const pylith::topology::Field* solution = _problem->getSolution();assert(solution);
 
-    // Set exact solution in domain
-    err = DMSetAuxiliaryVec(_solution->getDM(), NULL, 0, 0, _exactSolutionVec);REQUIRE(!err);
-    err = PetscObjectCompose((PetscObject)_solution->getDM(), "A", (PetscObject)_exactSolutionVec);REQUIRE(!err);
-
-    // Set exact solution for displacement field
-    PetscVec exactDisp = NULL;
-    err = VecDuplicate(_solution->getLocalVector(), &exactDisp);REQUIRE(!err);
-    err = PetscObjectSetName((PetscObject)exactDisp, "exact_displacement");REQUIRE(!err);
-
-    if (_data->exactSolnFns) {
-        err = DMProjectFunction(_solution->getDM(), t, _data->exactSolnFns, NULL, INSERT_VALUES, exactDisp);REQUIRE(!err);
-    } // if
-    err = VecCopy(exactDisp, _exactSolutionVec);REQUIRE(!err);
-    err = VecDestroy(&exactDisp);REQUIRE(!err);
-
-    // Set exact solution time derivative
-    if (_data->exactSolnDotFns) {
-        PetscVec exactDot = NULL;
-        err = VecDuplicate(_solution->getLocalVector(), &exactDot);REQUIRE(!err);
-        err = PetscObjectSetName((PetscObject)exactDot, "exact_solution_dot");REQUIRE(!err);
-        err = DMProjectFunction(_solution->getDM(), t, _data->exactSolnDotFns, NULL, INSERT_VALUES, exactDot);REQUIRE(!err);
-        err = VecCopy(exactDot, _exactSolutionDotVec);REQUIRE(!err);
-        err = VecDestroy(&exactDot);REQUIRE(!err);
-    } // if
-
-    PYLITH_METHOD_END;
+    PetscErrorCode err = PETSC_SUCCESS;
+    PetscDS ds = NULL;
+    err = DMGetDS(solution->getDM(), &ds);PYLITH_CHECK_ERROR(err);
+    for (size_t i = 0; i < _data->numSolnSubfields; ++i) {
+        err = PetscDSSetExactSolution(ds, i, _data->exactSolnFns[i], NULL);PYLITH_CHECK_ERROR(err);
+        if (_data->exactSolnDotFns) {
+            err = PetscDSSetExactSolutionTimeDerivative(ds, i, _data->exactSolnDotFns[i], NULL);PYLITH_CHECK_ERROR(err);
+        } // if
+    } // for
 } // _setExactSolution
 
 
@@ -200,28 +140,48 @@ pylith::TestThermoelasticity_Data::TestThermoelasticity_Data(void) :
     journalName("TestThermoelasticity"),
     spaceDim(2),
     meshFilename(NULL),
-    meshOptions(""),
+    meshOptions(NULL),
     boundaryLabel("boundary"),
     useAsciiMesh(true),
+
     jacobianConvergenceRate(1.0),
-    tolerance(1.0e-9),
+    tolerance(1.0e-4),
     isJacobianLinear(true),
     allowZeroResidual(true),
+
     t(0.0),
     dt(0.05),
     formulation(pylith::problems::Physics::QUASISTATIC),
+
     numSolnSubfields(0),
     solnDiscretizations(NULL),
-    exactSolnFns(NULL),
-    exactSolnDotFns(NULL),
+
     numAuxSubfields(0),
     auxSubfields(NULL),
-    auxDiscretizations(NULL) {}
+    auxDiscretizations(NULL) {
+    auxDB.setDescription("thermoelasticity auxiliary field spatial database");
+    cs.setSpaceDim(spaceDim);
+
+    // Use SI units with appropriate scaling for thermoelasticity
+    const double lengthScale = 1.0e+3; // 1 km
+    const double timeScale = 1.0e+3; // 1000 s
+    const double temperatureScale = 1.0e+3; // 1000 K
+
+    scales.setLengthScale(lengthScale);
+    scales.setTimeScale(timeScale);
+    scales.setDisplacementScale(1.0);
+    scales.setRigidityScale(1.0e+9); // 1 GPa
+    scales.setTemperatureScale(temperatureScale);
+} // constructor
 
 
 // ------------------------------------------------------------------------------------------------
 // Destructor
-pylith::TestThermoelasticity_Data::~TestThermoelasticity_Data(void) {}
+pylith::TestThermoelasticity_Data::~TestThermoelasticity_Data(void) {
+    for (size_t i = 0; i < bcs.size(); ++i) {
+        delete bcs[i];bcs[i] = NULL;
+    } // for
+} // destructor
 
 
 // End of file

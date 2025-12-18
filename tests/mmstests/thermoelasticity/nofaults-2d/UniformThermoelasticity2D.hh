@@ -22,6 +22,8 @@ class pylith::UniformThermoelasticity2D {
     // - Constant temperature field (no thermal strain)
     // - Zero body force (residual = 0 for linear solution)
 
+public:
+
     // Coefficient for nondimensionalization
     static const double LENGTHSCALE;
     static const double TIMESCALE;
@@ -40,6 +42,8 @@ class pylith::UniformThermoelasticity2D {
     // Solution field parameters
     static const double DISP_GRADIENT; // Linear displacement gradient
     static const double TEMPERATURE;   // Constant temperature
+
+    static TestThermoelasticity_Data* createData(void);
 
 protected:
 
@@ -85,7 +89,7 @@ protected:
     }
 
     static const char* thermal_conductivity_units(void) {
-        return "W/(m*K)";
+        return "watt/(meter*kelvin)";
     }
 
     // Reference temperature
@@ -175,10 +179,6 @@ protected:
 
         return PETSC_SUCCESS;
     }
-
-public:
-
-    static TestThermoelasticity_Data* createData(void);
 
 }; // class UniformThermoelasticity2D
 

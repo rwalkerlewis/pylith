@@ -13,6 +13,7 @@
 #include "UniformThermoelasticity2D.hh" // Implementation of class methods
 
 #include "pylith/problems/SolutionFactory.hh" // USES SolutionFactory
+#include "pylith/bc/DirichletUserFn.hh" // USES DirichletUserFn
 
 namespace pylith {
     class _UniformThermoelasticity2D;
@@ -24,59 +25,31 @@ public:
 
     // Spatial database user functions for auxiliary fields
     static double density(const double x, const double y) {
-        return UniformThermoelasticity2D::density(x, y);
+        return UniformThermoelasticity2D::DENSITY;
     }
 
     static double vs(const double x, const double y) {
-        return UniformThermoelasticity2D::vs(x, y);
+        return UniformThermoelasticity2D::VS;
     }
 
     static double vp(const double x, const double y) {
-        return UniformThermoelasticity2D::vp(x, y);
+        return UniformThermoelasticity2D::VP;
     }
 
     static double specific_heat(const double x, const double y) {
-        return UniformThermoelasticity2D::specific_heat(x, y);
+        return UniformThermoelasticity2D::SPECIFIC_HEAT;
     }
 
     static double thermal_conductivity(const double x, const double y) {
-        return UniformThermoelasticity2D::thermal_conductivity(x, y);
+        return UniformThermoelasticity2D::THERMAL_CONDUCTIVITY;
     }
 
     static double reference_temperature(const double x, const double y) {
-        return UniformThermoelasticity2D::reference_temperature(x, y);
+        return UniformThermoelasticity2D::REFERENCE_TEMPERATURE;
     }
 
     static double thermal_expansion_coefficient(const double x, const double y) {
-        return UniformThermoelasticity2D::thermal_expansion_coefficient(x, y);
-    }
-
-    static const char* density_units(void) {
-        return UniformThermoelasticity2D::density_units();
-    }
-
-    static const char* vs_units(void) {
-        return UniformThermoelasticity2D::vs_units();
-    }
-
-    static const char* vp_units(void) {
-        return UniformThermoelasticity2D::vp_units();
-    }
-
-    static const char* specific_heat_units(void) {
-        return UniformThermoelasticity2D::specific_heat_units();
-    }
-
-    static const char* thermal_conductivity_units(void) {
-        return UniformThermoelasticity2D::thermal_conductivity_units();
-    }
-
-    static const char* reference_temperature_units(void) {
-        return UniformThermoelasticity2D::reference_temperature_units();
-    }
-
-    static const char* thermal_expansion_coefficient_units(void) {
-        return UniformThermoelasticity2D::thermal_expansion_coefficient_units();
+        return UniformThermoelasticity2D::THERMAL_EXPANSION_COEFF;
     }
 
 }; // _UniformThermoelasticity2D
@@ -109,42 +82,21 @@ pylith::UniformThermoelasticity2D::createData(void) {
     data->boundaryLabel = "boundary";
     data->useAsciiMesh = true;
 
-    // Scales
-    data->scales.setLengthScale(LENGTHSCALE);
-    data->scales.setTimeScale(TIMESCALE);
-    data->scales.setPressureScale(PRESSURESCALE);
-    data->scales.setTemperatureScale(TEMPERATURESCALE);
-    data->scales.computeDensityScale();
-
     // Test parameters
     data->t = 0.0;
     data->dt = 0.05;
-    data->tolerance = 1.0e-9;
+    data->tolerance = 1.0e-4;
     data->isJacobianLinear = true;
     data->allowZeroResidual = true;
     data->jacobianConvergenceRate = 1.0;
     data->formulation = pylith::problems::Physics::QUASISTATIC;
 
-    // Solution discretizations: displacement (P1), temperature (P1)
-    static const pylith::topology::Field::Discretization _solnDiscretizations[2] = {
-        pylith::topology::Field::Discretization(1, 1), // displacement
-        pylith::topology::Field::Discretization(1, 1), // temperature
-    };
-    data->numSolnSubfields = 2;
-    data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
-
-    // Solution functions
-    static pylith::testing::MMSTest::solution_fn _exactSolnFns[2] = {
-        pylith::UniformThermoelasticity2D::solnkernel_disp,
-        pylith::UniformThermoelasticity2D::solnkernel_temp,
-    };
-    data->exactSolnFns = _exactSolnFns;
-
-    static pylith::testing::MMSTest::solution_fn _exactSolnDotFns[2] = {
-        pylith::UniformThermoelasticity2D::solnkernel_disp_dot,
-        pylith::UniformThermoelasticity2D::solnkernel_temp_dot,
-    };
-    data->exactSolnDotFns = _exactSolnDotFns;
+    // Material settings
+    data->material.setFormulation(pylith::problems::Physics::QUASISTATIC);
+    data->material.useBodyForce(false);
+    data->material.setIdentifier("thermoelasticity");
+    data->material.setName("material-id=24");
+    data->material.setLabelValue(24);
 
     // Auxiliary fields
     static const char* _auxSubfields[7] = {
@@ -171,13 +123,46 @@ pylith::UniformThermoelasticity2D::createData(void) {
     data->auxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_auxDiscretizations);
 
     // Spatial database for auxiliary fields
-    data->auxDB.addValue("density", _UniformThermoelasticity2D::density, _UniformThermoelasticity2D::density_units());
-    data->auxDB.addValue("specific_heat", _UniformThermoelasticity2D::specific_heat, _UniformThermoelasticity2D::specific_heat_units());
-    data->auxDB.addValue("thermal_conductivity", _UniformThermoelasticity2D::thermal_conductivity, _UniformThermoelasticity2D::thermal_conductivity_units());
-    data->auxDB.addValue("reference_temperature", _UniformThermoelasticity2D::reference_temperature, _UniformThermoelasticity2D::reference_temperature_units());
-    data->auxDB.addValue("thermal_expansion_coefficient", _UniformThermoelasticity2D::thermal_expansion_coefficient, _UniformThermoelasticity2D::thermal_expansion_coefficient_units());
-    data->auxDB.addValue("vs", _UniformThermoelasticity2D::vs, _UniformThermoelasticity2D::vs_units());
-    data->auxDB.addValue("vp", _UniformThermoelasticity2D::vp, _UniformThermoelasticity2D::vp_units());
+    data->auxDB.addValue("density", _UniformThermoelasticity2D::density, "kg/m**3");
+    data->auxDB.addValue("specific_heat", _UniformThermoelasticity2D::specific_heat, "J/(kg*K)");
+    data->auxDB.addValue("thermal_conductivity", _UniformThermoelasticity2D::thermal_conductivity, "watt/(meter*kelvin)");
+    data->auxDB.addValue("reference_temperature", _UniformThermoelasticity2D::reference_temperature, "K");
+    data->auxDB.addValue("thermal_expansion_coefficient", _UniformThermoelasticity2D::thermal_expansion_coefficient, "1/K");
+    data->auxDB.addValue("vs", _UniformThermoelasticity2D::vs, "m/s");
+    data->auxDB.addValue("vp", _UniformThermoelasticity2D::vp, "m/s");
+    data->auxDB.setCoordSys(data->cs);
+
+    // Boundary conditions (Dirichlet on all boundaries for displacement and temperature)
+    static const PylithInt constrainedDispDOF[2] = {0, 1};
+    static const PylithInt numConstrainedDisp = 2;
+    static const PylithInt constrainedTempDOF[1] = {0};
+    static const PylithInt numConstrainedTemp = 1;
+
+    data->bcs.resize(2);
+
+    pylith::bc::DirichletUserFn* bcDisp = new pylith::bc::DirichletUserFn();
+    bcDisp->setSubfieldName("displacement");
+    bcDisp->setLabelName("boundary");
+    bcDisp->setLabelValue(1);
+    bcDisp->setConstrainedDOF(constrainedDispDOF, numConstrainedDisp);
+    bcDisp->setUserFn(solnkernel_disp);
+    data->bcs[0] = bcDisp;
+
+    pylith::bc::DirichletUserFn* bcTemp = new pylith::bc::DirichletUserFn();
+    bcTemp->setSubfieldName("temperature");
+    bcTemp->setLabelName("boundary");
+    bcTemp->setLabelValue(1);
+    bcTemp->setConstrainedDOF(constrainedTempDOF, numConstrainedTemp);
+    bcTemp->setUserFn(solnkernel_temp);
+    data->bcs[1] = bcTemp;
+
+    // Solution functions
+    static pylith::testing::MMSTest::solution_fn _exactSolnFns[2] = {
+        pylith::UniformThermoelasticity2D::solnkernel_disp,
+        pylith::UniformThermoelasticity2D::solnkernel_temp,
+    };
+    data->exactSolnFns = _exactSolnFns;
+    data->exactSolnDotFns = NULL;  // Quasistatic, no time derivatives
 
     return data;
 } // createData

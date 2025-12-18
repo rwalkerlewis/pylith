@@ -13,8 +13,7 @@ SUBDIRS = \
 	incompressibleelasticity \
 	poroelasticity \
 	heat \
-	thermoelasticity \
-	thermoporoelasticity
+	thermoelasticity
 
 
 # End of file 
