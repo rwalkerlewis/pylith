@@ -686,6 +686,11 @@ pylith::problems::_Problem::createNullSpace(const pylith::topology::Field* solut
     PYLITH_METHOD_BEGIN;
     assert(solution);
 
+    // Skip if the subfield doesn't exist (e.g., heat conduction has no displacement).
+    if (!solution->hasSubfield(subfieldName)) {
+        PYLITH_METHOD_END;
+    } // if
+
     const int spaceDim = solution->getSpaceDim();
     const PetscInt m = (spaceDim * (spaceDim + 1)) / 2;assert(m > 0 && m <= 6);
 

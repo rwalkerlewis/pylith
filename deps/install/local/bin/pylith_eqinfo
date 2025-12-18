@@ -1,0 +1,34 @@
+#!/usr/bin/env nemesis
+# =================================================================================================
+# This code is part of PyLith, developed through the Computational Infrastructure
+# for Geodynamics (https://github.com/geodynamics/pylith).
+#
+# Copyright (c) 2010-2025, University of California, Davis and the PyLith Development Team.
+# All rights reserved.
+#
+# See https://mit-license.org/ and LICENSE.md and for license information. 
+# =================================================================================================
+"""
+This script creates a Python file with earthquake rupture information computed
+from PyLith output. The rupture information includes:
+
+  Rupture area
+  Average slip
+  Seismic potency
+  Seismic moment
+  Moment magnitude
+
+Usage: pylith_eqinfo [command line arguments]
+
+NOTE: Works with HDF5 files, not VTK files.
+"""
+
+
+# ----------------------------------------------------------------------
+if __name__ == "__main__":
+
+    from pylith.apps.EqInfoApp import EqInfoApp
+    from pythia.pyre.applications import start
+    start(applicationClass=EqInfoApp)
+
+# End of file

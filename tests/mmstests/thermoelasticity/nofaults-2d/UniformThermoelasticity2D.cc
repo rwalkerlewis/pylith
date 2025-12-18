@@ -147,6 +147,10 @@ pylith::UniformThermoelasticity2D::createData(void) {
     };
     data->exactSolnDotFns = _exactSolnDotFns;
 
+    // Material configuration
+    data->material.setLabelName("material-id");
+    data->material.setLabelValue(24);
+
     // Auxiliary fields
     static const char* _auxSubfields[7] = {
         "density",

@@ -41,7 +41,7 @@ class pylith::UniformThermoelasticity2D {
     static const double DISP_GRADIENT; // Linear displacement gradient
     static const double TEMPERATURE;   // Constant temperature
 
-protected:
+public:
 
     // Density
     static double density(const double x, const double y) {
@@ -85,7 +85,7 @@ protected:
     }
 
     static const char* thermal_conductivity_units(void) {
-        return "W*m**-1*K**-1";
+        return "watt/m/K";
     }
 
     // Reference temperature
