@@ -513,7 +513,16 @@ public:
             solnkernel_temperature,
         };
         data->exactSolnFns = const_cast<pylith::testing::MMSTest::solution_fn*>(_exactSolnFns);
-        data->exactSolnDotFns = nullptr;
+
+        // Explicit zero time derivative functions for steady-state problem
+        // This is necessary because the thermoporoelasticity kernels require s_t to be valid
+        static const pylith::testing::MMSTest::solution_fn _exactSolnDotFns[4] = {
+            solnkernel_velocity,              // displacement time derivative = velocity = 0
+            solnkernel_fluid_pressure_dot,    // pressure time derivative = 0
+            solnkernel_trace_strain_dot,      // trace strain time derivative = 0
+            solnkernel_temperature_dot,       // temperature time derivative = 0
+        };
+        data->exactSolnDotFns = const_cast<pylith::testing::MMSTest::solution_fn*>(_exactSolnDotFns);
 
         return data;
     } // createData

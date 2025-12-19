@@ -1,0 +1,8 @@
+problems/libpylith_la-Observer.lo: problems/Observer.cc \
+ /usr/include/stdc-predef.h ../../portinfo \
+ ../../libsrc/pylith/problems/Observer.hh \
+ ../../libsrc/pylith/problems/problemsfwd.hh
+/usr/include/stdc-predef.h:
+../../portinfo:
+../../libsrc/pylith/problems/Observer.hh:
+../../libsrc/pylith/problems/problemsfwd.hh:

@@ -247,6 +247,7 @@ public:
         for (PylithInt d = 0; d < dim; ++d) {
             div_u += displacement_x[d * dim + d];
         }
+        
         f0[0] += div_u - trace_strain;
     } // f0e
 
@@ -279,14 +280,14 @@ public:
                        const PylithScalar constants[],
                        PylithScalar f0[]) {
         assert(s_t);
+        assert(numA >= 10);
 
-        // Auxiliary indices
+        // Auxiliary indices (base fields always at start)
         const PylithInt i_solidDensity = 0;
         const PylithInt i_fluidDensity = 1;
         const PylithInt i_porosity = 3;
-        // Later indices depend on optional fields, passed via constants
-        // For now, use a simplified approach
-        const PylithInt i_specificHeat = numConstants >= 1 ? (PylithInt)constants[0] : 4;
+        // Rheology fields are indexed relative to numA (specific_heat is last field added)
+        const PylithInt i_specificHeat = numA - 1;
 
         const PylithScalar temperature_t = s_t[sOff[i_temperature]];
         const PylithScalar solidDensity = a[aOff[i_solidDensity]];
@@ -329,7 +330,10 @@ public:
         f0T_transient(dim, numS, numA, sOff, sOff_x, s, s_t, s_x, aOff, aOff_x, a, a_t, a_x, t, x, numConstants, constants, f0);
 
         // Add heat source (negative because it's a source on RHS)
-        const PylithInt i_heatSource = numConstants >= 2 ? (PylithInt)constants[1] : 5;
+        // heat_source is an optional field added after the required base fields
+        // and before rheology fields. Its position depends on what other optional
+        // fields are present. For simplicity, assume it's at index 4 if present.
+        const PylithInt i_heatSource = 4;  // Assumes heat_source is first optional field
         const PylithScalar heatSource = a[aOff[i_heatSource]];
 
         f0[0] -= heatSource;
@@ -393,6 +397,377 @@ public:
         }
     } // Jf1eu
 
+    // ============================= State Variable Kernels =============================
+    // These kernels are used when _useStateVars = true for quasistatic formulation.
+    // Solution fields: [displacement, pressure, trace_strain, temperature, 
+    //                   velocity, pressure_dot, trace_strain_dot, temperature_dot]
+
+    // Solution field indices for state variable formulation
+    static const PylithInt i_velocity = 4;
+    static const PylithInt i_pressure_dot = 5;
+    static const PylithInt i_trace_strain_dot = 6;
+    static const PylithInt i_temperature_dot = 7;
+
+    // ----------------------------------------------------------------------
+    /** f0 function for velocity equation with state variables.
+     *
+     * f0_v = ∂u/∂t - v = 0
+     *
+     * This enforces that velocity equals the time derivative of displacement.
+     */
+    static inline
+    void f0v_implicit(const PylithInt dim,
+                      const PylithInt numS,
+                      const PylithInt numA,
+                      const PylithInt sOff[],
+                      const PylithInt sOff_x[],
+                      const PylithScalar s[],
+                      const PylithScalar s_t[],
+                      const PylithScalar s_x[],
+                      const PylithInt aOff[],
+                      const PylithInt aOff_x[],
+                      const PylithScalar a[],
+                      const PylithScalar a_t[],
+                      const PylithScalar a_x[],
+                      const PylithReal t,
+                      const PylithScalar x[],
+                      const PylithInt numConstants,
+                      const PylithScalar constants[],
+                      PylithScalar f0[]) {
+        assert(numS >= 8);
+        assert(s_t);
+
+        const PylithScalar* displacement_t = &s_t[sOff[i_displacement]];
+        const PylithScalar* velocity = &s[sOff[i_velocity]];
+
+        for (PylithInt i = 0; i < dim; ++i) {
+            f0[i] += displacement_t[i] - velocity[i];
+        }
+    } // f0v_implicit
+
+    // ----------------------------------------------------------------------
+    /** f0 function for pressure_dot equation with state variables.
+     *
+     * f0_pdot = ∂p/∂t - p_dot = 0
+     */
+    static inline
+    void f0pdot(const PylithInt dim,
+                const PylithInt numS,
+                const PylithInt numA,
+                const PylithInt sOff[],
+                const PylithInt sOff_x[],
+                const PylithScalar s[],
+                const PylithScalar s_t[],
+                const PylithScalar s_x[],
+                const PylithInt aOff[],
+                const PylithInt aOff_x[],
+                const PylithScalar a[],
+                const PylithScalar a_t[],
+                const PylithScalar a_x[],
+                const PylithReal t,
+                const PylithScalar x[],
+                const PylithInt numConstants,
+                const PylithScalar constants[],
+                PylithScalar f0[]) {
+        assert(numS >= 8);
+        assert(s_t);
+
+        const PylithScalar pressure_t = s_t[sOff[i_pressure]];
+        const PylithScalar pressure_dot = s[sOff[i_pressure_dot]];
+
+        f0[0] += pressure_t - pressure_dot;
+    } // f0pdot
+
+    // ----------------------------------------------------------------------
+    /** f0 function for trace_strain_dot equation with state variables.
+     *
+     * f0_edot = ∂ε_v/∂t - ε_v_dot = 0
+     */
+    static inline
+    void f0edot(const PylithInt dim,
+                const PylithInt numS,
+                const PylithInt numA,
+                const PylithInt sOff[],
+                const PylithInt sOff_x[],
+                const PylithScalar s[],
+                const PylithScalar s_t[],
+                const PylithScalar s_x[],
+                const PylithInt aOff[],
+                const PylithInt aOff_x[],
+                const PylithScalar a[],
+                const PylithScalar a_t[],
+                const PylithScalar a_x[],
+                const PylithReal t,
+                const PylithScalar x[],
+                const PylithInt numConstants,
+                const PylithScalar constants[],
+                PylithScalar f0[]) {
+        assert(numS >= 8);
+        assert(s_t);
+
+        const PylithScalar trace_strain_t = s_t[sOff[i_trace_strain]];
+        const PylithScalar trace_strain_dot = s[sOff[i_trace_strain_dot]];
+
+        f0[0] += trace_strain_t - trace_strain_dot;
+    } // f0edot
+
+    // ----------------------------------------------------------------------
+    /** f0 function for temperature_dot equation with state variables.
+     *
+     * f0_Tdot = ∂T/∂t - T_dot = 0
+     */
+    static inline
+    void f0Tdot(const PylithInt dim,
+                const PylithInt numS,
+                const PylithInt numA,
+                const PylithInt sOff[],
+                const PylithInt sOff_x[],
+                const PylithScalar s[],
+                const PylithScalar s_t[],
+                const PylithScalar s_x[],
+                const PylithInt aOff[],
+                const PylithInt aOff_x[],
+                const PylithScalar a[],
+                const PylithScalar a_t[],
+                const PylithScalar a_x[],
+                const PylithReal t,
+                const PylithScalar x[],
+                const PylithInt numConstants,
+                const PylithScalar constants[],
+                PylithScalar f0[]) {
+        assert(numS >= 8);
+        assert(s_t);
+
+        const PylithScalar temperature_t = s_t[sOff[i_temperature]];
+        const PylithScalar temperature_dot = s[sOff[i_temperature_dot]];
+
+        f0[0] += temperature_t - temperature_dot;
+    } // f0Tdot
+
+    // ============================= State Variable Jacobians =============================
+
+    // ----------------------------------------------------------------------
+    /** Jf0_vu for velocity equation.
+     *
+     * Jf0_vu = s_tshift (derivative of ∂u/∂t w.r.t. u)
+     */
+    static inline
+    void Jf0vu(const PylithInt dim,
+               const PylithInt numS,
+               const PylithInt numA,
+               const PylithInt sOff[],
+               const PylithInt sOff_x[],
+               const PylithScalar s[],
+               const PylithScalar s_t[],
+               const PylithScalar s_x[],
+               const PylithInt aOff[],
+               const PylithInt aOff_x[],
+               const PylithScalar a[],
+               const PylithScalar a_t[],
+               const PylithScalar a_x[],
+               const PylithReal t,
+               const PylithReal s_tshift,
+               const PylithScalar x[],
+               const PylithInt numConstants,
+               const PylithScalar constants[],
+               PylithScalar Jf0[]) {
+        for (PylithInt i = 0; i < dim; ++i) {
+            Jf0[i * dim + i] += s_tshift;
+        }
+    } // Jf0vu
+
+    // ----------------------------------------------------------------------
+    /** Jf0_vv for velocity equation.
+     *
+     * Jf0_vv = -1 (derivative of -v w.r.t. v)
+     */
+    static inline
+    void Jf0vv(const PylithInt dim,
+               const PylithInt numS,
+               const PylithInt numA,
+               const PylithInt sOff[],
+               const PylithInt sOff_x[],
+               const PylithScalar s[],
+               const PylithScalar s_t[],
+               const PylithScalar s_x[],
+               const PylithInt aOff[],
+               const PylithInt aOff_x[],
+               const PylithScalar a[],
+               const PylithScalar a_t[],
+               const PylithScalar a_x[],
+               const PylithReal t,
+               const PylithReal s_tshift,
+               const PylithScalar x[],
+               const PylithInt numConstants,
+               const PylithScalar constants[],
+               PylithScalar Jf0[]) {
+        for (PylithInt i = 0; i < dim; ++i) {
+            Jf0[i * dim + i] -= 1.0;
+        }
+    } // Jf0vv
+
+    // ----------------------------------------------------------------------
+    /** Jf0_pdotp for pressure_dot equation.
+     *
+     * Jf0_pdotp = s_tshift (derivative of ∂p/∂t w.r.t. p)
+     */
+    static inline
+    void Jf0pdotp(const PylithInt dim,
+                  const PylithInt numS,
+                  const PylithInt numA,
+                  const PylithInt sOff[],
+                  const PylithInt sOff_x[],
+                  const PylithScalar s[],
+                  const PylithScalar s_t[],
+                  const PylithScalar s_x[],
+                  const PylithInt aOff[],
+                  const PylithInt aOff_x[],
+                  const PylithScalar a[],
+                  const PylithScalar a_t[],
+                  const PylithScalar a_x[],
+                  const PylithReal t,
+                  const PylithReal s_tshift,
+                  const PylithScalar x[],
+                  const PylithInt numConstants,
+                  const PylithScalar constants[],
+                  PylithScalar Jf0[]) {
+        Jf0[0] += s_tshift;
+    } // Jf0pdotp
+
+    // ----------------------------------------------------------------------
+    /** Jf0_pdotpdot for pressure_dot equation.
+     *
+     * Jf0_pdotpdot = -1 (derivative of -p_dot w.r.t. p_dot)
+     */
+    static inline
+    void Jf0pdotpdot(const PylithInt dim,
+                     const PylithInt numS,
+                     const PylithInt numA,
+                     const PylithInt sOff[],
+                     const PylithInt sOff_x[],
+                     const PylithScalar s[],
+                     const PylithScalar s_t[],
+                     const PylithScalar s_x[],
+                     const PylithInt aOff[],
+                     const PylithInt aOff_x[],
+                     const PylithScalar a[],
+                     const PylithScalar a_t[],
+                     const PylithScalar a_x[],
+                     const PylithReal t,
+                     const PylithReal s_tshift,
+                     const PylithScalar x[],
+                     const PylithInt numConstants,
+                     const PylithScalar constants[],
+                     PylithScalar Jf0[]) {
+        Jf0[0] -= 1.0;
+    } // Jf0pdotpdot
+
+    // ----------------------------------------------------------------------
+    /** Jf0_edote for trace_strain_dot equation.
+     */
+    static inline
+    void Jf0edote(const PylithInt dim,
+                  const PylithInt numS,
+                  const PylithInt numA,
+                  const PylithInt sOff[],
+                  const PylithInt sOff_x[],
+                  const PylithScalar s[],
+                  const PylithScalar s_t[],
+                  const PylithScalar s_x[],
+                  const PylithInt aOff[],
+                  const PylithInt aOff_x[],
+                  const PylithScalar a[],
+                  const PylithScalar a_t[],
+                  const PylithScalar a_x[],
+                  const PylithReal t,
+                  const PylithReal s_tshift,
+                  const PylithScalar x[],
+                  const PylithInt numConstants,
+                  const PylithScalar constants[],
+                  PylithScalar Jf0[]) {
+        Jf0[0] += s_tshift;
+    } // Jf0edote
+
+    // ----------------------------------------------------------------------
+    /** Jf0_edotedot for trace_strain_dot equation.
+     */
+    static inline
+    void Jf0edotedot(const PylithInt dim,
+                     const PylithInt numS,
+                     const PylithInt numA,
+                     const PylithInt sOff[],
+                     const PylithInt sOff_x[],
+                     const PylithScalar s[],
+                     const PylithScalar s_t[],
+                     const PylithScalar s_x[],
+                     const PylithInt aOff[],
+                     const PylithInt aOff_x[],
+                     const PylithScalar a[],
+                     const PylithScalar a_t[],
+                     const PylithScalar a_x[],
+                     const PylithReal t,
+                     const PylithReal s_tshift,
+                     const PylithScalar x[],
+                     const PylithInt numConstants,
+                     const PylithScalar constants[],
+                     PylithScalar Jf0[]) {
+        Jf0[0] -= 1.0;
+    } // Jf0edotedot
+
+    // ----------------------------------------------------------------------
+    /** Jf0_TdotT for temperature_dot equation.
+     */
+    static inline
+    void Jf0TdotT(const PylithInt dim,
+                  const PylithInt numS,
+                  const PylithInt numA,
+                  const PylithInt sOff[],
+                  const PylithInt sOff_x[],
+                  const PylithScalar s[],
+                  const PylithScalar s_t[],
+                  const PylithScalar s_x[],
+                  const PylithInt aOff[],
+                  const PylithInt aOff_x[],
+                  const PylithScalar a[],
+                  const PylithScalar a_t[],
+                  const PylithScalar a_x[],
+                  const PylithReal t,
+                  const PylithReal s_tshift,
+                  const PylithScalar x[],
+                  const PylithInt numConstants,
+                  const PylithScalar constants[],
+                  PylithScalar Jf0[]) {
+        Jf0[0] += s_tshift;
+    } // Jf0TdotT
+
+    // ----------------------------------------------------------------------
+    /** Jf0_TdotTdot for temperature_dot equation.
+     */
+    static inline
+    void Jf0TdotTdot(const PylithInt dim,
+                     const PylithInt numS,
+                     const PylithInt numA,
+                     const PylithInt sOff[],
+                     const PylithInt sOff_x[],
+                     const PylithScalar s[],
+                     const PylithScalar s_t[],
+                     const PylithScalar s_x[],
+                     const PylithInt aOff[],
+                     const PylithInt aOff_x[],
+                     const PylithScalar a[],
+                     const PylithScalar a_t[],
+                     const PylithScalar a_x[],
+                     const PylithReal t,
+                     const PylithReal s_tshift,
+                     const PylithScalar x[],
+                     const PylithInt numConstants,
+                     const PylithScalar constants[],
+                     PylithScalar Jf0[]) {
+        Jf0[0] -= 1.0;
+    } // Jf0TdotTdot
+
+    // ============================= Standard Jacobians =============================
+
     // ----------------------------------------------------------------------
     /** Jf0_TT function for temperature equation (heat capacity).
      *
@@ -418,10 +793,13 @@ public:
                          const PylithInt numConstants,
                          const PylithScalar constants[],
                          PylithScalar Jf0[]) {
+        assert(numA >= 10);
+
         const PylithInt i_solidDensity = 0;
         const PylithInt i_fluidDensity = 1;
         const PylithInt i_porosity = 3;
-        const PylithInt i_specificHeat = numConstants >= 1 ? (PylithInt)constants[0] : 4;
+        // Rheology fields indexed relative to numA (specific_heat is last)
+        const PylithInt i_specificHeat = numA - 1;
 
         const PylithScalar solidDensity = a[aOff[i_solidDensity]];
         const PylithScalar fluidDensity = a[aOff[i_fluidDensity]];

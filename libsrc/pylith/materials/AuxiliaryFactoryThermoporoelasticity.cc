@@ -306,7 +306,8 @@ pylith::materials::AuxiliaryFactoryThermoporoelasticity::addBiotModulus(void) {
     PYLITH_JOURNAL_DEBUG("addBiotModulus(void)");
 
     const char* subfieldName = "biot_modulus";
-    const PylithReal pressureScale = pylith::scales::ElasticityScales::getStressScale(*_scales);
+    // Use rigidityScale for moduli (consistent with poroelasticity)
+    const PylithReal rigidityScale = _scales->getRigidityScale();
 
     pylith::topology::Field::Description description;
     description.label = subfieldName;
@@ -315,7 +316,7 @@ pylith::materials::AuxiliaryFactoryThermoporoelasticity::addBiotModulus(void) {
     description.numComponents = 1;
     description.componentNames.resize(1);
     description.componentNames[0] = subfieldName;
-    description.scale = pressureScale;
+    description.scale = rigidityScale;
     description.validator = pylith::topology::FieldQuery::validatorPositive;
 
     _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
@@ -333,7 +334,8 @@ pylith::materials::AuxiliaryFactoryThermoporoelasticity::addDrainedBulkModulus(v
     PYLITH_JOURNAL_DEBUG("addDrainedBulkModulus(void)");
 
     const char* subfieldName = "drained_bulk_modulus";
-    const PylithReal pressureScale = pylith::scales::ElasticityScales::getStressScale(*_scales);
+    // Use rigidityScale for moduli (consistent with poroelasticity)
+    const PylithReal rigidityScale = _scales->getRigidityScale();
 
     pylith::topology::Field::Description description;
     description.label = subfieldName;
@@ -342,7 +344,7 @@ pylith::materials::AuxiliaryFactoryThermoporoelasticity::addDrainedBulkModulus(v
     description.numComponents = 1;
     description.componentNames.resize(1);
     description.componentNames[0] = subfieldName;
-    description.scale = pressureScale;
+    description.scale = rigidityScale;
     description.validator = pylith::topology::FieldQuery::validatorPositive;
 
     _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));
@@ -360,7 +362,8 @@ pylith::materials::AuxiliaryFactoryThermoporoelasticity::addShearModulus(void) {
     PYLITH_JOURNAL_DEBUG("addShearModulus(void)");
 
     const char* subfieldName = "shear_modulus";
-    const PylithReal pressureScale = pylith::scales::ElasticityScales::getStressScale(*_scales);
+    // Use rigidityScale for moduli (consistent with poroelasticity)
+    const PylithReal rigidityScale = _scales->getRigidityScale();
 
     pylith::topology::Field::Description description;
     description.label = subfieldName;
@@ -369,7 +372,7 @@ pylith::materials::AuxiliaryFactoryThermoporoelasticity::addShearModulus(void) {
     description.numComponents = 1;
     description.componentNames.resize(1);
     description.componentNames[0] = subfieldName;
-    description.scale = pressureScale;
+    description.scale = rigidityScale;
     description.validator = pylith::topology::FieldQuery::validatorNonnegative;
 
     _field->subfieldAdd(description, getSubfieldDiscretization(subfieldName));

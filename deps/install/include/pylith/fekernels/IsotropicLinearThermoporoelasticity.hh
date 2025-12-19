@@ -62,8 +62,8 @@
 class pylith::fekernels::IsotropicLinearThermoporoelasticity {
 public:
 
-    // ============================= Auxiliary Field Indices =============================
-    // Base poroelastic fields
+    // ============================= Field Indices =============================
+    // Base poroelastic auxiliary fields (fixed positions at start)
     static const PylithInt i_solidDensity = 0;
     static const PylithInt i_fluidDensity = 1;
     static const PylithInt i_fluidViscosity = 2;
@@ -74,6 +74,23 @@ public:
     static const PylithInt i_pressure = 1;
     static const PylithInt i_trace_strain = 2;
     static const PylithInt i_temperature = 3;
+
+    // Rheology auxiliary field offsets from end of auxiliary field array.
+    // Fields are added in this order in addAuxiliarySubfields() (matches poroelasticity order):
+    // shear_modulus, drained_bulk_modulus, biot_coefficient, biot_modulus,
+    // isotropic_permeability, reference_temperature, thermal_expansion_coefficient,
+    // fluid_thermal_expansion, thermal_conductivity, specific_heat
+    // So the offsets from numA are:
+    // specific_heat:            numA - 1
+    // thermal_conductivity:     numA - 2
+    // fluid_thermal_expansion:  numA - 3
+    // thermal_expansion_coeff:  numA - 4
+    // reference_temperature:    numA - 5
+    // isotropic_permeability:   numA - 6
+    // biot_modulus:             numA - 7
+    // biot_coefficient:         numA - 8
+    // drained_bulk_modulus:     numA - 9
+    // shear_modulus:            numA - 10
 
     // ============================= Stress Kernels =============================
 
@@ -103,26 +120,25 @@ public:
                          PylithScalar f1[]) {
         assert(2 == dim);
         assert(numS >= 4);
+        assert(numA >= 10);
 
-        // Constants array provides auxiliary field indices for rheology-specific fields
-        // constants[0]: i_biotCoeff, constants[1]: i_drainedBulkMod, constants[2]: i_shearMod
-        // constants[3]: i_refTemp, constants[4]: i_thermalExpCoeff
-        const PylithInt i_biotCoeff = numConstants >= 5 ? (PylithInt)constants[0] : 4;
-        const PylithInt i_drainedBulkMod = numConstants >= 5 ? (PylithInt)constants[1] : 5;
-        const PylithInt i_shearMod = numConstants >= 5 ? (PylithInt)constants[2] : 6;
-        const PylithInt i_refTemp = numConstants >= 5 ? (PylithInt)constants[3] : 7;
-        const PylithInt i_thermalExpCoeff = numConstants >= 5 ? (PylithInt)constants[4] : 8;
+        // Rheology auxiliary field indices (relative to numA, matching addAuxiliarySubfields order)
+        const PylithInt i_shearMod = numA - 10;
+        const PylithInt i_drainedBulkMod = numA - 9;
+        const PylithInt i_biotCoeff = numA - 8;
+        const PylithInt i_refTemp = numA - 5;
+        const PylithInt i_thermalExpCoeff = numA - 4;
 
         const PylithScalar* disp_x = &s_x[sOff_x[i_displacement]];
         const PylithScalar pressure = s[sOff[i_pressure]];
         const PylithScalar temperature = s[sOff[i_temperature]];
 
-        const PylithScalar biotCoeff = a[aOff[i_biotCoeff]];
-        const PylithScalar drainedBulkMod = a[aOff[i_drainedBulkMod]];
         const PylithScalar shearMod = a[aOff[i_shearMod]];
+        const PylithScalar drainedBulkMod = a[aOff[i_drainedBulkMod]];
+        const PylithScalar biotCoeff = a[aOff[i_biotCoeff]];
         const PylithScalar refTemp = a[aOff[i_refTemp]];
         const PylithScalar thermalExpCoeff = a[aOff[i_thermalExpCoeff]];
-
+        
         // Strain components
         const PylithScalar strain_xx = disp_x[0*dim+0];
         const PylithScalar strain_yy = disp_x[1*dim+1];
@@ -173,20 +189,22 @@ public:
                 PylithScalar f1[]) {
         assert(3 == dim);
         assert(numS >= 4);
+        assert(numA >= 10);
 
-        const PylithInt i_biotCoeff = numConstants >= 5 ? (PylithInt)constants[0] : 4;
-        const PylithInt i_drainedBulkMod = numConstants >= 5 ? (PylithInt)constants[1] : 5;
-        const PylithInt i_shearMod = numConstants >= 5 ? (PylithInt)constants[2] : 6;
-        const PylithInt i_refTemp = numConstants >= 5 ? (PylithInt)constants[3] : 7;
-        const PylithInt i_thermalExpCoeff = numConstants >= 5 ? (PylithInt)constants[4] : 8;
+        // Rheology auxiliary field indices (relative to numA, matching addAuxiliarySubfields order)
+        const PylithInt i_shearMod = numA - 10;
+        const PylithInt i_drainedBulkMod = numA - 9;
+        const PylithInt i_biotCoeff = numA - 8;
+        const PylithInt i_refTemp = numA - 5;
+        const PylithInt i_thermalExpCoeff = numA - 4;
 
         const PylithScalar* disp_x = &s_x[sOff_x[i_displacement]];
         const PylithScalar pressure = s[sOff[i_pressure]];
         const PylithScalar temperature = s[sOff[i_temperature]];
 
-        const PylithScalar biotCoeff = a[aOff[i_biotCoeff]];
-        const PylithScalar drainedBulkMod = a[aOff[i_drainedBulkMod]];
         const PylithScalar shearMod = a[aOff[i_shearMod]];
+        const PylithScalar drainedBulkMod = a[aOff[i_drainedBulkMod]];
+        const PylithScalar biotCoeff = a[aOff[i_biotCoeff]];
         const PylithScalar refTemp = a[aOff[i_refTemp]];
         const PylithScalar thermalExpCoeff = a[aOff[i_thermalExpCoeff]];
 
@@ -254,11 +272,12 @@ public:
                           PylithScalar f0[]) {
         assert(numS >= 4);
         assert(s_t);
+        assert(numA >= 10);
 
-        // Constants array provides indices
-        const PylithInt i_biotCoeff = numConstants >= 3 ? (PylithInt)constants[0] : 4;
-        const PylithInt i_biotMod = numConstants >= 3 ? (PylithInt)constants[1] : 5;
-        const PylithInt i_fluidThermalExp = numConstants >= 3 ? (PylithInt)constants[2] : 9;
+        // Rheology auxiliary field indices (relative to numA, matching addAuxiliarySubfields order)
+        const PylithInt i_biotCoeff = numA - 8;
+        const PylithInt i_biotMod = numA - 7;
+        const PylithInt i_fluidThermalExp = numA - 3;
 
         const PylithScalar trace_strain_t = s_t[sOff[i_trace_strain]];
         const PylithScalar pressure_t = s_t[sOff[i_pressure]];
@@ -267,7 +286,7 @@ public:
         const PylithScalar biotCoeff = a[aOff[i_biotCoeff]];
         const PylithScalar biotMod = a[aOff[i_biotMod]];
         const PylithScalar fluidThermalExp = a[aOff[i_fluidThermalExp]];
-
+        
         // ∂ζ/∂t = α_B ∂ε_v/∂t + (1/M) ∂p/∂t + 3α_f ∂T/∂t
         f0[0] += biotCoeff * trace_strain_t + pressure_t / biotMod + 3.0 * fluidThermalExp * temperature_t;
     } // f0p_fluidContent
@@ -297,8 +316,9 @@ public:
         // Add fluid content term
         f0p_fluidContent(dim, numS, numA, sOff, sOff_x, s, s_t, s_x, aOff, aOff_x, a, a_t, a_x, t, x, numConstants, constants, f0);
 
-        // Subtract source density (it's on RHS)
-        const PylithInt i_sourceDensity = numConstants >= 4 ? (PylithInt)constants[3] : 10;
+        // Source density is an optional field that comes after the required base fields (at index 4 if present)
+        // When source density is used, it's added after porosity
+        const PylithInt i_sourceDensity = 4;  // solid_density=0, fluid_density=1, fluid_viscosity=2, porosity=3, source_density=4
         const PylithScalar sourceDensity = a[aOff[i_sourceDensity]];
 
         f0[0] -= sourceDensity;
@@ -330,7 +350,8 @@ public:
                    const PylithInt numConstants,
                    const PylithScalar constants[],
                    PylithScalar f1[]) {
-        const PylithInt i_permeability = numConstants >= 2 ? (PylithInt)constants[0] : 10;
+        assert(numA >= 10);
+        const PylithInt i_permeability = numA - 6;  // isotropic_permeability
         const PylithInt i_fluidVisc = i_fluidViscosity;
 
         const PylithScalar* pressure_x = &s_x[sOff_x[i_pressure]];
@@ -367,8 +388,10 @@ public:
                         const PylithInt numConstants,
                         const PylithScalar constants[],
                         PylithScalar f1[]) {
-        const PylithInt i_permeability = numConstants >= 3 ? (PylithInt)constants[0] : 10;
-        const PylithInt i_gravity = numConstants >= 3 ? (PylithInt)constants[1] : 11;
+        assert(numA >= 10);
+        const PylithInt i_permeability = numA - 6;  // isotropic_permeability
+        // gravity field is an optional field at index 4 (after porosity)
+        const PylithInt i_gravity = 4;  // gravitational_acceleration
         const PylithInt i_fluidVisc = i_fluidViscosity;
         const PylithInt i_fluidDens = i_fluidDensity;
 
@@ -412,7 +435,8 @@ public:
                       const PylithInt numConstants,
                       const PylithScalar constants[],
                       PylithScalar f1[]) {
-        const PylithInt i_thermalCond = numConstants >= 1 ? (PylithInt)constants[0] : 11;
+        assert(numA >= 10);
+        const PylithInt i_thermalCond = numA - 2;  // thermal_conductivity
 
         const PylithScalar* temperature_x = &s_x[sOff_x[i_temperature]];
         const PylithScalar thermalConductivity = a[aOff[i_thermalCond]];
@@ -448,12 +472,14 @@ public:
                            const PylithScalar constants[],
                            PylithScalar Jf3[]) {
         assert(2 == dim);
+        assert(numA >= 10);
 
-        const PylithInt i_drainedBulkMod = numConstants >= 2 ? (PylithInt)constants[0] : 5;
-        const PylithInt i_shearMod = numConstants >= 2 ? (PylithInt)constants[1] : 6;
+        // Rheology auxiliary field indices (relative to numA, matching addAuxiliarySubfields order)
+        const PylithInt i_shearMod = numA - 10;
+        const PylithInt i_drainedBulkMod = numA - 9;
 
-        const PylithScalar drainedBulkMod = a[aOff[i_drainedBulkMod]];
         const PylithScalar shearMod = a[aOff[i_shearMod]];
+        const PylithScalar drainedBulkMod = a[aOff[i_drainedBulkMod]];
         const PylithScalar lambda_d = drainedBulkMod - 2.0 * shearMod / 3.0;
 
         const PylithReal C1111 = lambda_d + 2.0 * shearMod;
@@ -495,12 +521,14 @@ public:
                   const PylithScalar constants[],
                   PylithScalar Jf3[]) {
         assert(3 == dim);
+        assert(numA >= 10);
 
-        const PylithInt i_drainedBulkMod = numConstants >= 2 ? (PylithInt)constants[0] : 5;
-        const PylithInt i_shearMod = numConstants >= 2 ? (PylithInt)constants[1] : 6;
+        // Rheology auxiliary field indices (relative to numA, matching addAuxiliarySubfields order)
+        const PylithInt i_shearMod = numA - 10;
+        const PylithInt i_drainedBulkMod = numA - 9;
 
-        const PylithScalar drainedBulkMod = a[aOff[i_drainedBulkMod]];
         const PylithScalar shearMod = a[aOff[i_shearMod]];
+        const PylithScalar drainedBulkMod = a[aOff[i_drainedBulkMod]];
         const PylithScalar lambda_d = drainedBulkMod - 2.0 * shearMod / 3.0;
 
         const PylithReal C1111 = lambda_d + 2.0 * shearMod;
@@ -552,7 +580,8 @@ public:
                const PylithInt numConstants,
                const PylithScalar constants[],
                PylithScalar Jf2[]) {
-        const PylithInt i_biotCoeff = numConstants >= 1 ? (PylithInt)constants[0] : 4;
+        assert(numA >= 10);
+        const PylithInt i_biotCoeff = numA - 8;  // Updated to match addAuxiliarySubfields order
         const PylithScalar biotCoeff = a[aOff[i_biotCoeff]];
 
         for (PylithInt d = 0; d < dim; ++d) {
@@ -585,8 +614,9 @@ public:
                const PylithInt numConstants,
                const PylithScalar constants[],
                PylithScalar Jf2[]) {
-        const PylithInt i_drainedBulkMod = numConstants >= 2 ? (PylithInt)constants[0] : 5;
-        const PylithInt i_thermalExpCoeff = numConstants >= 2 ? (PylithInt)constants[1] : 8;
+        assert(numA >= 10);
+        const PylithInt i_drainedBulkMod = numA - 9;  // Updated to match addAuxiliarySubfields order
+        const PylithInt i_thermalExpCoeff = numA - 4;
 
         const PylithScalar drainedBulkMod = a[aOff[i_drainedBulkMod]];
         const PylithScalar thermalExpCoeff = a[aOff[i_thermalExpCoeff]];
@@ -623,7 +653,8 @@ public:
                const PylithInt numConstants,
                const PylithScalar constants[],
                PylithScalar Jf0[]) {
-        const PylithInt i_biotMod = numConstants >= 1 ? (PylithInt)constants[0] : 5;
+        assert(numA >= 10);
+        const PylithInt i_biotMod = numA - 7;  // Updated to match addAuxiliarySubfields order
         const PylithScalar biotMod = a[aOff[i_biotMod]];
 
         Jf0[0] += s_tshift / biotMod;
@@ -654,7 +685,8 @@ public:
                const PylithInt numConstants,
                const PylithScalar constants[],
                PylithScalar Jf0[]) {
-        const PylithInt i_biotCoeff = numConstants >= 1 ? (PylithInt)constants[0] : 4;
+        assert(numA >= 10);
+        const PylithInt i_biotCoeff = numA - 8;  // Updated to match addAuxiliarySubfields order
         const PylithScalar biotCoeff = a[aOff[i_biotCoeff]];
 
         Jf0[0] += biotCoeff * s_tshift;
@@ -685,7 +717,8 @@ public:
                const PylithInt numConstants,
                const PylithScalar constants[],
                PylithScalar Jf0[]) {
-        const PylithInt i_fluidThermalExp = numConstants >= 1 ? (PylithInt)constants[0] : 9;
+        assert(numA >= 10);
+        const PylithInt i_fluidThermalExp = numA - 3;
         const PylithScalar fluidThermalExp = a[aOff[i_fluidThermalExp]];
 
         Jf0[0] += 3.0 * fluidThermalExp * s_tshift;
@@ -716,7 +749,8 @@ public:
                const PylithInt numConstants,
                const PylithScalar constants[],
                PylithScalar Jf3[]) {
-        const PylithInt i_permeability = numConstants >= 1 ? (PylithInt)constants[0] : 10;
+        assert(numA >= 10);
+        const PylithInt i_permeability = numA - 6;  // isotropic_permeability
         const PylithScalar permeability = a[aOff[i_permeability]];
         const PylithScalar fluidViscosity = a[aOff[i_fluidViscosity]];
 
@@ -750,7 +784,8 @@ public:
                const PylithInt numConstants,
                const PylithScalar constants[],
                PylithScalar Jf0[]) {
-        const PylithInt i_specificHeat = numConstants >= 1 ? (PylithInt)constants[0] : 12;
+        assert(numA >= 10);
+        const PylithInt i_specificHeat = numA - 1;  // specific_heat
 
         const PylithScalar solidDensity = a[aOff[i_solidDensity]];
         const PylithScalar fluidDensity = a[aOff[i_fluidDensity]];
@@ -786,7 +821,8 @@ public:
                const PylithInt numConstants,
                const PylithScalar constants[],
                PylithScalar Jf3[]) {
-        const PylithInt i_thermalCond = numConstants >= 1 ? (PylithInt)constants[0] : 11;
+        assert(numA >= 10);
+        const PylithInt i_thermalCond = numA - 2;  // thermal_conductivity
         const PylithScalar thermalConductivity = a[aOff[i_thermalCond]];
 
         for (PylithInt d = 0; d < dim; ++d) {
@@ -819,20 +855,22 @@ public:
                                   const PylithScalar constants[],
                                   PylithScalar stress[]) {
         assert(2 == dim);
+        assert(numA >= 10);
 
-        const PylithInt i_biotCoeff = numConstants >= 5 ? (PylithInt)constants[0] : 4;
-        const PylithInt i_drainedBulkMod = numConstants >= 5 ? (PylithInt)constants[1] : 5;
-        const PylithInt i_shearMod = numConstants >= 5 ? (PylithInt)constants[2] : 6;
-        const PylithInt i_refTemp = numConstants >= 5 ? (PylithInt)constants[3] : 7;
-        const PylithInt i_thermalExpCoeff = numConstants >= 5 ? (PylithInt)constants[4] : 8;
+        // Rheology auxiliary field indices (relative to numA, matching addAuxiliarySubfields order)
+        const PylithInt i_shearMod = numA - 10;
+        const PylithInt i_drainedBulkMod = numA - 9;
+        const PylithInt i_biotCoeff = numA - 8;
+        const PylithInt i_refTemp = numA - 5;
+        const PylithInt i_thermalExpCoeff = numA - 4;
 
         const PylithScalar* disp_x = &s_x[sOff_x[i_displacement]];
         const PylithScalar pressure = s[sOff[i_pressure]];
         const PylithScalar temperature = s[sOff[i_temperature]];
 
-        const PylithScalar biotCoeff = a[aOff[i_biotCoeff]];
-        const PylithScalar drainedBulkMod = a[aOff[i_drainedBulkMod]];
         const PylithScalar shearMod = a[aOff[i_shearMod]];
+        const PylithScalar drainedBulkMod = a[aOff[i_drainedBulkMod]];
+        const PylithScalar biotCoeff = a[aOff[i_biotCoeff]];
         const PylithScalar refTemp = a[aOff[i_refTemp]];
         const PylithScalar thermalExpCoeff = a[aOff[i_thermalExpCoeff]];
 
@@ -876,10 +914,12 @@ public:
                       const PylithInt numConstants,
                       const PylithScalar constants[],
                       PylithScalar content[]) {
-        const PylithInt i_biotCoeff = numConstants >= 4 ? (PylithInt)constants[0] : 4;
-        const PylithInt i_biotMod = numConstants >= 4 ? (PylithInt)constants[1] : 5;
-        const PylithInt i_refTemp = numConstants >= 4 ? (PylithInt)constants[2] : 7;
-        const PylithInt i_fluidThermalExp = numConstants >= 4 ? (PylithInt)constants[3] : 9;
+        assert(numA >= 10);
+        // Updated to match addAuxiliarySubfields order
+        const PylithInt i_biotCoeff = numA - 8;
+        const PylithInt i_biotMod = numA - 7;
+        const PylithInt i_refTemp = numA - 5;
+        const PylithInt i_fluidThermalExp = numA - 3;
 
         const PylithScalar trace_strain = s[sOff[i_trace_strain]];
         const PylithScalar pressure = s[sOff[i_pressure]];
@@ -919,7 +959,8 @@ public:
                   const PylithInt numConstants,
                   const PylithScalar constants[],
                   PylithScalar flux[]) {
-        const PylithInt i_thermalCond = numConstants >= 1 ? (PylithInt)constants[0] : 11;
+        assert(numA >= 10);
+        const PylithInt i_thermalCond = numA - 2;  // thermal_conductivity
 
         const PylithScalar* temperature_x = &s_x[sOff_x[i_temperature]];
         const PylithScalar thermalConductivity = a[aOff[i_thermalCond]];
