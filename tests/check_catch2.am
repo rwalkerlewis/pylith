@@ -21,7 +21,7 @@ LDADD = \
 	$(top_builddir)/libsrc/pylith/libpylith.la \
 	-lspatialdata \
 	-lCatch2 -ldl \
-	$(PETSC_LIB) $(PYTHON_BLDLIBRARY) $(PYTHON_LIBS) $(PYTHON_SYSLIBS)
+	$(PETSC_LIB) -lmpi_cxx -lmpi $(PYTHON_BLDLIBRARY) $(PYTHON_LIBS) $(PYTHON_SYSLIBS)
 
 if ENABLE_CUBIT
   LDADD += -lnetcdf

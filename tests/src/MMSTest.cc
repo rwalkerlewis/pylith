@@ -237,6 +237,9 @@ pylith::testing::MMSTest::_initialize(void) {
     const pylith::topology::Field* solution = _problem->getSolution();assert(solution);
     err = VecDuplicate(solution->getGlobalVector(), &_solutionExactVec);PYLITH_CHECK_ERROR(err);
     err = VecDuplicate(_solutionExactVec, &_solutionDotExactVec);PYLITH_CHECK_ERROR(err);
+    // Initialize solution time derivative to zero (important for steady-state problems
+    // where exactSolnDotFns is not provided and all time derivatives should be zero)
+    err = VecZeroEntries(_solutionDotExactVec);PYLITH_CHECK_ERROR(err);
 
     pythia::journal::debug_t debug(GenericComponent::getName());
     if (debug.state()) {

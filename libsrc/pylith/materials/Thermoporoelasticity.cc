@@ -395,6 +395,42 @@ pylith::materials::Thermoporoelasticity::_setKernelsResidual(pylith::feassemble:
     kernels[0] = ResidualKernels("temperature", pylith::feassemble::Integrator::LHS, f0T, f1T);
     integrator->setKernelsResidual(kernels, solution);
 
+    // State variable equations (when _useStateVars is true)
+    // These relate time derivatives to their corresponding state variables
+    if (_useStateVars) {
+        // Velocity equation: f0_v = ∂u/∂t - v = 0
+        if (solution.hasSubfield("velocity")) {
+            kernels.resize(1);
+            kernels[0] = ResidualKernels("velocity", pylith::feassemble::Integrator::LHS,
+                                         ThermoporoelasticityKernels::f0v_implicit, NULL);
+            integrator->setKernelsResidual(kernels, solution);
+        } // if
+
+        // Pressure_dot equation: f0_pdot = ∂p/∂t - p_dot = 0
+        if (solution.hasSubfield("pressure_t")) {
+            kernels.resize(1);
+            kernels[0] = ResidualKernels("pressure_t", pylith::feassemble::Integrator::LHS,
+                                         ThermoporoelasticityKernels::f0pdot, NULL);
+            integrator->setKernelsResidual(kernels, solution);
+        } // if
+
+        // Trace_strain_dot equation: f0_edot = ∂ε_v/∂t - ε_v_dot = 0
+        if (solution.hasSubfield("trace_strain_t")) {
+            kernels.resize(1);
+            kernels[0] = ResidualKernels("trace_strain_t", pylith::feassemble::Integrator::LHS,
+                                         ThermoporoelasticityKernels::f0edot, NULL);
+            integrator->setKernelsResidual(kernels, solution);
+        } // if
+
+        // Temperature_dot equation: f0_Tdot = ∂T/∂t - T_dot = 0
+        if (solution.hasSubfield("temperature_t")) {
+            kernels.resize(1);
+            kernels[0] = ResidualKernels("temperature_t", pylith::feassemble::Integrator::LHS,
+                                         ThermoporoelasticityKernels::f0Tdot, NULL);
+            integrator->setKernelsResidual(kernels, solution);
+        } // if
+    } // if _useStateVars
+
     PYLITH_METHOD_END;
 } // _setKernelsResidual
 
@@ -479,6 +515,65 @@ pylith::materials::Thermoporoelasticity::_setKernelsJacobian(pylith::feassemble:
     kernels[0] = JacobianKernels("temperature", "temperature", pylith::feassemble::Integrator::LHS,
                                  Jf0TT, NULL, NULL, Jf3TT);
     integrator->setKernelsJacobian(kernels, solution);
+
+    // State variable Jacobians (when _useStateVars is true)
+    if (_useStateVars) {
+        // velocity - displacement: Jf0_vu = s_tshift
+        if (solution.hasSubfield("velocity")) {
+            kernels.resize(1);
+            kernels[0] = JacobianKernels("velocity", "displacement", pylith::feassemble::Integrator::LHS,
+                                         ThermoporoelasticityKernels::Jf0vu, NULL, NULL, NULL);
+            integrator->setKernelsJacobian(kernels, solution);
+
+            // velocity - velocity: Jf0_vv = -1
+            kernels.resize(1);
+            kernels[0] = JacobianKernels("velocity", "velocity", pylith::feassemble::Integrator::LHS,
+                                         ThermoporoelasticityKernels::Jf0vv, NULL, NULL, NULL);
+            integrator->setKernelsJacobian(kernels, solution);
+        } // if
+
+        // pressure_t - pressure: Jf0_pdotp = s_tshift
+        if (solution.hasSubfield("pressure_t")) {
+            kernels.resize(1);
+            kernels[0] = JacobianKernels("pressure_t", "pressure", pylith::feassemble::Integrator::LHS,
+                                         ThermoporoelasticityKernels::Jf0pdotp, NULL, NULL, NULL);
+            integrator->setKernelsJacobian(kernels, solution);
+
+            // pressure_t - pressure_t: Jf0_pdotpdot = -1
+            kernels.resize(1);
+            kernels[0] = JacobianKernels("pressure_t", "pressure_t", pylith::feassemble::Integrator::LHS,
+                                         ThermoporoelasticityKernels::Jf0pdotpdot, NULL, NULL, NULL);
+            integrator->setKernelsJacobian(kernels, solution);
+        } // if
+
+        // trace_strain_t - trace_strain: Jf0_edote = s_tshift
+        if (solution.hasSubfield("trace_strain_t")) {
+            kernels.resize(1);
+            kernels[0] = JacobianKernels("trace_strain_t", "trace_strain", pylith::feassemble::Integrator::LHS,
+                                         ThermoporoelasticityKernels::Jf0edote, NULL, NULL, NULL);
+            integrator->setKernelsJacobian(kernels, solution);
+
+            // trace_strain_t - trace_strain_t: Jf0_edotedot = -1
+            kernels.resize(1);
+            kernels[0] = JacobianKernels("trace_strain_t", "trace_strain_t", pylith::feassemble::Integrator::LHS,
+                                         ThermoporoelasticityKernels::Jf0edotedot, NULL, NULL, NULL);
+            integrator->setKernelsJacobian(kernels, solution);
+        } // if
+
+        // temperature_t - temperature: Jf0_TdotT = s_tshift
+        if (solution.hasSubfield("temperature_t")) {
+            kernels.resize(1);
+            kernels[0] = JacobianKernels("temperature_t", "temperature", pylith::feassemble::Integrator::LHS,
+                                         ThermoporoelasticityKernels::Jf0TdotT, NULL, NULL, NULL);
+            integrator->setKernelsJacobian(kernels, solution);
+
+            // temperature_t - temperature_t: Jf0_TdotTdot = -1
+            kernels.resize(1);
+            kernels[0] = JacobianKernels("temperature_t", "temperature_t", pylith::feassemble::Integrator::LHS,
+                                         ThermoporoelasticityKernels::Jf0TdotTdot, NULL, NULL, NULL);
+            integrator->setKernelsJacobian(kernels, solution);
+        } // if
+    } // if _useStateVars
 
     PYLITH_METHOD_END;
 } // _setKernelsJacobian

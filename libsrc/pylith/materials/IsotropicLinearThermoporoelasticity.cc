@@ -87,24 +87,27 @@ pylith::materials::IsotropicLinearThermoporoelasticity::addAuxiliarySubfields(vo
     PYLITH_METHOD_BEGIN;
     PYLITH_COMPONENT_DEBUG("addAuxiliarySubfields(void)");
 
-    // Poroelastic fields
-    _auxiliaryFactory->addBiotCoefficient();
-    _auxiliaryFactory->addBiotModulus();
-    _auxiliaryFactory->addDrainedBulkModulus();
-    _auxiliaryFactory->addShearModulus();
-    _auxiliaryFactory->addIsotropicPermeability();
-
-    // Thermal fields
-    _auxiliaryFactory->addReferenceTemperature();
-    _auxiliaryFactory->addThermalExpansionCoeff();
-    _auxiliaryFactory->addFluidThermalExpansion();
-    _auxiliaryFactory->addThermalConductivity();
-    _auxiliaryFactory->addSpecificHeat();
+    // :ATTENTION: The order for adding subfields must match the order of the auxiliary fields in the point-wise
+    // functions (kernels). Follow same pattern as poroelasticity for base fields.
 
     if (_useReferenceState) {
         _auxiliaryFactory->addReferenceStress();
         _auxiliaryFactory->addReferenceStrain();
     } // if
+
+    // Poroelastic fields (same order as IsotropicLinearPoroelasticity)
+    _auxiliaryFactory->addShearModulus();        // numA - 10
+    _auxiliaryFactory->addDrainedBulkModulus();  // numA - 9
+    _auxiliaryFactory->addBiotCoefficient();     // numA - 8
+    _auxiliaryFactory->addBiotModulus();         // numA - 7
+    _auxiliaryFactory->addIsotropicPermeability(); // numA - 6
+
+    // Thermal fields
+    _auxiliaryFactory->addReferenceTemperature();          // numA - 5
+    _auxiliaryFactory->addThermalExpansionCoeff();         // numA - 4
+    _auxiliaryFactory->addFluidThermalExpansion();         // numA - 3
+    _auxiliaryFactory->addThermalConductivity();           // numA - 2
+    _auxiliaryFactory->addSpecificHeat();                  // numA - 1
 
     PYLITH_METHOD_END;
 } // addAuxiliarySubfields
