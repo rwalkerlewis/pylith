@@ -56,6 +56,18 @@ pylith::_TestThermoelasticity::TriP2(void) {
     };
     data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
 
+    // Override auxiliary field discretizations to match solution quadrature order
+    static const pylith::topology::Field::Discretization _auxDiscretizations[7] = {
+        pylith::topology::Field::Discretization(0, 2), // density
+        pylith::topology::Field::Discretization(0, 2), // specific_heat
+        pylith::topology::Field::Discretization(0, 2), // thermal_conductivity
+        pylith::topology::Field::Discretization(0, 2), // reference_temperature
+        pylith::topology::Field::Discretization(0, 2), // thermal_expansion_coefficient
+        pylith::topology::Field::Discretization(0, 2), // shear_modulus
+        pylith::topology::Field::Discretization(0, 2), // bulk_modulus
+    };
+    data->auxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_auxDiscretizations);
+
     return data;
 }
 
@@ -87,6 +99,18 @@ pylith::_TestThermoelasticity::QuadQ2(void) {
         pylith::topology::Field::Discretization(2, 2), // temperature
     };
     data->solnDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_solnDiscretizations);
+
+    // Override auxiliary field discretizations to match solution quadrature order
+    static const pylith::topology::Field::Discretization _auxDiscretizations[7] = {
+        pylith::topology::Field::Discretization(0, 2), // density
+        pylith::topology::Field::Discretization(0, 2), // specific_heat
+        pylith::topology::Field::Discretization(0, 2), // thermal_conductivity
+        pylith::topology::Field::Discretization(0, 2), // reference_temperature
+        pylith::topology::Field::Discretization(0, 2), // thermal_expansion_coefficient
+        pylith::topology::Field::Discretization(0, 2), // shear_modulus
+        pylith::topology::Field::Discretization(0, 2), // bulk_modulus
+    };
+    data->auxDiscretizations = const_cast<pylith::topology::Field::Discretization*>(_auxDiscretizations);
 
     return data;
 }

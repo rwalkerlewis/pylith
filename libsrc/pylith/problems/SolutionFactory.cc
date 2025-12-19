@@ -269,6 +269,32 @@ pylith::problems::SolutionFactory::addTemperature(const pylith::topology::Field:
 
 
 // ------------------------------------------------------------------------------------------------
+// Add time derivative of temperature subfield to solution field.
+void
+pylith::problems::SolutionFactory::addTemperatureDot(const pylith::topology::Field::Discretization& discretization) {
+    PYLITH_METHOD_BEGIN;
+    PYLITH_JOURNAL_DEBUG("addTemperatureDot(discretization="<<typeid(discretization).name()<<")");
+
+    const char* fieldName = "temperature_t";
+    const char* componentNames[1] = { "temperature_t" };
+
+    pylith::topology::Field::Description description;
+    description.label = fieldName;
+    description.alias = fieldName;
+    description.vectorFieldType = pylith::topology::Field::SCALAR;
+    description.numComponents = 1;
+    description.componentNames.resize(1);
+    description.componentNames[0] = componentNames[0];
+    description.scale = _scales.getTemperatureScale() / _scales.getTimeScale();
+    description.validator = NULL;
+
+    _solution.subfieldAdd(description, discretization);
+
+    PYLITH_METHOD_END;
+} // addTemperatureDot
+
+
+// ------------------------------------------------------------------------------------------------
 void
 pylith::problems::SolutionFactory::setValues(spatialdata::spatialdb::SpatialDB* db) {
     PYLITH_METHOD_BEGIN;

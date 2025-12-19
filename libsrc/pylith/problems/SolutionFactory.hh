@@ -85,6 +85,12 @@ public:
      */
     void addTemperature(const pylith::topology::FieldBase::Discretization& discretization);
 
+    /** Add time derivative of temperature subfield to solution field.
+     *
+     * @param[in] discretization Discretization for temperature subfield.
+     */
+    void addTemperatureDot(const pylith::topology::FieldBase::Discretization& discretization);
+
     /** Allocate and populate subfield with values using spatial database.
      *
      * @param[in] db Spatial database.

@@ -44,6 +44,7 @@ pylith::materials::Thermoporoelasticity::Thermoporoelasticity(void) :
     _useSourceDensity(false),
     _useHeatSource(false),
     _useReferenceState(false),
+    _useStateVars(false),
     _rheology(NULL),
     _derivedFactory(new pylith::materials::DerivedFactoryPoroelasticity) {
     pylith::utils::PyreComponent::setName("thermoporoelasticity");
@@ -141,6 +142,24 @@ pylith::materials::Thermoporoelasticity::useReferenceState(void) const {
 
 
 // ---------------------------------------------------------------------------------------------------------------------
+// Use state variables to update auxiliary fields?
+void
+pylith::materials::Thermoporoelasticity::useStateVars(const bool value) {
+    PYLITH_COMPONENT_DEBUG("useStateVars(value="<<value<<")");
+
+    _useStateVars = value;
+} // useStateVars
+
+
+// ---------------------------------------------------------------------------------------------------------------------
+// Use state variables to update auxiliary fields?
+bool
+pylith::materials::Thermoporoelasticity::useStateVars(void) const {
+    return _useStateVars;
+} // useStateVars
+
+
+// ---------------------------------------------------------------------------------------------------------------------
 // Set bulk rheology.
 void
 pylith::materials::Thermoporoelasticity::setBulkRheology(pylith::materials::RheologyThermoporoelasticity* const rheology) {
@@ -190,6 +209,7 @@ pylith::materials::Thermoporoelasticity::createIntegrator(const pylith::topology
     pylith::feassemble::IntegratorDomain* integrator = new pylith::feassemble::IntegratorDomain(this);assert(integrator);
     integrator->setLabelName(getLabelName());
     integrator->setLabelValue(getLabelValue());
+    integrator->createLabelDS(solution, solution.getMesh().getDimension());
 
     _setKernelsResidual(integrator, solution);
     _setKernelsJacobian(integrator, solution);
