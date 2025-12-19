@@ -76,6 +76,18 @@ public:
      */
     bool useReferenceState(void) const;
 
+    /** Use state variables to update auxiliary fields?
+     *
+     * @param[in] value Flag indicating to update auxiliary fields using state variables.
+     */
+    void useStateVars(const bool value);
+
+    /** Use state variables to update auxiliary fields?
+     *
+     * @returns True if updating auxiliary fields using state variables, false otherwise.
+     */
+    bool useStateVars(void) const;
+
     /** Set bulk rheology.
      *
      * @param[in] rheology Bulk rheology for thermoporoelasticity.
@@ -186,6 +198,7 @@ private:
     bool _useSourceDensity; ///< Flag to include fluid source density term.
     bool _useHeatSource; ///< Flag to include heat source term.
     bool _useReferenceState; ///< Flag to use reference stress and strain.
+    bool _useStateVars; ///< Flag to update auxiliary fields using state variables.
     pylith::materials::RheologyThermoporoelasticity* _rheology; ///< Bulk rheology for thermoporoelasticity.
     pylith::materials::DerivedFactoryPoroelasticity* _derivedFactory; ///< Factory for creating derived fields.
 

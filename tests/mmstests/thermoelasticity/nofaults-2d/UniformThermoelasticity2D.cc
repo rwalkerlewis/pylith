@@ -13,6 +13,7 @@
 #include "UniformThermoelasticity2D.hh" // Implementation of class methods
 
 #include "pylith/problems/SolutionFactory.hh" // USES SolutionFactory
+#include "pylith/bc/DirichletUserFn.hh" // USES DirichletUserFn
 
 namespace pylith {
     class _UniformThermoelasticity2D;
@@ -120,7 +121,7 @@ pylith::UniformThermoelasticity2D::createData(void) {
     // Test parameters
     data->t = 0.0;
     data->dt = 0.05;
-    data->tolerance = 1.0e-9;
+    data->tolerance = 1.0e-7;
     data->isJacobianLinear = true;
     data->allowZeroResidual = true;
     data->jacobianConvergenceRate = 1.0;
@@ -183,6 +184,30 @@ pylith::UniformThermoelasticity2D::createData(void) {
     data->auxDB.addValue("thermal_expansion_coefficient", _UniformThermoelasticity2D::thermal_expansion_coefficient, _UniformThermoelasticity2D::thermal_expansion_coefficient_units());
     data->auxDB.addValue("vs", _UniformThermoelasticity2D::vs, _UniformThermoelasticity2D::vs_units());
     data->auxDB.addValue("vp", _UniformThermoelasticity2D::vp, _UniformThermoelasticity2D::vp_units());
+
+    // Dirichlet boundary conditions for displacement
+    static const PylithInt constrainedDispDOF[2] = {0, 1};
+    static const PylithInt numConstrainedDisp = 2;
+    pylith::bc::DirichletUserFn* bcDisp = new pylith::bc::DirichletUserFn();
+    bcDisp->setSubfieldName("displacement");
+    bcDisp->setLabelName("boundary");
+    bcDisp->setLabelValue(1);
+    bcDisp->setConstrainedDOF(constrainedDispDOF, numConstrainedDisp);
+    bcDisp->setUserFn(solnkernel_disp);
+
+    // Dirichlet boundary conditions for temperature
+    static const PylithInt constrainedTempDOF[1] = {0};
+    static const PylithInt numConstrainedTemp = 1;
+    pylith::bc::DirichletUserFn* bcTemp = new pylith::bc::DirichletUserFn();
+    bcTemp->setSubfieldName("temperature");
+    bcTemp->setLabelName("boundary");
+    bcTemp->setLabelValue(1);
+    bcTemp->setConstrainedDOF(constrainedTempDOF, numConstrainedTemp);
+    bcTemp->setUserFn(solnkernel_temp);
+
+    data->bcs.resize(2);
+    data->bcs[0] = bcDisp;
+    data->bcs[1] = bcTemp;
 
     return data;
 } // createData

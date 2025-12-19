@@ -105,6 +105,29 @@ class pylith::_PressureGradientTemp {
         return 2.0e+9;
     } // fluid_bulk_modulus
 
+    // Biot modulus: M = 1 / [(α - φ)/K_s + φ/K_f]
+    // For typical values with α close to 1, we can approximate K_s as very large
+    // So M ≈ K_f / φ
+    static double biot_modulus(const double x,
+                               const double y) {
+        // For a more accurate computation:
+        // M = 1 / [(α - φ)/K_s + φ/K_f]
+        // Using approximation K_s >> K_d (drained bulk), so (α-φ)/K_s ≈ 0
+        // M ≈ K_f / φ
+        const double alpha = biot_coefficient(x, y);
+        const double phi = porosity(x, y);
+        const double K_f = fluid_bulk_modulus(x, y);
+        // More general formula using solid bulk modulus estimate
+        // K_s = K_d / (1 - α) where K_d = drained_bulk_modulus
+        const double K_d = drained_bulk_modulus(x, y);
+        const double K_s = K_d / (1.0 - alpha + 1e-10); // avoid division by zero if alpha = 1
+        return 1.0 / ((alpha - phi) / K_s + phi / K_f);
+    } // biot_modulus
+
+    static const char* biot_modulus_units(void) {
+        return "Pa";
+    } // biot_modulus_units
+
     // Permeability
     static double isotropic_permeability(const double x,
                                          const double y) {
@@ -387,7 +410,8 @@ public:
         data->auxDB.addValue("porosity", porosity, porosity_units());
         data->auxDB.addValue("shear_modulus", shear_modulus, modulus_units());
         data->auxDB.addValue("drained_bulk_modulus", drained_bulk_modulus, modulus_units());
-        data->auxDB.addValue("biot_coefficient", biot_coefficient, modulus_units());
+        data->auxDB.addValue("biot_coefficient", biot_coefficient, biot_coefficient_units());
+        data->auxDB.addValue("biot_modulus", biot_modulus, biot_modulus_units());
         data->auxDB.addValue("fluid_bulk_modulus", fluid_bulk_modulus, modulus_units());
         data->auxDB.addValue("isotropic_permeability", isotropic_permeability, permeability_units());
         data->auxDB.addValue("reference_temperature", reference_temperature, temperature_units());
