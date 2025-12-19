@@ -15,7 +15,6 @@
 #include "pylith/topology/Field.hh" // USES Field
 #include "pylith/topology/FieldQuery.hh" // HOLDSA FieldQuery
 
-#include "spatialdata/units/Nondimensional.hh" // USES Nondimensional
 #include "spatialdata/spatialdb/GravityField.hh" // USES GravityField
 #include "pylith/scales/Scales.hh" // USES Scales
 

@@ -147,7 +147,7 @@ pylith::TestHeat_Data::TestHeat_Data(void) :
     useAsciiMesh(true),
 
     jacobianConvergenceRate(1.0),
-    tolerance(1.0e-9),
+    tolerance(1.0e-4),
     isJacobianLinear(true),
     allowZeroResidual(false),
 

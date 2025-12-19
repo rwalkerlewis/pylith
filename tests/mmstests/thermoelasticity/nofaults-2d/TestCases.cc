@@ -17,15 +17,15 @@
 
 // ------------------------------------------------------------------------------------------------
 // Helper class for setting up test data with mesh configuration.
-class pylith::_TestThermoelasticity {
-public:
-
-    static TestThermoelasticity_Data* TriP1(void);
-    static TestThermoelasticity_Data* TriP2(void);
-    static TestThermoelasticity_Data* QuadQ1(void);
-    static TestThermoelasticity_Data* QuadQ2(void);
-
-};
+namespace pylith {
+    class _TestThermoelasticity {
+    public:
+        static TestThermoelasticity_Data* TriP1(void);
+        static TestThermoelasticity_Data* TriP2(void);
+        static TestThermoelasticity_Data* QuadQ1(void);
+        static TestThermoelasticity_Data* QuadQ2(void);
+    };
+} // namespace pylith
 
 // ------------------------------------------------------------------------------------------------
 pylith::TestThermoelasticity_Data*

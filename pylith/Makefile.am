@@ -139,10 +139,12 @@ EXTRA_DIST = \
 	scales/DynamicElasticity.py \
 	scales/QuasistaticPoroelasticity.py \
 	scales/QuasistaticElasticity.py \
+	scales/Scales.py \
 	scales/__init__.py \
 	testing/FullTestApp.py \
 	testing/SolutionPoints.py \
 	testing/TestCases.py \
+	testing/UnitTestApp.py \
 	testing/__init__.py \
 	topology/Distributor.py \
 	topology/Field.py \

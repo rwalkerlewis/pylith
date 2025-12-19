@@ -1,0 +1,97 @@
+# =================================================================================================
+# This code is part of SpatialData, developed through the Computational Infrastructure
+# for Geodynamics (https://github.com/geodynamics/spatialdata).
+#
+# Copyright (c) 2010-2025, University of California, Davis and the SpatialData Development Team.
+# All rights reserved.
+#
+# See https://mit-license.org/ and LICENSE.md and for license information.
+# =================================================================================================
+
+from pythia.pyre.inventory.Inventory import Inventory
+from pythia.pyre.inventory.Dimensional import Dimensional
+from pythia.pyre.units.length import km, meter
+from pythia.pyre.units.time import second
+from pythia.pyre.units.mass import kg
+from pythia.pyre.units.temperature import kelvin
+from pythia.pyre.units.power import watt
+from pythia.pyre.units.energy import joule
+
+from .General import General
+
+
+class Heat(General):
+    """
+    Nondimensionalization for heat transfer problems.
+    """
+    
+    import pythia.pyre.inventory
+
+    lengthScale = pythia.pyre.inventory.dimensional("length_scale", default=100.0*km)
+    lengthScale.meta['tip'] = "Length scale for nondimensionalization."
+
+    thermalConductivity = pythia.pyre.inventory.dimensional(
+        "thermal_conductivity", 
+        default=2.5*watt/(meter*kelvin)
+    )
+    thermalConductivity.meta['tip'] = "Thermal conductivity for nondimensionalization."
+
+    density = pythia.pyre.inventory.dimensional("density", default=2500.0*kg/meter**3)
+    density.meta['tip'] = "Density for nondimensionalization."
+
+    specificHeat = pythia.pyre.inventory.dimensional(
+        "specific_heat", 
+        default=1000.0*joule/(kg*kelvin)
+    )
+    specificHeat.meta['tip'] = "Specific heat capacity for nondimensionalization."
+
+    temperatureScale = pythia.pyre.inventory.dimensional(
+        "temperature_scale",
+        default=1.0*kelvin
+    )
+    temperatureScale.meta['tip'] = "Temperature scale for nondimensionalization."
+
+    # PUBLIC METHODS /////////////////////////////////////////////////////
+
+    def __init__(self, name="heat"):
+        """Constructor.
+        """
+        General.__init__(self, name)
+
+    def preinitialize(self, problem):
+        """Initialize scales.
+        """
+        from pylith.mpi.Communicator import mpi_is_root
+        if mpi_is_root():
+            self._info.log("Performing minimal initialization of nondimensionalization.")
+
+        self._setScales(problem)
+
+    def _setScales(self, problem):
+        """Set default scales based on problem type.
+        """
+        from .ElasticityScales import ElasticityScales
+        
+        # Set heat transfer scales
+        ElasticityScales.setHeat(
+            problem.normalizer,
+            lengthScale=self.lengthScale,
+            thermalConductivity=self.thermalConductivity,
+            density=self.density,
+            specificHeat=self.specificHeat
+        )
+        
+        # Override temperature scale if user set it
+        if self.temperatureScale != 1.0*kelvin:
+            problem.normalizer.setTemperatureScale(self.temperatureScale.value)
+
+
+# FACTORIES ////////////////////////////////////////////////////////////
+
+def normalizer():
+    """Factory associated with Heat.
+    """
+    return Heat()
+
+
+# End of file

@@ -1,0 +1,217 @@
+// =================================================================================================
+// This code is part of PyLith, developed through the Computational Infrastructure
+// for Geodynamics (https://github.com/geodynamics/pylith).
+//
+// Copyright (c) 2010-2025, University of California, Davis and the PyLith Development Team.
+// All rights reserved.
+//
+// See https://mit-license.org/ and LICENSE.md and for license information.
+// =================================================================================================
+#pragma once
+
+#include "pylith/utils/error.hh" // USES PYLITH_CHECK_ERROR
+
+// ------------------------------------------------------------------------------------------------
+// Constructor with PetscDM, label name, and label value.
+inline
+pylith::feassemble::DSLabelAccess::DSLabelAccess(const PetscDM dm,
+                                                 const char* labelName,
+                                                 const int labelValue,
+                                                 const int dim) :
+    _dm(dm),
+    _label(NULL),
+    _ds(NULL),
+    _weakForm(NULL),
+    _pointsIS(NULL),
+    _numPoints(0),
+    _value(labelValue),
+    _dim(dim),
+    _name(labelName) {
+    PYLITH_METHOD_BEGIN;
+
+    assert(dm);
+    PetscErrorCode err = PETSC_SUCCESS;
+    PetscBool hasLabel = PETSC_FALSE;
+    err = DMHasLabel(_dm, labelName, &hasLabel);PYLITH_CHECK_ERROR(err);
+    if (!hasLabel) {
+        std::ostringstream msg;
+        const char* dmName = NULL;
+        err = PetscObjectGetName((PetscObject)_dm, &dmName);PYLITH_CHECK_ERROR(err);
+        msg << "PETSc DM '" << dmName << "' missing label '" << labelName << "'.";
+        throw std::runtime_error(msg.str());
+    } // if
+    err = DMGetLabel(_dm, labelName, &_label);PYLITH_CHECK_ERROR(err);assert(_label);
+
+    err = DMGetStratumIS(dm, labelName, labelValue, &_pointsIS);PYLITH_CHECK_ERROR(err);
+    if (_pointsIS) {
+        err = ISGetSize(_pointsIS, &_numPoints);PYLITH_CHECK_ERROR(err);
+        if (_numPoints > 0) {
+            const PetscInt* pointIndicesOrig = NULL;
+            const PetscInt numPointsOrig = _numPoints;
+            err = ISGetIndices(_pointsIS, &pointIndicesOrig);PYLITH_CHECK_ERROR(err);
+            err = DMGetCellDS(dm, pointIndicesOrig[0], &_ds, NULL);PYLITH_CHECK_ERROR(err);assert(_ds);
+            err = PetscDSGetWeakForm(_ds, &_weakForm);PYLITH_CHECK_ERROR(err);assert(_weakForm);
+            PetscInt numPointsNew = 0;
+            for (PetscInt iPoint = 0; iPoint < numPointsOrig; ++iPoint) {
+                const PetscInt point = pointIndicesOrig[iPoint];
+                PetscInt depth = 0;
+                err = DMPlexGetPointDepth(_dm, point, &depth);PYLITH_CHECK_ERROR(err);
+                if (depth == _dim) {
+                    ++numPointsNew;
+                } // if
+            } // for
+
+            // Create array with points over which to integrate.
+            PetscInt* pointIndicesNew = NULL;
+            err = PetscMalloc1(numPointsNew*sizeof(PetscInt), &pointIndicesNew);PYLITH_CHECK_ERROR(err);
+            for (PetscInt iPoint = 0, index = 0; iPoint < numPointsOrig; ++iPoint) {
+                const PetscInt point = pointIndicesOrig[iPoint];
+                PetscInt depth = 0;
+                err = DMPlexGetPointDepth(_dm, point, &depth);PYLITH_CHECK_ERROR(err);
+                if (depth == _dim) {
+                    pointIndicesNew[index++] = point;
+                } // if
+            } // for
+
+            err = ISRestoreIndices(_pointsIS, &pointIndicesOrig);PYLITH_CHECK_ERROR(err);
+            err = ISDestroy(&_pointsIS);PYLITH_CHECK_ERROR(err);
+            err = ISCreateGeneral(PETSC_COMM_SELF, numPointsNew, pointIndicesNew, PETSC_OWN_POINTER, &_pointsIS);PYLITH_CHECK_ERROR(err);
+            _numPoints = numPointsNew;
+        } else {
+            err = ISDestroy(&_pointsIS);PYLITH_CHECK_ERROR(err);
+        } // if/else
+    } // if
+
+    PYLITH_METHOD_END;
+}
+
+
+// ------------------------------------------------------------------------------------------------
+// Default destructor
+inline
+pylith::feassemble::DSLabelAccess::~DSLabelAccess(void) {
+    ISDestroy(&_pointsIS);
+}
+
+
+// ------------------------------------------------------------------------------------------------
+// Get PETSc DM.
+inline
+PetscDM
+pylith::feassemble::DSLabelAccess::dm(void) const {
+    return _dm;
+}
+
+
+// ------------------------------------------------------------------------------------------------
+// Get PETSc DMLabel.
+inline
+PetscDMLabel
+pylith::feassemble::DSLabelAccess::label(void) const {
+    return _label;
+}
+
+
+// ------------------------------------------------------------------------------------------------
+// Get PETSc DMLabel value.
+inline
+PetscInt
+pylith::feassemble::DSLabelAccess::value(void) const {
+    return _value;
+}
+
+
+// ------------------------------------------------------------------------------------------------
+// Get PetscDS.
+inline
+PetscDS
+pylith::feassemble::DSLabelAccess::ds(void) const {
+    return _ds;
+}
+
+
+// ------------------------------------------------------------------------------------------------
+// Get weak form associated with PetscDS.
+inline
+PetscWeakForm
+pylith::feassemble::DSLabelAccess::weakForm(void) const {
+    return _weakForm;
+}
+
+
+// ------------------------------------------------------------------------------------------------
+// Get PETSc IS associated with label and value.
+inline
+PetscIS
+pylith::feassemble::DSLabelAccess::pointsIS(void) const {
+    return _pointsIS;
+}
+
+
+// ------------------------------------------------------------------------------------------------
+// Get number of points in PETSc IS associated with label and value.
+inline
+PetscInt
+pylith::feassemble::DSLabelAccess::numPoints(void) const {
+    return _numPoints;
+}
+
+
+// ------------------------------------------------------------------------------------------------
+// Remove overlap from points index set.
+inline
+void
+pylith::feassemble::DSLabelAccess::removeOverlap(void) {
+    PYLITH_METHOD_BEGIN;
+
+    PetscErrorCode err;
+
+    PetscSF sf = NULL;
+    err = DMGetPointSF(_dm, &sf);PYLITH_CHECK_ERROR(err);
+    const PetscInt *leaves = NULL;
+    PetscInt numLeaves = 0, loc = -1;
+    err = PetscSFGetGraph(sf, NULL, &numLeaves, &leaves, NULL);PYLITH_CHECK_ERROR(err);
+    if ((_numPoints <= 0) || (numLeaves <= 0)) {
+        PYLITH_METHOD_END;
+    } // if
+
+    assert(_pointsIS);
+    assert(_numPoints > 0);
+
+    const PetscInt* pointIndicesOrig = NULL;
+    const PetscInt numPointsOrig = _numPoints;
+    err = ISGetIndices(_pointsIS, &pointIndicesOrig);PYLITH_CHECK_ERROR(err);
+
+    // Count number of cells over which to integrate.
+    PetscInt numPointsNew = 0;
+    for (PetscInt iPoint = 0; iPoint < numPointsOrig; ++iPoint) {
+        const PetscInt point = pointIndicesOrig[iPoint];
+
+        err = PetscFindInt(point, numLeaves, leaves, &loc);PYLITH_CHECK_ERROR(err);
+        if (loc < 0) { // not in PetscSF
+            ++numPointsNew;
+        } // if
+    } // for
+
+    // Create array with cells over which to integrate.
+    PetscInt* pointIndicesNew = NULL;
+    err = PetscMalloc1(numPointsNew*sizeof(PetscInt), &pointIndicesNew);PYLITH_CHECK_ERROR(err);
+    for (PetscInt iPoint = 0, index = 0; iPoint < numPointsOrig; ++iPoint) {
+        const PetscInt cell = pointIndicesOrig[iPoint];
+
+        err = PetscFindInt(cell, numLeaves, leaves, &loc);PYLITH_CHECK_ERROR(err);
+        if (loc < 0) { // not in PetscSF
+            pointIndicesNew[index++] = cell;
+        } // if
+    } // for
+
+    err = ISRestoreIndices(_pointsIS, &pointIndicesOrig);PYLITH_CHECK_ERROR(err);
+    err = ISDestroy(&_pointsIS);PYLITH_CHECK_ERROR(err);
+    err = ISCreateGeneral(PETSC_COMM_SELF, numPointsNew, pointIndicesNew, PETSC_OWN_POINTER, &_pointsIS);
+    _numPoints = numPointsNew;
+
+    PYLITH_METHOD_END;
+}
+
+
+// End of file
