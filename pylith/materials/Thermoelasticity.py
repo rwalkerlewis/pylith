@@ -71,8 +71,8 @@ class Thermoelasticity(Material, ModuleThermoelasticity):
         from .AuxSubfieldsThermoelasticity import AuxSubfieldsThermoelasticity
         self.auxiliarySubfields = AuxSubfieldsThermoelasticity("auxiliary_subfields")
 
-        from .DerivedSubfieldsElasticity import DerivedSubfieldsElasticity
-        self.derivedSubfields = DerivedSubfieldsElasticity("derived_subfields")
+        from .DerivedSubfieldsThermoelasticity import DerivedSubfieldsThermoelasticity
+        self.derivedSubfields = DerivedSubfieldsThermoelasticity("derived_subfields")
 
     def preinitialize(self, problem):
         """Setup material.

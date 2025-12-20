@@ -115,7 +115,7 @@ class QuasistaticThermoelasticity(General):
 # FACTORIES ////////////////////////////////////////////////////////////
 
 
-def normalizer():
+def scales():
     """
     Factory associated with QuasistaticThermoelasticity.
     """

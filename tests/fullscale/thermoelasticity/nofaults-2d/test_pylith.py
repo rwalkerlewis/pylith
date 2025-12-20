@@ -13,7 +13,7 @@
 
 import unittest
 
-from pylith.testing.FullTestApp import FullTestCase, TestAbstract, SuiteVerbosity
+from pylith.testing.FullTestApp import FullTestCase
 
 import TestThermoBar
 
@@ -27,16 +27,6 @@ def test_suite():
     suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestThermoBar.TestQuad))
     
     return suite
-
-
-class ThermoelasticityApp(TestAbstract):
-    """Driver application for running thermoelasticity tests."""
-
-    def __init__(self):
-        """Constructor."""
-        TestAbstract.__init__(self)
-        self.testSuite = test_suite()
-        return
 
 
 # Run test suite if executed as script

@@ -597,7 +597,7 @@ pylith::materials::Thermoporoelasticity::_setKernelsDerivedField(pylith::feassem
 
     std::vector<ProjectKernels> kernels(3);
     kernels[0] = ProjectKernels("cauchy_stress", _rheology->getKernelCauchyStressVector(coordsys));
-    kernels[1] = ProjectKernels("fluid_content", _rheology->getKernelFluidContent(coordsys));
+    kernels[1] = ProjectKernels("water_content", _rheology->getKernelFluidContent(coordsys));
     kernels[2] = ProjectKernels("heat_flux", _rheology->getKernelHeatFluxVector(coordsys));
 
     integrator->setKernelsDerivedField(kernels);

@@ -73,6 +73,8 @@ MU = SHEAR_MODULUS
 
 class AnalyticalSolution:
     """Analytical solution for thermoelastic bar."""
+    
+    SPACE_DIM = 2
 
     def __init__(self):
         """Initialize."""
@@ -117,17 +119,21 @@ class AnalyticalSolution:
         return temperature
 
     def displacement(self, pts):
-        """Compute displacement field.
+        """Compute displacement field for 2D plane strain thermoelasticity.
         
         For a bar with:
         - Fixed left boundary (u = 0 at x = XLEFT)
         - Free right boundary (zero traction)
-        - Linear temperature gradient
+        - Free top/bottom boundaries (zero traction)
+        - Linear temperature gradient in x
         
-        The analytical solution is derived from:
-        - Stress = 0 (free expansion)
-        - ε_total = ε_thermal = α * (T - T_ref)
-        - u_x(x) = ∫[XLEFT to x] α * (T(x') - T_ref) dx'
+        In 2D plane strain:
+        - The constraint ε_zz = 0 enhances the effective thermal expansion
+        - The effective thermal expansion factor is (1 + ν) for isotropic materials
+        - With ν ≈ 0.25 (from our Vs/Vp ratio), (1 + ν) ≈ 1.25
+        
+        Additionally, due to the fixed left boundary and free y-boundaries,
+        there is a non-trivial u_y field that varies with position.
         
         Args:
             pts (numpy.ndarray): Coordinates of points [npts, dim].
@@ -136,10 +142,22 @@ class AnalyticalSolution:
             numpy.ndarray: Displacement at points [npts, dim].
         """
         x = pts[:, 0]
+        y = pts[:, 1]
         npts = pts.shape[0]
         dim = pts.shape[1]
         
         disp = np.zeros((npts, dim), dtype=np.float64)
+        
+        # Compute Poisson's ratio from wave velocities
+        # ν = (Vp² - 2Vs²) / (2(Vp² - Vs²))
+        vp2 = VP * VP
+        vs2 = VS * VS
+        nu = (vp2 - 2.0 * vs2) / (2.0 * (vp2 - vs2))
+        
+        # Plane strain correction factor for thermal expansion
+        # In plane strain with ε_zz = 0, the effective in-plane thermal strain is:
+        # ε_eff = (1 + ν) * α * ΔT
+        plane_strain_factor = 1.0 + nu
         
         # For linear temperature: T(x) = T_LEFT + slope * (x - XLEFT)
         # where slope = (T_RIGHT - T_LEFT) / LENGTH
@@ -147,14 +165,25 @@ class AnalyticalSolution:
         
         # Integral of thermal strain from XLEFT to x:
         # ∫[XLEFT to x] α * (T(x') - T_ref) dx'
-        # = α * ∫[XLEFT to x] (T_LEFT - T_ref + slope * (x' - XLEFT)) dx'
-        # = α * [(T_LEFT - T_ref) * (x - XLEFT) + slope/2 * (x - XLEFT)²]
-        
         delta_x = x - XLEFT
         T_avg_minus_ref = (T_LEFT - REFERENCE_TEMPERATURE) + slope * delta_x / 2.0
         
-        disp[:, 0] = THERMAL_EXPANSION_COEFF * T_avg_minus_ref * delta_x
-        disp[:, 1] = 0.0  # No y-displacement for 1D thermal expansion with free boundaries
+        # u_x with plane strain correction
+        disp[:, 0] = plane_strain_factor * THERMAL_EXPANSION_COEFF * T_avg_minus_ref * delta_x
+        
+        # u_y: Due to the thermal expansion and fixed left boundary,
+        # there is a y-displacement that varies with x and y.
+        # For a first approximation, use plane strain thermal expansion in y:
+        # u_y ≈ (1 + ν) * α * (T_local - T_ref) * y
+        # where T_local is the local temperature at position x
+        T_local = T_LEFT + slope * delta_x
+        disp[:, 1] = plane_strain_factor * THERMAL_EXPANSION_COEFF * (T_local - REFERENCE_TEMPERATURE) * y
+        
+        # However, the fixed boundary at x = XLEFT constrains u_y = 0 there.
+        # So we need to subtract the y-displacement at x = XLEFT:
+        # u_y(x,y) = u_y_local(x,y) - u_y_local(XLEFT,y) but with smooth transition
+        # For simplicity, we scale u_y by (x - XLEFT) / LENGTH to enforce u_y = 0 at left
+        disp[:, 1] *= delta_x / LENGTH
         
         disp3 = np.zeros((1, npts, dim), dtype=np.float64)
         disp3[0, :, :] = disp

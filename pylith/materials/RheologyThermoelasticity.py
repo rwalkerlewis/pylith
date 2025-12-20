@@ -18,9 +18,11 @@ class RheologyThermoelasticity(PetscComponent):
 
     import pythia.pyre.inventory
 
-    from spatialdata.spatialdb.SimpleDB import SimpleDB
-    auxiliaryFieldDB = pythia.pyre.inventory.facility("auxiliary_field_db", family="spatial_database", factory=SimpleDB)
-    auxiliaryFieldDB.meta['tip'] = "Database for physical property parameters."
+    from pylith.topology.Subfield import subfieldFactory
+    from pylith.utils.EmptyBin import EmptyBin
+
+    auxiliarySubfields = pythia.pyre.inventory.facilityArray("auxiliary_subfields", itemFactory=subfieldFactory, factory=EmptyBin)
+    auxiliarySubfields.meta['tip'] = "Discretization information for physical properties and state variables."
 
     def __init__(self, name="rheologythermoelasticity"):
         """Constructor.

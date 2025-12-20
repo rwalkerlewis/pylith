@@ -62,8 +62,8 @@ class Thermoporoelasticity(Material, ModuleThermoporoelasticity):
         Material.__init__(self, name)
 
     def _defaults(self):
-        from .AuxSubfieldsThermoporoelasticity import AuxSubfieldsThermoporoelasticity
-        self.auxiliarySubfields = AuxSubfieldsThermoporoelasticity("auxiliary_subfields")
+        from .AuxSubfieldsPoroelasticity import AuxSubfieldsPoroelasticity
+        self.auxiliarySubfields = AuxSubfieldsPoroelasticity("auxiliary_subfields")
 
         from .DerivedSubfieldsPoroelasticity import DerivedSubfieldsPoroelasticity
         self.derivedSubfields = DerivedSubfieldsPoroelasticity("derived_subfields")
@@ -75,16 +75,18 @@ class Thermoporoelasticity(Material, ModuleThermoporoelasticity):
 
         Material.preinitialize(self, problem)
 
+        self.bulkRheology.addAuxiliarySubfields(self, problem)
+
         ModuleThermoporoelasticity.useBodyForce(self, self.useBodyForce)
         ModuleThermoporoelasticity.useSourceDensity(self, self.useSourceDensity)
         ModuleThermoporoelasticity.useHeatSource(self, self.useHeatSource)
         ModuleThermoporoelasticity.useReferenceState(self, self.useReferenceState)
-        ModuleThermoporoelasticity.setBulkRheology(self, self.bulkRheology)
 
     def _createModuleObj(self):
         """Create handle to C++ object.
         """
         ModuleThermoporoelasticity.__init__(self)
+        ModuleThermoporoelasticity.setBulkRheology(self, self.bulkRheology)
 
 
 # FACTORIES ////////////////////////////////////////////////////////////

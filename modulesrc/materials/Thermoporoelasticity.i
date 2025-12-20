@@ -13,6 +13,8 @@
  * Python interface to C++ Thermoporoelasticity.
  */
 
+%feature("notabstract") pylith::materials::Thermoporoelasticity;
+
 namespace pylith {
     namespace materials {
         class Thermoporoelasticity: public pylith::materials::Material {

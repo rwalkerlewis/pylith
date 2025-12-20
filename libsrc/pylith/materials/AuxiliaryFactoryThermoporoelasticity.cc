@@ -445,8 +445,16 @@ pylith::materials::AuxiliaryFactoryThermoporoelasticity::addThermalExpansionCoef
     PYLITH_JOURNAL_DEBUG("addThermalExpansionCoeff(void)");
 
     const char* subfieldName = "thermal_expansion_coefficient";
+    // For proper nondimensionalization in the strain equation:
+    //   ε_th = α * ΔT  (dimensionless strain)
+    //   ε_th_nd = α_nd * ΔT_nd
+    // where ε_nd = ε / (u_s / L_s) and T_nd = T / T_s
+    // So α_nd = α * L_s * T_s / u_s
+    // and thermalExpansionScale = u_s / (L_s * T_s)
+    const PylithReal lengthScale = _scales->getLengthScale();
+    const PylithReal displacementScale = _scales->getDisplacementScale();
     const PylithReal temperatureScale = _scales->getTemperatureScale();
-    const PylithReal thermalExpansionScale = 1.0 / temperatureScale;
+    const PylithReal thermalExpansionScale = displacementScale / (lengthScale * temperatureScale);
 
     pylith::topology::Field::Description description;
     description.label = subfieldName;
@@ -473,8 +481,13 @@ pylith::materials::AuxiliaryFactoryThermoporoelasticity::addFluidThermalExpansio
     PYLITH_JOURNAL_DEBUG("addFluidThermalExpansion(void)");
 
     const char* subfieldName = "fluid_thermal_expansion";
+    // Fluid thermal expansion coefficient has units of 1/K (per Kelvin)
+    // Similar to solid thermal expansion, for proper nondimensionalization:
+    // thermalExpansionScale = u_s / (L_s * T_s)
+    const PylithReal lengthScale = _scales->getLengthScale();
+    const PylithReal displacementScale = _scales->getDisplacementScale();
     const PylithReal temperatureScale = _scales->getTemperatureScale();
-    const PylithReal fluidThermalExpScale = 1.0 / temperatureScale;
+    const PylithReal fluidThermalExpScale = displacementScale / (lengthScale * temperatureScale);
 
     pylith::topology::Field::Description description;
     description.label = subfieldName;

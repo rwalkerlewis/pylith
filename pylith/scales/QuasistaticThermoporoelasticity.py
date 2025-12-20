@@ -156,4 +156,11 @@ def normalizer():
     return QuasistaticThermoporoelasticity()
 
 
+def scales():
+    """
+    Factory associated with QuasistaticThermoporoelasticity (alias for normalizer).
+    """
+    return QuasistaticThermoporoelasticity()
+
+
 # End of file

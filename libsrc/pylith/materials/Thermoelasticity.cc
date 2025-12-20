@@ -22,6 +22,7 @@
 
 #include "pylith/fekernels/Thermoelasticity.hh" // USES Thermoelasticity kernels
 #include "pylith/fekernels/DispVel.hh" // USES DispVel kernels
+#include "pylith/fekernels/Elasticity.hh" // USES Elasticity kernels for strain
 
 #include "pylith/utils/error.hh" // USES PYLITH_METHOD_*
 #include "pylith/utils/journals.hh" // USES PYLITH_COMPONENT_*
@@ -544,9 +545,15 @@ pylith::materials::Thermoelasticity::_setKernelsDerivedField(pylith::feassemble:
     const spatialdata::geocoords::CoordSys* coordsys = solution.getMesh().getCoordSys();
     assert(coordsys);
 
+    const int spaceDim = coordsys->getSpaceDim();
+    PetscPointFn* strainKernel =
+        (3 == spaceDim) ? pylith::fekernels::Elasticity3D::infinitesimalStrain_asVector :
+        (2 == spaceDim) ? pylith::fekernels::ElasticityPlaneStrain::infinitesimalStrain_asVector :
+        NULL;
+
     std::vector<ProjectKernels> kernels(2);
     kernels[0] = ProjectKernels("cauchy_stress", _rheology->getKernelCauchyStressVector(coordsys));
-    kernels[1] = ProjectKernels("heat_flux", _rheology->getKernelHeatFluxVector(coordsys));
+    kernels[1] = ProjectKernels("cauchy_strain", strainKernel);
 
     assert(integrator);
     integrator->setKernelsDerivedField(kernels);
