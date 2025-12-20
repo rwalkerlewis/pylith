@@ -19,11 +19,8 @@ namespace pylith {
             // PUBLIC METHODS //////////////////////////////////////////////////////////////////////////////////////////
 public:
 
-            /** Default constructor.
-             *
-             * @param dimension Spatial dimension associated with material.
-             */
-            Material(const int dimension);
+            /// Default constructor.
+            Material(void);
 
             /// Destructor.
             virtual ~Material(void);

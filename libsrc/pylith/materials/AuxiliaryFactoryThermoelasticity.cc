@@ -253,8 +253,16 @@ pylith::materials::AuxiliaryFactoryThermoelasticity::addThermalExpansionCoeff(vo
 
     const char* subfieldName = "thermal_expansion_coefficient";
     // Thermal expansion coefficient has units of 1/K (per Kelvin)
+    // For proper nondimensionalization in the strain equation:
+    //   ε_th = α * ΔT  (dimensionless strain)
+    //   ε_th_nd = α_nd * ΔT_nd
+    // where ε_nd = ε / (u_s / L_s) and T_nd = T / T_s
+    // So α_nd = α * L_s * T_s / u_s
+    // and thermalExpansionScale = u_s / (L_s * T_s)
+    const PylithReal lengthScale = _scales->getLengthScale();
+    const PylithReal displacementScale = _scales->getDisplacementScale();
     const PylithReal temperatureScale = _scales->getTemperatureScale();
-    const PylithReal thermalExpansionScale = 1.0 / temperatureScale;
+    const PylithReal thermalExpansionScale = displacementScale / (lengthScale * temperatureScale);
 
     pylith::topology::Field::Description description;
     description.label = subfieldName;

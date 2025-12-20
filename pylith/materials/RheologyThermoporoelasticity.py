@@ -33,6 +33,19 @@ class RheologyThermoporoelasticity(PetscComponent):
         """
         self._createModuleObj()
 
+    def addAuxiliarySubfields(self, material, problem):
+        """Add subfields for rheology to auxiliary field.
+        """
+        for subfield in self.auxiliarySubfields.components():
+            fieldName = subfield.aliases[-1]
+            descriptor = subfield.getTraitDescriptor("quadrature_order")
+            if hasattr(descriptor.locator, "source") and descriptor.locator.source == "default":
+                quadOrder = problem.defaults.quadOrder
+            else:
+                quadOrder = subfield.quadOrder
+            material.setAuxiliarySubfieldDiscretization(fieldName, subfield.basisOrder, quadOrder, subfield.dimension,
+                                                        subfield.cellBasis, subfield.feSpace, subfield.isBasisContinuous)
+
     def _createModuleObj(self):
         """Create handle to C++ object.
         """
