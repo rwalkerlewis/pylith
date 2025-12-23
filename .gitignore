@@ -42,3 +42,7 @@ examples/poroelastic-outerrise-2d/*.spatialdb
 /doc-latex/userguide/userguide.log
 /doc-latex/userguide/userguide.lot
 /doc-latex/userguide/userguide.out
+*.o
+*.lo
+*/.deps
+*/.libs
