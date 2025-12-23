@@ -14,7 +14,7 @@
 
 import unittest
 
-from pylith.scales.scales import Scales
+from pylith.scales.General import General
 from pylith.scales.ElasticityScales import ElasticityScales
 from pylith.scales.DynamicPoroelasticity import DynamicPoroelasticity
 
@@ -24,7 +24,8 @@ class TestDynamicPoroelasticityScales(unittest.TestCase):
 
     def test_setDynamicPoroelasticity_defaults(self):
         """Test setDynamicPoroelasticity with default parameters."""
-        scales = Scales()
+        scales = General()
+        scales._configure()
         
         lengthScale = 100.0e+3  # 100 km
         velocityScale = 3.0e+3  # 3 km/s
@@ -36,17 +37,18 @@ class TestDynamicPoroelasticityScales(unittest.TestCase):
             scales, lengthScale, velocityScale, permeability, viscosity, rigidity
         )
         
-        self.assertAlmostEqual(lengthScale, scales.getLengthScale(), places=5)
-        self.assertAlmostEqual(1.0, scales.getDisplacementScale(), places=10)
-        self.assertAlmostEqual(rigidity, scales.getRigidityScale(), places=5)
+        self.assertAlmostEqual(lengthScale, scales.getLengthScale().value, places=5)
+        self.assertAlmostEqual(1.0, scales.getDisplacementScale().value, places=10)
+        self.assertAlmostEqual(rigidity, scales.getRigidityScale().value, places=5)
         
         # Time scale based on wave propagation (not diffusion)
         expectedTime = lengthScale / velocityScale
-        self.assertAlmostEqual(expectedTime, scales.getTimeScale(), places=5)
+        self.assertAlmostEqual(expectedTime, scales.getTimeScale().value, places=5)
 
     def test_setDynamicPoroelasticity_custom(self):
         """Test setDynamicPoroelasticity with custom parameters."""
-        scales = Scales()
+        scales = General()
+        scales._configure()
         
         lengthScale = 10.0e+3  # 10 km
         velocityScale = 1.5e+3  # 1.5 km/s (sediments)
@@ -60,7 +62,7 @@ class TestDynamicPoroelasticityScales(unittest.TestCase):
         
         # Time scale from wave propagation
         expectedTime = lengthScale / velocityScale
-        self.assertAlmostEqual(expectedTime, scales.getTimeScale(), places=5)
+        self.assertAlmostEqual(expectedTime, scales.getTimeScale().value, places=5)
         
         # Should be ~6-7 seconds
         self.assertTrue(expectedTime > 5.0)
@@ -82,15 +84,15 @@ class TestDynamicPoroelasticityScales(unittest.TestCase):
         permeabilityScale = ElasticityScales.getPermeabilityScale(normalizer)
         velocityScale = ElasticityScales.getVelocityScale(normalizer)
         
-        self.assertTrue(pressureScale > 0.0)
-        self.assertTrue(viscosityScale > 0.0)
-        self.assertTrue(permeabilityScale > 0.0)
-        self.assertTrue(velocityScale > 0.0)
+        self.assertTrue(pressureScale.value > 0.0)
+        self.assertTrue(viscosityScale.value > 0.0)
+        self.assertTrue(permeabilityScale.value > 0.0)
+        self.assertTrue(velocityScale.value > 0.0)
 
     def test_time_scale_difference_quasi_vs_dynamic(self):
         """Test that dynamic uses wave time, not diffusion time."""
-        scalesQuasi = Scales()
-        scalesDynamic = Scales()
+        scalesQuasi = General()
+        scalesDynamic = General()
         
         lengthScale = 10.0e+3  # 10 km
         velocityScale = 3.0e+3  # 3 km/s
@@ -124,7 +126,8 @@ class TestDynamicPoroelasticityScales(unittest.TestCase):
 
     def test_integration_dynamic_poroelasticity_workflow(self):
         """Test complete workflow for dynamic poroelasticity."""
-        scales = Scales()
+        scales = General()
+        scales._configure()
         
         lengthScale = 5.0e+3  # 5 km sedimentary basin
         velocityScale = 1.0e+3  # 1 km/s
@@ -146,13 +149,13 @@ class TestDynamicPoroelasticityScales(unittest.TestCase):
         densityScale = ElasticityScales.getDensityScale(scales)
         
         # All should be positive
-        self.assertTrue(stressScale > 0.0)
-        self.assertTrue(pressureScale > 0.0)
-        self.assertTrue(velocityScaleComputed > 0.0)
-        self.assertTrue(accelerationScale > 0.0)
-        self.assertTrue(viscosityScale > 0.0)
-        self.assertTrue(permeabilityScale > 0.0)
-        self.assertTrue(densityScale > 0.0)
+        self.assertTrue(stressScale.value > 0.0)
+        self.assertTrue(pressureScale.value > 0.0)
+        self.assertTrue(velocityScaleComputed.value > 0.0)
+        self.assertTrue(accelerationScale.value > 0.0)
+        self.assertTrue(viscosityScale.value > 0.0)
+        self.assertTrue(permeabilityScale.value > 0.0)
+        self.assertTrue(densityScale.value > 0.0)
         
         # Pressure should equal stress
         self.assertAlmostEqual(stressScale, pressureScale, places=10)
