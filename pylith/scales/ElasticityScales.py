@@ -20,6 +20,18 @@ from pythia.pyre.units.energy import joule
 from pythia.pyre.units.unit import one
 
 
+def _get_value(param):
+    """Helper function to extract value from parameter.
+    
+    Args:
+        param: Either a unit object with .value attribute or a raw number
+        
+    Returns:
+        float: The numeric value
+    """
+    return param.value if hasattr(param, 'value') else param
+
+
 class ElasticityScales(ModuleElasticityScales):
     """
     Nondimensionalization for elasticity related boundary value problems.
@@ -28,7 +40,7 @@ class ElasticityScales(ModuleElasticityScales):
     @staticmethod
     def setQuasistaticElasticity(scales, lengthScale=100.0 * km, timeScale=year):
         ModuleElasticityScales.setQuasistaticElasticity(
-            scales, lengthScale.value, timeScale.value
+            scales, _get_value(lengthScale), _get_value(timeScale)
         )
 
     @staticmethod
@@ -36,7 +48,7 @@ class ElasticityScales(ModuleElasticityScales):
         scales, lengthScale=100.0 * km, velocityScale=3.0 * km / second
     ):
         ModuleElasticityScales.setDynamicElasticity(
-            scales, lengthScale.value, velocityScale.value
+            scales, _get_value(lengthScale), _get_value(velocityScale)
         )
 
     @staticmethod
@@ -50,11 +62,11 @@ class ElasticityScales(ModuleElasticityScales):
     ):
         ModuleElasticityScales.setDynamicPoroelasticity(
             scales,
-            lengthScale.value,
-            velocityScale.value,
-            permeability.value,
-            viscosity.value,
-            rigidity.value,
+            _get_value(lengthScale),
+            _get_value(velocityScale),
+            _get_value(permeability),
+            _get_value(viscosity),
+            _get_value(rigidity),
         )
 
     @staticmethod
@@ -67,16 +79,16 @@ class ElasticityScales(ModuleElasticityScales):
     ):
         ModuleElasticityScales.setQuasistaticPoroelasticity(
             scales,
-            lengthScale.value,
-            permeability.value,
-            viscosity.value,
-            rigidity.value,
+            _get_value(lengthScale),
+            _get_value(permeability),
+            _get_value(viscosity),
+            _get_value(rigidity),
         )
 
     @staticmethod
     def computePoroelasticityTimeScale(viscosity, permeability, length, rigidity):
         timeScale = ModuleElasticityScales.computePoroelasticityTimeScale(
-            viscosity.value, permeability.value, length.value, rigidity.value
+            _get_value(viscosity), _get_value(permeability), _get_value(length), _get_value(rigidity)
         )
         return timeScale * second
 
@@ -90,10 +102,10 @@ class ElasticityScales(ModuleElasticityScales):
     ):
         ModuleElasticityScales.setQuasistaticThermoelasticity(
             scales,
-            lengthScale.value,
-            thermalConductivity.value,
-            density.value,
-            specificHeat.value,
+            _get_value(lengthScale),
+            _get_value(thermalConductivity),
+            _get_value(density),
+            _get_value(specificHeat),
         )
 
     @staticmethod
@@ -101,10 +113,10 @@ class ElasticityScales(ModuleElasticityScales):
         lengthScale, thermalConductivity, density, specificHeat
     ):
         timeScale = ModuleElasticityScales.computeThermoelasticityTimeScale(
-            lengthScale.value,
-            thermalConductivity.value,
-            density.value,
-            specificHeat.value,
+            _get_value(lengthScale),
+            _get_value(thermalConductivity),
+            _get_value(density),
+            _get_value(specificHeat),
         )
         return timeScale * second
 
@@ -121,13 +133,13 @@ class ElasticityScales(ModuleElasticityScales):
     ):
         ModuleElasticityScales.setQuasistaticThermoporoelasticity(
             scales,
-            lengthScale.value,
-            permeability.value,
-            viscosity.value,
-            rigidity.value,
-            thermalConductivity.value,
-            density.value,
-            specificHeat.value,
+            _get_value(lengthScale),
+            _get_value(permeability),
+            _get_value(viscosity),
+            _get_value(rigidity),
+            _get_value(thermalConductivity),
+            _get_value(density),
+            _get_value(specificHeat),
         )
 
     @staticmethod
@@ -141,13 +153,13 @@ class ElasticityScales(ModuleElasticityScales):
         specificHeat,
     ):
         timeScale = ModuleElasticityScales.computeThermoporoelasticityTimeScale(
-            lengthScale.value,
-            permeability.value,
-            viscosity.value,
-            rigidity.value,
-            thermalConductivity.value,
-            density.value,
-            specificHeat.value,
+            _get_value(lengthScale),
+            _get_value(permeability),
+            _get_value(viscosity),
+            _get_value(rigidity),
+            _get_value(thermalConductivity),
+            _get_value(density),
+            _get_value(specificHeat),
         )
         return timeScale * second
 

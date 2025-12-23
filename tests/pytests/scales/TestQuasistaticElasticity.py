@@ -13,6 +13,7 @@
 import unittest
 
 from spatialdata.testing.TestCases import make_suite
+from pylith.scales.General import General
 from pylith.scales.QuasistaticElasticity import QuasistaticElasticity
 
 from pythia.pyre.units.length import meter, kilometer
@@ -33,10 +34,10 @@ class TestElasticityScales(unittest.TestCase):
         timeScale = 1.0e2 * year
 
         # Check defaults
-        self.assertEqual(displacementScale, dim.getDisplacementScale())
-        self.assertEqual(lengthScale, dim.getLengthScale())
-        self.assertEqual(rigidityScale, dim.getRigidityScale())
-        self.assertEqual(timeScale, dim.getTimeScale())
+        self.assertEqual(displacementScale.value, dim.getDisplacementScale().value)
+        self.assertEqual(lengthScale.value, dim.getLengthScale().value)
+        self.assertEqual(rigidityScale.value, dim.getRigidityScale().value)
+        self.assertEqual(timeScale.value, dim.getTimeScale().value)
 
 
 def load_tests(loader, tests, pattern):

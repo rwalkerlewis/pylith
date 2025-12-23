@@ -68,7 +68,7 @@ class DynamicElasticity(General):
         """
         Constructor.
         """
-        Scales.__init__(self, name)
+        General.__init__(self, name)
 
     # PRIVATE METHODS ////////////////////////////////////////////////////
 
@@ -76,7 +76,7 @@ class DynamicElasticity(General):
         """
         Setup members using inventory.
         """
-        Scales._configure(self)
+        General._configure(self)
 
         displacement = self.inventory.displacementScale
         length = self.inventory.lengthScale

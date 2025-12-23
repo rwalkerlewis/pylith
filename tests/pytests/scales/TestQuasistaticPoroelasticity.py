@@ -14,7 +14,7 @@
 
 import unittest
 
-from pylith.scales.Scales import Scales
+from pylith.scales.General import General
 from pylith.scales.ElasticityScales import ElasticityScales
 from pylith.scales.QuasistaticPoroelasticity import QuasistaticPoroelasticity
 
@@ -24,7 +24,8 @@ class TestQuasistaticPoroelasticityScales(unittest.TestCase):
 
     def test_setQuasistaticPoroelasticity_defaults(self):
         """Test setQuasistaticPoroelasticity with default parameters."""
-        scales = Scales()
+        scales = General()
+        scales._configure()
         
         lengthScale = 100.0e+3  # 100 km
         permeability = 1.0e-12  # m^2
@@ -35,13 +36,13 @@ class TestQuasistaticPoroelasticityScales(unittest.TestCase):
             scales, lengthScale, permeability, viscosity, rigidity
         )
         
-        self.assertAlmostEqual(lengthScale, scales.getLengthScale(), places=5)
-        self.assertAlmostEqual(1.0, scales.getDisplacementScale(), places=10)
-        self.assertAlmostEqual(rigidity, scales.getRigidityScale(), places=5)
+        self.assertAlmostEqual(lengthScale, scales.getLengthScale().value, places=5)
+        self.assertAlmostEqual(1.0, scales.getDisplacementScale().value, places=10)
+        self.assertAlmostEqual(rigidity, scales.getRigidityScale().value, places=5)
         
         # Check time scale (fluid diffusion)
         expectedTime = (viscosity * lengthScale * lengthScale) / (permeability * rigidity)
-        self.assertAlmostEqual(expectedTime, scales.getTimeScale(), places=5)
+        self.assertAlmostEqual(expectedTime, scales.getTimeScale().value, places=5)
 
     def test_computePoroelasticityTimeScale(self):
         """Test computePoroelasticityTimeScale."""
@@ -55,11 +56,11 @@ class TestQuasistaticPoroelasticityScales(unittest.TestCase):
         )
         
         expected = (viscosity * lengthScale * lengthScale) / (permeability * rigidity)
-        self.assertAlmostEqual(expected, timeScale, places=5)
+        self.assertAlmostEqual(expected, timeScale.value, places=5)
         
         # Should be on order of years to thousands of years
-        self.assertTrue(timeScale > 1.0e+8)  # > ~3 years
-        self.assertTrue(timeScale < 1.0e+15)  # < ~30 million years
+        self.assertTrue(timeScale.value > 1.0e+8)  # > ~3 years
+        self.assertTrue(timeScale.value < 1.0e+15)  # < ~30 million years
 
     def test_QuasistaticPoroelasticity_class(self):
         """Test QuasistaticPoroelasticity convenience class."""
@@ -67,21 +68,22 @@ class TestQuasistaticPoroelasticityScales(unittest.TestCase):
         normalizer._configure()
         
         # Check scales
-        self.assertTrue(normalizer.getLengthScale() > 0.0)
-        self.assertTrue(normalizer.getTimeScale() > 0.0)
+        self.assertTrue(normalizer.getLengthScale().value > 0.0)
+        self.assertTrue(normalizer.getTimeScale().value > 0.0)
         
         # Get derived scales
         pressureScale = ElasticityScales.getFluidPressureScale(normalizer)
         viscosityScale = ElasticityScales.getViscosityScale(normalizer)
         permeabilityScale = ElasticityScales.getPermeabilityScale(normalizer)
         
-        self.assertTrue(pressureScale > 0.0)
-        self.assertTrue(viscosityScale > 0.0)
-        self.assertTrue(permeabilityScale > 0.0)
+        self.assertTrue(pressureScale.value > 0.0)
+        self.assertTrue(viscosityScale.value > 0.0)
+        self.assertTrue(permeabilityScale.value > 0.0)
 
     def test_integration_poroelasticity_workflow(self):
         """Test complete workflow for poroelasticity."""
-        scales = Scales()
+        scales = General()
+        scales._configure()
         
         lengthScale = 50.0e+3  # 50 km
         permeability = 1.0e-13  # m^2 (low permeability)
@@ -100,18 +102,18 @@ class TestQuasistaticPoroelasticityScales(unittest.TestCase):
         permeabilityScale = ElasticityScales.getPermeabilityScale(scales)
         
         # All positive
-        self.assertTrue(stressScale > 0.0)
-        self.assertTrue(pressureScale > 0.0)
-        self.assertTrue(strainScale > 0.0)
-        self.assertTrue(viscosityScale > 0.0)
-        self.assertTrue(permeabilityScale > 0.0)
+        self.assertTrue(stressScale.value > 0.0)
+        self.assertTrue(pressureScale.value > 0.0)
+        self.assertTrue(strainScale.value > 0.0)
+        self.assertTrue(viscosityScale.value > 0.0)
+        self.assertTrue(permeabilityScale.value > 0.0)
         
         # Pressure should equal stress scale
-        self.assertAlmostEqual(stressScale, pressureScale, places=10)
+        self.assertAlmostEqual(stressScale.value, pressureScale.value, places=10)
         
         # Permeability scale should be L^2
         expectedPerm = lengthScale * lengthScale
-        self.assertAlmostEqual(expectedPerm, permeabilityScale, places=5)
+        self.assertAlmostEqual(expectedPerm, permeabilityScale.value, places=5)
 
 
 if __name__ == "__main__":

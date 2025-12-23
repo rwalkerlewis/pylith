@@ -14,7 +14,7 @@
 
 import unittest
 
-from pylith.scales.Scales import Scales
+from pylith.scales.General import General
 from pylith.scales.ElasticityScales import ElasticityScales
 from pylith.scales.DynamicElasticity import DynamicElasticity
 
@@ -24,7 +24,8 @@ class TestDynamicElasticityScales(unittest.TestCase):
 
     def test_setDynamicElasticity_defaults(self):
         """Test setDynamicElasticity with default parameters."""
-        scales = Scales()
+        scales = General()
+        scales._configure()
         
         lengthScale = 100.0e+3  # 100 km
         velocityScale = 3.0e+3  # 3 km/s
@@ -32,28 +33,29 @@ class TestDynamicElasticityScales(unittest.TestCase):
         ElasticityScales.setDynamicElasticity(scales, lengthScale, velocityScale)
         
         # Check scales
-        self.assertAlmostEqual(lengthScale, scales.getLengthScale(), places=5)
-        self.assertAlmostEqual(1.0, scales.getDisplacementScale(), places=10)
-        self.assertAlmostEqual(2.25e+10, scales.getRigidityScale(), places=5)
+        self.assertAlmostEqual(lengthScale, scales.getLengthScale().value, places=5)
+        self.assertAlmostEqual(1.0, scales.getDisplacementScale().value, places=10)
+        self.assertAlmostEqual(2.25e+10, scales.getRigidityScale().value, places=5)
         
         # Time scale for wave propagation
         expectedTime = lengthScale / velocityScale
-        self.assertAlmostEqual(expectedTime, scales.getTimeScale(), places=5)
+        self.assertAlmostEqual(expectedTime, scales.getTimeScale().value, places=5)
 
     def test_setDynamicElasticity_custom(self):
         """Test setDynamicElasticity with custom parameters."""
-        scales = Scales()
+        scales = General()
+        scales._configure()
         
         lengthScale = 50.0e+3  # 50 km
         velocityScale = 5.0e+3  # 5 km/s (fast velocity)
         
         ElasticityScales.setDynamicElasticity(scales, lengthScale, velocityScale)
         
-        self.assertAlmostEqual(lengthScale, scales.getLengthScale(), places=5)
+        self.assertAlmostEqual(lengthScale, scales.getLengthScale().value, places=5)
         
         # Verify wave travel time
         expectedTime = lengthScale / velocityScale
-        self.assertAlmostEqual(expectedTime, scales.getTimeScale(), places=5)
+        self.assertAlmostEqual(expectedTime, scales.getTimeScale().value, places=5)
         
         # Time should be ~10 seconds for these parameters
         self.assertTrue(expectedTime > 5.0)
@@ -68,21 +70,22 @@ class TestDynamicElasticityScales(unittest.TestCase):
         lengthScale = normalizer.getLengthScale()
         timeScale = normalizer.getTimeScale()
         
-        self.assertTrue(lengthScale > 0.0)
-        self.assertTrue(timeScale > 0.0)
+        self.assertTrue(lengthScale.value > 0.0)
+        self.assertTrue(timeScale.value > 0.0)
         
         # Get derived scales
         stressScale = ElasticityScales.getStressScale(normalizer)
         velocityScale = ElasticityScales.getVelocityScale(normalizer)
         accelerationScale = ElasticityScales.getAccelerationScale(normalizer)
         
-        self.assertTrue(stressScale > 0.0)
-        self.assertTrue(velocityScale > 0.0)
-        self.assertTrue(accelerationScale > 0.0)
+        self.assertTrue(stressScale.value > 0.0)
+        self.assertTrue(velocityScale.value > 0.0)
+        self.assertTrue(accelerationScale.value > 0.0)
 
     def test_integration_dynamic_workflow(self):
         """Test complete workflow for dynamic elasticity."""
-        scales = Scales()
+        scales = General()
+        scales._configure()
         
         lengthScale = 10.0e+3  # 10 km
         velocityScale = 3.0e+3  # 3 km/s
@@ -97,21 +100,21 @@ class TestDynamicElasticityScales(unittest.TestCase):
         densityScale = ElasticityScales.getDensityScale(scales)
         
         # All scales should be positive
-        self.assertTrue(stressScale > 0.0)
-        self.assertTrue(strainScale > 0.0)
-        self.assertTrue(velocityScaleComputed > 0.0)
-        self.assertTrue(accelerationScale > 0.0)
-        self.assertTrue(densityScale > 0.0)
+        self.assertTrue(stressScale.value > 0.0)
+        self.assertTrue(strainScale.value > 0.0)
+        self.assertTrue(velocityScaleComputed.value > 0.0)
+        self.assertTrue(accelerationScale.value > 0.0)
+        self.assertTrue(densityScale.value > 0.0)
         
         # Verify relationships
         timeScale = scales.getTimeScale()
         displacement = scales.getDisplacementScale()
         
         expectedVelocity = displacement / timeScale
-        self.assertAlmostEqual(expectedVelocity, velocityScaleComputed, places=5)
+        self.assertAlmostEqual(expectedVelocity.value, velocityScaleComputed.value, places=5)
         
         expectedAcceleration = displacement / (timeScale * timeScale)
-        self.assertAlmostEqual(expectedAcceleration, accelerationScale, places=5)
+        self.assertAlmostEqual(expectedAcceleration.value, accelerationScale.value, places=5)
 
 
 if __name__ == "__main__":
