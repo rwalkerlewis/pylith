@@ -1,8 +1,0 @@
-utils/libpylith_la-PylithVersion.lo: utils/PylithVersion.cc \
- /usr/include/stdc-predef.h ../../portinfo \
- ../../libsrc/pylith/utils/PylithVersion.hh \
- ../../libsrc/pylith/utils/utilsfwd.hh
-/usr/include/stdc-predef.h:
-../../portinfo:
-../../libsrc/pylith/utils/PylithVersion.hh:
-../../libsrc/pylith/utils/utilsfwd.hh:
