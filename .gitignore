@@ -42,7 +42,22 @@ examples/poroelastic-outerrise-2d/*.spatialdb
 /doc-latex/userguide/userguide.log
 /doc-latex/userguide/userguide.lot
 /doc-latex/userguide/userguide.out
+# Compiled object files
 *.o
 *.lo
-*/.deps
-*/.libs
+*.la
+*.lai
+*.a
+*.so
+*.so.*
+*.Plo
+*.Po
+*.pyo
+
+# Python cache
+__pycache__/
+
+# Build directories
+**/.deps/
+**/.libs/
+/deps/
