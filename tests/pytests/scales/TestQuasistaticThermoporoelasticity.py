@@ -14,7 +14,7 @@
 
 import unittest
 
-from pylith.scales.Scales import Scales
+from pylith.scales.scales import Scales
 from pylith.scales.ElasticityScales import ElasticityScales
 from pylith.scales.QuasistaticThermoporoelasticity import QuasistaticThermoporoelasticity
 

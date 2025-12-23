@@ -10,12 +10,13 @@
 # See https://mit-license.org/ and LICENSE.md and for license information.
 # =================================================================================================
 
-"""Unit tests for ElasticityScales thermoelasticity functions."""
+"""Unit tests for QuasistaticThermoelasticity scales."""
 
 import unittest
 
-from pylith.scales.Scales import Scales
+from pylith.scales.scales import Scales
 from pylith.scales.ElasticityScales import ElasticityScales
+from pylith.scales.QuasistaticThermoelasticity import QuasistaticThermoelasticity
 
 
 class TestThermoelasticityScales(unittest.TestCase):
