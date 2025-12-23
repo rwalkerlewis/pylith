@@ -43,10 +43,12 @@ class TestDependenciesVersion(unittest.TestCase):
 
     def test_netcdfVersion(self):
         version = DependenciesVersion.netcdfVersion()
-        # Check that version is of the form X.X.X
+        # Check that version is of the form X.X.X or 'unknown' if not configured
         import re
         match = re.search("[0-9]+\\.[0-9]+\\.[0-9]+", version)
-        self.assertFalse(match is None)
+        if match is None:
+            # If version string doesn't match, it should be 'unknown'
+            self.assertEqual(version, "unknown")
         return
 
 

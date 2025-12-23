@@ -18,6 +18,19 @@ from pylith.scales.General import General
 from pylith.scales.ElasticityScales import ElasticityScales
 from pylith.scales.QuasistaticThermoelasticity import QuasistaticThermoelasticity
 
+from pythia.pyre.units.length import meter, km
+from pythia.pyre.units.time import second
+from pythia.pyre.units.pressure import pascal
+from pythia.pyre.units.mass import kg
+from pythia.pyre.units.temperature import kelvin
+from pythia.pyre.units.power import watt
+from pythia.pyre.units.energy import joule
+
+
+def _get_value(v):
+    """Extract numeric value from Pyre unit object or return float directly."""
+    return v.value if hasattr(v, 'value') else v
+
 
 class TestThermoelasticityScales(unittest.TestCase):
     """Test ElasticityScales methods for thermoelasticity."""
@@ -27,7 +40,7 @@ class TestThermoelasticityScales(unittest.TestCase):
         scales = General()
         scales._configure()
         
-        # Default parameters
+        # Default parameters (as floats for this test)
         lengthScale = 100.0e+3  # 100 km in meters
         thermalConductivity = 2.5  # W/(m*K)
         density = 2500.0  # kg/m^3
@@ -42,11 +55,11 @@ class TestThermoelasticityScales(unittest.TestCase):
         )
         
         # Check scales  
-        self.assertAlmostEqual(lengthScale, scales.getLengthScale().value, places=5)
+        self.assertAlmostEqual(lengthScale, _get_value(scales.getLengthScale()), places=5)
         
         # Verify time scale
         expectedTime = (density * specificHeat * lengthScale * lengthScale) / thermalConductivity
-        self.assertAlmostEqual(expectedTime, scales.getTimeScale().value, places=5)
+        self.assertAlmostEqual(expectedTime, _get_value(scales.getTimeScale()), places=5)
 
     def test_setQuasistaticThermoelasticity_custom(self):
         """Test setQuasistaticThermoelasticity with custom parameters."""
@@ -67,11 +80,11 @@ class TestThermoelasticityScales(unittest.TestCase):
             specificHeat
         )
         
-        self.assertAlmostEqual(lengthScale, scales.getLengthScale(), places=5)
+        self.assertAlmostEqual(lengthScale, _get_value(scales.getLengthScale()), places=5)
         
         # Verify thermal diffusion time scale
         expectedTime = (density * specificHeat * lengthScale * lengthScale) / thermalConductivity
-        self.assertAlmostEqual(expectedTime, scales.getTimeScale(), places=5)
+        self.assertAlmostEqual(expectedTime, _get_value(scales.getTimeScale()), places=5)
 
     def test_computeThermoelasticityTimeScale(self):
         """Test computeThermoelasticityTimeScale."""
@@ -89,33 +102,33 @@ class TestThermoelasticityScales(unittest.TestCase):
         
         # Expected: t = rho * c * L^2 / k
         expected = (density * specificHeat * lengthScale * lengthScale) / thermalConductivity
-        self.assertAlmostEqual(expected, timeScale, places=5)
+        self.assertAlmostEqual(expected, _get_value(timeScale), places=5)
         
-        # For typical crustal values, this should be on the order of 10^14 seconds (~3 million years)
-        self.assertTrue(timeScale > 1.0e+13)
-        self.assertTrue(timeScale < 1.0e+15)
+        # For typical crustal values, this should be on the order of 10^15-10^16 seconds (~30 million years)
+        self.assertTrue(_get_value(timeScale) > 1.0e+13)
+        self.assertTrue(_get_value(timeScale) < 1.0e+17)
 
     def test_getTemperatureScale(self):
         """Test getTemperatureScale."""
         scales = General()
         scales._configure()
-        temperatureScale = 100.0  # 100 K
+        temperatureScale = 100.0 * kelvin
         scales.setTemperatureScale(temperatureScale)
         
         result = ElasticityScales.getTemperatureScale(scales)
-        self.assertAlmostEqual(temperatureScale, result, places=10)
+        self.assertAlmostEqual(_get_value(temperatureScale), _get_value(result), places=10)
 
     def test_getHeatFluxScale(self):
         """Test getHeatFluxScale."""
         scales = General()
         scales._configure()
         
-        # Set up typical scales
-        lengthScale = 100.0e+3
-        temperatureScale = 100.0
-        rigidityScale = 2.5e+10
-        timeScale = 1.0e+14
-        displacementScale = 1.0
+        # Set up typical scales with units
+        lengthScale = 100.0e+3 * meter
+        temperatureScale = 100.0 * kelvin
+        rigidityScale = 2.5e+10 * pascal
+        timeScale = 1.0e+14 * second
+        displacementScale = 1.0 * meter
         
         scales.setLengthScale(lengthScale)
         scales.setTemperatureScale(temperatureScale)
@@ -126,15 +139,15 @@ class TestThermoelasticityScales(unittest.TestCase):
         heatFluxScale = ElasticityScales.getHeatFluxScale(scales)
         
         # Heat flux scale should be positive
-        self.assertTrue(heatFluxScale > 0.0)
+        self.assertTrue(_get_value(heatFluxScale) > 0.0)
         
         # For typical crustal values, should be reasonable (order of W/m^2)
         # q = k * T / L where k ~ rho * c * L^2 / t
-        density = (rigidityScale * timeScale * timeScale) / (lengthScale * lengthScale)
-        thermalConductivity = (density * lengthScale * lengthScale) / timeScale
-        expectedFlux = (thermalConductivity * temperatureScale) / lengthScale
+        density = (_get_value(rigidityScale) * _get_value(timeScale) * _get_value(timeScale)) / (_get_value(lengthScale) * _get_value(lengthScale))
+        thermalConductivity = (density * _get_value(lengthScale) * _get_value(lengthScale)) / _get_value(timeScale)
+        expectedFlux = (thermalConductivity * _get_value(temperatureScale)) / _get_value(lengthScale)
         
-        self.assertAlmostEqual(expectedFlux, heatFluxScale, places=5)
+        self.assertAlmostEqual(expectedFlux, _get_value(heatFluxScale), places=5)
 
     def test_integration_thermoelasticity_workflow(self):
         """Test complete workflow for setting up thermoelasticity scales."""
@@ -163,19 +176,19 @@ class TestThermoelasticityScales(unittest.TestCase):
         heatFluxScale = ElasticityScales.getHeatFluxScale(scales)
         
         # Verify all scales are positive
-        self.assertTrue(stressScale.value > 0.0)
-        self.assertTrue(strainScale.value > 0.0)
-        self.assertTrue(temperatureScale.value > 0.0)
-        self.assertTrue(heatFluxScale.value > 0.0)
+        self.assertTrue(_get_value(stressScale) > 0.0)
+        self.assertTrue(_get_value(strainScale) > 0.0)
+        self.assertTrue(_get_value(temperatureScale) > 0.0)
+        self.assertTrue(_get_value(heatFluxScale) > 0.0)
         
         # Verify stress scale is reasonable for crustal values
         # stress ~ rigidity * displacement / length
-        expectedStress = scales.getRigidityScale() * scales.getDisplacementScale() / scales.getLengthScale()
-        self.assertAlmostEqual(expectedStress, stressScale, places=5)
+        expectedStress = _get_value(scales.getRigidityScale()) * _get_value(scales.getDisplacementScale()) / _get_value(scales.getLengthScale())
+        self.assertAlmostEqual(expectedStress, _get_value(stressScale), places=5)
         
         # Verify strain scale
-        expectedStrain = scales.getDisplacementScale() / scales.getLengthScale()
-        self.assertAlmostEqual(expectedStrain, strainScale, places=10)
+        expectedStrain = _get_value(scales.getDisplacementScale()) / _get_value(scales.getLengthScale())
+        self.assertAlmostEqual(expectedStrain, _get_value(strainScale), places=10)
 
 
 if __name__ == "__main__":

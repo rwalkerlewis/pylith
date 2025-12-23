@@ -19,6 +19,11 @@ from pylith.scales.ElasticityScales import ElasticityScales
 from pylith.scales.DynamicPoroelasticity import DynamicPoroelasticity
 
 
+def _get_value(v):
+    """Extract numeric value from Pyre unit object or return float directly."""
+    return v.value if hasattr(v, 'value') else v
+
+
 class TestDynamicPoroelasticityScales(unittest.TestCase):
     """Test ElasticityScales methods for dynamic poroelasticity."""
 
@@ -37,13 +42,13 @@ class TestDynamicPoroelasticityScales(unittest.TestCase):
             scales, lengthScale, velocityScale, permeability, viscosity, rigidity
         )
         
-        self.assertAlmostEqual(lengthScale, scales.getLengthScale().value, places=5)
-        self.assertAlmostEqual(1.0, scales.getDisplacementScale().value, places=10)
-        self.assertAlmostEqual(rigidity, scales.getRigidityScale().value, places=5)
+        self.assertAlmostEqual(lengthScale, _get_value(scales.getLengthScale()), places=5)
+        self.assertAlmostEqual(1.0, _get_value(scales.getDisplacementScale()), places=10)
+        self.assertAlmostEqual(rigidity, _get_value(scales.getRigidityScale()), places=5)
         
         # Time scale based on wave propagation (not diffusion)
         expectedTime = lengthScale / velocityScale
-        self.assertAlmostEqual(expectedTime, scales.getTimeScale().value, places=5)
+        self.assertAlmostEqual(expectedTime, _get_value(scales.getTimeScale()), places=5)
 
     def test_setDynamicPoroelasticity_custom(self):
         """Test setDynamicPoroelasticity with custom parameters."""
@@ -62,7 +67,7 @@ class TestDynamicPoroelasticityScales(unittest.TestCase):
         
         # Time scale from wave propagation
         expectedTime = lengthScale / velocityScale
-        self.assertAlmostEqual(expectedTime, scales.getTimeScale().value, places=5)
+        self.assertAlmostEqual(expectedTime, _get_value(scales.getTimeScale()), places=5)
         
         # Should be ~6-7 seconds
         self.assertTrue(expectedTime > 5.0)
@@ -74,9 +79,9 @@ class TestDynamicPoroelasticityScales(unittest.TestCase):
         normalizer._configure()
         
         # Check scales were set
-        self.assertTrue(normalizer.getLengthScale() > 0.0)
-        self.assertTrue(normalizer.getTimeScale() > 0.0)
-        self.assertTrue(normalizer.getRigidityScale() > 0.0)
+        self.assertTrue(_get_value(normalizer.getLengthScale()) > 0.0)
+        self.assertTrue(_get_value(normalizer.getTimeScale()) > 0.0)
+        self.assertTrue(_get_value(normalizer.getRigidityScale()) > 0.0)
         
         # Get poroelastic scales
         pressureScale = ElasticityScales.getFluidPressureScale(normalizer)
@@ -84,15 +89,17 @@ class TestDynamicPoroelasticityScales(unittest.TestCase):
         permeabilityScale = ElasticityScales.getPermeabilityScale(normalizer)
         velocityScale = ElasticityScales.getVelocityScale(normalizer)
         
-        self.assertTrue(pressureScale.value > 0.0)
-        self.assertTrue(viscosityScale.value > 0.0)
-        self.assertTrue(permeabilityScale.value > 0.0)
-        self.assertTrue(velocityScale.value > 0.0)
+        self.assertTrue(_get_value(pressureScale) > 0.0)
+        self.assertTrue(_get_value(viscosityScale) > 0.0)
+        self.assertTrue(_get_value(permeabilityScale) > 0.0)
+        self.assertTrue(_get_value(velocityScale) > 0.0)
 
     def test_time_scale_difference_quasi_vs_dynamic(self):
         """Test that dynamic uses wave time, not diffusion time."""
         scalesQuasi = General()
+        scalesQuasi._configure()
         scalesDynamic = General()
+        scalesDynamic._configure()
         
         lengthScale = 10.0e+3  # 10 km
         velocityScale = 3.0e+3  # 3 km/s
@@ -110,8 +117,8 @@ class TestDynamicPoroelasticityScales(unittest.TestCase):
             scalesDynamic, lengthScale, velocityScale, permeability, viscosity, rigidity
         )
         
-        timeQuasi = scalesQuasi.getTimeScale()
-        timeDynamic = scalesDynamic.getTimeScale()
+        timeQuasi = scalesQuasi.getTimeScale().value
+        timeDynamic = scalesDynamic.getTimeScale().value
         
         # Dynamic time should be wave travel time
         expectedDynamic = lengthScale / velocityScale
@@ -149,16 +156,16 @@ class TestDynamicPoroelasticityScales(unittest.TestCase):
         densityScale = ElasticityScales.getDensityScale(scales)
         
         # All should be positive
-        self.assertTrue(stressScale.value > 0.0)
-        self.assertTrue(pressureScale.value > 0.0)
-        self.assertTrue(velocityScaleComputed.value > 0.0)
-        self.assertTrue(accelerationScale.value > 0.0)
-        self.assertTrue(viscosityScale.value > 0.0)
-        self.assertTrue(permeabilityScale.value > 0.0)
-        self.assertTrue(densityScale.value > 0.0)
+        self.assertTrue(_get_value(stressScale) > 0.0)
+        self.assertTrue(_get_value(pressureScale) > 0.0)
+        self.assertTrue(_get_value(velocityScaleComputed) > 0.0)
+        self.assertTrue(_get_value(accelerationScale) > 0.0)
+        self.assertTrue(_get_value(viscosityScale) > 0.0)
+        self.assertTrue(_get_value(permeabilityScale) > 0.0)
+        self.assertTrue(_get_value(densityScale) > 0.0)
         
         # Pressure should equal stress
-        self.assertAlmostEqual(stressScale, pressureScale, places=10)
+        self.assertAlmostEqual(_get_value(stressScale), _get_value(pressureScale), places=10)
 
 
 if __name__ == "__main__":
