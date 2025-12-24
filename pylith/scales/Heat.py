@@ -70,9 +70,9 @@ class Heat(General):
         """
         from .ElasticityScales import ElasticityScales
         
-        # Set heat transfer scales
+        # Use self as the normalizer (this class inherits from General which has all the scale methods)
         ElasticityScales.setHeat(
-            problem.normalizer,
+            self,
             lengthScale=self.lengthScale,
             thermalConductivity=self.thermalConductivity,
             density=self.density,
@@ -81,7 +81,7 @@ class Heat(General):
         
         # Override temperature scale if user set it
         if self.temperatureScale != 1.0*kelvin:
-            problem.normalizer.setTemperatureScale(self.temperatureScale.value)
+            self.setTemperatureScale(self.temperatureScale.value)
 
 
 # FACTORIES ////////////////////////////////////////////////////////////

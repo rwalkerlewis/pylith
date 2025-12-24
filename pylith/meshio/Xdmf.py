@@ -326,7 +326,12 @@ class Xdmf(object):
             % (tstamps.shape[0],)
         )
         for t in tstamps:
-            self.file.write("  %16.8e" % t)
+            # Convert numpy scalar/0-d array to Python float
+            if hasattr(t, 'item'):
+                t_val = t.item()
+            else:
+                t_val = float(t)
+            self.file.write("  %16.8e" % t_val)
         self.file.write(
             "\n"
             "        </DataItem>\n"

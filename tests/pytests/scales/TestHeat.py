@@ -41,11 +41,10 @@ class TestHeat(unittest.TestCase):
 
         scale.preinitialize(problem)
 
-        # Check that scales were set
-        normalizer = problem.normalizer
-        self.assertAlmostEqual(normalizer.getLengthScale(), 100.0e+3, places=1)
-        self.assertAlmostEqual(normalizer.getTemperatureScale(), 1.0, places=10)
-        self.assertTrue(normalizer.getTimeScale() > 0.0)
+        # Check that scales were set on the scale object itself (not problem.normalizer)
+        self.assertAlmostEqual(scale.getLengthScale().value, 100.0e+3, places=1)
+        self.assertAlmostEqual(scale.getTemperatureScale().value, 1.0, places=10)
+        self.assertTrue(scale.getTimeScale().value > 0.0)
 
     def test_inventory(self):
         """Test inventory.
@@ -105,9 +104,8 @@ class TestHeat(unittest.TestCase):
 
         scale.preinitialize(problem)
 
-        # Check that time scale matches expected thermal diffusion time scale
-        normalizer = problem.normalizer
-        actual_time = normalizer.getTimeScale()
+        # Check that time scale matches expected thermal diffusion time scale (use scale object)
+        actual_time = scale.getTimeScale().value
         self.assertAlmostEqual(actual_time, expected_time, places=1)
 
 
