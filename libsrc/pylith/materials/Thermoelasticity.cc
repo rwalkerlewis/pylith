@@ -353,8 +353,8 @@ pylith::materials::Thermoelasticity::_setKernelsResidual(pylith::feassemble::Int
         PetscPointFn* f1u = _rheology->getKernelf1u_implicit(coordsys);
 
         // Temperature equation: ρc ∂T/∂t - ∇·(k∇T) = Q
-        // One-way coupling for quasistatic (no thermoelastic heating in slow processes)
-        PetscPointFn* f0T = NULL; // No heat source for now
+        // Time derivative term is needed for transient heat conduction
+        PetscPointFn* f0T = pylith::fekernels::Thermoelasticity::f0T_timedep;
         PetscPointFn* f1T = _rheology->getKernelf1T_implicit(coordsys);
 
         kernels.resize(2);
@@ -438,8 +438,8 @@ pylith::materials::Thermoelasticity::_setKernelsJacobian(pylith::feassemble::Int
         PetscPointJacFn* Jf2Tu = NULL;
         PetscPointJacFn* Jf3Tu = NULL;
 
-        // Temperature-temperature block (thermal conductivity)
-        PetscPointJacFn* Jf0TT = NULL;
+        // Temperature-temperature block (heat capacity time derivative + thermal conductivity)
+        PetscPointJacFn* Jf0TT = pylith::fekernels::Thermoelasticity::Jf0TT_timedep;
         PetscPointJacFn* Jf1TT = NULL;
         PetscPointJacFn* Jf2TT = NULL;
         PetscPointJacFn* Jf3TT = _rheology->getKernelJf3TT(coordsys);

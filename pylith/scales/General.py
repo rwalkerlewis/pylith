@@ -12,6 +12,21 @@ from pythia.pyre.components.Component import Component
 from .scales import Scales as ModuleScales
 
 
+def _get_value(param):
+    """
+    Get value from a parameter that may be a unit object or a raw float.
+    
+    Args:
+        param: Parameter that is either a unit object with a .value attribute or a raw float
+        
+    Returns:
+        The raw float value
+    """
+    if hasattr(param, 'value'):
+        return param.value
+    return param
+
+
 class General(Component, ModuleScales):
     """
     Abstract base class for nondimensionalizing problems.
@@ -33,7 +48,7 @@ class General(Component, ModuleScales):
         """
         Set length scale.
         """
-        return ModuleScales.setLengthScale(self, value.value)
+        return ModuleScales.setLengthScale(self, _get_value(value))
 
     def getLengthScale(self):
         """
@@ -47,7 +62,7 @@ class General(Component, ModuleScales):
         """
         Set displacement scale.
         """
-        return ModuleScales.setDisplacementScale(self, value.value)
+        return ModuleScales.setDisplacementScale(self, _get_value(value))
 
     def getDisplacementScale(self):
         """
@@ -61,7 +76,7 @@ class General(Component, ModuleScales):
         """
         Set pressure scale.
         """
-        return ModuleScales.setRigidityScale(self, value.value)
+        return ModuleScales.setRigidityScale(self, _get_value(value))
 
     def getRigidityScale(self):
         """
@@ -75,7 +90,7 @@ class General(Component, ModuleScales):
         """
         Get time scale.
         """
-        return ModuleScales.setTimeScale(self, value.value)
+        return ModuleScales.setTimeScale(self, _get_value(value))
 
     def getTimeScale(self):
         """
@@ -89,7 +104,7 @@ class General(Component, ModuleScales):
         """
         Get temperature scale.
         """
-        return ModuleScales.setTemperatureScale(self, value.value)
+        return ModuleScales.setTemperatureScale(self, _get_value(value))
 
     def getTemperatureScale(self):
         """

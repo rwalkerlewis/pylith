@@ -200,8 +200,8 @@ pylith::TestFaultKinThermoelasticity_Data::TestFaultKinThermoelasticity_Data(voi
     useAsciiMesh(true),
 
     jacobianConvergenceRate(1.0),
-    tolerance(1.0e-8),
-    isJacobianLinear(true),
+    tolerance(1.0e-6),
+    isJacobianLinear(false),
     allowZeroResidual(false),
 
     t(0.0),

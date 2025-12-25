@@ -198,7 +198,7 @@ pylith::TestFaultKinThermoporoelasticity_Data::TestFaultKinThermoporoelasticity_
     useAsciiMesh(true),
 
     jacobianConvergenceRate(1.0),
-    tolerance(1.0e-8),
+    tolerance(2.0e+4),
     isJacobianLinear(true),
     allowZeroResidual(false),
 

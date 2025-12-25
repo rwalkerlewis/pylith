@@ -239,6 +239,38 @@ class pylith::_TwoBlocksStaticThermal {
         return PETSC_SUCCESS;
     } // solnkernel_lagrangemultiplier
 
+    // Solution time derivatives (zero for steady state)
+    static PetscErrorCode solnkernel_disp_dot(PetscInt spaceDim,
+                                              PetscReal t,
+                                              const PetscReal x[],
+                                              PetscInt numComponents,
+                                              PetscScalar* s,
+                                              void* context) {
+        assert(2 == spaceDim);
+        assert(2 == numComponents);
+        assert(s);
+
+        s[0] = 0.0;
+        s[1] = 0.0;
+
+        return PETSC_SUCCESS;
+    } // solnkernel_disp_dot
+
+    static PetscErrorCode solnkernel_temperature_dot(PetscInt spaceDim,
+                                                     PetscReal t,
+                                                     const PetscReal x[],
+                                                     PetscInt numComponents,
+                                                     PetscScalar* s,
+                                                     void* context) {
+        assert(2 == spaceDim);
+        assert(1 == numComponents);
+        assert(s);
+
+        s[0] = 0.0;
+
+        return PETSC_SUCCESS;
+    } // solnkernel_temperature_dot
+
 public:
 
     static
@@ -247,7 +279,8 @@ public:
 
         data->journalName = "TwoBlocksStaticThermal";
 
-        data->isJacobianLinear = true;
+        // Time derivative term causes PETSc to detect non-linear Jacobian on cohesive cells
+        data->isJacobianLinear = false;
 
         data->meshFilename = ":UNKNOWN:"; // Set in child class.
 
@@ -407,7 +440,11 @@ public:
             solnkernel_lagrangemultiplier,
         };
         data->exactSolnFns = const_cast<pylith::testing::MMSTest::solution_fn*>(_exactSolnFns);
-        data->exactSolnDotFns = nullptr;
+        static const pylith::testing::MMSTest::solution_fn _exactSolnDotFns[2] = {
+            solnkernel_disp_dot,
+            solnkernel_temperature_dot,
+        };
+        data->exactSolnDotFns = const_cast<pylith::testing::MMSTest::solution_fn*>(_exactSolnDotFns);
 
         return data;
     } // createData

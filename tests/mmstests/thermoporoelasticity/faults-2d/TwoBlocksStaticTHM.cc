@@ -115,6 +115,21 @@ class pylith::_TwoBlocksStaticTHM {
         return 2.0e+9;
     } // fluid_bulk_modulus
 
+    // Biot modulus: M = 1 / [(α - φ)/K_s + φ/K_f]
+    static double biot_modulus(const double x,
+                               const double y) {
+        const double alpha = biot_coefficient(x, y);
+        const double phi = porosity(x, y);
+        const double K_f = fluid_bulk_modulus(x, y);
+        const double K_d = drained_bulk_modulus(x, y);
+        const double K_s = K_d / (1.0 - alpha + 1e-10); // avoid division by zero if alpha = 1
+        return 1.0 / ((alpha - phi) / K_s + phi / K_f);
+    } // biot_modulus
+
+    static const char* biot_modulus_units(void) {
+        return "Pa";
+    } // biot_modulus_units
+
     // Permeability
     static double isotropic_permeability(const double x,
                                          const double y) {
@@ -333,6 +348,68 @@ class pylith::_TwoBlocksStaticTHM {
         return PETSC_SUCCESS;
     } // solnkernel_lagrangemultiplier
 
+    // Solution time derivatives (zero for steady state)
+    static PetscErrorCode solnkernel_disp_dot(PetscInt spaceDim,
+                                              PetscReal t,
+                                              const PetscReal x[],
+                                              PetscInt numComponents,
+                                              PetscScalar* s,
+                                              void* context) {
+        assert(2 == spaceDim);
+        assert(2 == numComponents);
+        assert(s);
+
+        s[0] = 0.0;
+        s[1] = 0.0;
+
+        return PETSC_SUCCESS;
+    } // solnkernel_disp_dot
+
+    static PetscErrorCode solnkernel_fluid_pressure_dot(PetscInt spaceDim,
+                                                        PetscReal t,
+                                                        const PetscReal x[],
+                                                        PetscInt numComponents,
+                                                        PetscScalar* s,
+                                                        void* context) {
+        assert(2 == spaceDim);
+        assert(1 == numComponents);
+        assert(s);
+
+        s[0] = 0.0;
+
+        return PETSC_SUCCESS;
+    } // solnkernel_fluid_pressure_dot
+
+    static PetscErrorCode solnkernel_trace_strain_dot(PetscInt spaceDim,
+                                                      PetscReal t,
+                                                      const PetscReal x[],
+                                                      PetscInt numComponents,
+                                                      PetscScalar* s,
+                                                      void* context) {
+        assert(2 == spaceDim);
+        assert(1 == numComponents);
+        assert(s);
+
+        s[0] = 0.0;
+
+        return PETSC_SUCCESS;
+    } // solnkernel_trace_strain_dot
+
+    static PetscErrorCode solnkernel_temperature_dot(PetscInt spaceDim,
+                                                     PetscReal t,
+                                                     const PetscReal x[],
+                                                     PetscInt numComponents,
+                                                     PetscScalar* s,
+                                                     void* context) {
+        assert(2 == spaceDim);
+        assert(1 == numComponents);
+        assert(s);
+
+        s[0] = 0.0;
+
+        return PETSC_SUCCESS;
+    } // solnkernel_temperature_dot
+
 public:
 
     static
@@ -341,7 +418,7 @@ public:
 
         data->journalName = "TwoBlocksStaticTHM";
 
-        data->isJacobianLinear = true;
+        data->isJacobianLinear = false;
 
         data->meshFilename = ":UNKNOWN:"; // Set in child class.
 
@@ -392,6 +469,7 @@ public:
         data->matAuxDB.addValue("shear_modulus", shear_modulus, modulus_units());
         data->matAuxDB.addValue("drained_bulk_modulus", drained_bulk_modulus, modulus_units());
         data->matAuxDB.addValue("biot_coefficient", biot_coefficient, biot_coefficient_units());
+        data->matAuxDB.addValue("biot_modulus", biot_modulus, biot_modulus_units());
         data->matAuxDB.addValue("fluid_bulk_modulus", fluid_bulk_modulus, modulus_units());
         data->matAuxDB.addValue("isotropic_permeability", isotropic_permeability, permeability_units());
         data->matAuxDB.addValue("reference_temperature", reference_temperature, temperature_units());
@@ -556,7 +634,13 @@ public:
             solnkernel_lagrangemultiplier,
         };
         data->exactSolnFns = const_cast<pylith::testing::MMSTest::solution_fn*>(_exactSolnFns);
-        data->exactSolnDotFns = nullptr;
+        static const pylith::testing::MMSTest::solution_fn _exactSolnDotFns[4] = {
+            solnkernel_disp_dot,
+            solnkernel_fluid_pressure_dot,
+            solnkernel_trace_strain_dot,
+            solnkernel_temperature_dot,
+        };
+        data->exactSolnDotFns = const_cast<pylith::testing::MMSTest::solution_fn*>(_exactSolnDotFns);
 
         return data;
     } // createData
