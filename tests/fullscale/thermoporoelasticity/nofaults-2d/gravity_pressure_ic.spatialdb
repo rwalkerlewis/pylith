@@ -1,0 +1,20 @@
+// -*- C++ -*- (syntax highlighting)
+// Spatial database for initial pressure (hydrostatic)
+// p = rho_f * g * (y_max - y) where rho_f = 1000 kg/m³, g = 9.80665 m/s², y_max = 0
+// At y=0: p = 0
+// At y=-8000: p = 1000 * 9.80665 * 8000 = 78453200 Pa
+#SPATIAL.ascii 1
+SimpleDB {
+  num-values = 1
+  value-names = pressure
+  value-units = Pa
+  num-locs = 2
+  data-dim = 1
+  space-dim = 2
+  cs-data = cartesian {
+    space-dim = 2
+  }
+}
+// x  y  pressure
+0.0  0.0       0.0
+0.0  -8000.0   78453200.0

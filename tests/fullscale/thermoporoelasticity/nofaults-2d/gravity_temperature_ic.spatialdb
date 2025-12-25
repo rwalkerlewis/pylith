@@ -1,0 +1,20 @@
+// -*- C++ -*- (syntax highlighting)
+// Spatial database for initial temperature (geothermal gradient)
+// T = T_ref + dT_dy * (y_max - y) where dT_dy = -0.025 K/m, y_max = 0
+// At y=0: T = 300 K
+// At y=-8000: T = 500 K
+#SPATIAL.ascii 1
+SimpleDB {
+  num-values = 1
+  value-names = temperature
+  value-units = K
+  num-locs = 2
+  data-dim = 1
+  space-dim = 2
+  cs-data = cartesian {
+    space-dim = 2
+  }
+}
+// x  y  temperature
+0.0  0.0       300.0
+0.0  -8000.0   500.0

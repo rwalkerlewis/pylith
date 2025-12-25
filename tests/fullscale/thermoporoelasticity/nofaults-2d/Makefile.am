@@ -28,7 +28,9 @@ dist_noinst_DATA = \
 	thermoporo_quad.cfg \
 	gravity.cfg \
 	gravity_tri.cfg \
-	gravity_quad.cfg
+	gravity_quad.cfg \
+	gravity_temperature_ic.spatialdb \
+	gravity_pressure_ic.spatialdb
 
 noinst_TMP =
 

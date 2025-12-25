@@ -16,6 +16,8 @@
 #include "pylith/materials/AuxiliaryFactoryThermoporoelasticity.hh" // USES AuxiliaryFactoryThermoporoelasticity
 #include "pylith/materials/DerivedFactoryPoroelasticity.hh" // USES DerivedFactoryPoroelasticity
 #include "pylith/fekernels/Thermoporoelasticity.hh" // USES Thermoporoelasticity kernels
+#include "pylith/fekernels/Poroelasticity.hh" // USES Poroelasticity::bulkDensity_asScalar
+#include "pylith/fekernels/Elasticity.hh" // USES Elasticity strain kernels
 #include "pylith/feassemble/IntegratorDomain.hh" // USES IntegratorDomain
 #include "pylith/topology/Mesh.hh" // USES Mesh
 #include "pylith/topology/Field.hh" // USES Field
@@ -35,6 +37,7 @@
 typedef pylith::feassemble::IntegratorDomain::ResidualKernels ResidualKernels;
 typedef pylith::feassemble::IntegratorDomain::JacobianKernels JacobianKernels;
 typedef pylith::feassemble::IntegratorDomain::ProjectKernels ProjectKernels;
+typedef pylith::feassemble::Integrator::EquationPart EquationPart;
 typedef pylith::fekernels::Thermoporoelasticity ThermoporoelasticityKernels;
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -359,77 +362,108 @@ pylith::materials::Thermoporoelasticity::_setKernelsResidual(pylith::feassemble:
     assert(coordsys);
 
     const bool hasGravityField = _gravityField != NULL;
+    const bool hasTraceStrain = solution.hasSubfield("trace_strain");
 
     std::vector<ResidualKernels> kernels;
 
-    // Displacement equation
-    // f1u: stress
-    PetscPointFn* f1u = _rheology->getKernelf1u_implicit(coordsys);
-    kernels.resize(1);
-    kernels[0] = ResidualKernels("displacement", pylith::feassemble::Integrator::LHS, NULL, f1u);
-    integrator->setKernelsResidual(kernels, solution);
+    if (!_useStateVars) {
+        // Displacement equation: f1u = stress
+        PetscPointFn* f0u = NULL;
+        PetscPointFn* f1u = _rheology->getKernelf1u_implicit(coordsys);
 
-    // Pressure equation
-    // f0p: fluid content time derivative
-    // f1p: Darcy flux
-    PetscPointFn* f0p = _rheology->getKernelf0p_implicit(coordsys, _useSourceDensity);
-    PetscPointFn* f1p = _rheology->getKernelf1p_implicit(coordsys, hasGravityField);
-    kernels.resize(1);
-    kernels[0] = ResidualKernels("pressure", pylith::feassemble::Integrator::LHS, f0p, f1p);
-    integrator->setKernelsResidual(kernels, solution);
+        // Pressure equation: f0p = fluid content time derivative, f1p = Darcy flux
+        PetscPointFn* f0p = _rheology->getKernelf0p_implicit(coordsys, _useSourceDensity);
+        PetscPointFn* f1p = _rheology->getKernelf1p_implicit(coordsys, hasGravityField);
 
-    // Trace strain equation (if present)
-    if (solution.hasSubfield("trace_strain")) {
-        kernels.resize(1);
-        kernels[0] = ResidualKernels("trace_strain", pylith::feassemble::Integrator::LHS, 
-                                     ThermoporoelasticityKernels::f0e, NULL);
-        integrator->setKernelsResidual(kernels, solution);
-    } // if
+        // Trace strain equation (if present)
+        PetscPointFn* f0e = hasTraceStrain ? ThermoporoelasticityKernels::f0e : NULL;
+        PetscPointFn* f1e = NULL;
 
-    // Temperature equation
-    // f0T: heat capacity term
-    // f1T: heat flux
-    PetscPointFn* f0T = _rheology->getKernelf0T_implicit(coordsys, _useHeatSource);
-    PetscPointFn* f1T = _rheology->getKernelf1T_implicit(coordsys);
-    kernels.resize(1);
-    kernels[0] = ResidualKernels("temperature", pylith::feassemble::Integrator::LHS, f0T, f1T);
-    integrator->setKernelsResidual(kernels, solution);
+        // Temperature equation: f0T = heat capacity term, f1T = heat flux
+        PetscPointFn* f0T = _rheology->getKernelf0T_implicit(coordsys, _useHeatSource);
+        PetscPointFn* f1T = _rheology->getKernelf1T_implicit(coordsys);
 
-    // State variable equations (when _useStateVars is true)
-    // These relate time derivatives to their corresponding state variables
-    if (_useStateVars) {
+        if (hasTraceStrain) {
+            kernels.resize(4);
+            kernels[0] = ResidualKernels("displacement", pylith::feassemble::Integrator::LHS, f0u, f1u);
+            kernels[1] = ResidualKernels("pressure", pylith::feassemble::Integrator::LHS, f0p, f1p);
+            kernels[2] = ResidualKernels("trace_strain", pylith::feassemble::Integrator::LHS, f0e, f1e);
+            kernels[3] = ResidualKernels("temperature", pylith::feassemble::Integrator::LHS, f0T, f1T);
+        } else {
+            kernels.resize(3);
+            kernels[0] = ResidualKernels("displacement", pylith::feassemble::Integrator::LHS, f0u, f1u);
+            kernels[1] = ResidualKernels("pressure", pylith::feassemble::Integrator::LHS, f0p, f1p);
+            kernels[2] = ResidualKernels("temperature", pylith::feassemble::Integrator::LHS, f0T, f1T);
+        }
+    } else {
+        // State variable formulation
+        // Displacement equation
+        PetscPointFn* f0u = NULL;
+        PetscPointFn* f1u = _rheology->getKernelf1u_implicit(coordsys);
+
+        // Pressure equation
+        PetscPointFn* f0p = _rheology->getKernelf0p_implicit(coordsys, _useSourceDensity);
+        PetscPointFn* f1p = _rheology->getKernelf1p_implicit(coordsys, hasGravityField);
+
+        // Trace strain equation
+        PetscPointFn* f0e = hasTraceStrain ? ThermoporoelasticityKernels::f0e : NULL;
+        PetscPointFn* f1e = NULL;
+
+        // Temperature equation
+        PetscPointFn* f0T = _rheology->getKernelf0T_implicit(coordsys, _useHeatSource);
+        PetscPointFn* f1T = _rheology->getKernelf1T_implicit(coordsys);
+
         // Velocity equation: f0_v = ∂u/∂t - v = 0
-        if (solution.hasSubfield("velocity")) {
-            kernels.resize(1);
-            kernels[0] = ResidualKernels("velocity", pylith::feassemble::Integrator::LHS,
-                                         ThermoporoelasticityKernels::f0v_implicit, NULL);
-            integrator->setKernelsResidual(kernels, solution);
-        } // if
+        PetscPointFn* f0v = solution.hasSubfield("velocity") ? ThermoporoelasticityKernels::f0v_implicit : NULL;
+        PetscPointFn* f1v = NULL;
 
         // Pressure_dot equation: f0_pdot = ∂p/∂t - p_dot = 0
-        if (solution.hasSubfield("pressure_t")) {
-            kernels.resize(1);
-            kernels[0] = ResidualKernels("pressure_t", pylith::feassemble::Integrator::LHS,
-                                         ThermoporoelasticityKernels::f0pdot, NULL);
-            integrator->setKernelsResidual(kernels, solution);
-        } // if
+        PetscPointFn* f0pdot = solution.hasSubfield("pressure_t") ? ThermoporoelasticityKernels::f0pdot : NULL;
+        PetscPointFn* f1pdot = NULL;
 
         // Trace_strain_dot equation: f0_edot = ∂ε_v/∂t - ε_v_dot = 0
-        if (solution.hasSubfield("trace_strain_t")) {
-            kernels.resize(1);
-            kernels[0] = ResidualKernels("trace_strain_t", pylith::feassemble::Integrator::LHS,
-                                         ThermoporoelasticityKernels::f0edot, NULL);
-            integrator->setKernelsResidual(kernels, solution);
-        } // if
+        PetscPointFn* f0edot = solution.hasSubfield("trace_strain_t") ? ThermoporoelasticityKernels::f0edot : NULL;
+        PetscPointFn* f1edot = NULL;
 
         // Temperature_dot equation: f0_Tdot = ∂T/∂t - T_dot = 0
+        PetscPointFn* f0Tdot = solution.hasSubfield("temperature_t") ? ThermoporoelasticityKernels::f0Tdot : NULL;
+        PetscPointFn* f1Tdot = NULL;
+
+        // Count number of kernels needed
+        size_t numKernels = 3; // displacement, pressure, temperature
+        if (hasTraceStrain) { numKernels++; }
+        if (solution.hasSubfield("velocity")) { numKernels++; }
+        if (solution.hasSubfield("pressure_t")) { numKernels++; }
+        if (solution.hasSubfield("trace_strain_t")) { numKernels++; }
+        if (solution.hasSubfield("temperature_t")) { numKernels++; }
+
+        kernels.resize(numKernels);
+        size_t idx = 0;
+        kernels[idx++] = ResidualKernels("displacement", pylith::feassemble::Integrator::LHS, f0u, f1u);
+        kernels[idx++] = ResidualKernels("pressure", pylith::feassemble::Integrator::LHS, f0p, f1p);
+        if (hasTraceStrain) {
+            kernels[idx++] = ResidualKernels("trace_strain", pylith::feassemble::Integrator::LHS, f0e, f1e);
+        }
+        kernels[idx++] = ResidualKernels("temperature", pylith::feassemble::Integrator::LHS, f0T, f1T);
+        if (solution.hasSubfield("velocity")) {
+            kernels[idx++] = ResidualKernels("velocity", pylith::feassemble::Integrator::LHS, f0v, f1v);
+        }
+        if (solution.hasSubfield("pressure_t")) {
+            kernels[idx++] = ResidualKernels("pressure_t", pylith::feassemble::Integrator::LHS, f0pdot, f1pdot);
+        }
+        if (solution.hasSubfield("trace_strain_t")) {
+            kernels[idx++] = ResidualKernels("trace_strain_t", pylith::feassemble::Integrator::LHS, f0edot, f1edot);
+        }
         if (solution.hasSubfield("temperature_t")) {
-            kernels.resize(1);
-            kernels[0] = ResidualKernels("temperature_t", pylith::feassemble::Integrator::LHS,
-                                         ThermoporoelasticityKernels::f0Tdot, NULL);
-            integrator->setKernelsResidual(kernels, solution);
-        } // if
-    } // if _useStateVars
+            kernels[idx++] = ResidualKernels("temperature_t", pylith::feassemble::Integrator::LHS, f0Tdot, f1Tdot);
+        }
+    } // if/else _useStateVars
+
+    // Add any MMS body force kernels
+    kernels.insert(kernels.end(), _mmsBodyForceKernels.begin(), _mmsBodyForceKernels.end());
+
+    assert(integrator);
+    integrator->setKernelsResidual(kernels, solution);
 
     PYLITH_METHOD_END;
 } // _setKernelsResidual
@@ -446,134 +480,111 @@ pylith::materials::Thermoporoelasticity::_setKernelsJacobian(pylith::feassemble:
     const spatialdata::geocoords::CoordSys* coordsys = solution.getMesh().getCoordSys();
     assert(coordsys);
 
+    const bool hasTraceStrain = solution.hasSubfield("trace_strain");
+    const pylith::feassemble::Integrator::EquationPart equationPart = pylith::feassemble::Integrator::LHS;
+
+    integrator->setLHSJacobianTriggers(pylith::feassemble::Integrator::NEW_JACOBIAN_TIME_STEP_CHANGE);
+
     std::vector<JacobianKernels> kernels;
 
-    // Displacement-displacement (elastic stiffness)
-    PetscPointJacFn* Jf3uu = _rheology->getKernelJf3uu(coordsys);
-    kernels.resize(1);
-    kernels[0] = JacobianKernels("displacement", "displacement", pylith::feassemble::Integrator::LHS,
-                                 NULL, NULL, NULL, Jf3uu);
-    integrator->setKernelsJacobian(kernels, solution);
+    if (!_useStateVars) {
+        // Get all kernel functions from rheology
+        PetscPointJacFn* Jf3uu = _rheology->getKernelJf3uu(coordsys);
+        PetscPointJacFn* Jf2up = _rheology->getKernelJf2up(coordsys);
+        PetscPointJacFn* Jf2uT = _rheology->getKernelJf2uT(coordsys);
+        PetscPointJacFn* Jf0pp = _rheology->getKernelJf0pp(coordsys);
+        PetscPointJacFn* Jf3pp = _rheology->getKernelJf3pp(coordsys);
+        PetscPointJacFn* Jf0pe = hasTraceStrain ? _rheology->getKernelJf0pe(coordsys) : NULL;
+        PetscPointJacFn* Jf0pT = _rheology->getKernelJf0pT(coordsys);
+        PetscPointJacFn* Jf0TT = _rheology->getKernelJf0TT(coordsys);
+        PetscPointJacFn* Jf3TT = _rheology->getKernelJf3TT(coordsys);
 
-    // Displacement-pressure (Biot coupling)
-    PetscPointJacFn* Jf2up = _rheology->getKernelJf2up(coordsys);
-    kernels.resize(1);
-    kernels[0] = JacobianKernels("displacement", "pressure", pylith::feassemble::Integrator::LHS,
-                                 NULL, NULL, Jf2up, NULL);
-    integrator->setKernelsJacobian(kernels, solution);
+        if (hasTraceStrain) {
+            // With trace_strain: 9 kernels
+            kernels.resize(9);
+            kernels[0] = JacobianKernels("displacement", "displacement", equationPart, NULL, NULL, NULL, Jf3uu);
+            kernels[1] = JacobianKernels("displacement", "pressure", equationPart, NULL, NULL, Jf2up, NULL);
+            kernels[2] = JacobianKernels("displacement", "temperature", equationPart, NULL, NULL, Jf2uT, NULL);
+            kernels[3] = JacobianKernels("pressure", "pressure", equationPart, Jf0pp, NULL, NULL, Jf3pp);
+            kernels[4] = JacobianKernels("pressure", "trace_strain", equationPart, Jf0pe, NULL, NULL, NULL);
+            kernels[5] = JacobianKernels("pressure", "temperature", equationPart, Jf0pT, NULL, NULL, NULL);
+            kernels[6] = JacobianKernels("trace_strain", "displacement", equationPart, NULL, ThermoporoelasticityKernels::Jf1eu, NULL, NULL);
+            kernels[7] = JacobianKernels("trace_strain", "trace_strain", equationPart, ThermoporoelasticityKernels::Jf0ee, NULL, NULL, NULL);
+            kernels[8] = JacobianKernels("temperature", "temperature", equationPart, Jf0TT, NULL, NULL, Jf3TT);
+        } else {
+            // Without trace_strain: 6 kernels
+            kernels.resize(6);
+            kernels[0] = JacobianKernels("displacement", "displacement", equationPart, NULL, NULL, NULL, Jf3uu);
+            kernels[1] = JacobianKernels("displacement", "pressure", equationPart, NULL, NULL, Jf2up, NULL);
+            kernels[2] = JacobianKernels("displacement", "temperature", equationPart, NULL, NULL, Jf2uT, NULL);
+            kernels[3] = JacobianKernels("pressure", "pressure", equationPart, Jf0pp, NULL, NULL, Jf3pp);
+            kernels[4] = JacobianKernels("pressure", "temperature", equationPart, Jf0pT, NULL, NULL, NULL);
+            kernels[5] = JacobianKernels("temperature", "temperature", equationPart, Jf0TT, NULL, NULL, Jf3TT);
+        }
+    } else {
+        // State variable formulation
+        // Get all kernel functions from rheology
+        PetscPointJacFn* Jf3uu = _rheology->getKernelJf3uu(coordsys);
+        PetscPointJacFn* Jf2up = _rheology->getKernelJf2up(coordsys);
+        PetscPointJacFn* Jf2uT = _rheology->getKernelJf2uT(coordsys);
+        PetscPointJacFn* Jf0pp = _rheology->getKernelJf0pp(coordsys);
+        PetscPointJacFn* Jf3pp = _rheology->getKernelJf3pp(coordsys);
+        PetscPointJacFn* Jf0pe = hasTraceStrain ? _rheology->getKernelJf0pe(coordsys) : NULL;
+        PetscPointJacFn* Jf0pT = _rheology->getKernelJf0pT(coordsys);
+        PetscPointJacFn* Jf0TT = _rheology->getKernelJf0TT(coordsys);
+        PetscPointJacFn* Jf3TT = _rheology->getKernelJf3TT(coordsys);
 
-    // Displacement-temperature (thermal coupling)
-    PetscPointJacFn* Jf2uT = _rheology->getKernelJf2uT(coordsys);
-    kernels.resize(1);
-    kernels[0] = JacobianKernels("displacement", "temperature", pylith::feassemble::Integrator::LHS,
-                                 NULL, NULL, Jf2uT, NULL);
-    integrator->setKernelsJacobian(kernels, solution);
+        // Count number of kernels needed
+        size_t numKernels = 6; // base: uu, up, uT, pp, pT, TT
+        if (hasTraceStrain) { numKernels += 3; } // pe, eu, ee
+        if (solution.hasSubfield("velocity")) { numKernels += 2; } // vu, vv
+        if (solution.hasSubfield("pressure_t")) { numKernels += 2; } // pdotp, pdotpdot
+        if (solution.hasSubfield("trace_strain_t")) { numKernels += 2; } // edote, edotedot
+        if (solution.hasSubfield("temperature_t")) { numKernels += 2; } // TdotT, TdotTdot
 
-    // Pressure-pressure (storage + Darcy)
-    PetscPointJacFn* Jf0pp = _rheology->getKernelJf0pp(coordsys);
-    PetscPointJacFn* Jf3pp = _rheology->getKernelJf3pp(coordsys);
-    kernels.resize(1);
-    kernels[0] = JacobianKernels("pressure", "pressure", pylith::feassemble::Integrator::LHS,
-                                 Jf0pp, NULL, NULL, Jf3pp);
-    integrator->setKernelsJacobian(kernels, solution);
+        kernels.resize(numKernels);
+        size_t idx = 0;
 
-    // Pressure-trace_strain (Biot coupling)
-    if (solution.hasSubfield("trace_strain")) {
-        PetscPointJacFn* Jf0pe = _rheology->getKernelJf0pe(coordsys);
-        kernels.resize(1);
-        kernels[0] = JacobianKernels("pressure", "trace_strain", pylith::feassemble::Integrator::LHS,
-                                     Jf0pe, NULL, NULL, NULL);
-        integrator->setKernelsJacobian(kernels, solution);
-    } // if
+        // Base kernels
+        kernels[idx++] = JacobianKernels("displacement", "displacement", equationPart, NULL, NULL, NULL, Jf3uu);
+        kernels[idx++] = JacobianKernels("displacement", "pressure", equationPart, NULL, NULL, Jf2up, NULL);
+        kernels[idx++] = JacobianKernels("displacement", "temperature", equationPart, NULL, NULL, Jf2uT, NULL);
+        kernels[idx++] = JacobianKernels("pressure", "pressure", equationPart, Jf0pp, NULL, NULL, Jf3pp);
 
-    // Pressure-temperature (thermal coupling in fluid content)
-    PetscPointJacFn* Jf0pT = _rheology->getKernelJf0pT(coordsys);
-    kernels.resize(1);
-    kernels[0] = JacobianKernels("pressure", "temperature", pylith::feassemble::Integrator::LHS,
-                                 Jf0pT, NULL, NULL, NULL);
-    integrator->setKernelsJacobian(kernels, solution);
+        if (hasTraceStrain) {
+            kernels[idx++] = JacobianKernels("pressure", "trace_strain", equationPart, Jf0pe, NULL, NULL, NULL);
+        }
 
-    // Trace_strain equation Jacobians (if present)
-    if (solution.hasSubfield("trace_strain")) {
-        // trace_strain - displacement
-        kernels.resize(1);
-        kernels[0] = JacobianKernels("trace_strain", "displacement", pylith::feassemble::Integrator::LHS,
-                         NULL, ThermoporoelasticityKernels::Jf1eu, NULL, NULL);
-        integrator->setKernelsJacobian(kernels, solution);
+        kernels[idx++] = JacobianKernels("pressure", "temperature", equationPart, Jf0pT, NULL, NULL, NULL);
 
-        // trace_strain - trace_strain
-        kernels.resize(1);
-        kernels[0] = JacobianKernels("trace_strain", "trace_strain", pylith::feassemble::Integrator::LHS,
-                         ThermoporoelasticityKernels::Jf0ee, NULL, NULL, NULL);
-        integrator->setKernelsJacobian(kernels, solution);
-    } // if
+        if (hasTraceStrain) {
+            kernels[idx++] = JacobianKernels("trace_strain", "displacement", equationPart, NULL, ThermoporoelasticityKernels::Jf1eu, NULL, NULL);
+            kernels[idx++] = JacobianKernels("trace_strain", "trace_strain", equationPart, ThermoporoelasticityKernels::Jf0ee, NULL, NULL, NULL);
+        }
 
-    // Temperature-temperature (heat capacity + conductivity)
-    PetscPointJacFn* Jf0TT = _rheology->getKernelJf0TT(coordsys);
-    PetscPointJacFn* Jf3TT = _rheology->getKernelJf3TT(coordsys);
-    kernels.resize(1);
-    kernels[0] = JacobianKernels("temperature", "temperature", pylith::feassemble::Integrator::LHS,
-                                 Jf0TT, NULL, NULL, Jf3TT);
-    integrator->setKernelsJacobian(kernels, solution);
+        kernels[idx++] = JacobianKernels("temperature", "temperature", equationPart, Jf0TT, NULL, NULL, Jf3TT);
 
-    // State variable Jacobians (when _useStateVars is true)
-    if (_useStateVars) {
-        // velocity - displacement: Jf0_vu = s_tshift
+        // State variable kernels
         if (solution.hasSubfield("velocity")) {
-            kernels.resize(1);
-            kernels[0] = JacobianKernels("velocity", "displacement", pylith::feassemble::Integrator::LHS,
-                                         ThermoporoelasticityKernels::Jf0vu, NULL, NULL, NULL);
-            integrator->setKernelsJacobian(kernels, solution);
-
-            // velocity - velocity: Jf0_vv = -1
-            kernels.resize(1);
-            kernels[0] = JacobianKernels("velocity", "velocity", pylith::feassemble::Integrator::LHS,
-                                         ThermoporoelasticityKernels::Jf0vv, NULL, NULL, NULL);
-            integrator->setKernelsJacobian(kernels, solution);
-        } // if
-
-        // pressure_t - pressure: Jf0_pdotp = s_tshift
+            kernels[idx++] = JacobianKernels("velocity", "displacement", equationPart, ThermoporoelasticityKernels::Jf0vu, NULL, NULL, NULL);
+            kernels[idx++] = JacobianKernels("velocity", "velocity", equationPart, ThermoporoelasticityKernels::Jf0vv, NULL, NULL, NULL);
+        }
         if (solution.hasSubfield("pressure_t")) {
-            kernels.resize(1);
-            kernels[0] = JacobianKernels("pressure_t", "pressure", pylith::feassemble::Integrator::LHS,
-                                         ThermoporoelasticityKernels::Jf0pdotp, NULL, NULL, NULL);
-            integrator->setKernelsJacobian(kernels, solution);
-
-            // pressure_t - pressure_t: Jf0_pdotpdot = -1
-            kernels.resize(1);
-            kernels[0] = JacobianKernels("pressure_t", "pressure_t", pylith::feassemble::Integrator::LHS,
-                                         ThermoporoelasticityKernels::Jf0pdotpdot, NULL, NULL, NULL);
-            integrator->setKernelsJacobian(kernels, solution);
-        } // if
-
-        // trace_strain_t - trace_strain: Jf0_edote = s_tshift
+            kernels[idx++] = JacobianKernels("pressure_t", "pressure", equationPart, ThermoporoelasticityKernels::Jf0pdotp, NULL, NULL, NULL);
+            kernels[idx++] = JacobianKernels("pressure_t", "pressure_t", equationPart, ThermoporoelasticityKernels::Jf0pdotpdot, NULL, NULL, NULL);
+        }
         if (solution.hasSubfield("trace_strain_t")) {
-            kernels.resize(1);
-            kernels[0] = JacobianKernels("trace_strain_t", "trace_strain", pylith::feassemble::Integrator::LHS,
-                                         ThermoporoelasticityKernels::Jf0edote, NULL, NULL, NULL);
-            integrator->setKernelsJacobian(kernels, solution);
-
-            // trace_strain_t - trace_strain_t: Jf0_edotedot = -1
-            kernels.resize(1);
-            kernels[0] = JacobianKernels("trace_strain_t", "trace_strain_t", pylith::feassemble::Integrator::LHS,
-                                         ThermoporoelasticityKernels::Jf0edotedot, NULL, NULL, NULL);
-            integrator->setKernelsJacobian(kernels, solution);
-        } // if
-
-        // temperature_t - temperature: Jf0_TdotT = s_tshift
+            kernels[idx++] = JacobianKernels("trace_strain_t", "trace_strain", equationPart, ThermoporoelasticityKernels::Jf0edote, NULL, NULL, NULL);
+            kernels[idx++] = JacobianKernels("trace_strain_t", "trace_strain_t", equationPart, ThermoporoelasticityKernels::Jf0edotedot, NULL, NULL, NULL);
+        }
         if (solution.hasSubfield("temperature_t")) {
-            kernels.resize(1);
-            kernels[0] = JacobianKernels("temperature_t", "temperature", pylith::feassemble::Integrator::LHS,
-                                         ThermoporoelasticityKernels::Jf0TdotT, NULL, NULL, NULL);
-            integrator->setKernelsJacobian(kernels, solution);
+            kernels[idx++] = JacobianKernels("temperature_t", "temperature", equationPart, ThermoporoelasticityKernels::Jf0TdotT, NULL, NULL, NULL);
+            kernels[idx++] = JacobianKernels("temperature_t", "temperature_t", equationPart, ThermoporoelasticityKernels::Jf0TdotTdot, NULL, NULL, NULL);
+        }
+    } // if/else _useStateVars
 
-            // temperature_t - temperature_t: Jf0_TdotTdot = -1
-            kernels.resize(1);
-            kernels[0] = JacobianKernels("temperature_t", "temperature_t", pylith::feassemble::Integrator::LHS,
-                                         ThermoporoelasticityKernels::Jf0TdotTdot, NULL, NULL, NULL);
-            integrator->setKernelsJacobian(kernels, solution);
-        } // if
-    } // if _useStateVars
+    assert(integrator);
+    integrator->setKernelsJacobian(kernels, solution);
 
     PYLITH_METHOD_END;
 } // _setKernelsJacobian
@@ -595,10 +606,21 @@ pylith::materials::Thermoporoelasticity::_setKernelsDerivedField(pylith::feassem
         PYLITH_METHOD_END;
     } // if
 
-    std::vector<ProjectKernels> kernels(3);
+    // Set kernels for derived fields.
+    // DerivedFactoryPoroelasticity supports: cauchy_stress, cauchy_strain, bulk_density, water_content
+    // We must provide kernels for ALL derived subfields since the kernelsArray is indexed by subfield index.
+    const int spaceDim = coordsys->getSpaceDim();
+    PetscPointFn* strainKernel =
+        (3 == spaceDim) ? pylith::fekernels::Elasticity3D::infinitesimalStrain_asVector :
+        (2 == spaceDim) ? pylith::fekernels::ElasticityPlaneStrain::infinitesimalStrain_asVector :
+        NULL;
+    PetscPointFn* bulkDensityKernel = pylith::fekernels::Poroelasticity::bulkDensity_asScalar;
+
+    std::vector<ProjectKernels> kernels(4);
     kernels[0] = ProjectKernels("cauchy_stress", _rheology->getKernelCauchyStressVector(coordsys));
-    kernels[1] = ProjectKernels("water_content", _rheology->getKernelFluidContent(coordsys));
-    kernels[2] = ProjectKernels("heat_flux", _rheology->getKernelHeatFluxVector(coordsys));
+    kernels[1] = ProjectKernels("cauchy_strain", strainKernel);
+    kernels[2] = ProjectKernels("bulk_density", bulkDensityKernel);
+    kernels[3] = ProjectKernels("water_content", _rheology->getKernelFluidContent(coordsys));
 
     integrator->setKernelsDerivedField(kernels);
 
