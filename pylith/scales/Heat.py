@@ -86,7 +86,7 @@ class Heat(General):
 
 # FACTORIES ////////////////////////////////////////////////////////////
 
-def normalizer():
+def scales():
     """Factory associated with Heat.
     """
     return Heat()

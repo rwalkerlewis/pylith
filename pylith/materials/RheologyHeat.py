@@ -18,10 +18,12 @@ class RheologyHeat(PetscComponent):
 
     import pythia.pyre.inventory
 
-    from spatialdata.spatialdb.SimpleDB import SimpleDB
-    auxiliaryFieldDB = pythia.pyre.inventory.facility(
-        "db_auxiliary_field", family="spatial_database", factory=SimpleDB)
-    auxiliaryFieldDB.meta['tip'] = "Database for physical property parameters."
+    from pylith.topology.Subfield import subfieldFactory
+    from pylith.utils.EmptyBin import EmptyBin
+
+    auxiliarySubfields = pythia.pyre.inventory.facilityArray(
+        "auxiliary_subfields", itemFactory=subfieldFactory, factory=EmptyBin)
+    auxiliarySubfields.meta['tip'] = "Discretization information for physical properties and state variables."
 
     def __init__(self, name):
         """Constructor.
@@ -31,12 +33,25 @@ class RheologyHeat(PetscComponent):
     def preinitialize(self, problem):
         """Do pre-initialization setup.
         """
+        from pylith.mpi.Communicator import mpi_is_root
+        if mpi_is_root():
+            self._info.log(
+                "Performing minimal initialization of heat rheology '%s'." % self.aliases[-1])
         self._createModuleObj()
 
     def addAuxiliarySubfields(self, material, problem):
         """Add subfields to auxiliary field.
         """
-        pass
+        for subfield in self.auxiliarySubfields.components():
+            fieldName = subfield.aliases[-1]
+            descriptor = subfield.getTraitDescriptor("quadrature_order")
+            if hasattr(descriptor.locator, "source") and descriptor.locator.source == "default":
+                quadOrder = problem.defaults.quadOrder
+            else:
+                quadOrder = subfield.quadOrder
+            material.setAuxiliarySubfieldDiscretization(
+                fieldName, subfield.basisOrder, quadOrder, subfield.dimension,
+                subfield.cellBasis, subfield.feSpace, subfield.isBasisContinuous)
 
     def _createModuleObj(self):
         """Create handle to C++ object.

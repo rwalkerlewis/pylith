@@ -168,7 +168,9 @@ pylith::bc::BoundaryCondition::createDiagnosticField(const pylith::topology::Fie
     pylith::topology::FieldOps::createOutputLabel(diagnosticField);
 
     assert(_diagnosticFactory);
-    const pylith::topology::FieldBase::Discretization& discretization = solution.getSubfieldInfo("displacement").fe;
+    // Use displacement if available, otherwise use temperature (for heat-only problems)
+    const char* subfieldName = solution.hasSubfield("displacement") ? "displacement" : "temperature";
+    const pylith::topology::FieldBase::Discretization& discretization = solution.getSubfieldInfo(subfieldName).fe;
     const PylithInt cellDim = solution.getSpaceDim()-1;
     const bool isFaultOnly = false;
     _diagnosticFactory->setSubfieldDiscretization("default", discretization.basisOrder, discretization.quadOrder, cellDim,
