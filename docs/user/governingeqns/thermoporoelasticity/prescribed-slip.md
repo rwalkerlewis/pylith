@@ -1,4 +1,3 @@
-````markdown
 # Infinitesimal Strain and Prescribed Fault Slip
 
 For each fault, we add a boundary condition prescribing the jump in the displacement field across the fault, following the same approach as in thermoelasticity and poroelasticity:

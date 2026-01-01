@@ -1,4 +1,3 @@
-````markdown
 # Quasistatic
 
 For ease of solution in the quasistatic case, we introduce volumetric strain ($\epsilon_v$) as a third variable in addition to displacement and pressure, and we include temperature as the fourth field.

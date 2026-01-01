@@ -114,8 +114,5 @@ We can write the trace of the strain tensor as the dot product of the gradient a
 infinitesimal-strain-quasistatic.md
 infinitesimal-strain-dynamic.md
 :::
-infinitesimal-strain-quasistatic.md
-infinitesimal-strain-dynamic.md
-:::
 
 ````

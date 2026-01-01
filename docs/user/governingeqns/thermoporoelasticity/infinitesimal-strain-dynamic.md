@@ -1,4 +1,3 @@
-````markdown
 # Dynamic
 
 For the dynamic case we retain the inertial term and introduce velocity as an additional field. The solution vector becomes $(\vec{v}, \vec{u}, p, T, \epsilon_v)$.

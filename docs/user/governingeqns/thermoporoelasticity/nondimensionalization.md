@@ -1,4 +1,3 @@
-````markdown
 # Nondimensionalization
 
 Starting with the thermoporoelasticity equations:

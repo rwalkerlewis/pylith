@@ -1,4 +1,3 @@
-````markdown
 # Derivation of Thermoelasticity Equations
 
 For completeness we start our discussion of the governing equations with a derivation of the coupled thermoelasticity equations.

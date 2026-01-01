@@ -1,4 +1,3 @@
-````markdown
 # Infinitesimal Strain and No Faults
 
 We begin with the thermoelasticity system including the inertial term,

@@ -1,4 +1,3 @@
-```markdown
 (sec-user-governingeqns-thermoporoelasticity-rheologies)=
 # Bulk Rheologies
 
