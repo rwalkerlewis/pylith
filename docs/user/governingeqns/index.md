@@ -25,4 +25,6 @@ petsc-formulation.md
 elasticity/index.md
 incompressible-elasticity/index.md
 poroelasticity/index.md
+thermoelasticity/index.md
+thermoporoelasticity/index.md
 :::
