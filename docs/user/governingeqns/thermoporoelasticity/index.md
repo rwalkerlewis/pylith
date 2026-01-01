@@ -1,4 +1,4 @@
-```markdown
+(sec-user-governing-eqns-thermoporoelasticity)=
 # Thermoporoelasticity
 
 :::{toctree}
