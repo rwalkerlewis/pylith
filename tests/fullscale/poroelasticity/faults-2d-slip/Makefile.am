@@ -8,13 +8,31 @@
 # See https://mit-license.org/ and LICENSE.md and for license information. 
 # =================================================================================================
 
-SUBDIRS = \
-	nofaults-2d \
-	faults-2d \
-	faults-2d-slip \
-	terzaghi \
-	mandel \
-	cryer
+include $(top_srcdir)/tests/check_catch2.am
+include $(top_srcdir)/tests/check_cppunit.am
+
+TESTS = test_pylith.py
+dist_check_SCRIPTS = test_pylith.py
+
+dist_noinst_PYTHON = \
+	meshes.py \
+	generate_gmsh.py \
+	TestFaultSlip.py \
+	faultslip_soln.py
+
+dist_noinst_DATA = \
+	pylithapp.cfg \
+	faultslip.cfg \
+	faultslip_tri.cfg \
+	faultslip_quad.cfg \
+	mesh_tri.msh \
+	mesh_quad.msh
+
+noinst_TMP = \
+	output
+
+export_datadir = $(abs_top_builddir)/tests/fullscale/poroelasticity/faults-2d-slip
+include $(top_srcdir)/tests/data.am
 
 
-# End of file 
+# End of file
