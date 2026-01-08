@@ -13,7 +13,8 @@ SUBDIRS = \
 	faults-2d \
 	terzaghi \
 	mandel \
-	cryer
+	cryer \
+	blackoil
 
 
 # End of file 

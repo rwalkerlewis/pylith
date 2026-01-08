@@ -38,7 +38,9 @@ namespace pylith {
 
         class RheologyPoroelasticity;
         class IsotropicLinearPoroelasticity;
+        class IsotropicLinearBlackOilPoroelasticity;
         class AuxiliaryFactoryPoroelastic;
+        class AuxiliaryFactoryBlackOilPoroelastic;
 
         class Heat;
         class AuxiliaryFactoryHeat;

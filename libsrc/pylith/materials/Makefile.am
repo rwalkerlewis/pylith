@@ -33,6 +33,8 @@ subpkginclude_HEADERS = \
 	IsotropicPowerLaw.hh \
 	IsotropicLinearIncompElasticity.hh \
 	IsotropicLinearPoroelasticity.hh \
+	IsotropicLinearBlackOilPoroelasticity.hh \
+	AuxiliaryFactoryBlackOilPoroelastic.hh \
 	IsotropicHeat.hh \
 	Thermoelasticity.hh \
 	RheologyThermoelasticity.hh \
