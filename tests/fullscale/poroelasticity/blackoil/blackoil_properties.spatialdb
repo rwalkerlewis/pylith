@@ -1,0 +1,39 @@
+// -*- C++ -*- (tell Emacs to use C++ mode for syntax highlighting)
+//
+// This spatial database specifies the parameters for the black oil
+// poroelastic material.
+//
+#SPATIAL.ascii 1
+SimpleDB {
+  num-values = 13
+
+  // Names and units for database fields
+  value-names =  solid_density  fluid_density  fluid_viscosity  porosity  shear_modulus  drained_bulk_modulus  biot_coefficient  fluid_bulk_modulus  reference_pressure  fluid_compressibility  fluid_compressibility_coefficient  viscosity_coefficient  isotropic_permeability
+  value-units =  kg/m**3  kg/m**3  Pa*s  none  Pa  Pa  none  Pa  Pa  1/Pa  1/Pa**2  1/Pa  m**2
+
+  num-locs = 1
+  data-dim = 0 // uniform spatial distribution
+  space-dim = 2
+
+  // Columns are
+  // (1) x coordinate (m)
+  // (2) y coordinate (m)
+  // (3) solid_density (kg/m^3)
+  // (4) fluid_density (kg/m^3)
+  // (5) fluid_viscosity (Pa*s) - reference viscosity
+  // (6) porosity (-)
+  // (7) shear_modulus (Pa)
+  // (8) drained_bulk_modulus (Pa)
+  // (9) biot_coefficient (-)
+  // (10) fluid_bulk_modulus (Pa)
+  // (11) reference_pressure (Pa) - reference for pressure dependence
+  // (12) fluid_compressibility (1/Pa) - reference compressibility
+  // (13) fluid_compressibility_coefficient (1/Pa^2) - pressure dependence
+  // (14) viscosity_coefficient (1/Pa) - pressure dependence of viscosity
+  // (15) isotropic_permeability (m^2)
+  cs-data = cartesian {
+    to-meters = 1.0
+    space-dim = 2
+  }
+}
+  0.0  0.0  2500.0  1000.0  1.0e-3  0.2  3.0e+10  8.0e+10  0.8  2.0e+9  1.0e+7  5.0e-10  1.0e-18  1.0e-8  1.0e-14

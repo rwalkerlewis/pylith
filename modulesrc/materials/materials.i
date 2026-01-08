@@ -27,6 +27,7 @@
 #include "pylith/materials/Poroelasticity.hh"
 #include "pylith/materials/RheologyPoroelasticity.hh"
 #include "pylith/materials/IsotropicLinearPoroelasticity.hh"
+#include "pylith/materials/IsotropicLinearBlackOilPoroelasticity.hh"
 
 #include "pylith/materials/Heat.hh"
 #include "pylith/materials/RheologyHeat.hh"
@@ -83,6 +84,7 @@ import_array();
 %include "Poroelasticity.i"
 %include "RheologyPoroelasticity.i"
 %include "IsotropicLinearPoroelasticity.i"
+%include "IsotropicLinearBlackOilPoroelasticity.i"
 
 %include "Heat.i"
 %include "RheologyHeat.i"

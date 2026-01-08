@@ -30,6 +30,7 @@ swig_sources = \
 	RheologyIncompressibleElasticity.i \
 	IsotropicLinearIncompElasticity.i \
 	IsotropicLinearPoroelasticity.i \
+	IsotropicLinearBlackOilPoroelasticity.i \
 	RheologyPoroelasticity.i \
 	Poroelasticity.i \
 	Heat.i \

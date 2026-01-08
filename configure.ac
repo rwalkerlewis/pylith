@@ -282,6 +282,7 @@ AC_CONFIG_FILES([Makefile
 		tests/fullscale/poroelasticity/terzaghi/Makefile
 		tests/fullscale/poroelasticity/mandel/Makefile
 		tests/fullscale/poroelasticity/cryer/Makefile
+		tests/fullscale/poroelasticity/blackoil/Makefile
 		tests/fullscale/thermoporoelasticity/Makefile
 		tests/fullscale/thermoporoelasticity/nofaults-2d/Makefile
 		tests/fullscale/thermoporoelasticity/faults-2d/Makefile

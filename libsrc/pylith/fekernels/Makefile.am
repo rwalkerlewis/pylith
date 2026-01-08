@@ -24,6 +24,7 @@ subpkginclude_HEADERS = \
 	IncompressibleElasticity.hh \
 	IsotropicLinearIncompElasticity.hh \
 	IsotropicLinearPoroelasticity.hh \
+	IsotropicLinearBlackOilPoroelasticity.hh \
 	Poroelasticity.hh \
 	HeatEquation.hh \
 	IsotropicHeat.hh \
