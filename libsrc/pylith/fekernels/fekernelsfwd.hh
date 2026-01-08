@@ -50,6 +50,10 @@ namespace pylith {
         class IsotropicLinearPoroelasticityPlaneStrain;
         class IsotropicLinearPoroelasticity3D;
 
+        class IsotropicLinearBlackOilPoroelasticity;
+        class IsotropicLinearBlackOilPoroelasticityPlaneStrain;
+        class IsotropicLinearBlackOilPoroelasticity3D;
+
         class HeatEquation;
         class IsotropicHeat;
 

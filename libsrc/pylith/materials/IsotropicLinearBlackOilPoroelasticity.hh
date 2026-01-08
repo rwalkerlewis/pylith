@@ -209,7 +209,7 @@ protected:
     // PRIVATE MEMBERS /////////////////////////////////////////////////////////////////////////////////////////////////
 private:
 
-    pylith::materials::AuxiliaryFactoryPoroelastic* _auxiliaryFactory; ///< Factory for auxiliary subfields.
+    pylith::materials::AuxiliaryFactoryBlackOilPoroelastic* _auxiliaryFactory; ///< Factory for auxiliary subfields.
     bool _useReferenceState; ///< Flag to use reference stress and strain.
     bool _useTensorPermeability; ///< Flag to use tensor permeability
 
