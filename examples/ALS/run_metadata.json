@@ -1,0 +1,150 @@
+{
+  "timestamp": "20260206_190857",
+  "run": {
+    "name": "delta_fault_test",
+    "description": "Initial run using Delta Area AOI and geology/fault layers.",
+    "author": "shawn.hood",
+    "tags": [
+      "delta",
+      "paleoseismic"
+    ]
+  },
+  "config_file": "config\\workflow_config.yaml",
+  "inputs": {
+    "aoi": "C:\\Users\\shawn.hood\\OneDrive - ALS Limited\\Documents\\Projects\\2026\\20260101 Paleoseismic\\data_processed\\20260205 Delta Area\\20260205_delta-fault_aoi_epsg28351.shp",
+    "bedrock": "C:\\Users\\shawn.hood\\OneDrive - ALS Limited\\Documents\\Projects\\2026\\20260101 Paleoseismic\\data_processed\\20260205 Delta Area\\20260205_delta-fault_geology_epsg28351.shp",
+    "faults": "C:\\Users\\shawn.hood\\OneDrive - ALS Limited\\Documents\\Projects\\2026\\20260101 Paleoseismic\\data_processed\\20260205 Delta Area\\20260205_delta-fault_faults(simple)_epsg28351.shp"
+  },
+  "outputs": {
+    "run_dir": "Output\\20260206_190857_delta_fault_test",
+    "geo": "Output\\20260206_190857_delta_fault_test\\20260206_190857_pylith_model.geo",
+    "mesh": "Output\\20260206_190857_delta_fault_test\\20260206_190857_pylith_model.msh",
+    "shapefile": "Output\\20260206_190857_delta_fault_test\\20260206_190857_pylith_model_nodes.shp",
+    "plot": "Output\\20260206_190857_delta_fault_test\\20260206_190857_pylith_model_summary.png",
+    "pylith_inputs": "Output\\20260206_190857_delta_fault_test\\20260206_190857_pylith_inputs"
+  },
+  "parameters": {
+    "project": {
+      "epsg": 28351
+    },
+    "aoi": {
+      "path": "C:\\Users\\shawn.hood\\OneDrive - ALS Limited\\Documents\\Projects\\2026\\20260101 Paleoseismic\\data_processed\\20260205 Delta Area\\20260205_delta-fault_aoi_epsg28351.shp",
+      "center": null,
+      "size_m": null,
+      "grid_spacing_m": 1000.0,
+      "fallback_epsg": 28351
+    },
+    "bedrock": {
+      "path": "C:\\Users\\shawn.hood\\OneDrive - ALS Limited\\Documents\\Projects\\2026\\20260101 Paleoseismic\\data_processed\\20260205 Delta Area\\20260205_delta-fault_geology_epsg28351.shp",
+      "domain_field": "code",
+      "fallback_epsg": 28351,
+      "contact_densify_spacing_m": 100.0,
+      "polygon_point_density": 500.0,
+      "point_distribution_method": "centroid_outward",
+      "lithologies": [
+        "A-me-st",
+        "A-b-YEG",
+        "A-f-YEG",
+        "A-mgss-Y",
+        "A-o-YEG",
+        "A-s-YEG",
+        "A-u-YEG"
+      ],
+      "material_params": [
+        [
+          2700.0,
+          6000.0,
+          3464.0
+        ],
+        [
+          2700.0,
+          6000.0,
+          3464.0
+        ],
+        [
+          2700.0,
+          6000.0,
+          3464.0
+        ],
+        [
+          2700.0,
+          6000.0,
+          3464.0
+        ],
+        [
+          2700.0,
+          6000.0,
+          3464.0
+        ],
+        [
+          2700.0,
+          6000.0,
+          3464.0
+        ],
+        [
+          2700.0,
+          6000.0,
+          3464.0
+        ]
+      ]
+    },
+    "faults": {
+      "path": "C:\\Users\\shawn.hood\\OneDrive - ALS Limited\\Documents\\Projects\\2026\\20260101 Paleoseismic\\data_processed\\20260205 Delta Area\\20260205_delta-fault_faults(simple)_epsg28351.shp",
+      "domain_field": "feature",
+      "fault_flag_field": null,
+      "domain_mapping": null,
+      "auto_tag_start": 1,
+      "densify_spacing_m": 250.0,
+      "fallback_epsg": 28351
+    },
+    "gmsh": {
+      "output_geo": "output\\pylith_model.geo",
+      "point_size": 50.0
+    },
+    "metadata": {
+      "rock_domain_field": "rock_domain",
+      "is_fault_field": "is_fault",
+      "fault_domain_field": "fault_domain"
+    },
+    "pylith": {
+      "material_defaults": {
+        "density": 2700.0,
+        "vp": 6000.0,
+        "vs": 3464.0,
+        "reference": "Christensen & Mooney (1995)"
+      },
+      "material_overrides": {
+        "Sandstone": {
+          "density": 2500.0,
+          "vp": 4500.0,
+          "vs": 2600.0,
+          "reference": "Placeholder values"
+        }
+      },
+      "fault_slip": {
+        "left_lateral": 1.0,
+        "reverse": 0.0,
+        "opening": 0.0,
+        "rise_time": 10.0,
+        "reference": "Placeholder values"
+      },
+      "boundary_velocity": {
+        "x_neg_rate": 0.03,
+        "x_pos_rate": 0.03,
+        "y_neg_rate": 0.0,
+        "y_pos_rate": 0.0,
+        "reference": "Placeholder values"
+      }
+    },
+    "run": {
+      "name": "delta_fault_test",
+      "description": "Initial run using Delta Area AOI and geology/fault layers.",
+      "author": "shawn.hood",
+      "tags": [
+        "delta",
+        "paleoseismic"
+      ],
+      "output_root": "Output"
+    }
+  }
+}

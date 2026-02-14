@@ -1,0 +1,15 @@
+#SPATIAL.ascii 1
+SimpleDB {
+  num-values = 3
+  value-names = rate_amplitude_x rate_amplitude_y rate_start_time
+  value-units = m/year m/year year
+  num-locs = 2
+  data-dim = 2
+  space-dim = 3
+  cs-data = geographic {
+    crs-string = EPSG:28351
+    space-dim = 3
+  }
+}
+369921.122 6547900.914 0.0 0 0 0
+388746.563 6547900.914 0.0 0 0 0

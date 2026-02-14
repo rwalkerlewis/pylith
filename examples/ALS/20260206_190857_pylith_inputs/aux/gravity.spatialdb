@@ -1,0 +1,14 @@
+#SPATIAL.ascii 1
+SimpleDB {
+  num-values = 3
+  value-names = gravitational_acceleration_x gravitational_acceleration_y gravitational_acceleration_z
+  value-units = m/s**2 m/s**2 m/s**2
+  num-locs = 1
+  data-dim = 2
+  space-dim = 3
+  cs-data = geographic {
+    crs-string = EPSG:28351
+    space-dim = 3
+  }
+}
+0.000 0.000 0.0 0 0 -9.81

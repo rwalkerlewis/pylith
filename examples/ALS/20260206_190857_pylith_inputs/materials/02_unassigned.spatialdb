@@ -1,0 +1,14 @@
+#SPATIAL.ascii 1
+SimpleDB {
+  num-values = 5
+  value-names = density vp vs shear_modulus bulk_modulus
+  value-units = kg/m**3 m/s m/s Pa Pa
+  num-locs = 1
+  data-dim = 2
+  space-dim = 3
+  cs-data = geographic {
+    crs-string = EPSG:28351
+    space-dim = 3
+  }
+}
+375550.351 6547752.151 0.0 2700 6000 3464 3.23981e+10 5.40025e+10

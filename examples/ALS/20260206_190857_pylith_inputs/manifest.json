@@ -1,0 +1,134 @@
+{
+  "crs_epsg": 28351,
+  "materials": [
+    {
+      "domain": "A-f-YEG",
+      "tag": 4,
+      "db": "materials\\04_a_f_yeg.spatialdb",
+      "reference": "Christensen & Mooney (1995, EPSL 132, 341-353) average continental crust velocities and densities",
+      "density": 2700.0,
+      "vp": 6000.0,
+      "vs": 3464.0
+    },
+    {
+      "domain": "A-s-YEG",
+      "tag": 8,
+      "db": "materials\\08_a_s_yeg.spatialdb",
+      "reference": "Christensen & Mooney (1995, EPSL 132, 341-353) average continental crust velocities and densities",
+      "density": 2700.0,
+      "vp": 6000.0,
+      "vs": 3464.0
+    },
+    {
+      "domain": "A-mgss-Y",
+      "tag": 6,
+      "db": "materials\\06_a_mgss_y.spatialdb",
+      "reference": "Christensen & Mooney (1995, EPSL 132, 341-353) average continental crust velocities and densities",
+      "density": 2700.0,
+      "vp": 6000.0,
+      "vs": 3464.0
+    },
+    {
+      "domain": "A-o-YEG",
+      "tag": 7,
+      "db": "materials\\07_a_o_yeg.spatialdb",
+      "reference": "Christensen & Mooney (1995, EPSL 132, 341-353) average continental crust velocities and densities",
+      "density": 2700.0,
+      "vp": 6000.0,
+      "vs": 3464.0
+    },
+    {
+      "domain": "A-b-YEG",
+      "tag": 3,
+      "db": "materials\\03_a_b_yeg.spatialdb",
+      "reference": "Christensen & Mooney (1995, EPSL 132, 341-353) average continental crust velocities and densities",
+      "density": 2700.0,
+      "vp": 6000.0,
+      "vs": 3464.0
+    },
+    {
+      "domain": "A-me-st",
+      "tag": 5,
+      "db": "materials\\05_a_me_st.spatialdb",
+      "reference": "Christensen & Mooney (1995, EPSL 132, 341-353) average continental crust velocities and densities",
+      "density": 2700.0,
+      "vp": 6000.0,
+      "vs": 3464.0
+    },
+    {
+      "domain": "A-u-YEG",
+      "tag": 9,
+      "db": "materials\\09_a_u_yeg.spatialdb",
+      "reference": "Christensen & Mooney (1995, EPSL 132, 341-353) average continental crust velocities and densities",
+      "density": 2700.0,
+      "vp": 6000.0,
+      "vs": 3464.0
+    },
+    {
+      "domain": "None",
+      "tag": 2,
+      "db": "materials\\02_unassigned.spatialdb",
+      "reference": "Christensen & Mooney (1995)",
+      "density": 2700.0,
+      "vp": 6000.0,
+      "vs": 3464.0
+    }
+  ],
+  "faults": [
+    {
+      "fault_domain": 1,
+      "label": "fault_1",
+      "db": "faults\\fault_1_slip.spatialdb",
+      "reference": "Placeholder values",
+      "left_lateral_slip_m": 1.0,
+      "reverse_slip_m": 0.0,
+      "opening_slip_m": 0.0,
+      "rise_time_s": 10.0
+    }
+  ],
+  "boundaries": [
+    {
+      "label": "boundary_xneg",
+      "db": "boundary\\boundary_xneg_velocity.spatialdb",
+      "constrained_dofs": [
+        0,
+        1
+      ],
+      "rate_m_per_year": 0.03,
+      "reference": "Placeholder values"
+    },
+    {
+      "label": "boundary_xpos",
+      "db": "boundary\\boundary_xpos_velocity.spatialdb",
+      "constrained_dofs": [
+        0,
+        1
+      ],
+      "rate_m_per_year": 0.03,
+      "reference": "Placeholder values"
+    },
+    {
+      "label": "boundary_yneg",
+      "db": "boundary\\boundary_yneg_velocity.spatialdb",
+      "constrained_dofs": [
+        0,
+        1
+      ],
+      "rate_m_per_year": 0.0,
+      "reference": "Placeholder values"
+    },
+    {
+      "label": "boundary_ypos",
+      "db": "boundary\\boundary_ypos_velocity.spatialdb",
+      "constrained_dofs": [
+        0,
+        1
+      ],
+      "rate_m_per_year": 0.0,
+      "reference": "Placeholder values"
+    }
+  ],
+  "gravity_db": "aux\\gravity.spatialdb",
+  "config": "config\\pylithapp_generated.cfg",
+  "mesh": "../20260206_190857_pylith_model.msh"
+}
