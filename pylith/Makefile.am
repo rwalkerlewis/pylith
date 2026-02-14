@@ -139,6 +139,10 @@ EXTRA_DIST = \
 	scales/QuasistaticPoroelasticity.py \
 	scales/QuasistaticElasticity.py \
 	scales/__init__.py \
+	sources/__init__.py \
+	sources/AuxSubfieldsPointSource.py \
+	sources/PointMomentTensor.py \
+	sources/SourceTimeFunction.py \
 	testing/FullTestApp.py \
 	testing/SolutionPoints.py \
 	testing/TestCases.py \

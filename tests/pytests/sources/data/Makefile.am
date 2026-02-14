@@ -8,11 +8,7 @@
 # See https://mit-license.org/ and LICENSE.md and for license information. 
 # =================================================================================================
 
-SUBDIRS = \
-	nofaults-2d \
-	nofaults-3d \
-	faults-2d \
-	pointsource-2d
+dist_noinst_DATA = \
+	test_timehistory.timedb
 
-
-# End of file 
+# End of file

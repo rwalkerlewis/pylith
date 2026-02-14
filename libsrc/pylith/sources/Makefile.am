@@ -8,34 +8,15 @@
 # See https://mit-license.org/ and LICENSE.md and for license information. 
 # =================================================================================================
 
-
-subpackage = fekernels
+subpackage = sources
 include $(top_srcdir)/subpackage.am
 
 subpkginclude_HEADERS = \
-	fekernelsfwd.hh \
-	Tensor.hh \
-	BoundaryDirections.hh \
-	Elasticity.hh \
-	IsotropicLinearElasticity.hh \
-	IsotropicLinearMaxwell.hh \
-	IsotropicLinearGenMaxwell.hh \
-	IsotropicPowerLaw.hh \
-	IncompressibleElasticity.hh \
-	IsotropicLinearIncompElasticity.hh \
-	IsotropicLinearPoroelasticity.hh \
-	Poroelasticity.hh \
+	sourcesfwd.hh \
 	PointForce.hh \
-	Solution.hh \
-	DispVel.hh \
-	TimeDependentFn.hh \
-	NeumannTimeDependent.hh \
-	AbsorbingDampers.hh \
-	FaultCohesiveKin.hh
-	
-dist_noinst_HEADERS =
+	PointForceAuxiliaryFactory.hh
 
-dist_noinst_DATA =
+noinst_HEADERS =
 
 
 # End of file

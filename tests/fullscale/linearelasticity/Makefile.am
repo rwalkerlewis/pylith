@@ -14,7 +14,8 @@ SUBDIRS = \
 	faults-2d \
 	faults-3d \
 	faults-3d-buried \
-	greensfns-2d
+	greensfns-2d \
+	pointsource-2d
 
 
 # End of file 

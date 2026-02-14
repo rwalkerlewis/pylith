@@ -206,6 +206,7 @@ AC_CONFIG_FILES([Makefile
 		libsrc/pylith/topology/Makefile
 		libsrc/pylith/utils/Makefile
 		libsrc/pylith/scales/Makefile
+		libsrc/pylith/sources/Makefile
         libsrc/pylith/testing/Makefile
 		modulesrc/Makefile
 		modulesrc/include/Makefile
@@ -218,6 +219,7 @@ AC_CONFIG_FILES([Makefile
 		modulesrc/mpi/Makefile
 		modulesrc/problems/Makefile
 		modulesrc/scales/Makefile
+		modulesrc/sources/Makefile
 		modulesrc/topology/Makefile
 		modulesrc/utils/Makefile
 		tests/Makefile
@@ -246,6 +248,7 @@ AC_CONFIG_FILES([Makefile
 		tests/mmstests/linearelasticity/nofaults-2d/Makefile
 		tests/mmstests/linearelasticity/nofaults-3d/Makefile
 		tests/mmstests/linearelasticity/faults-2d/Makefile
+		tests/mmstests/linearelasticity/pointsource-2d/Makefile
 		tests/mmstests/incompressibleelasticity/Makefile
 		tests/mmstests/incompressibleelasticity/nofaults-2d/Makefile
 		tests/mmstests/poroelasticity/Makefile
@@ -262,6 +265,7 @@ AC_CONFIG_FILES([Makefile
 		tests/fullscale/linearelasticity/faults-3d/Makefile
 		tests/fullscale/linearelasticity/faults-3d-buried/Makefile
 		tests/fullscale/linearelasticity/greensfns-2d/Makefile
+		tests/fullscale/linearelasticity/pointsource-2d/Makefile
 		tests/fullscale/incompressibleelasticity/Makefile
 		tests/fullscale/incompressibleelasticity/nofaults-2d/Makefile
 		tests/fullscale/incompressibleelasticity/nofaults-3d/Makefile

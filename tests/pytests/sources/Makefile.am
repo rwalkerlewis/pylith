@@ -8,11 +8,17 @@
 # See https://mit-license.org/ and LICENSE.md and for license information. 
 # =================================================================================================
 
-SUBDIRS = \
-	nofaults-2d \
-	nofaults-3d \
-	faults-2d \
-	pointsource-2d
+TESTS = \
+	TestSourceTimeFunction.py \
+	TestPointMomentTensor.py
 
+dist_check_SCRIPTS = $(TESTS)
 
-# End of file 
+dist_noinst_PYTHON = \
+	__init__.py
+
+noinst_DATA = 
+
+SUBDIRS = data
+
+# End of file
