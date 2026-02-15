@@ -40,7 +40,7 @@ class TestGeneral(unittest.TestCase):
         dim.setDisplacementScale(2.0 * meter)
 
         self.assertEqual(2.0 * meter, dim.getDisplacementScale())
-        self.assertEqual(1.0 * pascal, dim.getLengthScale())
+        self.assertEqual(1.0 * meter, dim.getLengthScale())
         self.assertEqual(1.0 * pascal, dim.getRigidityScale())
         self.assertEqual(1.0 * second, dim.getTimeScale())
 

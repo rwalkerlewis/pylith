@@ -44,6 +44,23 @@ public:
                                       const double lengthScale=100.0e+3,
                                       const double velocityScale=3.0e+3);
 
+            /** Set defaults scales for dynamic poroelasticity.
+             *
+             * @param[inout] Scales for nondimensionalization.
+             * @param[in] lengthScale Default length scale in meters.
+             * @param[in] velocityScale Default velocity scale in m/s.
+             * @param[in] permeability Default permeability scale in m^2.
+             * @param[in] viscosity Default viscosity scale in Pa*s.
+             * @param[in] rigidity Default rigidity scale in Pa.
+             */
+            static
+            void setDynamicPoroelasticity(pylith::scales::Scales* scales,
+                                          const double lengthScale=100.0e+3,
+                                          const double velocityScale=3.0e+3,
+                                          const double permeability=1.0e-12,
+                                          const double viscosity=1.0e-3,
+                                          const double rigidity=25.0e+9);
+
             /** Set defaults scales for quasi-static poroelasticity.
              *
              * @param[inout] Scales for nondimensionalization.
@@ -73,6 +90,95 @@ public:
                                                   const double permeability,
                                                   const double length,
                                                   const double rigidity);
+
+            /** Set defaults scales for quasi-static thermoelasticity.
+             *
+             * @param[inout] Scales for nondimensionalization.
+             * @param[in] lengthScale Default length scale in meters.
+             * @param[in] thermalConductivity Default thermal conductivity in W/(m*K).
+             * @param[in] density Default density in kg/m^3.
+             * @param[in] specificHeat Default specific heat capacity in J/(kg*K).
+             */
+            static
+            void setQuasistaticThermoelasticity(pylith::scales::Scales* scales,
+                                                const double lengthScale=100.0e+3,
+                                                const double thermalConductivity=2.5,
+                                                const double density=2500.0,
+                                                const double specificHeat=1000.0);
+
+            /** Compute time scale for thermoelasticity.
+             *
+             * @param[in] lengthScale Default length scale in meters.
+             * @param[in] thermalConductivity Default thermal conductivity in W/(m*K).
+             * @param[in] density Default density in kg/m^3.
+             * @param[in] specificHeat Default specific heat capacity in J/(kg*K).
+             *
+             * @returns Time scale in seconds.
+             */
+            static
+            double computeThermoelasticityTimeScale(const double lengthScale,
+                                                    const double thermalConductivity,
+                                                    const double density,
+                                                    const double specificHeat);
+
+            /** Set defaults scales for quasi-static thermoporoelasticity.
+             *
+             * @param[inout] Scales for nondimensionalization.
+             * @param[in] lengthScale Default length scale in meters.
+             * @param[in] permeability Default permeability scale in m^2.
+             * @param[in] viscosity Default viscosity scale in Pa*s.
+             * @param[in] rigidity Default rigidity scale in Pa.
+             * @param[in] thermalConductivity Default thermal conductivity in W/(m*K).
+             * @param[in] density Default density in kg/m^3.
+             * @param[in] specificHeat Default specific heat capacity in J/(kg*K).
+             */
+            static
+            void setQuasistaticThermoporoelasticity(pylith::scales::Scales* scales,
+                                                    const double lengthScale=100.0e+3,
+                                                    const double permeability=1.0e-12,
+                                                    const double viscosity=1.0e-3,
+                                                    const double rigidity=25.0e+9,
+                                                    const double thermalConductivity=2.5,
+                                                    const double density=2500.0,
+                                                    const double specificHeat=1000.0);
+
+            /** Set defaults scales for heat transfer.
+             *
+             * @param[inout] Scales for nondimensionalization.
+             * @param[in] lengthScale Default length scale in meters.
+             * @param[in] thermalConductivity Default thermal conductivity in W/(m*K).
+             * @param[in] density Default density in kg/m^3.
+             * @param[in] specificHeat Default specific heat capacity in J/(kg*K).
+             */
+            static
+            void setHeat(pylith::scales::Scales* scales,
+                         const double lengthScale=100.0e+3,
+                         const double thermalConductivity=2.5,
+                         const double density=2500.0,
+                         const double specificHeat=1000.0);
+
+            /** Compute time scale for thermoporoelasticity.
+             *
+             * Chooses minimum of poroelastic and thermal diffusion time scales.
+             *
+             * @param[in] lengthScale Default length scale in meters.
+             * @param[in] permeability Default permeability scale in m^2.
+             * @param[in] viscosity Default viscosity scale in Pa*s.
+             * @param[in] rigidity Default rigidity scale in Pa.
+             * @param[in] thermalConductivity Default thermal conductivity in W/(m*K).
+             * @param[in] density Default density in kg/m^3.
+             * @param[in] specificHeat Default specific heat capacity in J/(kg*K).
+             *
+             * @returns Time scale in seconds.
+             */
+            static
+            double computeThermoporoelasticityTimeScale(const double lengthScale,
+                                                        const double permeability,
+                                                        const double viscosity,
+                                                        const double rigidity,
+                                                        const double thermalConductivity,
+                                                        const double density,
+                                                        const double specificHeat);
 
             /** Get value to nondimensionalize stress.
              *
@@ -145,6 +251,22 @@ public:
              */
             static
             double getPermeabilityScale(const pylith::scales::Scales& scales);
+
+            /** Get value to nondimensionalize temperature.
+             *
+             * @param[in] Scales for nondimensionalization.
+             * @returns Temperature scale in K (SI units).
+             */
+            static
+            double getTemperatureScale(const pylith::scales::Scales& scales);
+
+            /** Get value to nondimensionalize heat flux.
+             *
+             * @param[in] Scales for nondimensionalization.
+             * @returns Heat flux scale in W/m^2 (SI units).
+             */
+            static
+            double getHeatFluxScale(const pylith::scales::Scales& scales);
 
         }; // class ElasticityScales
 

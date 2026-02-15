@@ -37,7 +37,7 @@ for name, fields in fields.items():
     norm = mask*fieldA[iA,:,:] + ~mask*small
     diff = (fieldA[iA,:,:] - fieldB[iB,:,:]) / norm
     if numpy.sum(numpy.abs(diff)) > 1.0e-4:
-        print name
-        print fieldA[iA,:,:], fieldB[iB,:,:], norm, diff
+        print(name)
+        print(fieldA[iA,:,:], fieldB[iB,:,:], norm, diff)
     else:
-        print name, "OK"
+        print(name, "OK")

@@ -25,6 +25,12 @@ subpkginclude_HEADERS = \
 	IsotropicLinearIncompElasticity.hh \
 	IsotropicLinearPoroelasticity.hh \
 	Poroelasticity.hh \
+	HeatEquation.hh \
+	IsotropicHeat.hh \
+	Thermoelasticity.hh \
+	IsotropicLinearThermoelasticity.hh \
+	Thermoporoelasticity.hh \
+	IsotropicLinearThermoporoelasticity.hh \
 	Solution.hh \
 	DispVel.hh \
 	TimeDependentFn.hh \

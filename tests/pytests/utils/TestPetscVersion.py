@@ -24,7 +24,7 @@ class TestPetscVersion(unittest.TestCase):
         version = PetscVersion.version()
         # Check that version is of the form X.X.X
         import re
-        match = re.search("[0-9]+\.[0-9]+\.[0-9]+", version)
+        match = re.search(r"[0-9]+\.[0-9]+\.[0-9]+", version)
         self.assertFalse(match is None)
         return
 
@@ -36,7 +36,7 @@ class TestPetscVersion(unittest.TestCase):
         else:
             # Check that revision is of the form v2.1.3-16-g9323114 or v3.10-88-g06a760874e
             import re
-            match = re.search("v[0-9]+\.[0-9]+(\.[0-9]+)*-[0-9]+-g[0-9,a-z]+", revision)
+            match = re.search(r"v[0-9]+\.[0-9]+(\.[0-9]+)*-[0-9]+-g[0-9,a-z]+", revision)
             self.assertFalse(match is None)
         return
 

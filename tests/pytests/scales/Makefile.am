@@ -14,9 +14,14 @@ TESTS = test_scales.py
 dist_check_SCRIPTS = test_scales.py
 
 noinst_PYTHON = \
-	TestScales.py \
+	TestGeneral.py \
 	TestQuasistaticElasticity.py \
-	TestDynamicElasticity.py
+	TestDynamicElasticity.py \
+	TestQuasistaticPoroelasticity.py \
+	TestDynamicPoroelasticity.py \
+	TestQuasistaticThermoelasticity.py \
+	TestQuasistaticThermoporoelasticity.py \
+	TestHeat.py
 
 
 # End of file 

@@ -24,6 +24,8 @@ This allows variation of the material properties across cells with the same mate
 elasticity.md
 incompressible-elasticity.md
 poroelasticity.md
+thermoelasticity.md
+thermoporoelasticity.md
 :::
 
 :::{seealso}

@@ -24,6 +24,9 @@ SUBDIRS = \
 	subduction-3d \
 	magma-2d \
 	poroelastic-outerrise-2d \
+	earthquake-thermoelasticity-2d \
+	thermoelasticity-2d \
+	thermoporoelasticity-2d \
 	troubleshooting-2d
 
 

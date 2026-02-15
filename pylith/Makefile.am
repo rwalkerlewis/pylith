@@ -116,6 +116,7 @@ EXTRA_DIST = \
 	problems/SolnDispPresLagrange.py \
 	problems/SolnDispPresTracStrain.py \
 	problems/SolnDispPresTracStrainLagrange.py \
+	problems/SolnDispPresTracStrainTempLagrange.py \
 	problems/SolnDispPresTracStrainVelPdotTdot.py \
 	problems/SolnDispPresTracStrainVelPdotTdotLagrange.py \
 	problems/SolnDispPresVel.py \
