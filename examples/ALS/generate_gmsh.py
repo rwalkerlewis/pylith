@@ -1,496 +1,286 @@
-#!/usr/bin/env python3
+#!/usr/bin/env nemesis
+"""Generate a tri mesh for the ALS model domain using Gmsh.
+
+Fault curves are loaded from node coordinates extracted from the input mesh file
+20260206_130505_pylith_model.msh. Two fault traces run diagonally (NW-SE) across
+the rectangular domain.
+
+Run `generate_gmsh.py --help` to see the command line options.
+Run `generate_gmsh.py --write` to generate the mesh.
 """
-Generate a PyLith-compatible binary Gmsh mesh from point cloud data.
-
-This script reads the original 20260206_190857_pylith_model.msh file
-which contains 6815 points with material and fault assignments, performs
-Delaunay triangulation, and writes a binary Gmsh 4.1 format mesh suitable
-for PyLith simulations.
-
-Materials (physical tags):
-  2: unassigned
-  3: A_b_YEG
-  4: A_f_YEG
-  5: A_me_st
-  6: A_mgss_Y
-  7: A_o_YEG
-  8: A_s_YEG
-  9: A_u_YEG
-
-Fault (physical tag 1): fault_1
-"""
-
-import argparse
-import struct
-import numpy as np
-from scipy.spatial import Delaunay
-from pathlib import Path
-from collections import Counter
+import gmsh
+from pylith.meshio.gmsh_utils import (VertexGroup, MaterialGroup, GenerateMesh)
 
 
-# Physical group definitions matching the original mesh
-PHYSICAL_GROUPS = {
-    1: ("fault_1", 1),      # (name, dimension) - fault is 1D (edges)
-    2: ("material-id:2", 2),  # 2D materials (triangles)
-    3: ("material-id:3", 2),
-    4: ("material-id:4", 2),
-    5: ("material-id:5", 2),
-    6: ("material-id:6", 2),
-    7: ("material-id:7", 2),
-    8: ("material-id:8", 2),
-    9: ("material-id:9", 2),
-}
-
-
-def parse_msh_file(filepath):
+class App(GenerateMesh):
     """
-    Parse Gmsh 4.1 ASCII format file to extract points and their physical tags.
-    
-    Returns:
-        points: numpy array of shape (N, 2) with x, y coordinates
-        point_materials: numpy array of shape (N,) with material tag for each point
-        fault_nodes: set of point indices that are on the fault
+    Application for generating the mesh.
+
+    Domain (meters):
+        369921 <= x <= 388747
+        6527123 <= y <= 6547901
+
+    p4-----------------p3
+    |                   |
+    |  fault_a          |
+    |     \    fault_b  |
+    |      \    /       |
+    |       \  /        |
+    |        \/         |
+    p1-----------------p2
     """
-    points = []
-    point_materials = []
-    fault_nodes = set()
-    
-    with open(filepath, 'r') as f:
-        content = f.read()
-    
-    lines = content.split('\n')
-    i = 0
-    
-    while i < len(lines):
-        line = lines[i].strip()
-        
-        if line == '$Entities':
-            i += 1
-            # Header: numPoints numCurves numSurfaces numVolumes
-            header = lines[i].strip().split()
-            num_points = int(header[0])
-            i += 1
-            
-            for _ in range(num_points):
-                parts = lines[i].strip().split()
-                if len(parts) >= 5:
-                    # Format: pointTag x y z numPhysicalTags [physicalTags...]
-                    x = float(parts[1])
-                    y = float(parts[2])
-                    
-                    num_phys = int(parts[4])
-                    phys_tags = [int(parts[5 + j]) for j in range(num_phys)]
-                    
-                    point_idx = len(points)
-                    points.append([x, y])
-                    
-                    # Determine material (highest non-fault tag, or 2 for unassigned)
-                    material = 2  # default unassigned
-                    for tag in phys_tags:
-                        if tag == 1:
-                            fault_nodes.add(point_idx)
-                        elif 2 <= tag <= 9:
-                            material = tag
-                    
-                    point_materials.append(material)
-                i += 1
-            
-            # Skip curves, surfaces, volumes (not present in point-only mesh)
-            while i < len(lines) and lines[i].strip() != '$EndEntities':
-                i += 1
-        
-        i += 1
-    
-    return np.array(points), np.array(point_materials), fault_nodes
+    X_WEST = 369921.0
+    X_EAST = 388747.0
+    Y_SOUTH = 6527123.0
+    Y_NORTH = 6547901.0
 
+    DX_FAULT = 200.0
+    DX_BIAS = 1.05
 
-def triangulate_points(points):
-    """
-    Perform Delaunay triangulation on 2D points.
-    
-    Returns:
-        triangles: numpy array of shape (M, 3) with vertex indices
-    """
-    tri = Delaunay(points)
-    return tri.simplices
-
-
-def compute_triangle_materials(triangles, point_materials):
-    """
-    Assign material to each triangle based on vertex materials.
-    
-    Uses majority vote among vertices. If tie, uses lowest material tag.
-    
-    Returns:
-        triangle_materials: numpy array of shape (M,) with material tag
-    """
-    n_triangles = len(triangles)
-    triangle_materials = np.zeros(n_triangles, dtype=int)
-    
-    for i, tri in enumerate(triangles):
-        vertex_mats = point_materials[tri]
-        counter = Counter(vertex_mats)
-        # Get most common material (ties broken by lowest tag)
-        most_common = counter.most_common()
-        max_count = most_common[0][1]
-        candidates = [mat for mat, count in most_common if count == max_count]
-        triangle_materials[i] = min(candidates)
-    
-    return triangle_materials
-
-
-def find_fault_edges(triangles, fault_nodes):
-    """
-    Find edges where both endpoints are fault nodes.
-    
-    Returns:
-        fault_edges: list of (node1, node2) tuples
-    """
-    fault_edges = set()
-    
-    for tri in triangles:
-        edges = [(tri[0], tri[1]), (tri[1], tri[2]), (tri[2], tri[0])]
-        for n1, n2 in edges:
-            if n1 in fault_nodes and n2 in fault_nodes:
-                # Ensure consistent ordering
-                edge = (min(n1, n2), max(n1, n2))
-                fault_edges.add(edge)
-    
-    return list(fault_edges)
-
-
-def write_binary_msh(filepath, points, triangles, triangle_materials, 
-                     fault_edges, physical_groups):
-    """
-    Write mesh in Gmsh 4.1 binary format.
-    
-    Binary format specs from Gmsh documentation:
-    - size_t is 8 bytes (specified in header)
-    - int is 4 bytes
-    - double is 8 bytes
-    """
-    print(f"Writing binary mesh to {filepath}")
-    
-    n_points = len(points)
-    n_triangles = len(triangles)
-    n_fault_edges = len(fault_edges)
-    
-    # Collect which physical groups are actually used
-    used_groups = set()
-    if fault_edges:
-        used_groups.add(1)  # fault
-    used_groups.update(np.unique(triangle_materials))
-    
-    # Filter physical groups
-    active_groups = {k: v for k, v in physical_groups.items() if k in used_groups}
-    
-    with open(filepath, 'wb') as f:
-        # $MeshFormat - header is ASCII, then one binary int for endianness
-        f.write(b"$MeshFormat\n")
-        f.write(b"4.1 1 8\n")  # version, binary=1, sizeof(size_t)=8
-        f.write(struct.pack('<i', 1))  # endian check (binary)
-        f.write(b"\n$EndMeshFormat\n")
-        
-        # $PhysicalNames - entirely ASCII section
-        f.write(b"$PhysicalNames\n")
-        f.write(f"{len(active_groups)}\n".encode())
-        for tag in sorted(active_groups.keys()):
-            name, dim = active_groups[tag]
-            f.write(f'{dim} {tag} "{name}"\n'.encode())
-        f.write(b"$EndPhysicalNames\n")
-        
-        # $Entities - ASCII header line, then binary entity data
-        n_curves = 1 if fault_edges else 0
-        n_surfaces = len([t for t in active_groups if active_groups[t][1] == 2])
-        
-        f.write(b"$Entities\n")
-        # numPoints numCurves numSurfaces numVolumes (size_t each, binary)
-        f.write(struct.pack('<4Q', 0, n_curves, n_surfaces, 0))
-        
-        # Curve entity for fault (binary)
-        # Format: curveTag(int) minX minY minZ maxX maxY maxZ(double*6) 
-        #         numPhysicalTags(size_t) physicalTags[](int*) 
-        #         numBoundingPoints(size_t) pointTags[](int*)
-        if fault_edges:
-            fault_pts = points[list(set(sum(fault_edges, ())))]
-            min_x, min_y = fault_pts.min(axis=0)
-            max_x, max_y = fault_pts.max(axis=0)
-            f.write(struct.pack('<i', 1))  # curveTag
-            f.write(struct.pack('<6d', min_x, min_y, 0.0, max_x, max_y, 0.0))  # bbox
-            f.write(struct.pack('<Q', 1))  # numPhysicalTags (size_t)
-            f.write(struct.pack('<i', 1))  # physicalTag (int)
-            f.write(struct.pack('<Q', 0))  # numBoundingPoints (size_t)
-        
-        # Surface entities for materials (binary)
-        # Format: surfaceTag(int) minX minY minZ maxX maxY maxZ(double*6)
-        #         numPhysicalTags(size_t) physicalTags[](int*)
-        #         numBoundingCurves(size_t) curveTags[](int*)
-        for mat_tag in sorted([t for t in active_groups if active_groups[t][1] == 2]):
-            mat_tris = triangles[triangle_materials == mat_tag]
-            if len(mat_tris) > 0:
-                mat_pts = points[np.unique(mat_tris.flatten())]
-                min_x, min_y = mat_pts.min(axis=0)
-                max_x, max_y = mat_pts.max(axis=0)
-            else:
-                min_x = min_y = max_x = max_y = 0.0
-            f.write(struct.pack('<i', int(mat_tag)))  # surfaceTag (int)
-            f.write(struct.pack('<6d', min_x, min_y, 0.0, max_x, max_y, 0.0))  # bbox
-            f.write(struct.pack('<Q', 1))  # numPhysicalTags (size_t)
-            f.write(struct.pack('<i', int(mat_tag)))  # physicalTag (int)
-            f.write(struct.pack('<Q', 0))  # numBoundingCurves (size_t)
-        
-        f.write(b"\n$EndEntities\n")
-        
-        # $Nodes - binary
-        # Format: numEntityBlocks(size_t) numNodes(size_t) minNodeTag(size_t) maxNodeTag(size_t)
-        # Then for each entity block:
-        #   entityDim(int) entityTag(int) parametric(int) numNodesInBlock(size_t)
-        #   nodeTags[](size_t) coordinates[](double*3)
-        f.write(b"$Nodes\n")
-        num_entity_blocks = 1
-        f.write(struct.pack('<4Q', num_entity_blocks, n_points, 1, n_points))
-        
-        # Single entity block containing all nodes
-        f.write(struct.pack('<3i', 2, 1, 0))  # entityDim=2, entityTag=1, parametric=0
-        f.write(struct.pack('<Q', n_points))  # numNodesInBlock (size_t)
-        
-        # Node tags (size_t each)
-        for i in range(1, n_points + 1):
-            f.write(struct.pack('<Q', i))
-        
-        # Node coordinates (3 doubles each)
-        for pt in points:
-            f.write(struct.pack('<3d', pt[0], pt[1], 0.0))
-        
-        f.write(b"\n$EndNodes\n")
-        
-        # $Elements - binary
-        # Format: numEntityBlocks(size_t) numElements(size_t) minElementTag(size_t) maxElementTag(size_t)
-        # Then for each entity block:
-        #   entityDim(int) entityTag(int) elementType(int) numElementsInBlock(size_t)
-        #   elementTag(size_t) nodeTags[](size_t) for each element
-        f.write(b"$Elements\n")
-        
-        tri_by_mat = {}
-        for i, mat in enumerate(triangle_materials):
-            mat_int = int(mat)
-            if mat_int not in tri_by_mat:
-                tri_by_mat[mat_int] = []
-            tri_by_mat[mat_int].append(i)
-        
-        num_entity_blocks = len(tri_by_mat) + (1 if fault_edges else 0)
-        total_elements = n_triangles + n_fault_edges
-        
-        f.write(struct.pack('<4Q', num_entity_blocks, total_elements, 1, total_elements))
-        
-        element_tag = 1
-        
-        # Fault edges (1D elements, element type 1 = 2-node line)
-        if fault_edges:
-            f.write(struct.pack('<3i', 1, 1, 1))  # entityDim=1, entityTag=1, elementType=1
-            f.write(struct.pack('<Q', n_fault_edges))  # numElementsInBlock
-            
-            for n1, n2 in fault_edges:
-                f.write(struct.pack('<Q', element_tag))  # elementTag
-                f.write(struct.pack('<2Q', n1 + 1, n2 + 1))  # nodeTags (1-indexed)
-                element_tag += 1
-        
-        # Triangles (2D elements, element type 2 = 3-node triangle)
-        for mat_tag in sorted(tri_by_mat.keys()):
-            tri_indices = tri_by_mat[mat_tag]
-            f.write(struct.pack('<3i', 2, mat_tag, 2))  # entityDim=2, entityTag, elementType=2
-            f.write(struct.pack('<Q', len(tri_indices)))  # numElementsInBlock
-            
-            for idx in tri_indices:
-                tri = triangles[idx]
-                f.write(struct.pack('<Q', element_tag))  # elementTag
-                f.write(struct.pack('<3Q', tri[0] + 1, tri[1] + 1, tri[2] + 1))  # nodeTags
-                element_tag += 1
-        
-        f.write(b"\n$EndElements\n")
-    
-    print(f"  Nodes: {n_points}")
-    print(f"  Triangles: {n_triangles}")
-    print(f"  Fault edges: {n_fault_edges}")
-    print(f"  Materials: {sorted(tri_by_mat.keys())}")
-
-
-def write_ascii_msh(filepath, points, triangles, triangle_materials,
-                    fault_edges, physical_groups):
-    """
-    Write mesh in Gmsh 4.1 ASCII format for debugging.
-    """
-    print(f"Writing ASCII mesh to {filepath}")
-    
-    n_points = len(points)
-    n_triangles = len(triangles)
-    n_fault_edges = len(fault_edges)
-    
-    # Collect which physical groups are actually used
-    used_groups = set()
-    if fault_edges:
-        used_groups.add(1)
-    used_groups.update(np.unique(triangle_materials))
-    
-    active_groups = {k: v for k, v in physical_groups.items() if k in used_groups}
-    
-    with open(filepath, 'w') as f:
-        # MeshFormat
-        f.write("$MeshFormat\n")
-        f.write("4.1 0 8\n")  # version, ascii, sizeof(size_t)
-        f.write("$EndMeshFormat\n")
-        
-        # PhysicalNames
-        f.write("$PhysicalNames\n")
-        f.write(f"{len(active_groups)}\n")
-        for tag in sorted(active_groups.keys()):
-            name, dim = active_groups[tag]
-            f.write(f'{dim} {tag} "{name}"\n')
-        f.write("$EndPhysicalNames\n")
-        
-        # Entities
-        n_curves = 1 if fault_edges else 0
-        n_surfaces = len([t for t in active_groups if active_groups[t][1] == 2])
-        
-        f.write("$Entities\n")
-        f.write(f"0 {n_curves} {n_surfaces} 0\n")
-        
-        if fault_edges:
-            fault_pts = points[list(set(sum(fault_edges, ())))]
-            min_x, min_y = fault_pts.min(axis=0)
-            max_x, max_y = fault_pts.max(axis=0)
-            f.write(f"1 {min_x} {min_y} 0 {max_x} {max_y} 0 1 1 0\n")
-        
-        for mat_tag in sorted([t for t in active_groups if active_groups[t][1] == 2]):
-            mat_tris = triangles[triangle_materials == mat_tag]
-            if len(mat_tris) > 0:
-                mat_pts = points[np.unique(mat_tris.flatten())]
-                min_x, min_y = mat_pts.min(axis=0)
-                max_x, max_y = mat_pts.max(axis=0)
-            else:
-                min_x = min_y = max_x = max_y = 0.0
-            f.write(f"{mat_tag} {min_x} {min_y} 0 {max_x} {max_y} 0 1 {mat_tag} 0\n")
-        
-        f.write("$EndEntities\n")
-        
-        # Nodes
-        f.write("$Nodes\n")
-        f.write(f"1 {n_points} 1 {n_points}\n")
-        f.write(f"2 1 0 {n_points}\n")  # dim=2, entityTag=1, parametric=0
-        for i in range(1, n_points + 1):
-            f.write(f"{i}\n")
-        for pt in points:
-            f.write(f"{pt[0]:.10f} {pt[1]:.10f} 0.0\n")
-        f.write("$EndNodes\n")
-        
-        # Elements
-        tri_by_mat = {}
-        for i, mat in enumerate(triangle_materials):
-            if mat not in tri_by_mat:
-                tri_by_mat[mat] = []
-            tri_by_mat[mat].append(i)
-        
-        num_entity_blocks = len(tri_by_mat) + (1 if fault_edges else 0)
-        total_elements = n_triangles + n_fault_edges
-        
-        f.write("$Elements\n")
-        f.write(f"{num_entity_blocks} {total_elements} 1 {total_elements}\n")
-        
-        element_tag = 1
-        
-        if fault_edges:
-            f.write(f"1 1 1 {n_fault_edges}\n")  # dim=1, entityTag=1, type=1
-            for n1, n2 in fault_edges:
-                f.write(f"{element_tag} {n1 + 1} {n2 + 1}\n")
-                element_tag += 1
-        
-        for mat_tag in sorted(tri_by_mat.keys()):
-            tri_indices = tri_by_mat[mat_tag]
-            f.write(f"2 {mat_tag} 2 {len(tri_indices)}\n")  # dim=2, entityTag, type=2
-            for idx in tri_indices:
-                tri = triangles[idx]
-                f.write(f"{element_tag} {tri[0] + 1} {tri[1] + 1} {tri[2] + 1}\n")
-                element_tag += 1
-        
-        f.write("$EndElements\n")
-    
-    print(f"  Nodes: {n_points}")
-    print(f"  Triangles: {n_triangles}")
-    print(f"  Fault edges: {n_fault_edges}")
-
-
-def main():
-    parser = argparse.ArgumentParser(
-        description="Generate PyLith-compatible mesh from point cloud data"
+    # Fault A: NW-SE trace (57 control points, extracted from input mesh)
+    FAULT_A_POINTS = (
+        (369980.4, 6542902.3),
+        (370190.4, 6542655.3),
+        (370352.4, 6542464.9),
+        (370547.4, 6542210.7),
+        (370699.6, 6542012.3),
+        (370851.7, 6541813.9),
+        (371003.9, 6541615.6),
+        (371156.0, 6541417.2),
+        (371416.5, 6541133.5),
+        (371585.5, 6540949.3),
+        (371754.6, 6540765.1),
+        (371923.6, 6540580.9),
+        (372092.7, 6540396.8),
+        (372314.7, 6540079.2),
+        (372458.0, 6539874.3),
+        (372648.7, 6539595.9),
+        (372790.0, 6539389.6),
+        (373063.6, 6538971.2),
+        (373200.4, 6538762.0),
+        (373337.2, 6538552.7),
+        (373474.0, 6538343.5),
+        (373610.8, 6538134.2),
+        (373737.0, 6537900.1),
+        (373855.5, 6537680.0),
+        (373974.1, 6537459.9),
+        (374092.7, 6537239.8),
+        (374211.3, 6537019.7),
+        (374329.8, 6536799.6),
+        (374494.1, 6536528.4),
+        (374623.7, 6536314.6),
+        (374753.2, 6536100.8),
+        (374882.8, 6535887.0),
+        (375012.3, 6535673.1),
+        (375251.7, 6535539.7),
+        (375470.1, 6535418.0),
+        (375688.4, 6535296.3),
+        (375906.8, 6535174.6),
+        (376125.2, 6535052.8),
+        (376343.6, 6534931.1),
+        (376679.1, 6534813.6),
+        (376956.1, 6534678.3),
+        (377180.7, 6534568.5),
+        (377405.3, 6534458.7),
+        (377504.7, 6534410.1),
+        (377670.8, 6534067.1),
+        (377779.8, 6533842.1),
+        (377888.8, 6533617.1),
+        (377942.6, 6533561.1),
+        (377962.7, 6533510.6),
+        (378399.6, 6533388.1),
+        (378797.6, 6533175.1),
+        (379018.0, 6533057.1),
+        (379167.2, 6533032.6),
+        (379417.4, 6532884.0),
+        (379632.3, 6532756.3),
+        (379847.2, 6532628.6),
+        (380062.1, 6532500.9),
     )
-    parser.add_argument(
-        "--input", "-i",
-        default="20260206_190857_pylith_model.msh",
-        help="Input Gmsh file with point entities (default: 20260206_190857_pylith_model.msh)"
+
+    # Fault B: N-SE trace (92 control points, extracted from input mesh)
+    FAULT_B_POINTS = (
+        (375550.4, 6547752.2),
+        (375654.3, 6547496.2),
+        (375785.6, 6547204.5),
+        (375888.3, 6546976.6),
+        (375990.9, 6546748.6),
+        (376093.5, 6546520.6),
+        (376196.1, 6546292.7),
+        (376330.8, 6546012.1),
+        (376438.9, 6545786.7),
+        (376547.1, 6545561.3),
+        (376655.3, 6545335.9),
+        (376763.4, 6545110.5),
+        (376871.6, 6544885.1),
+        (376979.7, 6544659.7),
+        (377126.6, 6544353.5),
+        (377234.8, 6544128.1),
+        (377342.9, 6543902.7),
+        (377536.3, 6543540.2),
+        (377654.0, 6543319.6),
+        (377771.7, 6543099.1),
+        (377889.4, 6542878.5),
+        (378007.1, 6542657.9),
+        (378124.8, 6542437.4),
+        (378242.4, 6542216.8),
+        (378360.1, 6541996.3),
+        (378477.8, 6541775.7),
+        (378710.2, 6541395.1),
+        (378840.4, 6541181.8),
+        (378970.7, 6540968.4),
+        (379101.0, 6540755.0),
+        (379231.2, 6540541.6),
+        (379361.5, 6540328.3),
+        (379491.8, 6540114.9),
+        (379622.1, 6539901.5),
+        (379752.3, 6539688.1),
+        (379882.6, 6539474.8),
+        (380012.9, 6539261.4),
+        (380143.1, 6539048.0),
+        (380273.4, 6538834.6),
+        (380403.7, 6538621.3),
+        (380534.0, 6538407.9),
+        (380664.2, 6538194.5),
+        (380794.5, 6537981.1),
+        (380924.8, 6537767.8),
+        (380975.5, 6537684.6),
+        (381194.2, 6537385.4),
+        (381341.7, 6537183.5),
+        (381489.2, 6536981.7),
+        (381636.6, 6536779.8),
+        (381784.1, 6536578.0),
+        (381931.6, 6536376.1),
+        (382162.8, 6536095.2),
+        (382321.7, 6535902.2),
+        (382480.6, 6535709.2),
+        (382648.8, 6535504.8),
+        (382807.7, 6535311.8),
+        (382966.5, 6535118.7),
+        (383125.4, 6534925.7),
+        (383284.2, 6534732.6),
+        (383443.1, 6534539.6),
+        (383625.0, 6534326.5),
+        (383787.3, 6534136.4),
+        (383949.7, 6533946.3),
+        (384112.0, 6533756.1),
+        (384274.3, 6533566.0),
+        (384436.7, 6533375.9),
+        (384599.0, 6533185.7),
+        (384761.3, 6532995.6),
+        (384923.6, 6532805.5),
+        (385086.0, 6532615.3),
+        (385248.3, 6532425.2),
+        (385410.6, 6532235.1),
+        (385628.8, 6532003.5),
+        (385821.9, 6531798.5),
+        (385993.3, 6531616.5),
+        (386164.7, 6531434.6),
+        (386411.5, 6531127.5),
+        (386568.1, 6530932.6),
+        (386724.8, 6530737.8),
+        (386881.4, 6530542.9),
+        (387038.0, 6530348.0),
+        (387294.6, 6529980.1),
+        (387437.6, 6529775.0),
+        (387679.4, 6529428.0),
+        (387885.3, 6529079.0),
+        (388012.3, 6528863.7),
+        (388139.3, 6528648.3),
+        (388266.3, 6528433.0),
+        (388370.3, 6528257.0),
+        (388537.4, 6527892.1),
+        (388641.4, 6527664.8),
+        (388745.5, 6527437.5),
     )
-    parser.add_argument(
-        "--output", "-o",
-        default="pylith_mesh.msh",
-        help="Output mesh file (default: pylith_mesh.msh)"
-    )
-    parser.add_argument(
-        "--ascii", "-a",
-        action="store_true",
-        help="Write ASCII format instead of binary"
-    )
-    parser.add_argument(
-        "--debug", "-d",
-        action="store_true",
-        help="Write both ASCII and binary for debugging"
-    )
-    
-    args = parser.parse_args()
-    
-    input_path = Path(args.input)
-    if not input_path.is_absolute():
-        input_path = Path(__file__).parent / input_path
-    
-    output_path = Path(args.output)
-    if not output_path.is_absolute():
-        output_path = Path(__file__).parent / output_path
-    
-    print(f"Reading input mesh: {input_path}")
-    points, point_materials, fault_nodes = parse_msh_file(input_path)
-    
-    print(f"  Points: {len(points)}")
-    print(f"  Fault nodes: {len(fault_nodes)}")
-    for mat in range(2, 10):
-        count = np.sum(point_materials == mat)
-        if count > 0:
-            print(f"  Material {mat}: {count} points")
-    
-    print("Triangulating...")
-    triangles = triangulate_points(points)
-    print(f"  Created {len(triangles)} triangles")
-    
-    print("Assigning materials to triangles...")
-    triangle_materials = compute_triangle_materials(triangles, point_materials)
-    
-    print("Finding fault edges...")
-    fault_edges = find_fault_edges(triangles, fault_nodes)
-    print(f"  Found {len(fault_edges)} fault edges")
-    
-    if args.ascii:
-        write_ascii_msh(output_path, points, triangles, triangle_materials,
-                       fault_edges, PHYSICAL_GROUPS)
-    elif args.debug:
-        # Write both formats
-        ascii_path = output_path.with_suffix('.ascii.msh')
-        write_ascii_msh(ascii_path, points, triangles, triangle_materials,
-                       fault_edges, PHYSICAL_GROUPS)
-        write_binary_msh(output_path, points, triangles, triangle_materials,
-                        fault_edges, PHYSICAL_GROUPS)
-    else:
-        write_binary_msh(output_path, points, triangles, triangle_materials,
-                        fault_edges, PHYSICAL_GROUPS)
-    
-    print("Done!")
+
+    def __init__(self):
+        self.cell_choices = {
+            "default": "tri",
+            "choices": ["tri"],
+        }
+        self.filename = "mesh_tri.msh"
+
+    def create_geometry(self):
+        """Create geometry.
+
+        Rectangular domain with two embedded fault curves.
+        """
+        # Domain corners
+        p1 = gmsh.model.geo.add_point(self.X_WEST, self.Y_SOUTH, 0.0)
+        p2 = gmsh.model.geo.add_point(self.X_EAST, self.Y_SOUTH, 0.0)
+        p3 = gmsh.model.geo.add_point(self.X_EAST, self.Y_NORTH, 0.0)
+        p4 = gmsh.model.geo.add_point(self.X_WEST, self.Y_NORTH, 0.0)
+
+        # Domain boundary curves
+        self.c_south = gmsh.model.geo.add_line(p1, p2)
+        self.c_east = gmsh.model.geo.add_line(p2, p3)
+        self.c_north = gmsh.model.geo.add_line(p3, p4)
+        self.c_west = gmsh.model.geo.add_line(p4, p1)
+
+        # Create domain surface
+        loop = gmsh.model.geo.add_curve_loop([self.c_south, self.c_east, self.c_north, self.c_west])
+        self.s_domain = gmsh.model.geo.add_plane_surface([loop])
+
+        # Create fault A spline from extracted points
+        pts_a = []
+        for x, y in self.FAULT_A_POINTS:
+            pts_a.append(gmsh.model.geo.add_point(x, y, 0.0))
+        self.c_fault_a = gmsh.model.geo.add_spline(pts_a)
+
+        # Create fault B spline from extracted points
+        pts_b = []
+        for x, y in self.FAULT_B_POINTS:
+            pts_b.append(gmsh.model.geo.add_point(x, y, 0.0))
+        self.c_fault_b = gmsh.model.geo.add_spline(pts_b)
+
+        gmsh.model.geo.synchronize()
+
+        # Embed fault curves in the domain surface so the mesh conforms to them
+        gmsh.model.mesh.embed(1, [self.c_fault_a, self.c_fault_b], 2, self.s_domain)
+
+    def mark(self):
+        """Mark geometry for materials, boundary conditions, faults."""
+        # Single material for the whole domain
+        materials = (
+            MaterialGroup(tag=1, entities=[self.s_domain]),
+        )
+        for material in materials:
+            material.create_physical_group()
+
+        # Boundary and fault groups
+        vertex_groups = (
+            VertexGroup(name="boundary_south", tag=10, dim=1, entities=[self.c_south]),
+            VertexGroup(name="boundary_east", tag=11, dim=1, entities=[self.c_east]),
+            VertexGroup(name="boundary_north", tag=12, dim=1, entities=[self.c_north]),
+            VertexGroup(name="boundary_west", tag=13, dim=1, entities=[self.c_west]),
+            VertexGroup(name="fault_a", tag=20, dim=1, entities=[self.c_fault_a]),
+            VertexGroup(name="fault_b", tag=21, dim=1, entities=[self.c_fault_b]),
+        )
+        for group in vertex_groups:
+            group.create_physical_group()
+
+    def generate_mesh(self, cell):
+        """Generate the mesh."""
+        # Disable default sizing
+        gmsh.option.set_number("Mesh.MeshSizeFromPoints", 0)
+        gmsh.option.set_number("Mesh.MeshSizeFromCurvature", 0)
+        gmsh.option.set_number("Mesh.MeshSizeExtendFromBoundary", 0)
+
+        # Distance field from both faults
+        field_distance = gmsh.model.mesh.field.add("Distance")
+        gmsh.model.mesh.field.setNumbers(field_distance, "CurvesList", [self.c_fault_a, self.c_fault_b])
+
+        # Size field: refine near faults, coarsen away
+        field_size = gmsh.model.mesh.field.add("MathEval")
+        math_exp = GenerateMesh.get_math_progression(field_distance, min_dx=self.DX_FAULT, bias=self.DX_BIAS)
+        gmsh.model.mesh.field.setString(field_size, "F", math_exp)
+
+        gmsh.model.mesh.field.setAsBackgroundMesh(field_size)
+
+        gmsh.model.mesh.generate(2)
+        gmsh.model.mesh.optimize("Laplace2D")
 
 
 if __name__ == "__main__":
-    main()
+    App().main()
